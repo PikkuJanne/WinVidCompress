@@ -6,7 +6,11 @@ One compression profile (like HandBrake “Very Fast 1080p”):
 H.264 (libx264) -preset veryfast, -crf 22; AAC 160 kbps; MP4 with +faststart.
 No cropping; only downscales if source height > 1080 (never upscales).
 Filename-driven metadata (artist/date/title/comment) for interview archiving.
-Drag & drop workflow: I drop a single video onto the .bat and find the result in Videos.
+Drag & drop workflow: I drop video files or folders onto the .bat and find the result in Videos.
+Supports simple batch processing:
+- Dropping a single file compresses that file
+- Dropping a folder compresses all videos inside (recursive)
+- Dropping multiple files or folders queues everything and processes sequentially
 
 **Requirements**
 Windows 11
@@ -22,17 +26,17 @@ WinVidCompress.ps1
 WinVidCompress.bat (wrapper for double-click + drag-and-drop)
 On first run the tool creates %APPDATA%\WinVidCompress\config.json and sets the OutputDir to your Videos folder.
 
-Usage
+**Usage**
 1. My everyday flow (drag & drop onto .bat)
-Drag a single video file onto WinVidCompress.bat.
+Drag a single video file (or a folder) onto WinVidCompress.bat.
 The compressed .mp4 appears in %USERPROFILE%\Videos.
 Window stays open so you can see progress/logs.
-2. TUI (double-click)
+1. TUI (double-click)
 Double-click WinVidCompress.bat to open the TUI:
 Set output folder (persists in config)
 Compress ONE file (paste a path)
 Compress ALL videos in a folder (recursive)
-3. Command line
+1. Command line
 #One file
 .\WinVidCompress.ps1 "D:\Interviews\Band Name 29092025 - CamA.mov"
 #Whole folder (recursive)
@@ -54,22 +58,7 @@ If parsing fails, the file still compresses (no prompts).
 Default: Windows Videos folder (e.g., C:\Users\<you>\Videos).
 You can change it in the TUI (Option 1).
 The setting is stored in %APPDATA%\WinVidCompress\config.json.
-
-**Batch wrapper (included)**
-WinVidCompress.bat (drag-and-drop + double-click):
-
-@echo off
-setlocal EnableExtensions EnableDelayedExpansion
-set "SCRIPT=%~dp0WinVidCompress.ps1"
-:: Double-click = TUI
-if "%~1"=="" (
-  powershell -NoProfile -ExecutionPolicy Bypass -NoExit -File "%SCRIPT%"
-  goto :eof
-)
-:: Drag & drop (handles typical cases)
-set "ARGS=%*"
-powershell -NoProfile -ExecutionPolicy Bypass -NoExit -File "%SCRIPT%" !ARGS!
-Note: Windows CMD treats %…% as env vars. This wrapper handles typical cases; if you still hit edge cases, use the TUI or rename the file.
+If an output file already exists, the script auto-renames the new file using a "(compressed)" suffix.
 
 **Technical details**
 Video: -c:v libx264 -preset veryfast -crf 22

@@ -7,28 +7,36 @@ Target OS: Windows 11
 Dependencies: ffmpeg.exe + ffprobe.exe (in PATH or next to this script)
 
 SYNOPSIS
-    One-preset, no-frills video compressor intended for my own workflow:
-    archiving band interview videos with consistent quality and embedded metadata.
+    One-preset, no-frills video compressor intended for my own workflow.
+    Archiving band interview videos with consistent quality and embedded metadata.
 
 WHAT THIS IS (AND ISN’T)
     - Personal, purpose-built tool for my specific use case.
       I don’t expect most people to need this, it trades options for speed and repeatability.
     - Text-UI (TUI) when run directly, also supports drag-and-drop via the .bat wrapper.
     - Single compression profile modeled after HandBrake “Very Fast 1080p”:
-        • Video: H.264 (libx264), -preset veryfast, -crf 22
-        • Audio: AAC 160 kbps
-        • Container: MP4 with +faststart (moov moved to front)
-        • Scaling: no crop; only downscale if source height > 1080 (never upscale)
+        - Video: H.264 (libx264), -preset veryfast, -crf 22
+        - Audio: AAC 160 kbps
+        - Container: MP4 with +faststart (moov moved to front)
+        - Scaling: no crop; only downscale if source height > 1080 (never upscale)
     - Filename-driven metadata tagging for interviews.
 
 FEATURES
     - Zero decision surface: exactly one quality level.
+    - Drag & drop batch mode:
+        - Drop one file -> compress that file
+        - Drop one folder -> queue and compress all videos inside (recursive)
+        - Drop multiple files/folders -> queue everything and run sequentially
+        - Prints a simple summary at the end (found/done/skipped/failed)
+    - Output collision behavior:
+        - If an output .mp4 already exists, the script will auto-rename to
+          " (compressed)" / " (compressed 2)" etc. (configurable in script).
     - Writes MP4 metadata parsed from the filename:
-        • Expected filename forms (examples):
+        - Expected filename forms (examples):
             "Band Name 29092025 - CamA.mov"
             "Band Name 29.09.2025.mov"
             "Band Name 29-09-2025.mkv"
-        • Tags written:
+        - Tags written:
             artist = Band Name
             date   = YYYY-MM-DD
             title  = base filename (without extension)
@@ -38,8 +46,8 @@ FEATURES
       Default output is the Windows “Videos” folder (e.g., C:\Users\<you>\Videos).
 
 MY INTENDED USAGE
-    - I drag a single video file onto the WinVidCompress.bat in my Downloads folder.
-    - The script compresses it and drops the MP4 into my Videos folder.
+    - I drag a single video file (or a whole folder after a shoot) onto WinVidCompress.bat in my Downloads folder.
+    - The script compresses and drops the MP4(s) into my Videos folder.
     - That’s it, no clicking around HandBrake.
 
 SETUP
@@ -53,7 +61,8 @@ SETUP
 USAGE
     A) Drag & drop (my default)
         - Drag a single video file onto WinVidCompress.bat.
-        - Output MP4 will appear in:  %USERPROFILE%\Videos
+        - Or drag a folder to batch-compress all videos inside (recursive).
+        - Output MP4(s) will appear in:  %USERPROFILE%\Videos
     B) Double-click for TUI
         - Options:
             1) Set output folder (persists in config)
@@ -88,68 +97,93 @@ LICENSE / WARRANTY
 
 [CmdletBinding()]
 param(
-  [Parameter(ValueFromRemainingArguments=$true)]
-  [string[]]$Path
+    [Parameter(ValueFromRemainingArguments = $true)]
+    [string[]]$Path
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# ----- Config -----
+# --- Config ---
 $AppName    = 'WinVidCompress'
 $ConfigDir  = Join-Path $env:APPDATA $AppName
 $ConfigPath = Join-Path $ConfigDir 'config.json'
+
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
-# Folder where this script resides (works when run via .bat or directly)
-$ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } elseif ($PSCommandPath) { Split-Path -Parent $PSCommandPath } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 
-# ----- Utilities -----
+# Collision behavior when output file already exists:
+# "skip": do nothing
+# "rename": create " (compressed)" / " (compressed 2)" suffix
+$CollisionMode = 'rename'
+
+# --- Helpers ---
 function Ensure-Tool([string]$exe) {
     $cmd = Get-Command $exe -ErrorAction SilentlyContinue
-    if (-not $cmd) {
-        # Also try local folder
-        $local = Join-Path (Split-Path -Parent $PSCommandPath) $exe
-        if (Test-Path $local) { return $local }
-        throw "$exe not found. Add it to PATH or place it next to this script."
+    if ($cmd) { return $cmd.Source }
+
+    $local = Join-Path (Split-Path -Parent $PSCommandPath) $exe
+    if (Test-Path -LiteralPath $local) { return $local }
+
+    throw "$exe not found. Put it in PATH or next to this script."
+}
+
+function Save-Config($cfg) {
+    if (-not (Test-Path -LiteralPath $ConfigDir)) {
+        [void][IO.Directory]::CreateDirectory($ConfigDir)
     }
-    return $cmd.Source
+    $cfg | ConvertTo-Json | Set-Content -Encoding UTF8 -Path $ConfigPath
 }
 
 function Load-Config {
-    if (-not (Test-Path $ConfigDir)) { [void][IO.Directory]::CreateDirectory($ConfigDir) }
+    if (-not (Test-Path -LiteralPath $ConfigDir)) {
+        [void][IO.Directory]::CreateDirectory($ConfigDir)
+    }
 
-    $videos = [Environment]::GetFolderPath('MyVideos')  # e.g. C:\Users\you\Videos
+    $videos = [Environment]::GetFolderPath('MyVideos')  # e.g. C:\Users\<you>\Videos
+
     if (-not (Test-Path -LiteralPath $ConfigPath)) {
         $cfg = [pscustomobject]@{ OutputDir = $videos }
-        $cfg | ConvertTo-Json | Set-Content -Encoding UTF8 -Path $ConfigPath
+        Save-Config $cfg
         return $cfg
     }
 
-    $cfg = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+    try {
+        $cfg = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+    } catch {
+        $cfg = [pscustomobject]@{ OutputDir = $videos }
+        Save-Config $cfg
+        return $cfg
+    }
+
     if (-not $cfg.OutputDir -or -not (Test-Path -LiteralPath $cfg.OutputDir)) {
         $cfg.OutputDir = $videos
         Save-Config $cfg
     }
-    return $cfg
-}
 
-function Save-Config($cfg) {
-    if (-not (Test-Path $ConfigDir)) { [void][IO.Directory]::CreateDirectory($ConfigDir) }
-    $cfg | ConvertTo-Json | Set-Content -Encoding UTF8 -Path $ConfigPath
+    return $cfg
 }
 
 function Prompt-Path([string]$prompt, [switch]$Folder) {
     while ($true) {
         $p = Read-Host $prompt
         if ([string]::IsNullOrWhiteSpace($p)) { return $null }
-        $p = $p.Trim('"')
+        $p = $p.Trim().Trim('"')
+
         if ($Folder) {
-            if (-not (Test-Path $p)) { [void][IO.Directory]::CreateDirectory($p) }
-            if (Test-Path $p -PathType Container) { return (Resolve-Path $p).Path }
+            if (-not (Test-Path -LiteralPath $p)) {
+                # Create if missing, for user-selected output folder
+                [void][IO.Directory]::CreateDirectory($p)
+            }
+            if (Test-Path -LiteralPath $p -PathType Container) {
+                return (Resolve-Path -LiteralPath $p).Path
+            }
         } else {
-            if (Test-Path $p -PathType Leaf)     { return (Resolve-Path $p).Path }
+            if (Test-Path -LiteralPath $p -PathType Leaf) {
+                return (Resolve-Path -LiteralPath $p).Path
+            }
         }
+
         Write-Host "Invalid path. Try again." -ForegroundColor Yellow
     }
 }
@@ -157,9 +191,6 @@ function Prompt-Path([string]$prompt, [switch]$Folder) {
 function Parse-MetadataFromName([string]$fileName) {
     $base = [IO.Path]::GetFileNameWithoutExtension($fileName)
 
-    # Patterns:
-    # 1) "Band ddmmyyyy" [optional: " - ..."]
-    # 2) "Band dd.mm.yyyy" or "Band dd-mm-yyyy" [optional: " - ..."]
     $patterns = @(
         '^(?<band>.+?)\s+(?<dd>\d{2})(?<mm>\d{2})(?<yyyy>\d{4})(?:\s*-\s*.*)?$',
         '^(?<band>.+?)\s+(?<dd>\d{2})[.\-](?<mm>\d{2})[.\-](?<yyyy>\d{4})(?:\s*-\s*.*)?$'
@@ -183,11 +214,11 @@ function Parse-MetadataFromName([string]$fileName) {
         }
     }
 
-    # Fallback: find an 8-digit ddmmyyyy anywhere; band = text before it
+    # Fallback, find any 8-digit date anywhere (ddmmyyyy)
     $m2 = [regex]::Match($base, '(?<!\d)(?<dd>\d{2})(?<mm>\d{2})(?<yyyy>\d{4})(?!\d)')
     if ($m2.Success) {
         $idx  = $m2.Index
-        $band = $base.Substring(0,$idx).Trim()
+        $band = $base.Substring(0, $idx).Trim()
         $dd   = $m2.Groups['dd'].Value
         $mm   = $m2.Groups['mm'].Value
         $yyyy = $m2.Groups['yyyy'].Value
@@ -201,8 +232,7 @@ function Parse-MetadataFromName([string]$fileName) {
         }
     }
 
-    # Last resort: no prompt—default gracefully
-    Write-Host "Couldn't parse band/date from filename: '$base' (writing without metadata)" -ForegroundColor Yellow
+    # No prompts, compress anyway, just without tags
     return [pscustomobject]@{
         Band      = ''
         DateISO   = ''
@@ -212,134 +242,177 @@ function Parse-MetadataFromName([string]$fileName) {
 }
 
 function Get-VideoHeight($ffprobe, [string]$inPath) {
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = $ffprobe
-    $psi.Arguments = "-v error -select_streams v:0 -show_entries stream=height -of csv=p=0 `"$inPath`""
-    $psi.RedirectStandardOutput = $true
-    $psi.RedirectStandardError  = $true
-    $psi.UseShellExecute = $false
-    $p = [System.Diagnostics.Process]::Start($psi)
-    $out = $p.StandardOutput.ReadToEnd().Trim()
-    $err = $p.StandardError.ReadToEnd()
-    $p.WaitForExit()
-    if (-not [int]::TryParse($out, [ref]([int]$null))) {
-        # If probe fails, assume no scaling
-        return $null
-    }
-    return [int]$out
+    $out = & $ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 -- $inPath 2>$null
+    $out = ($out | Out-String).Trim()
+    $h = 0
+    if ([int]::TryParse($out, [ref]$h)) { return $h }
+    return $null
 }
 
-function Next-AvailablePath([string]$targetPath) {
-    if (-not (Test-Path $targetPath)) { return $targetPath }
+function Next-CompressedPath([string]$targetPath) {
+    # Creates: "name (compressed).mp4", then "name (compressed 2).mp4", etc.
     $dir  = Split-Path -Parent $targetPath
     $base = [IO.Path]::GetFileNameWithoutExtension($targetPath)
     $ext  = [IO.Path]::GetExtension($targetPath)
-    $i = 1
+
+    $candidate = Join-Path $dir ("{0} (compressed){1}" -f $base,$ext)
+    if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
+
+    $i = 2
     while ($true) {
-        $candidate = Join-Path $dir ("{0} ({1}){2}" -f $base,$i,$ext)
-        if (-not (Test-Path $candidate)) { return $candidate }
+        $candidate = Join-Path $dir ("{0} (compressed {1}){2}" -f $base,$i,$ext)
+        if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
         $i++
     }
 }
 
-function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf) {
-    if (-not (Test-Path $inPath -PathType Leaf)) { Write-Host "Missing: $inPath" -ForegroundColor Red; return }
-    if (-not (Test-Path $outDir)) { [void][IO.Directory]::CreateDirectory($outDir) }
+function Collect-InputFiles([string]$p) {
+    if (-not (Test-Path -LiteralPath $p)) { return @() }
 
-    $meta  = Parse-MetadataFromName ([IO.Path]::GetFileName($inPath))
-    $base  = [IO.Path]::GetFileNameWithoutExtension($inPath)
-    $out   = Join-Path $outDir ($base + '.mp4')
-    $out   = Next-AvailablePath $out
-
-    $h = Get-VideoHeight $ffprobe $inPath
-    $args = @('-y','-i', $inPath)
-
-    if ($h -and $h -gt 1080) {
-        $args += @('-vf','scale=-2:1080')
+    if (Test-Path -LiteralPath $p -PathType Leaf) {
+        return ,(Resolve-Path -LiteralPath $p).Path
     }
 
-    $args += @(
-        '-map','0',
-        '-c:v','libx264','-preset','veryfast','-crf',"$crf",
-        '-c:a','aac','-b:a','160k',
-        '-movflags','+faststart'
-    )
+    # Folder: recursive
+    $files = Get-ChildItem -LiteralPath $p -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object { $VideoExts -contains $_.Extension.ToLower() }
 
-    if ($meta.Title) { $args += @('-metadata',"title=$($meta.Title)") }
-    if ($meta.Band)  { $args += @('-metadata',"artist=$($meta.Band)") }
-    if ($meta.DateISO){$args += @('-metadata',"date=$($meta.DateISO)") }
-    if ($meta.DateHuman -and $meta.Band) {
-        $args += @('-metadata',"comment=Interview date $($meta.DateHuman); Band: $($meta.Band)")
-    }
+    return $files.FullName
+}
 
-    $args += $out
+function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
+    try {
+        if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
+            Write-Host "Missing: $inPath" -ForegroundColor Red
+            $counters.Value.Failed++
+            return
+        }
 
-    Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
-    Write-Host $inPath
-    Write-Host "    -> $out"
-    & $ffmpeg @args
-    $ec = $LASTEXITCODE
-    if ($ec -eq 0) {
-        Write-Host "Done." -ForegroundColor Green
-    } else {
-        Write-Host "FFmpeg exit code: $ec" -ForegroundColor Red
+        if (-not (Test-Path -LiteralPath $outDir -PathType Container)) {
+            Write-Host "Output folder missing: $outDir" -ForegroundColor Red
+            $counters.Value.Failed++
+            return
+        }
+
+        $meta = Parse-MetadataFromName ([IO.Path]::GetFileName($inPath))
+        $base = [IO.Path]::GetFileNameWithoutExtension($inPath)
+
+        $out = Join-Path $outDir ($base + '.mp4')
+
+        if (Test-Path -LiteralPath $out) {
+            if ($CollisionMode -eq 'skip') {
+                Write-Host "Skipping (exists): $out" -ForegroundColor DarkYellow
+                $counters.Value.Skipped++
+                return
+            } else {
+                $out = Next-CompressedPath $out
+            }
+        }
+
+        $h = Get-VideoHeight $ffprobe $inPath
+
+        $args = @(
+            '-hide_banner',
+            '-stats',
+            '-n',                      # never overwrite
+            '-i', $inPath
+        )
+
+        if ($h -and $h -gt 1080) {
+            $args += @('-vf','scale=-2:1080')
+        }
+
+        $args += @(
+            '-c:v','libx264','-preset','veryfast','-crf',"$crf",
+            '-c:a','aac','-b:a','160k',
+            '-movflags','+faststart'
+        )
+
+        if ($meta.Title) { $args += @('-metadata',"title=$($meta.Title)") }
+        if ($meta.Band)  { $args += @('-metadata',"artist=$($meta.Band)") }
+        if ($meta.DateISO) { $args += @('-metadata',"date=$($meta.DateISO)") }
+        if ($meta.DateHuman -and $meta.Band) {
+            $args += @('-metadata',"comment=Interview date $($meta.DateHuman); Band: $($meta.Band)")
+        }
+
+        $args += $out
+
+        Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
+        Write-Host $inPath
+        Write-Host "    -> $out"
+
+        & $ffmpeg @args
+        $ec = $LASTEXITCODE
+
+        if ($ec -eq 0) {
+            Write-Host "Done." -ForegroundColor Green
+            $counters.Value.Done++
+        } else {
+            Write-Host "FFmpeg exit code: $ec" -ForegroundColor Red
+            $counters.Value.Failed++
+        }
+    } catch {
+        Write-Host "Failed: $inPath" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor DarkRed
+        $counters.Value.Failed++
     }
 }
 
-function Collect-InputFiles([string]$path) {
-    if (-not (Test-Path $path)) { throw "Path not found: $path" }
-    if (Test-Path $path -PathType Leaf) {
-        return ,(Resolve-Path $path).Path
-    } else {
-        $files = Get-ChildItem -Path $path -Recurse -File | Where-Object { $VideoExts -contains $_.Extension.ToLower() }
-        return $files.FullName
+function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+    $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0 }
+
+    foreach ($p in $paths) {
+        $targets = Collect-InputFiles $p
+        if (-not $targets -or $targets.Count -eq 0) {
+            Write-Host "No videos found: $p" -ForegroundColor Yellow
+            continue
+        }
+
+        $counters.Found += $targets.Count
+
+        foreach ($f in $targets) {
+            Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF ([ref]$counters)
+        }
     }
+
+    Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
+    Write-Host ("Found:   {0}" -f $counters.Found)
+    Write-Host ("Done:    {0}" -f $counters.Done)
+    Write-Host ("Skipped: {0}" -f $counters.Skipped)
+    Write-Host ("Failed:  {0}" -f $counters.Failed)
 }
 
-# ----- Main modes -----
-$ffmpeg  = Ensure-Tool 'ffmpeg.exe'
-$ffprobe = Ensure-Tool 'ffprobe.exe'
-$cfg     = Load-Config
-<#if ($OutDir) {
-    $p = $OutDir.Trim('"')
-    if (Test-Path -LiteralPath $p -PathType Leaf) { $p = Split-Path -Parent $p }
-
-    if (-not (Test-Path -LiteralPath $p)) {
-        throw "OutDir does not exist: $p"   # don't create new folders
-    }
-
-    $cfg.OutputDir = (Get-Item -LiteralPath $p).FullName
-    Save-Config $cfg
-}#>
-
-function Run-TUI {
+# --- TUI ---
+function Run-TUI($ffmpeg, $ffprobe, $cfg) {
     while ($true) {
         Write-Host ""
-        Write-Host "========== $AppName =========="
+        Write-Host "========== WinVidCompress =========="
         Write-Host "Output folder: $($cfg.OutputDir)"
         Write-Host ""
         Write-Host "1) Set output folder"
         Write-Host "2) Compress ONE file"
         Write-Host "3) Compress ALL videos in a folder (recursive)"
         Write-Host "4) Quit"
+
         $c = Read-Host "Choose [1-4]"
         switch ($c) {
             '1' {
-                $p = Prompt-Path "Enter output folder path (or blank to cancel)" -Folder
-                if ($p) { $cfg.OutputDir = $p; Save-Config $cfg }
+                $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder
+                if ($p) {
+                    $cfg.OutputDir = $p
+                    Save-Config $cfg
+                }
             }
             '2' {
-                $f = Prompt-Path "Paste/drag a source FILE path" 
-                if ($f) { Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF }
+                $f = Prompt-Path "Paste a source FILE path"
+                if ($f) {
+                    Process-Paths @($f) $ffmpeg $ffprobe $cfg
+                }
             }
             '3' {
                 $d = Prompt-Path "Paste a source FOLDER path" -Folder
                 if ($d) {
-                    $list = Collect-InputFiles $d
-                    if (-not $list) { Write-Host "No video files found." -ForegroundColor Yellow }
-                    foreach ($f in $list) {
-                        Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF
-                    }
+                    Process-Paths @($d) $ffmpeg $ffprobe $cfg
                 }
             }
             '4' { break }
@@ -348,11 +421,14 @@ function Run-TUI {
     }
 }
 
+# --- Main ---
+$ffmpeg  = Ensure-Tool 'ffmpeg.exe'
+$ffprobe = Ensure-Tool 'ffprobe.exe'
+$cfg     = Load-Config
+
+# If args were provided, queue and process immediately.
 if ($Path -and $Path.Count -gt 0) {
-    foreach ($p in $Path) {
-        $targets = Collect-InputFiles $p
-        foreach ($f in $targets) { Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF }
-    }
+    Process-Paths $Path $ffmpeg $ffprobe $cfg
 } else {
-    Run-TUI
+    Run-TUI $ffmpeg $ffprobe $cfg
 }
