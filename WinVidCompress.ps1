@@ -68,6 +68,7 @@ USAGE
             1) Set output folder (persists in config)
             2) Compress ONE file (paste full path)
             3) Compress ALL videos in a folder (recursive)
+            4) Quit (the .bat window remains at its PowerShell prompt)
     C) Direct PowerShell
         - Run:  .\WinVidCompress.ps1  "D:\Interviews\Band 29092025 - CamA.mov"
         - Or:   .\WinVidCompress.ps1  "D:\Interviews\FolderWithVideos"
@@ -164,24 +165,30 @@ function Load-Config {
     return $cfg
 }
 
-function Prompt-Path([string]$prompt, [switch]$Folder) {
+function Prompt-Path([string]$prompt, [switch]$Folder, [switch]$CreateIfMissing) {
     while ($true) {
         $p = Read-Host $prompt
         if ([string]::IsNullOrWhiteSpace($p)) { return $null }
         $p = $p.Trim().Trim('"')
+        if ([string]::IsNullOrWhiteSpace($p)) { return $null }
 
-        if ($Folder) {
-            if (-not (Test-Path -LiteralPath $p)) {
-                # Create if missing, for user-selected output folder
-                [void][IO.Directory]::CreateDirectory($p)
+        try {
+            if ($Folder) {
+                if ($CreateIfMissing -and -not (Test-Path -LiteralPath $p)) {
+                    # Creation is reserved for an explicitly selected output folder.
+                    [void][IO.Directory]::CreateDirectory($p)
+                }
+                if (Test-Path -LiteralPath $p -PathType Container) {
+                    return (Resolve-Path -LiteralPath $p).Path
+                }
+            } else {
+                if (Test-Path -LiteralPath $p -PathType Leaf) {
+                    return (Resolve-Path -LiteralPath $p).Path
+                }
             }
-            if (Test-Path -LiteralPath $p -PathType Container) {
-                return (Resolve-Path -LiteralPath $p).Path
-            }
-        } else {
-            if (Test-Path -LiteralPath $p -PathType Leaf) {
-                return (Resolve-Path -LiteralPath $p).Path
-            }
+        } catch {
+            Write-Host "Cannot access path '$p': $($_.Exception.Message)" -ForegroundColor Yellow
+            continue
         }
 
         Write-Host "Invalid path. Try again." -ForegroundColor Yellow
@@ -397,7 +404,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
         $c = Read-Host "Choose [1-4]"
         switch ($c) {
             '1' {
-                $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder
+                $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder -CreateIfMissing
                 if ($p) {
                     $cfg.OutputDir = $p
                     Save-Config $cfg
@@ -415,7 +422,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
                     Process-Paths @($d) $ffmpeg $ffprobe $cfg
                 }
             }
-            '4' { break }
+            '4' { return }
             Default { }
         }
     }

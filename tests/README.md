@@ -30,10 +30,14 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 - **Quick**: current-host Pester characterization/harness/fixture checks, parse, pinned error-severity analyzer, new PS1 encoding policy and task/evidence schema.
 - **Targeted**: Quick plus actual direct PS1/BAT entry smoke with native recorders and runtime fixture generation/probing. With FFmpeg unavailable, four media cases are explicitly skipped and eight synthetic JSON cases copied/tested.
-- **Full**: defaults to both required hosts, includes the five known baseline regressions on each, and runs Targeted components. It also records remaining manual/future coverage as NotRun. This presently fails on the known application defects; full-harness execution is not completed release acceptance.
+- **Full**: defaults to both required hosts, includes the remaining four known baseline regressions on each, and runs Targeted components. It also records remaining manual/future coverage as NotRun. This presently fails on the known application defects; full-harness execution is not completed release acceptance.
 - **Manual**: creates an unfilled checklist for Explorer, real cancellation, playback, paths and benchmarks. It performs no manual checks and returns incomplete; an agent must not mark those checks passed from mocks.
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
+
+M1-01 replaces the old AST-only Quit defect probe with normal nested menu/path regressions that execute the real menu function with bounded mocked input. Quit returns to its caller; the unchanged BAT's `-NoExit` leaves its PowerShell prompt open. Actual Explorer double-click acceptance must still be recorded separately.
+
+For an isolated human menu check when real encoders are unavailable, run `powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-MenuManualFixture.ps1`. It copies the actual PS1/BAT bytes into an owned temp root, supplies startup-only native dependency sentinels, and creates `Check-Menu.bat` to isolate APPDATA/PATH before calling the unchanged launcher. Double-click that preparation wrapper in Explorer, select 4 once, verify a usable PowerShell prompt remains, then type `exit`. Record the wrapper/sentinel limitation and actual observer/result; preparation or scripted stdin is not manual acceptance. Clean only this returned Owner using `Remove-WvcTestRoot` after closing its console.
 
 The tier runner automatically discovers all nested `tests/**/*.Tests.ps1` in stable path order, so later unit/integration regressions are included without changing a hard-coded suite list.
 
@@ -57,7 +61,7 @@ See [fixture inventory](fixtures/inventory.json) and [fixture notes](fixtures/RE
 
 Owned roots have unique names/tokens/markers under temp. Creation refuses reused fixture directories. Cleanup validates the absolute path, temp containment, ownership and absence of reparse points before recursive removal. Neighbors/source/final sentinels are preserved in tests. Native timeouts stop only the owned process tree using a PowerShell 5.1-compatible Windows fallback. Failed termination retains fixture roots.
 
-The native entry recorder is compiled under Windows PowerShell 5.1 outside Git; it generates no media. PS1 -File and BAT use a two-video synthetic folder because single selections still have the baseline Count defect. The original launcher's -NoExit is closed through controlled stdin. This is not Explorer drag/drop or comprehensive launcher argv acceptance.
+The native entry recorder is compiled under Windows PowerShell 5.1 outside Git; it generates no media. Three batch cases use PS1 -File and BAT with a two-video synthetic folder because single selections still have the baseline Count defect. Three menu cases use no-argument PS1/BAT and scripted Quit; a marker executed after Quit verifies BAT's PowerShell caller survives. The original launcher's -NoExit is closed through controlled stdin. These six cases are not Explorer drag/drop or comprehensive launcher argv acceptance.
 
 ## Line endings and encoding
 

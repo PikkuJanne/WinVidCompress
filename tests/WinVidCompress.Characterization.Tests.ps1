@@ -237,22 +237,6 @@ Describe 'Isolated config and enumeration' {
 # These assert desired behavior. Run separately with -KnownDefects: failures are
 # baseline evidence for later tasks, never converted to passing application tests.
 Describe 'Known baseline defects' -Tag 'KnownDefect' {
-    It 'Quit exits the surrounding menu loop [WVC-M1-01]' {
-        $menu = $script:ApplicationAst.Find({
-            param($node)
-            $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Run-TUI'
-        }, $true)
-        $quitSwitch = $menu.Find({
-            param($node)
-            $node -is [Management.Automation.Language.SwitchStatementAst]
-        }, $true)
-        # Bound the loop to two iterations, execute the actual switch with choice 4,
-        # and omit all TUI code/Read-Host to make the defect safe and deterministic.
-        $probe = [scriptblock]::Create('$iterations = 0; $c = "4"; while ($iterations -lt 2) { $iterations++; ' +
-            $quitSwitch.Extent.Text + ' }; $iterations')
-        (& $probe) | Should -Be 1
-    }
-
     It 'wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]' {
         New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
         Set-Content -LiteralPath $ConfigPath -Value '{}'
