@@ -107,7 +107,7 @@
       "title": "Characterize existing behaviour and add the smallest test seam",
       "milestone": "M0",
       "priority": "P0",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         18,
         19
@@ -135,35 +135,57 @@
           "id": "WVC-M0-02-A01",
           "description": "Tests do not invoke the TUI, modify real APPDATA or touch user Videos.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-02.md",
+            "evidence/WVC-M0-02.json"
+          ],
+          "notes": "Fixture-local APPDATA/source/output; helper include performs no discovery/config writes/TUI; startup tripwire and native recorder isolation verified."
         },
         {
           "id": "WVC-M0-02-A02",
           "description": "Default profile remains libx264 / veryfast / CRF 22 / AAC 160k / MP4 +faststart.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-02.md",
+            "evidence/WVC-M0-02.json"
+          ],
+          "notes": "Exact ordered encoder arguments retain libx264/veryfast/CRF 22/AAC 160k/+faststart on both real hosts."
         },
         {
           "id": "WVC-M0-02-A03",
           "description": "Direct invocation and the original launcher still reach the existing application flow.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-02.md",
+            "evidence/WVC-M0-02.json"
+          ],
+          "notes": "Actual -File flow on both hosts and original BAT pass with a two-video synthetic folder/native recorders; explicit single-file Count failure separately documented."
         },
         {
           "id": "WVC-M0-02-A04",
           "description": "PowerShell 5.1 and PowerShell 7 characterization outcomes are recorded separately.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-02.md",
+            "evidence/WVC-M0-02.json"
+          ],
+          "notes": "Separate real Windows PowerShell 5.1.26100.9444 and PowerShell 7.6.5 results reviewed/recorded; actual Explorer/manual acceptance remains outstanding."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "a1e22e4a1f6eec9ca56e0e58e8d624155f627342"
+      ],
+      "evidence": [
+        "evidence/WVC-M0-02.md",
+        "evidence/WVC-M0-02.json",
+        "evidence/WVC-M0-02-session.md"
+      ],
+      "notes": "Bounded characterization verified on real PS5.1/PS7; five desired assertions remain baseline failures on each host. Native working folder entry flow passes on both hosts and unchanged BAT. No real FFmpeg/Explorer/media or owner acceptance. Final handoff push/check pending at commit time; report externally. Next WVC-M0-03."
     },
     {
       "id": "WVC-M0-03",
