@@ -6,6 +6,10 @@ This bundle includes tested development helpers and planned application acceptan
 
 Use Pester for the PowerShell test harness and PSScriptAnalyzer for targeted static analysis. Verify and pin compatible versions during M0. Record exact PowerShell, Windows and FFmpeg/FFprobe versions, including executable paths where safe. Do not substitute a Linux FFmpeg result for Windows argument/Explorer acceptance.
 
+M0-03 implements `tools/test.ps1 -Tier Quick|Targeted|Full|Manual`, with pins in `tests/Dependencies.psd1` (Pester 5.7.1/analyzer 1.24.0), error-severity settings in `PSScriptAnalyzerSettings.psd1`, and actual setup/commands/report policy in [tests/README.md](../../tests/README.md). These are developer-only tools; runners never install dependencies. New PS1 is ASCII or UTF-8 with BOM; existing application PS1/BAT bytes are preserved. See `.gitattributes` and the quick encoding gate.
+
+Full includes current KnownDefect regressions and reports remaining coverage; Manual emits an unfilled checklist. Missing native tools/hosts stay skipped/incomplete; neither tier is automatically release acceptance. The starter fixture map/recipes/provenance/cleanup policy are [tests/fixtures/inventory.json](../../tests/fixtures/inventory.json) and [notes](../../tests/fixtures/README.md). Reports contain real counts/status/exit/source/host information; local diagnostics and generated media/recorders remain outside Git.
+
 ## Test tiers
 
 | Tier | When | Scope |
@@ -33,4 +37,4 @@ Actual Explorer argv tests must cover `!`, `%PATH%`, `!NAME!`, `&`, parentheses,
 
 Use evidence/TASK_EVIDENCE_TEMPLATE.json or the markdown template. Record task+acceptance IDs, exact command, tested source SHA/tree, host/tool versions, observed exit and pass/fail/skip counts, artifacts (sanitized) and limitations. A screenshot alone is not evidence for all paths. A test that was not run remains not_run/skipped, not passed. Manual approval must cite the actual owner decision and date; the agent may not approve on their behalf.
 
-Application test command paths in the plan are future deliverables until M0 creates them. Do not report them as already executed. Update the documented commands to the real harness after implementation. CI must run the same relevant test scopes and fail on real failed tests.
+The tier entry point and focused characterization/native smoke are now implemented; other application acceptance paths in the plan remain future deliverables until their task implements them. Do not report those as executed. CI must run the same relevant scopes and fail on real failures; no CI result is implied by the existence of the local harness.

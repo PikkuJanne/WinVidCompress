@@ -1,0 +1,629 @@
+{
+  "SchemaVersion": 1,
+  "Items": [
+    {
+      "Id": "sdr-av",
+      "File": "sdr-av.mp4",
+      "Kind": "Media",
+      "Provenance": "Runtime synthetic lavfi signals; no source footage.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [
+        "ffmpeg",
+        "ffprobe"
+      ],
+      "RequiredCapabilities": [
+        "lavfi",
+        "sine",
+        "testsrc2",
+        "libx264",
+        "mp4 muxer",
+        "aac"
+      ],
+      "Arguments": [
+        "-nostdin",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-n",
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=320x240:rate=24:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000:duration=1",
+        "-t",
+        "1",
+        "-map",
+        "0:v:0",
+        "-map",
+        "1:a:0",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "22",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "160k",
+        "-movflags",
+        "+faststart",
+        "{output}"
+      ],
+      "ProbeArguments": [
+        "-v",
+        "error",
+        "-show_streams",
+        "-show_format",
+        "-of",
+        "json",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 320,
+          "height": 240,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 1
+        }
+      ],
+      "DurationSeconds": {
+        "Minimum": 0.8,
+        "Maximum": 1.5
+      },
+      "Capabilities": [
+        "small video with mono audio",
+        "height below cap",
+        "unclassified SDR pixel format"
+      ]
+    },
+    {
+      "Id": "silent",
+      "File": "silent.mp4",
+      "Kind": "Media",
+      "Provenance": "Runtime synthetic lavfi signals; no source footage.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [
+        "ffmpeg",
+        "ffprobe"
+      ],
+      "RequiredCapabilities": [
+        "lavfi",
+        "testsrc2",
+        "libx264",
+        "mp4 muxer"
+      ],
+      "Arguments": [
+        "-nostdin",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-n",
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=160x120:rate=24:duration=1",
+        "-t",
+        "1",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "22",
+        "-pix_fmt",
+        "yuv420p",
+        "-movflags",
+        "+faststart",
+        "{output}"
+      ],
+      "ProbeArguments": [
+        "-v",
+        "error",
+        "-show_streams",
+        "-show_format",
+        "-of",
+        "json",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 160,
+          "height": 120,
+          "pix_fmt": "yuv420p"
+        }
+      ],
+      "DurationSeconds": {
+        "Minimum": 0.8,
+        "Maximum": 1.5
+      },
+      "Capabilities": [
+        "video with no audio"
+      ]
+    },
+    {
+      "Id": "multi-stream",
+      "File": "multi-stream.mkv",
+      "Kind": "Media",
+      "Provenance": "Runtime synthetic lavfi signals; no source footage.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [
+        "ffmpeg",
+        "ffprobe"
+      ],
+      "RequiredCapabilities": [
+        "lavfi",
+        "sine",
+        "testsrc2",
+        "libx264",
+        "color",
+        "matroska muxer",
+        "aac"
+      ],
+      "Arguments": [
+        "-nostdin",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-n",
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=320x240:rate=24:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "color=c=blue:size=160x120:rate=24:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=880:sample_rate=48000:duration=1",
+        "-t",
+        "1",
+        "-map",
+        "0:v:0",
+        "-map",
+        "1:v:0",
+        "-map",
+        "2:a:0",
+        "-map",
+        "3:a:0",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "22",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "160k",
+        "-disposition:v:0",
+        "default",
+        "-disposition:v:1",
+        "0",
+        "-disposition:a:0",
+        "0",
+        "-disposition:a:1",
+        "default",
+        "-metadata:s:a:0",
+        "language=fin",
+        "-metadata:s:a:1",
+        "language=deu",
+        "{output}"
+      ],
+      "ProbeArguments": [
+        "-v",
+        "error",
+        "-show_streams",
+        "-show_format",
+        "-of",
+        "json",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 320,
+          "height": 240,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 160,
+          "height": 120,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 1,
+          "default": 0,
+          "language": "fin"
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 1,
+          "default": 1,
+          "language": "deu"
+        }
+      ],
+      "DurationSeconds": {
+        "Minimum": 0.8,
+        "Maximum": 1.5
+      },
+      "Capabilities": [
+        "two video/two audio streams",
+        "default audio differs from first",
+        "language tags"
+      ]
+    },
+    {
+      "Id": "audio-only",
+      "File": "audio-only.m4a",
+      "Kind": "Media",
+      "Provenance": "Runtime synthetic lavfi signals; no source footage.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [
+        "ffmpeg",
+        "ffprobe"
+      ],
+      "RequiredCapabilities": [
+        "lavfi",
+        "sine",
+        "mp4 muxer",
+        "aac"
+      ],
+      "Arguments": [
+        "-nostdin",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-n",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=440:sample_rate=48000:duration=1",
+        "-t",
+        "1",
+        "-map",
+        "0:a:0",
+        "-vn",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "160k",
+        "{output}"
+      ],
+      "ProbeArguments": [
+        "-v",
+        "error",
+        "-show_streams",
+        "-show_format",
+        "-of",
+        "json",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 1
+        }
+      ],
+      "DurationSeconds": {
+        "Minimum": 0.8,
+        "Maximum": 1.5
+      },
+      "Capabilities": [
+        "audio-only input"
+      ]
+    },
+    {
+      "Id": "attached-picture",
+      "File": "attached-picture.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/attached-picture.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/attached-picture.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "mjpeg",
+          "width": 600,
+          "height": 600,
+          "disposition": {
+            "attached_pic": 1,
+            "default": 0
+          }
+        },
+        {
+          "index": 3,
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "disposition": {
+            "attached_pic": 0,
+            "default": 1
+          }
+        },
+        {
+          "index": 7,
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "disposition": {
+            "default": 1
+          }
+        }
+      ],
+      "Capabilities": [
+        "cover art before real video",
+        "noncontiguous indexes"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "display-geometry",
+      "File": "display-geometry.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/display-geometry.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/display-geometry.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 641,
+          "height": 479,
+          "sample_aspect_ratio": "16:15",
+          "avg_frame_rate": "24/1",
+          "side_data_list": [
+            {
+              "side_data_type": "Display Matrix",
+              "rotation": 90
+            }
+          ]
+        }
+      ],
+      "Capabilities": [
+        "odd dimensions",
+        "non-square SAR",
+        "display matrix rotation"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "hdr-pq",
+      "File": "hdr-pq.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/hdr-pq.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/hdr-pq.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "width": 3840,
+          "height": 2160,
+          "pix_fmt": "yuv420p10le",
+          "color_space": "bt2020nc",
+          "color_primaries": "bt2020",
+          "color_transfer": "smpte2084"
+        }
+      ],
+      "Capabilities": [
+        "10-bit HDR PQ tags",
+        "4K encoded dimensions"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "hdr-hlg",
+      "File": "hdr-hlg.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/hdr-hlg.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/hdr-hlg.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "width": 1080,
+          "height": 1920,
+          "pix_fmt": "yuv420p10le",
+          "color_space": "bt2020nc",
+          "color_primaries": "bt2020",
+          "color_transfer": "arib-std-b67"
+        }
+      ],
+      "Capabilities": [
+        "10-bit HDR HLG tags",
+        "portrait dimensions"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "ten-bit-sdr",
+      "File": "ten-bit-sdr.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/ten-bit-sdr.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/ten-bit-sdr.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 2560,
+          "height": 1080,
+          "pix_fmt": "yuv420p10le",
+          "color_space": "bt709",
+          "color_primaries": "bt709",
+          "color_transfer": "bt709"
+        }
+      ],
+      "Capabilities": [
+        "10-bit SDR tags",
+        "ultrawide dimensions"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "unknown-duration",
+      "File": "unknown-duration.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/unknown-duration.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/unknown-duration.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 320,
+          "height": 240,
+          "duration": "N/A"
+        }
+      ],
+      "Capabilities": [
+        "absent format duration",
+        "N/A stream duration"
+      ],
+      "InvalidResponse": false
+    },
+    {
+      "Id": "wrong-shape",
+      "File": "wrong-shape.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/wrong-shape.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/wrong-shape.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [],
+      "Capabilities": [
+        "valid JSON with wrong stream shape"
+      ],
+      "InvalidResponse": true
+    },
+    {
+      "Id": "malformed",
+      "File": "malformed.json",
+      "Kind": "ProbeJson",
+      "Source": "probe/malformed.json",
+      "Provenance": "Hand-authored synthetic normalized probe response; not observed media evidence.",
+      "CleanupOwner": "New-WvcTestRoot token; Remove-WvcTestRoot",
+      "Requires": [],
+      "RequiredCapabilities": [],
+      "Arguments": [
+        "Copy-Item",
+        "-LiteralPath",
+        "{repository}/tests/fixtures/probe/malformed.json",
+        "-Destination",
+        "{output}"
+      ],
+      "ExpectedStreams": [],
+      "Capabilities": [
+        "malformed JSON"
+      ],
+      "InvalidResponse": true
+    }
+  ]
+}

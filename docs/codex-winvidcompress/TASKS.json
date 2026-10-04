@@ -192,7 +192,7 @@
       "title": "Establish the regression harness and generated fixtures",
       "milestone": "M0",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         18,
         19
@@ -222,35 +222,58 @@
           "id": "WVC-M0-03-A01",
           "description": "Harness reports real pass/fail/skip counts and returns nonzero on failing automated tests.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-03.md",
+            "evidence/WVC-M0-03.json"
+          ],
+          "notes": "Actual mixed child suite yields 1 pass/1 fail/1 skip and exit 1; all-skipped required suite yields exit 2. Both hosts verify report/count/duplicate/exit accounting. Full honestly returns exit 1 with ten baseline failures."
         },
         {
           "id": "WVC-M0-03-A02",
           "description": "Missing FFmpeg or an unavailable host is recorded as skipped/not tested, never passed.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-03.md",
+            "evidence/WVC-M0-03.json"
+          ],
+          "notes": "Each Targeted run records four unavailable media cases Skipped. Explicit absent PS7 and PS5.1 supplied as PS7 remain Incomplete/exit 2 without false PS7 execution."
         },
         {
           "id": "WVC-M0-03-A03",
           "description": "No private footage, downloaded executables, secrets or real user config enters Git.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-03.md",
+            "evidence/WVC-M0-03.json"
+          ],
+          "notes": "Reviewed intentional files contain no private media/config/paths/logs/secrets, executable or package. Original PS1/BAT hashes unchanged. External isolated fixtures/recorders; no dependency download in this task."
         },
         {
           "id": "WVC-M0-03-A04",
           "description": "A fixture inventory maps each generated file to commands, capabilities, cleanup owner and expected streams.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M0-03.md",
+            "evidence/WVC-M0-03.json"
+          ],
+          "notes": "12-case authoritative/runtime inventories map files, argument arrays, capabilities, cleanup ownership and expected streams. Eight synthetic probe JSON copies/hashes verified; four real media recipes implemented but explicitly skipped because FFmpeg/FFprobe are absent."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "7d37d0ef80238d9482fec4976dc377487f7b4818",
+        "dffc714ba3f6269f12e8e88056f49bae345ead68"
+      ],
+      "evidence": [
+        "evidence/WVC-M0-03.md",
+        "evidence/WVC-M0-03.json",
+        "evidence/WVC-M0-03-session.md"
+      ],
+      "notes": "Bounded harness acceptance verified on real PS5.1/PS7. Each Quick 59 passed; each Targeted 70 passed/4 skipped; Full 125 passed/10 known failures/4 skipped/8 NotRun, exit 1. Manual unexecuted/exit 2; no real FFmpeg/media/Explorer or owner acceptance. Final handoff push/check pending at commit time; report externally. Next WVC-M1-01."
     },
     {
       "id": "WVC-M1-01",
