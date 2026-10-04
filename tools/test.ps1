@@ -59,8 +59,8 @@ try {
                     continue
                 }
                 $hostObservations += [pscustomobject]@{ Name = $hostName; Version = $hostVersion.Version; Edition = $hostVersion.Edition }
-                $selected = @('WinVidCompress.Characterization.Tests.ps1','Harness.Tests.ps1','Fixtures.Tests.ps1') |
-                    ForEach-Object { Join-Path $testsRoot $_ }
+                $selected = @(Get-WvcPesterTestPaths $testsRoot)
+                if (-not $selected.Count) { throw 'No Pester test files discovered.' }
                 $childPath = Join-Path $owner.Path ($hostName + '.pester.json')
                 $arguments = @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
                     (Join-Path $testsRoot 'Invoke-PesterRun.ps1'),'-ModuleRoot',$ModuleRoot,

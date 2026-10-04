@@ -121,6 +121,11 @@ function New-WvcTestCase([string]$Id, [string]$Status, [string]$Reason = '') {
     [pscustomobject][ordered]@{ Id = $Id; Status = $Status; Reason = $Reason }
 }
 
+function Get-WvcPesterTestPaths([string]$Root) {
+    @(Get-ChildItem -LiteralPath $Root -Filter '*.Tests.ps1' -File -Recurse |
+        Sort-Object FullName | Select-Object -ExpandProperty FullName)
+}
+
 function Get-WvcTierSummary([string]$Tier, [object[]]$Cases) {
     $counts = [ordered]@{}
     foreach ($state in @('Passed','Failed','Skipped','NotRun')) {

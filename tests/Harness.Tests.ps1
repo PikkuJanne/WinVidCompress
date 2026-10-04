@@ -7,6 +7,21 @@ BeforeAll {
 }
 
 Describe 'Harness result accounting' {
+    It 'discovers future nested unit tests and excludes helper scripts' {
+        $root = Join-Path $TestDrive 'discovery'
+        $nested = Join-Path $root 'unit'
+        New-Item -ItemType Directory -Path $nested | Out-Null
+        $top = Join-Path $root 'Top.Tests.ps1'
+        $menu = Join-Path $nested 'Menu.Tests.ps1'
+        Set-Content -LiteralPath $top -Value '# synthetic test'
+        Set-Content -LiteralPath $menu -Value '# synthetic test'
+        Set-Content -LiteralPath (Join-Path $root 'Helper.ps1') -Value '# synthetic helper'
+        $paths = @(Get-WvcPesterTestPaths $root)
+        $paths.Count | Should -Be 2
+        $paths | Should -Contain $top
+        $paths | Should -Contain $menu
+    }
+
     It 'publishes actual mixed Pester outcomes and returns nonzero on a failure' {
         $suite = Join-Path $TestDrive 'mixed.Tests.ps1'
         @'
