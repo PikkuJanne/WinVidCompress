@@ -1,40 +1,45 @@
 # Next session
 
-Next: **WVC-M1-01 — Repair menu exit and separate source/output folder selection**.
+Exact remaining action: **WVC-M1-01-A04 — actual Windows Explorer double-click/menu/Quit observation**. M1-01 code and automated A01-A03 are implemented/passed; do not mark verified without the manual result.
 
-Use installed NEXT_THREAD_PROMPT.md. Stop after that bounded task; do not reimport the bundle or implement all of M1.
+Next bounded coding task after that acceptance record: **WVC-M1-02 — Harden the .bat launcher using measured argument round trips**. Do not silently implement the rest of M1.
 
 ## Start from actual state
 
-- Root `D:/projects/WinVidCompress-main`; branch `codex/wvc-m0-03-harness`; upstream `origin/codex/wvc-m0-03-harness`.
-- Verified effective origin fetch/push: `https://github.com/PikkuJanne/WinVidCompress.git`.
-- Final implementation/tested checkpoint `dffc714ba3f6269f12e8e88056f49bae345ead68`; initial implementation `7d37d0ef80238d9482fec4976dc377487f7b4818`.
-- Previous clean live-ref equality at `2026-10-04T17:09:49.610890+00:00` applies only to the implementation checkpoint. Final evidence handoff SHA is reported externally after push; inspect current HEAD independently.
-- Draft [PR #3](https://github.com/PikkuJanne/WinVidCompress/pull/3) is open against main; no workflow/check runs existed at the final implementation checkpoint.
-- Owner merged PR #2 before this session. Inspected main was `d1b28add3cd72375ff15ac6a3c625e4de619c8c8`, identical in tree to final M0-02 feature HEAD. This task branch began from that live main.
+- Root `D:/projects/WinVidCompress-main`; branch `codex/wvc-m1-01-menu-paths`; upstream `origin/codex/wvc-m1-01-menu-paths`.
+- Origin has one fetch/push destination `https://github.com/PikkuJanne/WinVidCompress.git`.
+- Tested implementation `6337b73d41cf65b9f12cb412800bc3d68780693c`; prior clean live equality at `2026-10-04T17:27:56.672063+00:00` describes only that checkpoint. Final handoff SHA is externally reported after push; verify independently.
+- Draft [PR #4](https://github.com/PikkuJanne/WinVidCompress/pull/4) open against main; no workflow/check runs at implementation checkpoint.
+- Owner merged PR #3 before this session. Inspected main `e8b54d1fdd03bdd3e0135c67c38335788a6f8112` has the same tree as M0-03's final feature; M1-01 branch starts from it.
 
-Read AGENTS.md, INDEX/STATUS, GIT_SYNC, TASKS.json, M1-01 brief and PRODUCT_CONTRACT; consult TESTING and M0-03 evidence/tests. Inspect branch/status/upstream/operations/conflicts/URLs and HEAD; run `git fetch --no-tags origin`, then `python -B tools/codex-winvidcompress/check_repo_sync.py --repo "D:/projects/WinVidCompress-main"`.
+Read AGENTS/INDEX/STATUS/GIT_SYNC/TASKS, M1-01 evidence for the remaining manual check, then the M1-02 brief/PROCESS_AND_CLI/TESTING for launcher work. Inspect status/branch/upstream/HEAD, operations/conflicts/hooks, effective URLs and live state. Run `git fetch --no-tags origin` then `python -B tools/codex-winvidcompress/check_repo_sync.py --repo "D:/projects/WinVidCompress-main"`.
 
-Preserve unknown changes and reconcile live main/feature histories. If PR #3 merged, start from inspected current main; otherwise retain M0-03 ancestry for the next `codex/wvc-*` branch. Do not discard the harness or rely solely on a cached remote ref. No concurrent writer may use the same checkout/branch.
+Preserve unknown changes. If PR #4 merged, start launcher work from inspected current main; otherwise retain M1-01 ancestry in the next codex/wvc-* branch. Never rely on cached refs or reset to the historical baseline. One writer only.
 
-## Exact bounded next action
+## Remaining actual manual check
 
-Repair Quit with a function return or correct outer-loop exit; preserve the caller runspace. Separate validation of an existing source directory from creation of an explicitly selected output directory. Retain the four-option menu and blank-to-cancel behavior, use literal paths for brackets/Unicode, and report permission errors clearly.
+The prior user was asked asynchronously to observe a prepared isolated fixture; no manual result has been recorded. Native desktop control is disabled in this session. If a response arrives, record the actual observer/date/result and tested copy hashes, then update M1-01-A04/status/evidence without claiming broader media/argv acceptance.
 
-Add focused tests under `tests/unit/*Menu*` and `tests/unit/*Path*`; nested `*.Tests.ps1` files are now automatically discovered. Move the repaired Quit assertion out of KnownDefect coverage. Do not silently repair the unrelated configuration/enumeration defects in this task.
+If a fresh fixture is needed, run:
 
-Run Quick and relevant Targeted coverage on both real hosts using `tools/test.ps1`. `tests/README.md` documents pins, setup and report/exit semantics. Developer modules currently exist in an external temporary M0-02 directory; they may not persist. The runners do not download them. Use new report paths and fixture-local APPDATA/output/source roots.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-MenuManualFixture.ps1
+```
 
-M1-01-A04 requires an actual Windows double-click/menu/Quit check in the launcher's documented console state. Recorder/mocked coverage cannot pass that criterion. Record exact manual actions and actual outcome, or retain pending acceptance honestly.
+This outputs an owned temp root and Check-Menu.bat. In Explorer double-click that wrapper, select 4 once, confirm the menu disappears and a usable PowerShell prompt remains, then type exit. The wrapper only isolates APPDATA/PATH/PSModulePath and calls the unchanged original BAT/actual PS1 copies. Native sentinels satisfy startup lookup and fail if accidentally invoked; do not compress with them. Preparation or scripted stdin is not manual execution. Keep paths/config/exes/tokens/raw logs outside Git. After closing the owned console, clean only its returned Owner with TestSupport's Remove-WvcTestRoot.
 
-## Outcomes and limits
+A01-A03 cover real bounded menu behavior and literal path helper behavior on both hosts; A04 requires the actual observation. No permission decision is needed to run this isolated check.
 
-Final clean M0-03 implementation: each real host Quick 59 passed/0 failed/0 skipped/5 NotRun, exit 0; Targeted 70 passed/0 failed/4 skipped/5 NotRun, exit 0. Full 125 passed/10 failed/4 skipped/8 NotRun, exit 1. Manual 7 NotRun, exit 2. Missing/wrong-version host probes return incomplete exit 2 without falsely claiming PS7 execution. Repeated PS7 Quick reports were byte-identical.
+## Subsequent launcher scope
 
-Full failures are five baseline assertions on each host: Quit repeats; `{}` config property access throws; empty-folder FullName throws; single-video folder and explicit single-file Count throw. The last four belong to M1-03/M1-04. Full remains failed until repaired; it is not a passing milestone/release gate.
+M1-02 should measure actual argv through a dedicated recorder, remove unnecessary delayed expansion/multi-stage argument reconstruction, and preserve double-click/one-file/folder/multiple selection on PS5.1. Test spaces, !, &, parentheses, apostrophes, [], %, Finnish/German/non-Latin, literal %PATH%/!NAME! with matching variables. Do not execute payload-like names or promise unlimited Windows command lines. Missing PS1/dependencies must produce actionable errors. Several criteria require actual Windows Explorer observation.
 
-FFmpeg/FFprobe were absent from PATH, adjacent files and inspected bundled dependency tree. Four one-second media recipes are implemented but real generation/probing is untested. Eight hand-authored synthetic probe JSON cases are available. No real media, Explorer, cancellation, playback/colour, UNC/long-path or benchmark pass is claimed.
+Use the existing tier runner with nested tests automatically discovered. New PS1 stays ASCII or UTF-8 BOM; BAT CRLF. External temporary Pester 5.7.1/analyzer 1.24.0 modules may not persist; no automatic download in application/runners.
 
-Available: Windows 11 Pro build 26300, PS5.1.26100.9444, PS7.6.5, Pester 5.7.1, analyzer 1.24.0, Python 3.14.7, Git 2.56.0.windows.1, GitHub CLI 2.97.0. PS1/BAT/default quality remained unchanged in M0-03.
+## Tested outcomes and limits
 
-No owner decision blocks M1-01. End with task/evidence/STATUS/NEXT_SESSION/session updates, intentional commits, explicit feature push, live fetch/push equality and clean-state check, plus a draft PR. Main merges/pushes, tags/releases, settings/secrets, dependency bundling/signing, deployment and default-quality changes require explicit owner approval.
+Clean implementation: each host Quick 79 passed/0 failed/0 skipped/4 NotRun, exit 0; Targeted 93 passed/0 failed/4 skipped/4 NotRun, exit 0. Full both hosts 168 passed/8 known failures/4 skipped/8 NotRun, exit 1. Counts include 75 Pester checks plus static/native/JSON cases. Twenty menu/path regressions pass per host; six native batch/menu entries pass. BAT's surviving caller is verified through a split output marker after scripted Quit.
+
+Remaining Full failures: config shape and empty/single enumeration defects (M1-03/M1-04). Four media recipes skip because FFmpeg/FFprobe are absent. No real encoding/probe/playback, actual Explorer/manual, comprehensive special-character drag/drop, cancellation/UNC/long-path/benchmark pass is claimed. Compression defaults and BAT bytes retained.
+
+End with task/evidence/status/next/session updates, intentional feature commits/push, live fetch/push equality/clean check and draft PR status. Main push/merge, release/tags/settings/secrets/deployment or quality changes need explicit owner approval.
