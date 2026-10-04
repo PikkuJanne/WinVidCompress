@@ -1,0 +1,2011 @@
+{
+  "schema_version": 1,
+  "bundle_version": "1.0.0",
+  "repository": "PikkuJanne/WinVidCompress",
+  "baseline_commit": "5bab7fc698d153128babe3421ce19c0ca3012cc5",
+  "status_values": [
+    "todo",
+    "in_progress",
+    "blocked",
+    "implemented",
+    "verified",
+    "accepted",
+    "deferred"
+  ],
+  "acceptance_status_values": [
+    "not_run",
+    "passed",
+    "failed",
+    "skipped",
+    "blocked",
+    "not_applicable"
+  ],
+  "status_policy": "Implemented is not verified, verified is not owner-accepted. Accepted requires evidence for every applicable acceptance item. Deferred requires an owner-approved reason.",
+  "tasks": [
+    {
+      "id": "WVC-M0-01",
+      "title": "Reconcile the real checkout and install this handoff",
+      "milestone": "M0",
+      "priority": "P0",
+      "status": "in_progress",
+      "improvements": [],
+      "depends_on": [],
+      "files_in_scope": [
+        "AGENTS.md",
+        "docs/codex-winvidcompress/**",
+        "tools/codex-winvidcompress/**"
+      ],
+      "specs": [
+        "GIT_SYNC.md",
+        "BASELINE.json"
+      ],
+      "implementation_steps": [
+        "Read existing repository and parent instructions; inspect root, branch, worktree, remotes, upstream and operation state.",
+        "Fetch origin and compare the reviewed commit with current main and the active feature branch. Record changes; never reset to the review snapshot.",
+        "Use a clean codex/wvc-* branch. Preview the external importer, bind apply to the inspected HEAD, then review all added files.",
+        "Reconcile any existing AGENTS.md without replacing it; initialize STATUS.md, NEXT_SESSION.md and the first session record.",
+        "Commit the handoff only, push the feature branch, check live matching refs, and open or update one draft PR when tooling is available."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M0-01-A01",
+          "description": "Correct repository identity, unchanged application files, clean feature branch and actual local path are recorded.",
+          "tier": "quick",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-01-A02",
+          "description": "A dirty/conflicting or unexpected checkout is preserved and explicitly blocked, not auto-stashed, cleaned or reset.",
+          "tier": "quick",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-01-A03",
+          "description": "Importer preview creates no files; apply adds only missing approved handoff files.",
+          "tier": "quick",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-01-A04",
+          "description": "A real GitHub branch SHA equals local HEAD after push; otherwise synchronization is marked unverified/failed.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Handoff imported at inspected live main; application unchanged. Final task evidence and synchronization checks are pending."
+    },
+    {
+      "id": "WVC-M0-02",
+      "title": "Characterize existing behaviour and add the smallest test seam",
+      "milestone": "M0",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        18,
+        19
+      ],
+      "depends_on": [
+        "WVC-M0-01"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/**"
+      ],
+      "specs": [
+        "PRODUCT_CONTRACT.md",
+        "TESTING.md",
+        "AUDIT.md"
+      ],
+      "implementation_steps": [
+        "Capture default argument construction, naming and metadata behaviour with mocks/synthetic inputs.",
+        "Allow pure helpers to be loaded without tool discovery, config writes or TUI startup. Keep the script entry point and normal invocation unchanged.",
+        "Reproduce the known menu, config and enumeration defects with focused tests. Mark baseline failures as known defects without asserting that broken behaviour is desired.",
+        "Avoid moving every function or adding an application framework."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M0-02-A01",
+          "description": "Tests do not invoke the TUI, modify real APPDATA or touch user Videos.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-02-A02",
+          "description": "Default profile remains libx264 / veryfast / CRF 22 / AAC 160k / MP4 +faststart.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-02-A03",
+          "description": "Direct invocation and the original launcher still reach the existing application flow.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-02-A04",
+          "description": "PowerShell 5.1 and PowerShell 7 characterization outcomes are recorded separately.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M0-03",
+      "title": "Establish the regression harness and generated fixtures",
+      "milestone": "M0",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        18,
+        19
+      ],
+      "depends_on": [
+        "WVC-M0-02"
+      ],
+      "files_in_scope": [
+        "tests/**",
+        "tools/test*.ps1",
+        "PSScriptAnalyzerSettings.psd1",
+        ".gitignore",
+        ".gitattributes"
+      ],
+      "specs": [
+        "TESTING.md",
+        "ACCEPTANCE_MATRIX.md"
+      ],
+      "implementation_steps": [
+        "Pin and document compatible Pester/PSScriptAnalyzer versions in the developer setup after checking official releases.",
+        "Create quick, targeted, full and manual test entry points with deterministic result reports.",
+        "Generate short synthetic video/audio fixtures in isolated temporary directories; use probe-JSON fixtures for expensive cases.",
+        "Define line-ending/encoding policy for .bat and PowerShell 5.1 Unicode without wholesale formatting churn."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M0-03-A01",
+          "description": "Harness reports real pass/fail/skip counts and returns nonzero on failing automated tests.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-03-A02",
+          "description": "Missing FFmpeg or an unavailable host is recorded as skipped/not tested, never passed.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-03-A03",
+          "description": "No private footage, downloaded executables, secrets or real user config enters Git.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M0-03-A04",
+          "description": "A fixture inventory maps each generated file to commands, capabilities, cleanup owner and expected streams.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-01",
+      "title": "Repair menu exit and separate source/output folder selection",
+      "milestone": "M1",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        1,
+        4
+      ],
+      "depends_on": [
+        "WVC-M0-03"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Menu*",
+        "tests/unit/*Path*"
+      ],
+      "specs": [
+        "PRODUCT_CONTRACT.md"
+      ],
+      "implementation_steps": [
+        "Replace switch-only Quit handling with a function return or correctly labelled outer-loop exit.",
+        "Separate existing-source validation from explicitly requested output directory creation.",
+        "Keep blank-to-cancel and the four-option workflow; report permission errors clearly."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-01-A01",
+          "description": "Choosing 4 exits the menu function without redisplaying it or terminating a caller runspace.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-01-A02",
+          "description": "A missing source directory remains missing after selection; only a selected output path can be created.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-01-A03",
+          "description": "Blank input cancels; literal brackets and Unicode paths are not expanded as wildcards.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-01-A04",
+          "description": "Double-click launch reaches the menu and Quit leaves the console in its documented state.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-02",
+      "title": "Harden the .bat launcher using measured argument round trips",
+      "milestone": "M1",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        2
+      ],
+      "depends_on": [
+        "WVC-M0-03"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.bat",
+        "WinVidCompress.ps1",
+        "tests/launcher/**"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md",
+        "TESTING.md"
+      ],
+      "implementation_steps": [
+        "Remove unnecessary delayed expansion and avoid multi-stage command reconstruction.",
+        "Use a dedicated test argument-recorder to observe the exact argv entering PowerShell; do not execute payload-like filenames.",
+        "Preserve double-click, one-file, folder and multiple-selection invocation on Windows PowerShell 5.1.",
+        "Document Windows command-line length and shell-specific limits instead of promising unlimited drops."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-02-A01",
+          "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-02-A02",
+          "description": "Test literal %PATH% and !NAME! filename segments with matching environment variables set; no environment substitution or command execution occurs.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-02-A03",
+          "description": "No Invoke-Expression, dynamically constructed cmd /c pipeline or broad execution-policy changes are introduced.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-02-A04",
+          "description": "Missing .ps1 and inaccessible dependencies result in actionable launcher errors.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-03",
+      "title": "Make configuration validation and recovery safe",
+      "milestone": "M1",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        3
+      ],
+      "depends_on": [
+        "WVC-M0-03"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Config*"
+      ],
+      "specs": [
+        "CONFIG_AND_DISCOVERY.md"
+      ],
+      "implementation_steps": [
+        "Validate JSON root type, property presence, scalar types and output directory semantics before property access.",
+        "Retain backward compatibility with the existing OutputDir-only JSON file.",
+        "Distinguish malformed config from unavailable external/UNC destinations; never silently rewrite a temporary failure to Videos.",
+        "Write through an owned temporary file, preserve a previous valid copy, and use replace/no-clobber semantics as appropriate."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-03-A01",
+          "description": "Missing file, empty file, invalid JSON, null, {}, [], numeric root and wrong OutputDir types all have explicit tested outcomes.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-03-A02",
+          "description": "Offline output drive, permission denial and existing file-as-directory do not silently redirect or overwrite saved preferences.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-03-A03",
+          "description": "A failed save does not destroy the last valid config; tests isolate APPDATA.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-03-A04",
+          "description": "Unknown compatible keys survive load/save or a documented migration; no unnecessary schema reset occurs.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-04",
+      "title": "Normalize file discovery and expose scan failures",
+      "milestone": "M1",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        4
+      ],
+      "depends_on": [
+        "WVC-M1-01"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Discovery*"
+      ],
+      "specs": [
+        "CONFIG_AND_DISCOVERY.md"
+      ],
+      "implementation_steps": [
+        "Materialize zero/one/many enumeration results consistently; preserve literal path handling.",
+        "Normalize existing filesystem paths; reject unsupported non-filesystem inputs.",
+        "Report unreadable paths and inaccessible subfolders separately from empty folders.",
+        "Choose and document a safe reparse-point/junction traversal policy with cycle protection."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-04-A01",
+          "description": "Empty directory, one file, many files and mixed supported/unsupported extensions work under strict mode.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-04-A02",
+          "description": "Unreadable or missing requested inputs produce explicit records and do not count as successful scans.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-04-A03",
+          "description": "Reparse points cannot cause recursive loops or accidental broad scans.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-04-A04",
+          "description": "UNC, non-ASCII and longer paths are tested on Windows and limitations recorded.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-05",
+      "title": "Freeze and deduplicate the full batch before encoding",
+      "milestone": "M1",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        5
+      ],
+      "depends_on": [
+        "WVC-M1-04"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Queue*"
+      ],
+      "specs": [
+        "CONFIG_AND_DISCOVERY.md",
+        "OUTPUT_SAFETY.md"
+      ],
+      "implementation_steps": [
+        "Collect all input selections into one deterministic queue before starting the first encode.",
+        "Deduplicate normalized paths with appropriate Windows comparison; document hard-link identity as a separate concern.",
+        "Exclude trusted generated outputs and owned temporary files, not every MP4 or every file in the output directory.",
+        "Handle source=destination, nested destination and overlapping input roots without losing original sources."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-05-A01",
+          "description": "File+parent-folder, parent+child-folder and repeated selections encode a source once.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-05-A02",
+          "description": "Output files created during a run cannot become new inputs in the same run.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-05-A03",
+          "description": "Original MP4s in the destination or names containing (compressed) are not excluded solely by their name.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-05-A04",
+          "description": "New output is never the same normalized path as its input; discovery failures remain visible.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M1-06",
+      "title": "Add dependency and output-environment diagnostics",
+      "milestone": "M1",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        17
+      ],
+      "depends_on": [
+        "WVC-M0-03",
+        "WVC-M1-03"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Environment*"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md",
+        "SECURITY_AND_RELEASE.md"
+      ],
+      "implementation_steps": [
+        "Resolve actual applications for ffmpeg.exe and ffprobe.exe with explicit paths and documented precedence.",
+        "Preserve current PATH-before-adjacent precedence unless a documented owner-approved change is required.",
+        "Record versions/build details and verify libx264, AAC and needed probe/muxer capabilities using bounded calls.",
+        "Validate destination availability/writability and report capacity concerns without a false size guarantee."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M1-06-A01",
+          "description": "Missing, non-executable, wrong tool and unsupported encoder cases fail before processing.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-06-A02",
+          "description": "Doctor output shows exactly which binaries would run, without downloading or replacing them.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-06-A03",
+          "description": "Capability checks time out and fail clearly; no elevated rights or system PATH edits are required.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M1-06-A04",
+          "description": "Unwritable/offline destinations are diagnosed without changing saved preferences.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-01",
+      "title": "Expand FFprobe into normalized JSON media inspection",
+      "milestone": "M2",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        7
+      ],
+      "depends_on": [
+        "WVC-M1-06"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Probe*",
+        "tests/fixtures/probe/**"
+      ],
+      "specs": [
+        "MEDIA_PIPELINE.md"
+      ],
+      "implementation_steps": [
+        "Replace height-only probing with one bounded structured inspection per input.",
+        "Parse stream indices/types/dispositions, geometry, rotation, SAR, pixel format, colour fields, audio details and duration where present.",
+        "Keep probe stderr and native exit status; reject malformed responses and no-real-video inputs.",
+        "Represent unknown/invalid duration explicitly without forcing an invented zero."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-01-A01",
+          "description": "Probe exit failure, timeout, invalid JSON and missing required video fields yield structured failure.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-01-A02",
+          "description": "Audio-only input and attached artwork without real video do not start video compression.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-01-A03",
+          "description": "Valid video with absent duration proceeds with indeterminate progress and an explicit validation limitation.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-01-A04",
+          "description": "Probe output parsing is culture-independent and tolerates additional unknown fields.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-02",
+      "title": "Select and map the same real video and intended audio",
+      "milestone": "M2",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        8
+      ],
+      "depends_on": [
+        "WVC-M2-01"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Stream*",
+        "tests/integration/*Streams*"
+      ],
+      "specs": [
+        "MEDIA_PIPELINE.md"
+      ],
+      "implementation_steps": [
+        "Select a real video stream once and carry its absolute index into probing, scaling and -map construction.",
+        "Use first real video by stream index for the documented first-video policy; exclude attached pictures.",
+        "Select default-disposition audio when unique, otherwise the first audio; document/warn omitted alternatives.",
+        "Keep audio optional and subtitles/data/attachments intentionally out of scope; do not silently change channel count or frame rate."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-02-A01",
+          "description": "A multi-video fixture proves the inspected and encoded indices are identical.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-02-A02",
+          "description": "Cover artwork is not mistaken for the primary video.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-02-A03",
+          "description": "Silent video completes without inventing an audio stream; multi-audio omission is visible.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-02-A04",
+          "description": "Selected video, audio, channels and any discarded stream types are present in the job plan/report.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-03",
+      "title": "Isolate command construction and native process execution",
+      "milestone": "M2",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        2,
+        8,
+        19
+      ],
+      "depends_on": [
+        "WVC-M2-02",
+        "WVC-M1-02"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Arguments*",
+        "tests/integration/*Process*"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Build FFmpeg arguments as tokens in a pure helper, then use a small execution adapter.",
+        "Preserve correct quoting across Windows PowerShell 5.1 and PowerShell 7; do not assume ProcessStartInfo.ArgumentList exists in .NET Framework.",
+        "Drain stderr and progress stdout without deadlocks; keep native stderr distinct from PowerShell error policy.",
+        "Prevent child input from consuming menu/interactive input and avoid leaking callbacks/process resources."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-03-A01",
+          "description": "Default encoder tokens and exact input/output/metadata token values have unit assertions.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-03-A02",
+          "description": "Native argument round trips preserve supported filenames and metadata on both target shells.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-03-A03",
+          "description": "Large stderr output cannot deadlock the process; nonzero exit is always recognized.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-03-A04",
+          "description": "The adapter returns a structured process result and does not evaluate source paths as shell code.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-04",
+      "title": "Implement owned temporary output and no-clobber promotion",
+      "milestone": "M2",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        6
+      ],
+      "depends_on": [
+        "WVC-M2-03",
+        "WVC-M1-05"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Output*",
+        "tests/integration/*Collision*"
+      ],
+      "specs": [
+        "OUTPUT_SAFETY.md"
+      ],
+      "implementation_steps": [
+        "Create unique same-volume temporary MP4 paths and record ownership per job; keep final filenames unavailable until successful promotion.",
+        "Keep FFmpeg refusal to overwrite a pre-existing temp path. Do not reserve the exact temp with an empty file then invoke -n against it.",
+        "Promote with a filesystem operation that refuses an existing final destination; re-resolve rename collisions safely.",
+        "Clean only proven owned temporary artifacts, with explicit interrupted-job reporting."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-04-A01",
+          "description": "Existing source/final sentinel bytes are unchanged after success, failure and collision races.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-04-A02",
+          "description": "Two jobs targeting the same final base never clobber one another.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-04-A03",
+          "description": "Failed jobs leave no finished-looking final; cleanup never uses broad filename patterns.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-04-A04",
+          "description": "Promotion failure reports failure and retains/reports or safely removes only the owned partial according to policy.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-05",
+      "title": "Validate output before marking it complete",
+      "milestone": "M2",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        6
+      ],
+      "depends_on": [
+        "WVC-M2-04"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Validation*",
+        "tests/integration/*Validation*"
+      ],
+      "specs": [
+        "OUTPUT_SAFETY.md",
+        "MEDIA_PIPELINE.md"
+      ],
+      "implementation_steps": [
+        "Probe the produced temp and require nonempty readable MP4 with expected video/audio structure.",
+        "Compare duration when known using a documented tolerance grounded in fixtures; allow timestamp/container differences without declaring every mismatch corrupt.",
+        "Add optional full decode validation for release testing rather than silently doubling every normal conversion.",
+        "Promote only after checks pass; describe ordinary validation as structural, not proof of perfect visual quality."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-05-A01",
+          "description": "Exit 0 plus zero bytes, unreadable output, wrong streams or materially truncated duration is rejected.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-05-A02",
+          "description": "Silent-input and known/unknown-duration cases follow explicit policies.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-05-A03",
+          "description": "Only validated+promoted jobs increment Done.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-05-A04",
+          "description": "Validation errors carry source/job identity and do not overwrite existing outputs.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M2-06",
+      "title": "Define job results, counters and script exit codes",
+      "milestone": "M2",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        14
+      ],
+      "depends_on": [
+        "WVC-M2-05"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "WinVidCompress.bat",
+        "tests/unit/*Results*",
+        "tests/integration/*Exit*"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Return job results instead of relying only on mutable counters and Write-Host.",
+        "Document exit code 0 completed without failures, 1 partial/job failure, 2 startup/invalid-request/no-eligible-input failure and 3 cancellation, with cancellation precedence.",
+        "Treat valid intentional skips as non-errors; distinguish empty explicit batches from user cancelling the menu.",
+        "Separate interactive window persistence from an unattended invocation that returns the actual exit code."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M2-06-A01",
+          "description": "Success, all-skip, mixed failure, startup failure, no-input batch and cancellation have exact tests.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-06-A02",
+          "description": "Summary counters reconcile with job records plus separate scan errors.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-06-A03",
+          "description": "PowerShell helper loading does not exit the caller session.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M2-06-A04",
+          "description": "Unattended .ps1/launcher path returns a real process exit code; interactive mode remains usable.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-01",
+      "title": "Harden resizing and rotation without a new resolution preset",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        9
+      ],
+      "depends_on": [
+        "WVC-M2-06"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Geometry*",
+        "tests/integration/*Geometry*"
+      ],
+      "specs": [
+        "MEDIA_PIPELINE.md",
+        "DECISIONS.md"
+      ],
+      "implementation_steps": [
+        "Use selected-stream display geometry and handle autorotation exactly once.",
+        "Retain a height-cap policy with no crop/no upscale; do not silently switch to a 1920x1080 bounding box.",
+        "Derive encoder-compatible even dimensions while preserving display aspect ratio within a documented rounding tolerance.",
+        "Document how odd-sized inputs and non-square pixels are treated; test the generated filter rather than copying an unverified expression."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-01-A01",
+          "description": "Landscape, portrait, rotation 90/180/270, ultrawide, non-square SAR and odd dimensions have regression cases.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-01-A02",
+          "description": "Sub-1080 inputs are not enlarged; output orientation and aspect ratio match the source intent.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-01-A03",
+          "description": "High-frame-rate/VFR input does not acquire a forced FPS policy.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-01-A04",
+          "description": "Owner views representative geometry samples before any materially changed default behaviour is accepted.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Materially changing the height-cap/default geometry policy requires owner approval; bug fixes within the documented policy do not.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-02",
+      "title": "Define SDR compatibility and reject untested HDR conversions",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        10
+      ],
+      "depends_on": [
+        "WVC-M3-01"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Colour*",
+        "tests/integration/*Colour*"
+      ],
+      "specs": [
+        "MEDIA_PIPELINE.md",
+        "DECISIONS.md"
+      ],
+      "implementation_steps": [
+        "Detect HDR from colour metadata and transfer characteristics, not bit depth alone.",
+        "Implement and test a conventional 8-bit yuv420p SDR compatibility path for supported SDR inputs.",
+        "Use an actionable unsupported result for known HDR not covered by a validated conversion path; no automatic tone mapper in this scope.",
+        "Warn on ambiguous colour metadata, preserve known SDR colour information where appropriate, and never relabel HDR as SDR."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-02-A01",
+          "description": "10-bit SDR is not incorrectly classified as HDR solely by depth.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-02-A02",
+          "description": "PQ/HLG test metadata is recognized and untested HDR does not silently encode as ordinary SDR.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-02-A03",
+          "description": "SDR outputs have the intended tested pixel format and do not claim HDR preservation.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-02-A04",
+          "description": "Colour-sensitive sample review is recorded before promoting changed defaults.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "New tone-mapping path or change to accepted output-quality defaults requires owner approval.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-03",
+      "title": "Validate interview metadata dates and preserve text",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        11
+      ],
+      "depends_on": [
+        "WVC-M0-03",
+        "WVC-M2-03"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Metadata*"
+      ],
+      "specs": [
+        "MEDIA_PIPELINE.md"
+      ],
+      "implementation_steps": [
+        "Use culture-independent calendar validation for existing ddmmyyyy, dd.mm.yyyy and dd-mm-yyyy patterns.",
+        "Define handling of fallback dates, ambiguous/multiple matches and blank band names.",
+        "Keep title and compression on parse failure; report omitted tags without inventing dates.",
+        "Define existing-tag precedence and verify MP4 tag read-back on the selected FFmpeg build."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-03-A01",
+          "description": "Leap day, invalid month/day, 31 February, empty band and unrelated 8-digit numbers are tested.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-03-A02",
+          "description": "Finnish/German and non-Latin names round-trip as supported UTF-8 metadata.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-03-A03",
+          "description": "Failed date parsing never prevents an otherwise valid video from compressing.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-03-A04",
+          "description": "Source metadata and filename-derived overrides follow a documented deterministic policy.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-04",
+      "title": "Report savings and benchmark rather than guess",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        12
+      ],
+      "depends_on": [
+        "WVC-M3-02",
+        "WVC-M2-06"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Summary*",
+        "tools/benchmark*.ps1",
+        "docs/benchmarks/**"
+      ],
+      "specs": [
+        "BENCHMARKS.md"
+      ],
+      "implementation_steps": [
+        "Add original/output bytes, percentage change, duration and elapsed time to each completed result and the batch summary.",
+        "Represent larger output honestly; do not auto-delete a valid result or lower CRF in repeated trials.",
+        "Add a reproducible benchmark runner/report template that records tool versions and exact settings.",
+        "Compare the current preset with optional experimental candidates on disposable representative copies only; retain defaults unless owner approves a measured change."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-04-A01",
+          "description": "Reduction, growth, zero/unavailable size and cancelled jobs have correct arithmetic and labels.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-04-A02",
+          "description": "No fixed size-reduction percentage is promised in user-facing copy.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-04-A03",
+          "description": "Benchmark fixtures and reports record provenance; private clips and unredacted paths stay outside Git.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-04-A04",
+          "description": "Timing and visual/audio judgments are measured/owner-recorded, not fabricated.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Changing CRF, preset, codec, audio bitrate or other default quality/performance policy requires owner approval.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-05",
+      "title": "Add machine progress and privacy-aware persistent logs",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        13,
+        14
+      ],
+      "depends_on": [
+        "WVC-M2-06",
+        "WVC-M3-04"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Progress*",
+        "tests/unit/*Log*"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Parse FFmpeg -progress key/value records, keeping stderr diagnostics separate.",
+        "Show file index/total and elapsed/approximate remaining time; unknown duration gets indeterminate progress.",
+        "Record encoding, finalizing, validating and completed states accurately.",
+        "Write bounded session text/JSON results locally with schema version, and add a redacted diagnostic export."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-05-A01",
+          "description": "Partial progress records, N/A values, locale differences and end markers are tested.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-05-A02",
+          "description": "No job is reported fully complete before validation and final promotion.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-05-A03",
+          "description": "Logs capture version/parameters/errors and useful job identity; normal console operation does not become a wall of raw logs.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-05-A04",
+          "description": "Sharing/export redacts personal roots/filenames as configured; no automatic telemetry or upload is added.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-06",
+      "title": "Cancel safely and terminate only this job’s child process",
+      "milestone": "M3",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        15
+      ],
+      "depends_on": [
+        "WVC-M3-05"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/integration/*Cancel*"
+      ],
+      "specs": [
+        "OUTPUT_SAFETY.md",
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Implement controlled cancellation for the active child, then prevent the next job from starting.",
+        "Attempt a bounded graceful stop followed by termination only of the owned child/process tree as supported.",
+        "Always release callbacks/resources and update job status; leave crash-only artifacts distinguishable by provenance.",
+        "Do not use taskkill /IM ffmpeg.exe or global process-name termination."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-06-A01",
+          "description": "Ctrl+C in each supported Windows launch mode stops the current batch and does not start the next file.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-06-A02",
+          "description": "Another unrelated FFmpeg process is not terminated.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-06-A03",
+          "description": "Source/existing final files are unchanged; no cancelled partial is promoted.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-06-A04",
+          "description": "Cancellation exit status, logs and queue summary agree.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M3-07",
+      "title": "Add validated batch retry/resume with a versioned manifest",
+      "milestone": "M3",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        15
+      ],
+      "depends_on": [
+        "WVC-M3-06",
+        "WVC-M1-05"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Manifest*",
+        "tests/integration/*Resume*"
+      ],
+      "specs": [
+        "OUTPUT_SAFETY.md",
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Persist job identity, normalized source, size/mtime, settings fingerprint, output identity and state atomically.",
+        "Resume by rerunning unfinished jobs, never by appending encoded data to a partial MP4.",
+        "Skip a completed job only after checking source identity, settings and output validity; paths alone are insufficient.",
+        "Validate manifest schema/paths and reject traversal/foreign ownership; add an opt-in stronger source hash for stricter checks."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M3-07-A01",
+          "description": "Changed source, changed CRF/settings, missing output, corrupt output and mismatched manifest all prevent a false completed skip.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-07-A02",
+          "description": "Interrupted batches can retry failed/unstarted jobs while keeping validated successful outputs.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-07-A03",
+          "description": "Default fast identity limitations are documented; opt-in hashing detects same-size/same-mtime content changes.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M3-07-A04",
+          "description": "Malformed/foreign manifests cannot cause deletion of files or execution outside the current local job scope.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M4-01",
+      "title": "Expose optional CLI controls and a truly non-writing preview",
+      "milestone": "M4",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        16
+      ],
+      "depends_on": [
+        "WVC-M3-07",
+        "WVC-M1-06"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "WinVidCompress.bat",
+        "tests/unit/*Cli*",
+        "tests/integration/*WhatIf*"
+      ],
+      "specs": [
+        "PROCESS_AND_CLI.md"
+      ],
+      "implementation_steps": [
+        "Add optional -OutputDir, -CollisionMode, -WhatIf and -CheckEnvironment without disrupting positional path arguments.",
+        "Use a defined precedence: built-in defaults < persisted config < per-run options; per-run options do not persist implicitly.",
+        "Implement read-only planning: no config creation, output directories, encoding, manifests or persistent logs under -WhatIf.",
+        "Provide real comment-based help and documented unattended usage; exact flag naming can be adjusted once and tracked."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M4-01-A01",
+          "description": "No-option drag/drop/TUI behaviour retains the accepted defaults.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-01-A02",
+          "description": "WhatIf filesystem snapshots before/after show no application writes; process probes, when used, are read-only and documented.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-01-A03",
+          "description": "Invalid CRF/enum/path combinations fail before conversion; public options remain intentionally small.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-01-A04",
+          "description": "Get-Help examples execute correctly and automation never blocks on Read-Host.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M4-02",
+      "title": "Add opt-in relative subfolder preservation",
+      "milestone": "M4",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        16
+      ],
+      "depends_on": [
+        "WVC-M4-01"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/unit/*Layout*"
+      ],
+      "specs": [
+        "CONFIG_AND_DISCOVERY.md"
+      ],
+      "implementation_steps": [
+        "Implement an opt-in preserve-subfolders layout, keeping flat output as the default.",
+        "Specify deterministic roots for multiple folder/file selections and repeated root names.",
+        "Guarantee destination containment; sanitize derived relative paths and reject traversal.",
+        "Make dry-run and logs display the chosen relative layout and collisions."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M4-02-A01",
+          "description": "No flag produces the original flat layout.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-02-A02",
+          "description": "Two cameras with repeated clip names in different input folders produce deterministic separated outputs when enabled.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-02-A03",
+          "description": "Every planned output remains beneath the selected destination root.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-02-A04",
+          "description": "Input roots overlapping with destination do not cause self-reingestion.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M4-03",
+      "title": "Stress concurrency, crash recovery and filesystem edge cases",
+      "milestone": "M4",
+      "priority": "P0",
+      "status": "todo",
+      "improvements": [
+        5,
+        6,
+        15,
+        18
+      ],
+      "depends_on": [
+        "WVC-M4-02"
+      ],
+      "files_in_scope": [
+        "WinVidCompress.ps1",
+        "tests/integration/*Safety*"
+      ],
+      "specs": [
+        "OUTPUT_SAFETY.md",
+        "ACCEPTANCE_MATRIX.md"
+      ],
+      "implementation_steps": [
+        "Exercise two independent tool instances targeting the same name and config simultaneously.",
+        "Inject errors at temp creation, encode exit, probe, promotion and manifest/config persistence boundaries.",
+        "Verify stale-artifact discovery uses ownership proof and never blanket deletes.",
+        "Check unavailable drives/UNC and long-path limitations in disposable Windows test roots."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M4-03-A01",
+          "description": "Existing sentinels retain their hashes through each injected failure.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-03-A02",
+          "description": "Final-name races resolve as safe rename/skip/failure, never overwrite.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-03-A03",
+          "description": "Crash artifacts remain identifiable; reporting them cannot mutate unrelated files.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-03-A04",
+          "description": "Windows-specific filesystem cases have actual results or explicit release-blocking limitations.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M4-04",
+      "title": "Add Windows CI and targeted static analysis",
+      "milestone": "M4",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        18,
+        19
+      ],
+      "depends_on": [
+        "WVC-M4-03"
+      ],
+      "files_in_scope": [
+        ".github/workflows/**",
+        "PSScriptAnalyzerSettings.psd1",
+        "tests/**",
+        "tools/test*.ps1"
+      ],
+      "specs": [
+        "TESTING.md",
+        "SECURITY_AND_RELEASE.md"
+      ],
+      "implementation_steps": [
+        "Run unit/targeted integration tests on Windows PowerShell 5.1 and a supported stable PowerShell 7 version.",
+        "Pin action revisions and test-tool/dependency versions with provenance/integrity checks appropriate to distribution.",
+        "Use minimum token permissions and no secrets for untrusted PRs; do not use privileged pull_request_target for checkout/test execution.",
+        "Analyze changed code; use narrow documented suppressions instead of a wholesale style rewrite."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M4-04-A01",
+          "description": "Failing tests and static-analysis policy failures fail the workflow.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-04-A02",
+          "description": "CI reports host/FFmpeg versions and preserves sanitized results as artifacts.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-04-A03",
+          "description": "No automatic merge, tag, GitHub release or deployment is introduced.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-04-A04",
+          "description": "Real workflow runs on the pushed feature commit are inspected; queued/missing runs are not called passed.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M4-05",
+      "title": "Complete the real Windows workflow acceptance matrix",
+      "milestone": "M4",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        18,
+        19
+      ],
+      "depends_on": [
+        "WVC-M4-04"
+      ],
+      "files_in_scope": [
+        "tests/**",
+        "docs/codex-winvidcompress/evidence/**",
+        "docs/codex-winvidcompress/STATUS.md"
+      ],
+      "specs": [
+        "ACCEPTANCE_MATRIX.md",
+        "TESTING.md"
+      ],
+      "implementation_steps": [
+        "Run the full automated matrix on exact implementation commits, then perform genuine Explorer drag/drop tests.",
+        "Exercise new-user and upgraded-config workflows on the active owner workstation with synthetic media.",
+        "Use copies of selected real interviews only with owner consent for visual/audio review.",
+        "Record remaining limitations with severity and release impact instead of weakening test expectations."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M4-05-A01",
+          "description": "All required automated gates pass or are explicitly blocked with reproducible evidence.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-05-A02",
+          "description": "Single file, folder, multiple selections, menu, paths with special characters and cancellation are checked from Windows Explorer.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-05-A03",
+          "description": "Representative outputs play with expected orientation, duration, audio and metadata.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M4-05-A04",
+          "description": "No implementation is marked accepted solely from Linux or mocked tests.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Owner supplies/approves real-media review and confirms manual acceptance.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M5-01",
+      "title": "Write onboarding, help and troubleshooting for actual behaviour",
+      "milestone": "M5",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        20
+      ],
+      "depends_on": [
+        "WVC-M4-05"
+      ],
+      "files_in_scope": [
+        "README.md",
+        "WinVidCompress.ps1",
+        "docs/user/**"
+      ],
+      "specs": [
+        "PRODUCT_CONTRACT.md",
+        "SECURITY_AND_RELEASE.md"
+      ],
+      "implementation_steps": [
+        "Document download/extract, dependency setup, doctor, first run, output naming and collision behaviour.",
+        "Describe exact preset settings, supported media, stream omissions, HDR limits and local-only privacy boundaries.",
+        "Remove unsupported blanket quoting/HandBrake-equivalence claims; do not market lossy copies as lossless archival masters.",
+        "Document resetting/recovering config without encouraging antivirus or permanent policy weakening."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M5-01-A01",
+          "description": "A new user can follow instructions using a clean extracted package.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-01-A02",
+          "description": "README and Get-Help agree with implemented options and tested shells.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-01-A03",
+          "description": "Troubleshooting covers unavailable output drive, invalid config, probe failure, larger output and failed/cancelled jobs.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-01-A04",
+          "description": "All claimed capabilities point to completed acceptance records or explicit limitations.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M5-02",
+      "title": "Build deterministic tool-only release packages and checksums",
+      "milestone": "M5",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        21
+      ],
+      "depends_on": [
+        "WVC-M5-01"
+      ],
+      "files_in_scope": [
+        "tools/package*.ps1",
+        "CHANGELOG.md",
+        "VERSION*",
+        "docs/releases/**"
+      ],
+      "specs": [
+        "SECURITY_AND_RELEASE.md"
+      ],
+      "implementation_steps": [
+        "Choose a version consistent with existing tags after checking GitHub; no version is pre-declared by this bundle.",
+        "Package using an allowlist: application entry points, actually needed assets, README/help/license/notices.",
+        "Record version/source commit/tested dependencies; generate SHA-256 checksums from final ZIP bytes.",
+        "Normalize ZIP ordering/timestamps where supported; test deterministic contents and repeatability before claiming bit-identical builds."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M5-02-A01",
+          "description": "Package excludes private config, logs, videos, development fixture output, .git and credentials.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-02-A02",
+          "description": "Two builds from the same inputs have identical file manifests; byte reproducibility is measured and limitations recorded.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-02-A03",
+          "description": "Checksums verify final artifacts and source commit provenance is accurate.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-02-A04",
+          "description": "Packaging creates local candidate artifacts only, no tags/releases/uploads.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": null,
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M5-03",
+      "title": "Preserve licensing and review distribution security",
+      "milestone": "M5",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        22
+      ],
+      "depends_on": [
+        "WVC-M5-02"
+      ],
+      "files_in_scope": [
+        "LICENSE",
+        "README.md",
+        "SECURITY.md",
+        "THIRD_PARTY_NOTICES.md",
+        "docs/releases/**"
+      ],
+      "specs": [
+        "SECURITY_AND_RELEASE.md"
+      ],
+      "implementation_steps": [
+        "Preserve the existing Unlicense for project code; do not relabel FFmpeg binaries.",
+        "Keep the initial package tool-only with trusted dependency instructions and clear build-specific FFmpeg licensing references.",
+        "Document privacy-aware bug reports, no elevation requirement, and responsible security reporting without inventing contact channels.",
+        "Record code-signing and bundled-FFmpeg distribution as approval-gated follow-on decisions, not completed features."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M5-03-A01",
+          "description": "Original license remains intact unless the owner explicitly authorizes a change.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-03-A02",
+          "description": "No FFmpeg binary is silently included under the project license.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-03-A03",
+          "description": "Release materials avoid claims of certification, guaranteed safety or signed binaries unless demonstrated.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-03-A04",
+          "description": "No embedded credentials, secret-looking values, private absolute paths or unintended telemetry are found in the candidate.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Bundled dependencies, signing setup, license changes or external account/settings changes require explicit owner approval.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M5-04",
+      "title": "Prepare website product metadata and genuine demonstration content",
+      "milestone": "M5",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        23
+      ],
+      "depends_on": [
+        "WVC-M5-03"
+      ],
+      "files_in_scope": [
+        "website-content/**",
+        "docs/releases/**"
+      ],
+      "specs": [
+        "WEBSITE_HANDOFF.md"
+      ],
+      "implementation_steps": [
+        "Create static product metadata and copy describing the local application and verified release candidate.",
+        "Populate version/download/checksum fields from released artifacts only; before release keep them null/draft.",
+        "Prepare real screenshot instructions/captures and labelled measured examples using synthetic or approved media.",
+        "Do not build upload forms, accounts, server-side FFmpeg, a new web framework or telemetry."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M5-04-A01",
+          "description": "Website data has a schema/version and distinguishes draft candidates from published downloads.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-04-A02",
+          "description": "No fabricated download URL, checksum, testimonial or compression measurement is published.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-04-A03",
+          "description": "Screenshots show the actual tool and contain no personal paths or footage without permission.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-04-A04",
+          "description": "Website content is prepared locally only; no deployment is performed.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Public website deployment and connecting release download URLs require owner approval and an actual release.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    },
+    {
+      "id": "WVC-M5-05",
+      "title": "Reconstruct from GitHub and present a release candidate for approval",
+      "milestone": "M5",
+      "priority": "P1",
+      "status": "todo",
+      "improvements": [
+        18,
+        21,
+        23
+      ],
+      "depends_on": [
+        "WVC-M5-04"
+      ],
+      "files_in_scope": [
+        "docs/codex-winvidcompress/**",
+        "docs/releases/**"
+      ],
+      "specs": [
+        "GIT_SYNC.md",
+        "SECURITY_AND_RELEASE.md",
+        "ACCEPTANCE_MATRIX.md"
+      ],
+      "implementation_steps": [
+        "Clone the pushed feature branch into a new disposable directory on the active workstation; reconstruct using only tracked code and documented dependencies.",
+        "Build and inspect the package, run clean-extraction smoke tests, and verify hashes.",
+        "Reconcile all 23 improvement IDs against task acceptance evidence; document gated optional decisions rather than silently omitting them.",
+        "Present exact implementation/head/remote SHAs, test outcomes, limitations and the candidate artifact paths. Stop before merging, tagging, release publication or site deployment."
+      ],
+      "acceptance": [
+        {
+          "id": "WVC-M5-05-A01",
+          "description": "A clean clone of the live GitHub branch reproduces the tested candidate without hidden files from the developer checkout.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-05-A02",
+          "description": "All required tasks/acceptance IDs have real evidence; skipped/manual pending items remain visible.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-05-A03",
+          "description": "Local HEAD equals the live GitHub feature ref and worktree is clean at handoff.",
+          "tier": "targeted",
+          "status": "not_run",
+          "evidence": []
+        },
+        {
+          "id": "WVC-M5-05-A04",
+          "description": "Owner explicitly accepts the candidate before publication; approval records cite their actual decision.",
+          "tier": "manual",
+          "status": "not_run",
+          "evidence": []
+        }
+      ],
+      "approval_gate": "Merge to default branch, tags, GitHub release publication and website deployment are separate explicit owner approvals.",
+      "implementation_commits": [],
+      "evidence": [],
+      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+    }
+  ]
+}

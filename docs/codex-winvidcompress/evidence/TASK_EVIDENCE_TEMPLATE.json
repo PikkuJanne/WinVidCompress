@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "template_only": true,
+  "task_id": null,
+  "acceptance_ids": [],
+  "recorded_at": null,
+  "tested_commits": [],
+  "host": {
+    "os": null,
+    "powershell": null,
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "runs": [],
+  "manual_checks": [],
+  "sanitized_artifacts": [],
+  "owner_approval": null,
+  "previous_verified_sync": null,
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [],
+  "next_task": null
+}
