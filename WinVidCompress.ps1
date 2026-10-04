@@ -421,6 +421,9 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
     }
 }
 
+# Dot-sourcing loads helpers/defaults without application startup.
+if ($MyInvocation.InvocationName -eq '.') { return }
+
 # --- Main ---
 $ffmpeg  = Ensure-Tool 'ffmpeg.exe'
 $ffprobe = Ensure-Tool 'ffprobe.exe'
