@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M0-02",
+  "acceptance_ids": [
+    "WVC-M0-02-A01",
+    "WVC-M0-02-A02",
+    "WVC-M0-02-A03",
+    "WVC-M0-02-A04"
+  ],
+  "recorded_at": "2026-10-04",
+  "tested_commits": [
+    "a1e22e4a1f6eec9ca56e0e58e8d624155f627342"
+  ],
+  "base_commit": "778f5678d115cfefe863b9e7cb7f1d1cf4520dee",
+  "branch": "codex/wvc-m0-02-characterization",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "runs": [
+    {
+      "name": "ps7-positive",
+      "tier": "targeted",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-Characterization.ps1 -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules')",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "exit_code": 0,
+      "summary": {
+        "PowerShell": "7.6.5",
+        "Edition": "Core",
+        "Pester": "5.7.1",
+        "KnownDefectRun": false,
+        "Passed": 22,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 5,
+        "FailedTests": []
+      },
+      "classification": "passed"
+    },
+    {
+      "name": "ps51-positive",
+      "tier": "targeted",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-Characterization.ps1 -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules')",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "exit_code": 0,
+      "summary": {
+        "PowerShell": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "Pester": "5.7.1",
+        "KnownDefectRun": false,
+        "Passed": 22,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 5,
+        "FailedTests": []
+      },
+      "classification": "passed"
+    },
+    {
+      "name": "ps7-known",
+      "tier": "targeted",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-Characterization.ps1 -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -KnownDefects",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "exit_code": 1,
+      "summary": {
+        "PowerShell": "7.6.5",
+        "Edition": "Core",
+        "Pester": "5.7.1",
+        "KnownDefectRun": true,
+        "Passed": 0,
+        "Failed": 5,
+        "Skipped": 0,
+        "NotRun": 22,
+        "FailedTests": [
+          "Quit exits the surrounding menu loop [WVC-M1-01]",
+          "wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+          "empty folder collection returns an empty queue [WVC-M1-04]",
+          "single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+          "explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+        ]
+      },
+      "classification": "Known baseline assertion failures; not passing application behavior"
+    },
+    {
+      "name": "ps51-known",
+      "tier": "targeted",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-Characterization.ps1 -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -KnownDefects",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "exit_code": 1,
+      "summary": {
+        "PowerShell": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "Pester": "5.7.1",
+        "KnownDefectRun": true,
+        "Passed": 0,
+        "Failed": 5,
+        "Skipped": 0,
+        "NotRun": 22,
+        "FailedTests": [
+          "Quit exits the surrounding menu loop [WVC-M1-01]",
+          "wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+          "empty folder collection returns an empty queue [WVC-M1-04]",
+          "single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+          "explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+        ]
+      },
+      "classification": "Known baseline assertion failures; not passing application behavior"
+    },
+    {
+      "name": "entry-smoke",
+      "tier": "targeted",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-EntrySmoke.ps1 -PowerShell7 (Get-Command pwsh).Source",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "exit_code": 0,
+      "summary": {
+        "Passed": 3,
+        "Failed": 0,
+        "Skipped": 0,
+        "Cases": [
+          {
+            "Executable": "powershell.exe",
+            "ExitCode": 0,
+            "NativeArguments": 52,
+            "Passed": true
+          },
+          {
+            "Executable": "pwsh.exe",
+            "ExitCode": 0,
+            "NativeArguments": 52,
+            "Passed": true
+          },
+          {
+            "Executable": "cmd.exe",
+            "ExitCode": 0,
+            "NativeArguments": 52,
+            "Passed": true
+          }
+        ]
+      },
+      "classification": "passed"
+    },
+    {
+      "name": "quick-static-and-consistency",
+      "tier": "quick",
+      "tested_commit": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+      "commands": [
+        "Import-Module (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules/PSScriptAnalyzer/1.24.0/PSScriptAnalyzer.psd1'); $analyzedFiles = @('WinVidCompress.ps1') + @(Get-ChildItem -LiteralPath tests -Filter '*.ps1' | Select-Object -ExpandProperty FullName); $diagnostics = @($analyzedFiles | ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Severity Error }); [pscustomobject]@{ Analyzer = (Get-Module PSScriptAnalyzer).Version.ToString(); Files = $analyzedFiles.Count; ErrorCount = $diagnostics.Count } | ConvertTo-Json; if ($diagnostics.Count) { exit 1 }",
+        "git -c core.whitespace=cr-at-eol diff --check",
+        "python -B tools/codex-winvidcompress/validate_tracker.py --repo ."
+      ],
+      "exit_code": 0,
+      "analyzer_version": "1.24.0",
+      "analyzed_files": 4,
+      "error_diagnostics": 0,
+      "tracker": {
+        "valid": true,
+        "tasks": 32,
+        "acceptance_criteria": 128,
+        "improvements_covered": 23
+      },
+      "limitations": "Error-severity analysis only; legacy warning/style debt not claimed resolved."
+    }
+  ],
+  "manual_checks": [
+    {
+      "acceptance_id": "WVC-M0-02-A04",
+      "outcome": "passed",
+      "method": "Both real supported Windows shells launched separately; versions, test outcomes and exit codes reviewed independently. No Explorer acceptance claimed."
+    }
+  ],
+  "sanitized_artifacts": [
+    "tests/README.md",
+    "evidence/WVC-M0-02.md",
+    "evidence/WVC-M0-02-session.md"
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "checked_at": "2026-10-04T15:51:43.173257+00:00",
+    "head": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+    "live_fetch_head": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+    "live_push_head": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+    "status": "SYNCHRONIZED",
+    "dirty": false,
+    "operations": []
+  },
+  "pull_request": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/2",
+    "state": "OPEN",
+    "draft": true,
+    "tested_head": "a1e22e4a1f6eec9ca56e0e58e8d624155f627342",
+    "check_runs": 0,
+    "workflow_runs": 0
+  },
+  "final_handoff_push": "pending when committed; verify live fetch/push refs and clean state externally after final commit",
+  "module_preparation": {
+    "scope": "External temporary developer directory only; no application dependency installation",
+    "pester_package": "https://www.powershellgallery.com/api/v2/package/Pester/5.7.1",
+    "pester_package_sha256": "4A27904C6814A5FBE4758F8E49861F6A1994AEE77B71165A5C43C0371BA6C580",
+    "analyzer_package": "https://www.powershellgallery.com/api/v2/package/PSScriptAnalyzer/1.24.0",
+    "analyzer_package_sha256": "E86C97D44BB1BC8A1DE35E753B85EA1D938F6F9F881639A181507E079BCA4556"
+  },
+  "source_hashes": {
+    "WinVidCompress_ps1_sha256": "6F7015B37DD492CBD62511A76DAE16FAECDBB2873C45E2860A233E5C815F38FA",
+    "unchanged_WinVidCompress_bat_sha256": "C5A38591DDE911446A97B210F2E7C520F52DCFD456DCF381A2A351B94D4A9F6D"
+  },
+  "limitations": [
+    "Five baseline desired-behavior assertions still fail on each host; fixing them belongs to WVC-M1-01/M1-03/M1-04.",
+    "FFmpeg/FFprobe unavailable on PATH/adjacent; no real encoding, validation, playback, visual/audio integrity or benchmark testing.",
+    "No actual Explorer launch, drag/drop, full special-character native argv or no-argument interactive menu execution; manual acceptance remains outstanding.",
+    "Native smoke uses generated .NET Framework recorders, two synthetic source sentinels, fixture APPDATA/output/PATH, controlled stdin; no media output is produced.",
+    "Initial exploratory Pester attempt was blocked by execution policy, not a demonstrated pre-seam failure; final checks used existing launcher-style process-local Bypass.",
+    "First config defect test had a missing fixture config directory; corrected before final tested checkpoint, then real OutputDir failure reproduced.",
+    "An initial single-file native entry smoke failed with baseline Count error; recorded as a known defect, with the working folder flow separately verified.",
+    "Full tier/fixture generation and lasting developer setup/encoding policy remain WVC-M0-03 scope; no CI run/pass claimed."
+  ],
+  "next_task": "WVC-M0-03"
+}

@@ -2,31 +2,36 @@
 
 Updated: 2026-10-04. Repository: `PikkuJanne/WinVidCompress`.
 
-`WVC-M0-01` is verified at import checkpoint `7fce9895d5e14554b78d82958c1ed7917a4b20ac`. This thread only installs and verifies the developer handoff; no application improvement has been implemented. The other 31 tasks remain `todo`, with their 124 acceptance criteria `not_run`. TASKS.json is the task-status authority.
+`WVC-M0-01` and `WVC-M0-02` are verified for their bounded acceptance criteria. M0-02 implementation/tested commit: `a1e22e4a1f6eec9ca56e0e58e8d624155f627342`. The remaining 30 tasks are `todo`, with 120 acceptance criteria `not_run`. TASKS.json is the status authority. No milestone/release or owner acceptance is claimed.
 
 ## Actual repository and reconciliation
 
-- Actual root: `D:/projects/WinVidCompress-main`.
-- Active branch: `codex/wvc-m0-01-handoff`; upstream: `origin/codex/wvc-m0-01-handoff`.
-- Origin fetch and push URLs: `https://github.com/PikkuJanne/WinVidCompress.git` (one effective URL for each direction).
-- The initial folder had seven source/documentation/asset files and no `.git` metadata. No root or parent AGENTS.md was present. Git-dependent import was held until repository identity and file ownership were established.
-- All seven local Git blob hashes exactly matched live GitHub main `5bab7fc698d153128babe3421ce19c0ca3012cc5`; no unknown files existed. Live main equals the historical review anchor; no newer source work or existing feature branch/PR required reconciliation.
-- Git metadata was restored in place from fetched live history using `git init`, remote/fetch, creation of the previously absent feature ref, and index-only `git read-tree`. No checkout of working files, stash, reset, clean, force-push, or history replacement occurred. Before import, the feature branch was clean, with no conflicts/operations and no upstream; the first authorized push established the matching upstream.
-- The external installer was inspected, previewed without changing worktree inventory or hashes, then applied with `--apply --expected-head 5bab7fc698d153128babe3421ce19c0ca3012cc5`. It added 62 missing handoff files; all payload hashes matched. AGENTS.md was new, so no owner guidance was overwritten. BASELINE.json remains an unchanged historical snapshot.
-- The compressor, launcher, README, license, and all three assets remain byte-identical to live main. Existing libx264 / veryfast / CRF 22 / AAC 160k / MP4 +faststart defaults remain intact.
+- Root: `D:/projects/WinVidCompress-main`.
+- Branch: `codex/wvc-m0-02-characterization`; upstream: `origin/codex/wvc-m0-02-characterization`.
+- Effective origin fetch/push: `https://github.com/PikkuJanne/WinVidCompress.git`, one destination each.
+- Initial checkout: clean M0-01 feature HEAD `4e4d241b1d0e4eae1482bee9076e7b147dc15887`, matching both live endpoints, no operations/conflicts.
+- Fetch revealed the owner's merge of PR #1. Main is `778f5678d115cfefe863b9e7cb7f1d1cf4520dee`, a descendant with an identical tree. PR #1 is merged, rather than still draft as the prior handoff recorded.
+- Created this task branch from inspected current main. Historical BASELINE.json was compared, never used as a reset target. No unknown changes were present; no stash/reset/clean/history rewrite occurred.
+- Application edit: three lines before Main permit dot-source helper loading without startup. Existing functions/default quality/normal entry flow and the original BAT remain. README/license/assets are unchanged.
 
 ## Evidence and limitations
 
-Evidence: [WVC-M0-01.md](evidence/WVC-M0-01.md), [WVC-M0-01.json](evidence/WVC-M0-01.json).
+Evidence: [WVC-M0-02.md](evidence/WVC-M0-02.md), [JSON](evidence/WVC-M0-02.json), [session](evidence/WVC-M0-02-session.md).
 
-Windows 11 Pro build 26300; PowerShell 7.6.5; Python 3.14.7; Git 2.56.0.windows.1; GitHub CLI 2.97.0. Git/Python/GitHub CLI were already available; no software was installed. Windows PowerShell 5.1.26100.9444 and PowerShell 7.6.5 are available (version queries only); application compatibility was not exercised. FFmpeg/FFprobe were not found on PATH or in this root.
+Windows 11 Pro 10.0.26300. Separately tested Windows PowerShell 5.1.26100.9444 Desktop and PowerShell 7.6.5 Core. Pester 5.7.1 and PSScriptAnalyzer 1.24.0 were prepared only in an external temporary developer directory; neither is an application dependency.
 
-Developer-helper suite: 48 tests, 47 passed, 1 skipped, exit 0. The destination symlink-escape test was skipped because Windows symlink creation was unavailable. This differs from the external bundle's historical Linux helper run of 48 passes. Bundle/tool checks do not establish application behavior. Installed tracker validation passes: 32 tasks, 128 criteria, all 23 reviewed improvements mapped. No application, media, Explorer, benchmark, or Windows PowerShell 5.1 compatibility tests ran in this task.
+- Positive characterization on each host: 22 passed, 0 failed, 0 skipped, 5 excluded/not_run; exit 0.
+- Separate KnownDefect run on each host: 0 passed, 5 failed, 0 skipped, 22 excluded/not_run; exit 1. Desired assertions fail for Quit repeating, missing OutputDir in valid JSON, empty-folder FullName access, single-video-folder Count access and explicit single-file Count access. These remain defects for M1-01/M1-03/M1-04, not endorsed behavior.
+- Native entry smoke: 3 passed/0 failed/0 skipped, exit 0. Actual PS1 -File on both hosts and unchanged BAT process a two-video synthetic folder with native recorders; captured paths/counters and source hashes checked. Recorder produces no media.
+- Quick: parse/load checks pass on both hosts; analyzer error-severity scan returns zero diagnostics across four PS1 files; tracker valid with 32 tasks/128 criteria/23 mappings; CRLF-aware whitespace passes.
+- Tests isolate APPDATA/output/source roots. Real TUI, user configuration and user Videos are not exercised. Collision sentinels remain unchanged under mocks.
 
-Draft PR: [#1](https://github.com/PikkuJanne/WinVidCompress/pull/1), open against main. At the tested import checkpoint, GitHub reported no workflow runs or check runs; no CI pass is claimed.
+FFmpeg/FFprobe remain unavailable on PATH/adjacent. No real encoding, media validation/playback, Explorer drag/drop, interactive menu, comprehensive native special-character argv or benchmark result is claimed. Manual Explorer/release acceptance remains outstanding. Full harness/setup/fixture/encoding policy belongs to M0-03.
 
-Previous verified synchronization: `7fce9895d5e14554b78d82958c1ed7917a4b20ac`, checked at `2026-10-04T15:35:55.240343+00:00`; local HEAD equals live fetch and push feature refs, worktree clean, no operation/conflict state. This is a point-in-time result for that checkpoint only.
+Draft PR: [#2](https://github.com/PikkuJanne/WinVidCompress/pull/2), open against main. At the implementation checkpoint GitHub reports zero workflow runs/check runs and an empty PR checks list; no CI pass is claimed.
 
-The final evidence handoff commit's push/check is pending when this file is committed. Verify that final SHA externally after the final push and again at the next session; never treat the prior checkpoint as proof for a later commit. No merge, default-branch push, release, dependency bundling/signing, settings/secrets change, or website deployment was authorized/performed.
+Previous verified sync: `a1e22e4a1f6eec9ca56e0e58e8d624155f627342` at `2026-10-04T15:51:43.173257+00:00`; local HEAD equals live fetch/push feature refs, matching upstream, clean worktree, no operations/conflicts. This applies only to that checkpoint.
 
-Next task: **WVC-M0-02 — Characterize existing behaviour and add the smallest test seam**. No blocker was found for this handoff; symlink coverage remains an explicit helper-test limitation.
+Final evidence handoff push/check is pending when this file is committed. Report final SHA equality externally after commit/push; independently verify at the next session. This agent performed no main push/merge, release, settings/secrets change, website deployment or quality change.
+
+Next: **WVC-M0-03 — Establish the regression harness and generated fixtures**. No blocker to that bounded developer task; known application defects and untested media/manual paths remain explicit.
