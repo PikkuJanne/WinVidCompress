@@ -2,36 +2,47 @@
 
 Updated: 2026-10-04. Repository: `PikkuJanne/WinVidCompress`.
 
-`WVC-M0-01` and `WVC-M0-02` are verified for their bounded acceptance criteria. M0-02 implementation/tested commit: `a1e22e4a1f6eec9ca56e0e58e8d624155f627342`. The remaining 30 tasks are `todo`, with 120 acceptance criteria `not_run`. TASKS.json is the status authority. No milestone/release or owner acceptance is claimed.
+`WVC-M0-01`, `WVC-M0-02` and `WVC-M0-03` are verified for their bounded acceptance criteria. The remaining 29 tasks are `todo`, with 116 acceptance criteria `not_run`. TASKS.json is the status authority. No milestone/release or owner acceptance is claimed.
 
 ## Actual repository and reconciliation
 
 - Root: `D:/projects/WinVidCompress-main`.
-- Branch: `codex/wvc-m0-02-characterization`; upstream: `origin/codex/wvc-m0-02-characterization`.
+- Branch: `codex/wvc-m0-03-harness`; upstream: `origin/codex/wvc-m0-03-harness`.
 - Effective origin fetch/push: `https://github.com/PikkuJanne/WinVidCompress.git`, one destination each.
-- Initial checkout: clean M0-01 feature HEAD `4e4d241b1d0e4eae1482bee9076e7b147dc15887`, matching both live endpoints, no operations/conflicts.
-- Fetch revealed the owner's merge of PR #1. Main is `778f5678d115cfefe863b9e7cb7f1d1cf4520dee`, a descendant with an identical tree. PR #1 is merged, rather than still draft as the prior handoff recorded.
-- Created this task branch from inspected current main. Historical BASELINE.json was compared, never used as a reset target. No unknown changes were present; no stash/reset/clean/history rewrite occurred.
-- Application edit: three lines before Main permit dot-source helper loading without startup. Existing functions/default quality/normal entry flow and the original BAT remain. README/license/assets are unchanged.
+- Initial checkout: clean M0-02 feature HEAD `cef0fa39262a47f04634b0a90106a89536dccddd`, matching both live endpoints, no operations/conflicts or unknown changes.
+- Fetch revealed the owner's merge of PR #2. Main `d1b28add3cd72375ff15ac6a3c625e4de619c8c8` is a descendant with an identical tree. PR #2 is merged, rather than still draft as the prior handoff recorded.
+- Created this task branch from that inspected main. Historical BASELINE.json was compared, never used as a reset target. No stash/reset/clean/history rewrite occurred.
+- M0-03 implementation checkpoints: `7d37d0ef80238d9482fec4976dc377487f7b4818` and final tested `dffc714ba3f6269f12e8e88056f49bae345ead68`. Application PS1/BAT, original README/license/assets and default quality are unchanged in this task.
 
 ## Evidence and limitations
 
-Evidence: [WVC-M0-02.md](evidence/WVC-M0-02.md), [JSON](evidence/WVC-M0-02.json), [session](evidence/WVC-M0-02-session.md).
+Evidence: [WVC-M0-03.md](evidence/WVC-M0-03.md), [JSON](evidence/WVC-M0-03.json), [session](evidence/WVC-M0-03-session.md). Earlier [M0-02 evidence](evidence/WVC-M0-02.md) remains the application characterization baseline.
 
-Windows 11 Pro 10.0.26300. Separately tested Windows PowerShell 5.1.26100.9444 Desktop and PowerShell 7.6.5 Core. Pester 5.7.1 and PSScriptAnalyzer 1.24.0 were prepared only in an external temporary developer directory; neither is an application dependency.
+Windows 11 Pro 10.0.26300. Separately tested Windows PowerShell 5.1.26100.9444 Desktop and PowerShell 7.6.5 Core. Developer pins are Pester 5.7.1 and PSScriptAnalyzer 1.24.0; reused external temporary modules, with no dependency download in M0-03 or application runtime dependency added.
 
-- Positive characterization on each host: 22 passed, 0 failed, 0 skipped, 5 excluded/not_run; exit 0.
-- Separate KnownDefect run on each host: 0 passed, 5 failed, 0 skipped, 22 excluded/not_run; exit 1. Desired assertions fail for Quit repeating, missing OutputDir in valid JSON, empty-folder FullName access, single-video-folder Count access and explicit single-file Count access. These remain defects for M1-01/M1-03/M1-04, not endorsed behavior.
-- Native entry smoke: 3 passed/0 failed/0 skipped, exit 0. Actual PS1 -File on both hosts and unchanged BAT process a two-video synthetic folder with native recorders; captured paths/counters and source hashes checked. Recorder produces no media.
-- Quick: parse/load checks pass on both hosts; analyzer error-severity scan returns zero diagnostics across four PS1 files; tracker valid with 32 tasks/128 criteria/23 mappings; CRLF-aware whitespace passes.
-- Tests isolate APPDATA/output/source roots. Real TUI, user configuration and user Videos are not exercised. Collision sentinels remain unchanged under mocks.
+Final exact-commit outcomes:
 
-FFmpeg/FFprobe remain unavailable on PATH/adjacent. No real encoding, media validation/playback, Explorer drag/drop, interactive menu, comprehensive native special-character argv or benchmark result is claimed. Manual Explorer/release acceptance remains outstanding. Full harness/setup/fixture/encoding policy belongs to M0-03.
+| Run | Passed | Failed | Skipped | NotRun | Exit |
+|---|---:|---:|---:|---:|---:|
+| Quick, each PS5.1/PS7 host | 59 | 0 | 0 | 5 | 0 |
+| Targeted, each PS5.1/PS7 host | 70 | 0 | 4 | 5 | 0 |
+| Full, both required hosts | 125 | 10 | 4 | 8 | 1 |
+| Manual checklist, unexecuted | 0 | 0 | 0 | 7 | 2 |
+| Explicit absent required PS7, Quick | 4 | 0 | 1 | 0 | 2 |
+| PS5.1 supplied as PS7, Targeted | 14 | 0 | 6 | 0 | 2 |
 
-Draft PR: [#2](https://github.com/PikkuJanne/WinVidCompress/pull/2), open against main. At the implementation checkpoint GitHub reports zero workflow runs/check runs and an empty PR checks list; no CI pass is claimed.
+Quick's passing count combines 55 individual Pester checks and four static/schema gates. Targeted adds three native recorder entry cases and eight copied/hashed synthetic probe JSON cases. Four one-second synthetic media recipes are implemented but skipped because FFmpeg/FFprobe are unavailable. Actual generation/probing and visual/audio integrity have not been verified.
 
-Previous verified sync: `a1e22e4a1f6eec9ca56e0e58e8d624155f627342` at `2026-10-04T15:51:43.173257+00:00`; local HEAD equals live fetch/push feature refs, matching upstream, clean worktree, no operations/conflicts. This applies only to that checkpoint.
+Full's ten failures are the same five baseline application assertions on each host: Quit repeats; `{}` configuration throws on OutputDir; empty-folder FullName throws; single-video folder and explicit single-file Count throw. These remain for M1-01/M1-03/M1-04. Full is a failed gate, not application/release verification. Seven actual manual checks and future media/CLI/safety/packaging coverage remain NotRun.
 
-Final evidence handoff push/check is pending when this file is committed. Report final SHA equality externally after commit/push; independently verify at the next session. This agent performed no main push/merge, release, settings/secrets change, website deployment or quality change.
+Mixed pass/fail/skip child execution, all-skipped suites, invalid/count-mismatched/duplicate child reports, missing/mislabelled hosts, native argument quoting, owned cleanup and fixture failure paths have regression coverage on both hosts. Repeating clean-commit PS7 Quick produced byte-identical reports. Nested tests are discovered automatically in stable path order. Tracker and CRLF-aware whitespace checks pass; no private media/config/paths/logs/executables are committed.
 
-Next: **WVC-M0-03 — Establish the regression harness and generated fixtures**. No blocker to that bounded developer task; known application defects and untested media/manual paths remain explicit.
+No actual Explorer drag/drop, double-click menu, real cancellation, playback/colour judgement, UNC/long-path or benchmark acceptance ran. The native recorder smoke exercises actual PS1/BAT processes with isolated two-file synthetic inputs and creates no media.
+
+Draft [PR #3](https://github.com/PikkuJanne/WinVidCompress/pull/3) is open against main. GitHub reports zero workflow runs and an empty PR checks list at `dffc714ba3f6269f12e8e88056f49bae345ead68`; no CI pass is claimed.
+
+Previous verified sync: `dffc714ba3f6269f12e8e88056f49bae345ead68` at `2026-10-04T17:09:49.610890+00:00`; local HEAD equals live fetch/push feature refs, matching upstream, clean worktree, no operations/conflicts. This applies only to that checkpoint.
+
+Final evidence handoff push/check is pending when this file is committed. Report final SHA equality externally after commit/push; independently verify at the next session. This agent performed no main push/merge, release, settings/secrets change, deployment or quality change.
+
+Next: **WVC-M1-01 — Repair menu exit and separate source/output folder selection**. No blocker to that bounded task; encoder/media/manual acceptance gaps remain explicit.

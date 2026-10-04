@@ -1,0 +1,844 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M0-03",
+  "acceptance_ids": [
+    "WVC-M0-03-A01",
+    "WVC-M0-03-A02",
+    "WVC-M0-03-A03",
+    "WVC-M0-03-A04"
+  ],
+  "recorded_at": "2026-10-04",
+  "tested_commits": [
+    "7d37d0ef80238d9482fec4976dc377487f7b4818",
+    "dffc714ba3f6269f12e8e88056f49bae345ead68"
+  ],
+  "base_commit": "d1b28add3cd72375ff15ac6a3c625e4de619c8c8",
+  "branch": "codex/wvc-m0-03-harness",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "python": "3.14.7",
+    "git": "2.56.0.windows.1",
+    "github_cli": "2.97.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-quick51-358fd080780d3.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'quick51'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 59,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 5
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "native_tools": [],
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [
+        "Current/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "Current/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "Current/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "fixture_outcomes": [],
+      "classification": "Selected scope passed with visible omissions"
+    },
+    {
+      "name": "quick7",
+      "tier": "Quick",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-quick7-80241d189723d8.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'quick7'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 59,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 5
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "native_tools": [],
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [
+        "Current/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "Current/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "Current/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "fixture_outcomes": [],
+      "classification": "Selected scope passed with visible omissions"
+    },
+    {
+      "name": "target51",
+      "tier": "Targeted",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-target51-0a5081e44c20d.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'target51'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 70,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 5
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": null,
+          "Available": false
+        },
+        {
+          "Name": "FFprobe",
+          "Version": null,
+          "Available": false
+        }
+      ],
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "Current/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "Current/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "Current/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "fixture_outcomes": [
+        {
+          "id": "sdr-av",
+          "file": "sdr-av.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "silent",
+          "file": "silent.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "multi-stream",
+          "file": "multi-stream.mkv",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "audio-only",
+          "file": "audio-only.m4a",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "attached-picture",
+          "file": "attached-picture.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "display-geometry",
+          "file": "display-geometry.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-pq",
+          "file": "hdr-pq.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-hlg",
+          "file": "hdr-hlg.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "ten-bit-sdr",
+          "file": "ten-bit-sdr.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "unknown-duration",
+          "file": "unknown-duration.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "wrong-shape",
+          "file": "wrong-shape.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "malformed",
+          "file": "malformed.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        }
+      ],
+      "classification": "Selected scope passed with visible omissions"
+    },
+    {
+      "name": "target7",
+      "tier": "Targeted",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-target7-de5fccf986ed4.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'target7'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 70,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 5
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": null,
+          "Available": false
+        },
+        {
+          "Name": "FFprobe",
+          "Version": null,
+          "Available": false
+        }
+      ],
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "Current/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "Current/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "Current/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "fixture_outcomes": [
+        {
+          "id": "sdr-av",
+          "file": "sdr-av.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "silent",
+          "file": "silent.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "multi-stream",
+          "file": "multi-stream.mkv",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "audio-only",
+          "file": "audio-only.m4a",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "attached-picture",
+          "file": "attached-picture.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "display-geometry",
+          "file": "display-geometry.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-pq",
+          "file": "hdr-pq.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-hlg",
+          "file": "hdr-hlg.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "ten-bit-sdr",
+          "file": "ten-bit-sdr.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "unknown-duration",
+          "file": "unknown-duration.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "wrong-shape",
+          "file": "wrong-shape.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "malformed",
+          "file": "malformed.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        }
+      ],
+      "classification": "Selected scope passed with visible omissions"
+    },
+    {
+      "name": "full",
+      "tier": "Full",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-full-e6291774b7e298.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'full'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 1,
+      "status": "Failed",
+      "counts": {
+        "Passed": 125,
+        "Failed": 10,
+        "Skipped": 4,
+        "NotRun": 8
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": null,
+          "Available": false
+        },
+        {
+          "Name": "FFprobe",
+          "Version": null,
+          "Available": false
+        }
+      ],
+      "failed_case_ids": [
+        "PowerShell7/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "PowerShell7/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "PowerShell7/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "PowerShell7/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "PowerShell7/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]",
+        "WindowsPowerShell/056:Quit exits the surrounding menu loop [WVC-M1-01]",
+        "WindowsPowerShell/057:wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]",
+        "WindowsPowerShell/058:empty folder collection returns an empty queue [WVC-M1-04]",
+        "WindowsPowerShell/059:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "WindowsPowerShell/060:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "coverage/future-media-cli-safety-packaging",
+        "manual/explorer-file-folder-multi-drop",
+        "manual/explorer-menu-quit",
+        "manual/explorer-special-character-argv",
+        "manual/playback-sdr-hdr-audio",
+        "manual/real-ctrl-c-and-console-close",
+        "manual/representative-benchmarks",
+        "manual/unc-long-paths"
+      ],
+      "fixture_outcomes": [
+        {
+          "id": "sdr-av",
+          "file": "sdr-av.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "silent",
+          "file": "silent.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "multi-stream",
+          "file": "multi-stream.mkv",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "audio-only",
+          "file": "audio-only.m4a",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "attached-picture",
+          "file": "attached-picture.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "display-geometry",
+          "file": "display-geometry.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-pq",
+          "file": "hdr-pq.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-hlg",
+          "file": "hdr-hlg.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "ten-bit-sdr",
+          "file": "ten-bit-sdr.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "unknown-duration",
+          "file": "unknown-duration.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "wrong-shape",
+          "file": "wrong-shape.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "malformed",
+          "file": "malformed.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        }
+      ],
+      "classification": "Known application assertions fail as required; not a passing full gate"
+    },
+    {
+      "name": "manual",
+      "tier": "Manual",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-manual-9293091d212858.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport ; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'manual'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 2,
+      "status": "Incomplete",
+      "counts": {
+        "Passed": 0,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 7
+      },
+      "hosts": [],
+      "native_tools": [],
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [
+        "manual/explorer-file-folder-multi-drop",
+        "manual/explorer-menu-quit",
+        "manual/explorer-special-character-argv",
+        "manual/playback-sdr-hdr-audio",
+        "manual/real-ctrl-c-and-console-close",
+        "manual/representative-benchmarks",
+        "manual/unc-long-paths"
+      ],
+      "fixture_outcomes": [],
+      "classification": "No manual checks executed; incomplete"
+    },
+    {
+      "name": "missing-host",
+      "tier": "Quick",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-missing-host-dac59499c4b1.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport -Hosts PowerShell7 -PowerShell7 (Join-Path ([IO.Path]::GetTempPath()) 'wvc-missing-host.exe'); $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'missing-host'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 2,
+      "status": "Incomplete",
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 1,
+        "NotRun": 0
+      },
+      "hosts": [],
+      "native_tools": [],
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "PowerShell7/pester",
+          "Status": "Skipped",
+          "Reason": "Required host or pinned Pester unavailable; unit suite not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "fixture_outcomes": [],
+      "classification": "Negative prerequisite/host-label accounting check; actual requested work omitted"
+    },
+    {
+      "name": "wrong-host-label",
+      "tier": "Targeted",
+      "command": "$taskReport = Join-Path ([IO.Path]::GetTempPath()) 'wvc-m03-final2-wrong-host-label-f9a312bcb7dcd.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path ([IO.Path]::GetTempPath()) 'wvc-m0-02-dev-modules') -ReportPath $taskReport -Hosts PowerShell7 -PowerShell7 (Get-Command powershell).Source; $taskExit = $LASTEXITCODE; if (Test-Path -LiteralPath $taskReport) { $report = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; [pscustomobject]@{ Name = 'wrong-host-label'; ExitCode = $taskExit; ReportPath = $taskReport; Report = $report } | ConvertTo-Json -Depth 35 }; exit $taskExit",
+      "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+      "tested_tree_dirty": false,
+      "exit_code": 2,
+      "status": "Incomplete",
+      "counts": {
+        "Passed": 14,
+        "Failed": 0,
+        "Skipped": 6,
+        "NotRun": 0
+      },
+      "hosts": [],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": null,
+          "Available": false
+        },
+        {
+          "Name": "FFprobe",
+          "Version": null,
+          "Available": false
+        }
+      ],
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "entry/direct-ps7",
+          "Status": "Skipped",
+          "Reason": "Required executable unavailable; entry not tested."
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "PowerShell7/pester",
+          "Status": "Skipped",
+          "Reason": "Required host or pinned Pester unavailable; unit suite not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "fixture_outcomes": [
+        {
+          "id": "sdr-av",
+          "file": "sdr-av.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "silent",
+          "file": "silent.mp4",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "multi-stream",
+          "file": "multi-stream.mkv",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "audio-only",
+          "file": "audio-only.m4a",
+          "kind": "Media",
+          "status": "Skipped",
+          "generated": false
+        },
+        {
+          "id": "attached-picture",
+          "file": "attached-picture.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "display-geometry",
+          "file": "display-geometry.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-pq",
+          "file": "hdr-pq.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "hdr-hlg",
+          "file": "hdr-hlg.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "ten-bit-sdr",
+          "file": "ten-bit-sdr.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "unknown-duration",
+          "file": "unknown-duration.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "wrong-shape",
+          "file": "wrong-shape.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        },
+        {
+          "id": "malformed",
+          "file": "malformed.json",
+          "kind": "ProbeJson",
+          "status": "Passed",
+          "generated": true
+        }
+      ],
+      "classification": "Negative prerequisite/host-label accounting check; actual requested work omitted"
+    }
+  ],
+  "deterministic_report_check": {
+    "tested_commit": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+    "command": "Repeat the PowerShell 7 Quick command above with a distinct new temporary -ReportPath; compare both report files using Get-FileHash -Algorithm SHA256.",
+    "repeated_run": {
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0,
+      "not_run": 5,
+      "exit_code": 0
+    },
+    "sha256": "7E2EBE146143EAA5651D17FC354B9E354BAFE8FADB42D12984F06AF2F30157CA",
+    "equal": true
+  },
+  "sanitized_artifacts": [
+    "tests/fixtures/inventory.json",
+    "tests/fixtures/probe/*.json",
+    "tests/README.md",
+    "evidence/WVC-M0-03.md",
+    "evidence/WVC-M0-03-session.md"
+  ],
+  "acceptance": {
+    "A01": "Actual mixed child suite yields 1 passed/1 failed/1 skipped, exit1, verified by a passing harness regression on each host. Full returns exit1 with all ten known baseline failures. Invalid reports/zero executed suites cannot be green.",
+    "A02": "Each Targeted run records four media Skipped; explicit absent PS7 and wrong-version PS7 candidate produce incomplete exit2 without false PS7 execution.",
+    "A03": "Application/launcher/original README/license/assets unchanged; staged artifact review has no media/executables/packages/logs. No private data/config/paths/secrets. No dependency downloads in this task or normal compression.",
+    "A04": "Authoritative 12-case inventory and runtime inventories map recipes, required capabilities, expected streams, provenance and owned cleanup. Eight JSON files copied/hashed; four real media recipes skipped, not generated."
+  },
+  "manual_checks": [],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "checked_at": "2026-10-04T17:09:49.610890+00:00",
+    "head": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+    "live_fetch_head": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+    "live_push_head": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+    "status": "SYNCHRONIZED",
+    "dirty": false,
+    "operations": []
+  },
+  "pull_request": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/3",
+    "state": "OPEN",
+    "draft": true,
+    "tested_head": "dffc714ba3f6269f12e8e88056f49bae345ead68",
+    "check_runs": 0,
+    "workflow_runs": 0
+  },
+  "final_handoff_push": "pending when committed; verify final live fetch/push equality and clean state externally",
+  "source_hashes": {
+    "unchanged_WinVidCompress_ps1_sha256": "6F7015B37DD492CBD62511A76DAE16FAECDBB2873C45E2860A233E5C815F38FA",
+    "unchanged_WinVidCompress_bat_sha256": "C5A38591DDE911446A97B210F2E7C520F52DCFD456DCF381A2A351B94D4A9F6D"
+  },
+  "limitations": [
+    "Actual FFmpeg/FFprobe unavailable on PATH, next to application or in inspected bundled dependency tree. Four one-second recipes implemented but real generation/probing not exercised.",
+    "Full is failed, not verified application/release acceptance: five known baseline defects on each host remain for M1-01/M1-03/M1-04, plus four media skips/eight not-run coverage records.",
+    "Manual checklist is unexecuted; no Explorer, real cancellation, playback/colour judgement, UNC/long-path or benchmark pass claimed.",
+    "Passing counts combine 55 Pester checks per host and four static/schema gates; Targeted adds three recorder entry cases and eight JSON copies, not real encoded-media results.",
+    "JSON fixture provenance is hand-authored synthetic and does not establish actual media orientation/HDR handling or full visual/audio integrity.",
+    "Developer modules reused from external temporary M0-02 preparation; runners never install/download them. No FFmpeg or other executables committed.",
+    "Read-only subagents reviewed accounting/fixtures. Initial exploratory PS5.1 JSON array wrapping, cross-version inherited module-path and multi-match executable resolution issues were fixed before the tested commit.",
+    "Review fixes rejected non-finite duration, false host labels, masked all-skipped child suites, duplicate/mismatched reports and stale successful cleanup reports before the final tested checkpoint.",
+    "No GitHub workflow/check runs present at implementation checkpoint; no CI pass.",
+    "A small follow-up discovers all nested *.Tests.ps1 automatically; its added regression and all tier/negative/determinism checks were rerun on the clean follow-up commit."
+  ],
+  "next_task": "WVC-M1-01"
+}

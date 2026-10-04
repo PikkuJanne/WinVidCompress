@@ -35,6 +35,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
 
+The tier runner automatically discovers all nested `tests/**/*.Tests.ps1` in stable path order, so later unit/integration regressions are included without changing a hard-coded suite list.
+
 Choose `-Hosts Current`, `WindowsPowerShell`, or `PowerShell7`; Full's default is both named hosts. Executable overrides are `-WindowsPowerShell` and `-PowerShell7`. The harness verifies each host's actual version/edition before assigning its label. An explicit missing override is unavailable, rather than a request to fall back silently to PATH.
 
 ## Reports and exit codes
