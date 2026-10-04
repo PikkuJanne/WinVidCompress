@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "draft_not_for_publication",
+  "product_id": "winvidcompress",
+  "name": "WinVidCompress",
+  "summary": "A local Windows video compressor built with PowerShell and FFmpeg.",
+  "source_repository": "https://github.com/PikkuJanne/WinVidCompress",
+  "processing_location": "user_device",
+  "uploads_supported": false,
+  "reviewed_default_profile": {
+    "video": "libx264",
+    "preset": "veryfast",
+    "crf": 22,
+    "audio": "aac",
+    "audio_bitrate": "160k",
+    "container": "mp4",
+    "faststart": true
+  },
+  "tested_platforms": [],
+  "published_version": null,
+  "release_date": null,
+  "release_url": null,
+  "download_url": null,
+  "sha256": null,
+  "screenshots": [],
+  "measured_examples": [],
+  "known_limitations": []
+}

@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M0-01",
+  "acceptance_ids": [
+    "WVC-M0-01-A01",
+    "WVC-M0-01-A02",
+    "WVC-M0-01-A03",
+    "WVC-M0-01-A04"
+  ],
+  "recorded_at": "2026-10-04T15:38:44.114393+00:00",
+  "repository": "PikkuJanne/WinVidCompress",
+  "actual_root": "D:/projects/WinVidCompress-main",
+  "branch": "codex/wvc-m0-01-handoff",
+  "upstream": "origin/codex/wvc-m0-01-handoff",
+  "effective_origin_fetch_url": "https://github.com/PikkuJanne/WinVidCompress.git",
+  "effective_origin_push_url": "https://github.com/PikkuJanne/WinVidCompress.git",
+  "tested_commits": [
+    "5bab7fc698d153128babe3421ce19c0ca3012cc5",
+    "7fce9895d5e14554b78d82958c1ed7917a4b20ac"
+  ],
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300",
+    "powershell": "7.6.5 Core",
+    "windows_powershell": "5.1.26100.9444; version query only; application compatibility not run",
+    "python": "3.14.7",
+    "git": "2.56.0.windows.1",
+    "github_cli": "2.97.0",
+    "ffmpeg": "not found on PATH or in repository",
+    "ffprobe": "not found on PATH or in repository"
+  },
+  "initial_reality": {
+    "git_metadata_present": false,
+    "existing_owner_or_parent_agents": false,
+    "local_files": 7,
+    "all_original_blobs_match_live_main": true,
+    "unknown_files": [],
+    "live_main": "5bab7fc698d153128babe3421ce19c0ca3012cc5",
+    "historical_review_matches_live_main": true,
+    "existing_feature_refs": [],
+    "existing_open_prs": [],
+    "resolution": "Held Git-dependent import; verified identity and every local blob/inventory before reconstructing absent Git metadata from fetched live history; no working-file changes or history replacement"
+  },
+  "import": {
+    "expected_head": "5bab7fc698d153128babe3421ce19c0ca3012cc5",
+    "preview_additions": 62,
+    "preview_worktree_unchanged": true,
+    "added_files": 62,
+    "all_payload_hashes_match": true,
+    "original_files_unchanged": true,
+    "existing_agents_merge": "not required: no existing AGENTS.md",
+    "all_32_tasks_initially_todo": true,
+    "all_128_criteria_initially_not_run": true,
+    "application_improvements_implemented": 0
+  },
+  "original_files": {
+    "LICENSE": {
+      "bytes": 1211,
+      "git_blob_sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657",
+      "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+      "unchanged_from_live_main": true
+    },
+    "README.md": {
+      "bytes": 3966,
+      "git_blob_sha": "4388707ecfb004665837c64a9ad00bf6c87a9344",
+      "sha256": "b7d6076f0e40d0ce7fa6d2c700c60d498a35aad30f34734712d811f1d7e41673",
+      "unchanged_from_live_main": true
+    },
+    "WinVidCompress.bat": {
+      "bytes": 386,
+      "git_blob_sha": "443531538e5b0f1632f2b19d3c6c0dc15c1d0371",
+      "sha256": "c5a38591dde911446a97b210f2e7c520f52dcfd456dcf381a2a351b94d4a9f6d",
+      "unchanged_from_live_main": true
+    },
+    "WinVidCompress.ps1": {
+      "bytes": 15695,
+      "git_blob_sha": "55ff148637364fec2365b9a6c06e945db36356b7",
+      "sha256": "cf2f75d55235c5f05b3169a9d2b2dc87b6e8d52b6ffc0806d9770c8a7d251436",
+      "unchanged_from_live_main": true
+    },
+    "WinVidCompress_icon_variant.png": {
+      "bytes": 11007,
+      "git_blob_sha": "b46188de4a51e139cf1546d812b5048d17b3dcd4",
+      "sha256": "26668c8d59384a5fcb1adf894fba7ae5f9c75c84355a3a527dda1046f69445cd",
+      "unchanged_from_live_main": true
+    },
+    "WinVidCompress_poster.png": {
+      "bytes": 1769258,
+      "git_blob_sha": "16634f49359d64f040b54118e682008018340382",
+      "sha256": "b9a8a87a34780c2e241a98ef7f67968495bedbff5cf42c971234952a5e3e68d9",
+      "unchanged_from_live_main": true
+    },
+    "WinVidCompress_variant.ico": {
+      "bytes": 18529,
+      "git_blob_sha": "3acc46fc70921f802f0c03e6e355252665c12089",
+      "sha256": "e4b5462ffdfe3618586e6df12b03c1230104ee8344fe4133fba3d3c009fe1066",
+      "unchanged_from_live_main": true
+    }
+  },
+  "runs": [
+    {
+      "tier": "quick",
+      "command": "Compare all seven local Git blob hashes against gh api repos/PikkuJanne/WinVidCompress/git/trees/5bab7fc698d153128babe3421ce19c0ca3012cc5?recursive=1",
+      "exit_code": 0,
+      "result": "7/7 exact blob matches; complete local/remote file inventory match; no unknown files"
+    },
+    {
+      "tier": "quick",
+      "command": "git init --initial-branch=codex/wvc-m0-01-handoff; git remote add origin https://github.com/PikkuJanne/WinVidCompress.git; git fetch --no-tags origin; git update-ref refs/heads/codex/wvc-m0-01-handoff 5bab7fc698d153128babe3421ce19c0ca3012cc5 0000000000000000000000000000000000000000; git read-tree 5bab7fc698d153128babe3421ce19c0ca3012cc5",
+      "exit_code": 0,
+      "result": "Sequential guarded metadata-only bootstrap of absent Git tracking; clean feature branch; no working-file checkout"
+    },
+    {
+      "tier": "quick",
+      "command": "python \"BUNDLE_PATH/tools/install_bundle.py\" --repo \"D:/projects/WinVidCompress-main\"",
+      "exit_code": 0,
+      "result": "62 add actions; no conflicts/safety issues; worktree file inventory and SHA-256 hashes identical before/after preview"
+    },
+    {
+      "tier": "quick",
+      "command": "python \"BUNDLE_PATH/tools/install_bundle.py\" --repo \"D:/projects/WinVidCompress-main\" --apply --expected-head 5bab7fc698d153128babe3421ce19c0ca3012cc5",
+      "exit_code": 0,
+      "result": "62/62 newly added payload hashes matched; 7/7 original SHA-256 hashes unchanged; HEAD unchanged"
+    },
+    {
+      "tier": "targeted",
+      "working_directory": "BUNDLE_PATH, outside actual repository",
+      "command": "python -B -m unittest discover -s bundle-tests -v",
+      "exit_code": 0,
+      "tests": 48,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 79.077,
+      "skip_reason": "test_25_destination_symlink_escape_is_refused: Windows symlink creation unavailable; isolated fixtures do not establish application behavior or GitHub transport"
+    },
+    {
+      "tier": "quick",
+      "working_directory": "BUNDLE_PATH",
+      "command": "python -B repo-files/tools/codex-winvidcompress/validate_tracker.py --repo repo-files",
+      "exit_code": 0,
+      "result": "32 tasks; 128 criteria; 23 improvements mapped; no errors"
+    },
+    {
+      "tier": "quick",
+      "command": "python tools/codex-winvidcompress/validate_tracker.py --repo \"D:/projects/WinVidCompress-main\"",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "32 tasks; 128 criteria; 23 improvements mapped; no errors"
+    },
+    {
+      "tier": "quick",
+      "command": "git diff 5bab7fc698d153128babe3421ce19c0ca3012cc5 HEAD --exit-code -- WinVidCompress.ps1 WinVidCompress.bat README.md LICENSE WinVidCompress_icon_variant.png WinVidCompress_poster.png WinVidCompress_variant.ico",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "No original file changes"
+    },
+    {
+      "tier": "quick",
+      "command": "git diff --cached --check",
+      "exit_code": 0,
+      "result": "No whitespace errors before import commit; 62 staged files were additions in approved handoff paths"
+    },
+    {
+      "tier": "manual",
+      "command": "git push -u origin HEAD:refs/heads/codex/wvc-m0-01-handoff",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "Created feature branch and matching upstream; no main push"
+    },
+    {
+      "tier": "manual",
+      "command": "python tools/codex-winvidcompress/check_repo_sync.py --repo \"D:/projects/WinVidCompress-main\"",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "SYNCHRONIZED; local HEAD equals live fetch and push refs; clean worktree; no conflicts/operations"
+    },
+    {
+      "tier": "manual",
+      "command": "gh pr create --repo PikkuJanne/WinVidCompress --head codex/wvc-m0-01-handoff --base main --draft --title \"docs(wvc): install improvement handoff and verify M0-01 sync\" --body-file SANITIZED_PR_BODY",
+      "exit_code": 0,
+      "result": "Opened draft PR #1; attached to current Codex chat"
+    },
+    {
+      "tier": "manual",
+      "command": "gh pr view 1 --repo PikkuJanne/WinVidCompress --json number,url,isDraft,state,headRefName,headRefOid,baseRefName,statusCheckRollup",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "OPEN draft PR #1; base main; feature HEAD matches checkpoint; statusCheckRollup empty"
+    },
+    {
+      "tier": "manual",
+      "command": "gh api \"repos/PikkuJanne/WinVidCompress/actions/runs?head_sha=7fce9895d5e14554b78d82958c1ed7917a4b20ac\"; gh api repos/PikkuJanne/WinVidCompress/commits/7fce9895d5e14554b78d82958c1ed7917a4b20ac/check-runs",
+      "tested_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "exit_code": 0,
+      "result": "0 workflow runs and 0 check runs; CI not executed"
+    },
+    {
+      "tier": "quick",
+      "command": "powershell.exe -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'",
+      "exit_code": 0,
+      "result": "5.1.26100.9444; tooling version only, no application execution"
+    }
+  ],
+  "acceptance": {
+    "WVC-M0-01-A01": {
+      "status": "passed",
+      "basis": "Verified actual root, repository identity/URLs, clean feature checkpoint, all original blob/hash comparisons"
+    },
+    "WVC-M0-01-A02": {
+      "status": "passed",
+      "basis": "Initial unexpected absence of Git metadata investigated without replacing local files; isolated test_19 dirty preservation, test_21 conflicts refuse all writes, test_22 existing owner rules preserved, test_24 changed tracker never overwritten passed"
+    },
+    "WVC-M0-01-A03": {
+      "status": "passed",
+      "basis": "Real preview before/after hash inventory equal; exact-HEAD apply added 62 missing approved files only; tests 15-17,20,26-30 passed"
+    },
+    "WVC-M0-01-A04": {
+      "status": "passed",
+      "basis": "Real live GitHub fetch and push equality at import checkpoint; final evidence handoff push/check pending and must be reported externally"
+    }
+  },
+  "manual_checks": [
+    {
+      "kind": "live repository synchronization",
+      "status": "passed",
+      "commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+      "checked_at": "2026-10-04T15:35:55.240343+00:00"
+    },
+    {
+      "kind": "application Windows/Explorer/media acceptance",
+      "status": "not_run",
+      "reason": "Outside WVC-M0-01; source unchanged"
+    }
+  ],
+  "sanitized_artifacts": [
+    "evidence/WVC-M0-01.json",
+    "evidence/WVC-M0-01.md"
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-04T15:35:55.240343+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "root": "D:\\projects\\WinVidCompress-main",
+    "head": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+    "branch": "codex/wvc-m0-01-handoff",
+    "upstream": "origin/codex/wvc-m0-01-handoff",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+    "live_push_head": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+    "status": "SYNCHRONIZED"
+  },
+  "pr": {
+    "number": 1,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/1",
+    "state": "OPEN",
+    "draft": true,
+    "base": "main",
+    "observed_head": "7fce9895d5e14554b78d82958c1ed7917a4b20ac"
+  },
+  "ci": {
+    "observed_commit": "7fce9895d5e14554b78d82958c1ed7917a4b20ac",
+    "workflow_runs": 0,
+    "check_runs": 0,
+    "status": "not_run"
+  },
+  "final_handoff_push": "pending; commit this record, push feature branch, then verify externally without embedding this commit SHA",
+  "limitations": [
+    "Windows destination symlink-escape helper test skipped: symlink creation unavailable",
+    "Helper suite uses isolated local fixtures; it is not application/Explorer/FFmpeg acceptance",
+    "No application tests or PowerShell 5.1 compatibility execution in M0-01",
+    "FFmpeg/FFprobe absent from PATH and repository; no tooling installed",
+    "No CI workflow/check runs were available at the tested import checkpoint",
+    "Live synchronization report is point-in-time for the preceding import commit, not the final evidence commit"
+  ],
+  "next_task": "WVC-M0-02"
+}

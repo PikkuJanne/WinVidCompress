@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-04",
+  "repository": "PikkuJanne/WinVidCompress",
+  "default_branch_observed": "main",
+  "commit_observed": "5bab7fc698d153128babe3421ce19c0ca3012cc5",
+  "commit_author_date": "2026-01-04T11:19:27Z",
+  "evidence_kind": "GitHub connector read; source inspection, not Windows execution",
+  "local_checkout_path": null,
+  "local_checkout_inspected": false,
+  "github_modified_by_bundle_author": false,
+  "files": {
+    "WinVidCompress.ps1": {
+      "git_blob_sha": "55ff148637364fec2365b9a6c06e945db36356b7",
+      "bytes": 15695
+    },
+    "WinVidCompress.bat": {
+      "git_blob_sha": "443531538e5b0f1632f2b19d3c6c0dc15c1d0371",
+      "bytes": 386
+    },
+    "README.md": {
+      "git_blob_sha": "4388707ecfb004665837c64a9ad00bf6c87a9344",
+      "bytes": 3966
+    },
+    "LICENSE": {
+      "git_blob_sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657",
+      "bytes": 1211
+    }
+  },
+  "source_urls": [
+    "https://github.com/PikkuJanne/WinVidCompress/commit/5bab7fc698d153128babe3421ce19c0ca3012cc5",
+    "https://github.com/PikkuJanne/WinVidCompress/blob/5bab7fc698d153128babe3421ce19c0ca3012cc5/WinVidCompress.ps1",
+    "https://github.com/PikkuJanne/WinVidCompress/blob/5bab7fc698d153128babe3421ce19c0ca3012cc5/WinVidCompress.bat",
+    "https://github.com/PikkuJanne/WinVidCompress/blob/5bab7fc698d153128babe3421ce19c0ca3012cc5/README.md",
+    "https://github.com/PikkuJanne/WinVidCompress/blob/5bab7fc698d153128babe3421ce19c0ca3012cc5/LICENSE"
+  ],
+  "baseline_policy": "Informational anchor only. Fetch and inspect the real checkout; do not reset newer work to this commit."
+}

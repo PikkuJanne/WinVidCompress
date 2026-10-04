@@ -1,0 +1,33 @@
+# Media inspection, selection and encoding contract
+
+These are proposed implementation requirements derived from the agreed review. Consult the current FFmpeg/FFprobe documentation and verify behaviour with pinned tool builds. Do not treat a suggested filter expression as already tested.
+
+## Normalized probe result
+
+Use a bounded native probe with captured stderr/exit code and JSON parsing. Return an object with input identity, all stream indices/types/dispositions, selected real video/audio indices, coded and display geometry, rotation/display matrix, SAR/DAR, pixel format, colour primaries/transfer/matrix, frame-rate information, audio channels/sample rate and source duration where known. Store unknown values explicitly. Reject malformed responses, probe failures and no-real-video inputs before encoding.
+
+Do not infer duration from filename or file size. Duration can be absent/uncertain; progress becomes indeterminate and duration-validation limitations must be reported. Bounded retries, when justified, must not mask corrupt media. Inputs are user-selected files, not URLs or scripts; reject playlists/unsupported protocol-style inputs and review FFmpeg protocol/demuxer restrictions against actual supported containers. Never promise an absolute offline guarantee without verifying all process paths.
+
+## Stream contract
+
+Select the first real video stream by index for the documented first-video behaviour, excluding attached pictures. Probe this same selected stream's fields and explicitly map its absolute index in the encode. Select uniquely default-disposition audio when available, otherwise the first audio; log the selection and warn about alternatives omitted. No audio is a valid input case.
+
+Do not silently add audio, downmix channels, force FPS, or preserve arbitrary subtitle/data/attachment streams. Subtitles remain out of scope and omitted streams are disclosed. Language/disposition metadata should be retained deliberately where relevant. Any owner preference for another audio policy belongs in DECISIONS.md before changing the default again.
+
+## Geometry
+
+Keep no crop/no upscaling and the existing height-cap product policy, not a new width-bounded preset. Compute based on display geometry and selected stream. Account for FFmpeg autorotation exactly once; test rotation metadata handling and output orientation. Preserve display aspect ratio, handling non-square pixels intentionally. Ensure encoder-compatible even dimensions with bounded rounding; do not add a generic crop or upscale a small clip to make dimensions convenient.
+
+Required cases: small/SD source, 1080p, 4K, portrait, 90/180/270 rotation, ultrawide, anamorphic SAR and odd width/height. Confirm output geometry by probe and visual test patterns, not only command string inspection. VFR and high-frame-rate input must not receive a hidden frame-rate conversion policy.
+
+## Colour
+
+Establish tested SDR yuv420p output compatibility. Use transfer/colour evidence to recognize PQ/HLG HDR; bit depth alone is insufficient. For a known HDR path not deliberately supported, return an actionable unsupported result without silent washed-out conversion. Do not merely change colour tags to claim SDR. Ambiguous colour metadata warrants explicit warning/limitations rather than fabricated certainty.
+
+Tone mapping is outside the initial implementation. Any later path needs separate colour transforms, tests and owner review. Keep accepted quality settings unless the owner authorizes a measured change.
+
+## Filename metadata
+
+Retain the three existing date formats and title fallback. Use culture-independent real-date parsing; test leap years, impossible dates, extra/multiple date tokens, missing artist and the eight-digit fallback. Never fabricate a date when parsing is ambiguous. Compression continues if tags cannot be parsed. Unicode text and shell-looking punctuation remain data, never executable syntax.
+
+Define tag precedence: generated filename title and valid interview artist/date/comment intentionally override those fields; preserve other compatible source tags only by documented policy. Document privacy implications and prove selected tag read-back with FFprobe on the packaged dependency baseline. Do not copy unrelated private tags blindly while claiming the output contains only four fields.
