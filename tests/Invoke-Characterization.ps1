@@ -6,8 +6,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-Import-Module (Join-Path $ModuleRoot 'Pester/5.7.1/Pester.psd1') -ErrorAction Stop
-if ((Get-Module Pester).Version -ne [version]'5.7.1') { throw 'Pester 5.7.1 is required.' }
+$dependencies = Import-PowerShellDataFile (Join-Path $PSScriptRoot 'Dependencies.psd1')
+Import-Module (Join-Path $ModuleRoot ('Pester/' + $dependencies.Pester + '/Pester.psd1')) -ErrorAction Stop
+if ((Get-Module Pester).Version -ne [version]$dependencies.Pester) { throw 'Pinned Pester version is required.' }
 
 $configuration = New-PesterConfiguration
 $configuration.Run.Path = Join-Path $PSScriptRoot 'WinVidCompress.Characterization.Tests.ps1'

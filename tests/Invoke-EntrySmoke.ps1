@@ -1,13 +1,15 @@
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$PowerShell7
+    [string]$PowerShell7,
+    [string]$ReportPath
 )
 
 # Run this fixture compiler under Windows PowerShell 5.1 (.NET Framework).
 # The generated console executable is a recorder, not an encoder or downloaded tool.
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'TestSupport.ps1')
+if ($PowerShell7 -and -not (Get-WvcHostInfo $PowerShell7 'PowerShell7')) { $PowerShell7 = $null }
 if ($PSVersionTable.PSEdition -ne 'Desktop') { throw 'Run this smoke harness with Windows PowerShell 5.1.' }
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $fixtureRoot = Join-Path ([IO.Path]::GetTempPath()) ('wvc-entry-' + [guid]::NewGuid().ToString('N'))
@@ -122,12 +124,32 @@ public static class WvcEntryRecorder {
     $launcher = Join-Path $repoRoot 'WinVidCompress.bat'
     $directArguments = '-NoProfile -ExecutionPolicy Bypass -File "' + $application + '" "' + $inputRoot + '"'
     $windowsPowerShell = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
-    $results = @(
-        Invoke-SmokeProcess $windowsPowerShell $directArguments
-        Invoke-SmokeProcess $PowerShell7 $directArguments
-        Invoke-SmokeProcess $env:ComSpec ('/d /s /c ""' + $launcher + '" "' + $inputRoot + '""')
+    $definitions = @(
+        @{ Id = 'direct-ps51'; Executable = $windowsPowerShell; Arguments = $directArguments },
+        @{ Id = 'direct-ps7'; Executable = $PowerShell7; Arguments = $directArguments },
+        @{ Id = 'original-bat'; Executable = $env:ComSpec; Arguments = ('/d /s /c ""' + $launcher + '" "' + $inputRoot + '""') }
     )
-    [pscustomobject]@{ Passed = $results.Count; Failed = 0; Skipped = 0; Cases = $results } | ConvertTo-Json -Depth 5
+    $cases = @()
+    foreach ($definition in $definitions) {
+        if (-not $definition.Executable -or -not (Test-Path -LiteralPath $definition.Executable -PathType Leaf)) {
+            $cases += New-WvcTestCase $definition.Id 'Skipped' 'Required executable unavailable; entry not tested.'
+            continue
+        }
+        try {
+            $observation = Invoke-SmokeProcess $definition.Executable $definition.Arguments
+            $case = New-WvcTestCase $definition.Id 'Passed'
+            $case | Add-Member NoteProperty NativeArguments $observation.NativeArguments
+            $cases += $case
+        } catch {
+            $cases += New-WvcTestCase $definition.Id 'Failed' 'Entry smoke failed; see local diagnostics.'
+            [IO.File]::WriteAllText((Join-Path $fixtureRoot ($definition.Id + '.error.log')), $_.ToString())
+            $script:KeepFixture = $true
+        }
+    }
+    $summary = Get-WvcTierSummary 'Targeted' $cases
+    $report = [pscustomobject][ordered]@{ SchemaVersion = 1; Kind = 'EntrySmoke'; Counts = $summary.Counts; Cases = $cases }
+    if ($ReportPath) { Write-WvcTestJson $ReportPath $report }
+    $report | ConvertTo-Json -Depth 6
 } finally {
     $resolvedFixture = [IO.Path]::GetFullPath($fixtureRoot)
     if (-not (Get-Variable KeepFixture -Scope Script -ErrorAction SilentlyContinue) -and
@@ -137,3 +159,4 @@ public static class WvcEntryRecorder {
         Remove-Item -LiteralPath $resolvedFixture -Recurse -Force
     }
 }
+exit $summary.ExitCode

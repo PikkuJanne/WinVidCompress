@@ -1,0 +1,12 @@
+# Developer dependencies and local reports are never distribution artifacts.
+.test-results/
+.test-modules/
+TestResults.xml
+__pycache__/
+*.pyc
+# Generated media/native recorders belong only in owned temporary roots.
+tests/**/*.exe
+tests/**/*.dll
+tests/**/*.mp4
+tests/**/*.mkv
+tests/**/*.m4a

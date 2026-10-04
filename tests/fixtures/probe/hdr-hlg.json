@@ -1,0 +1,18 @@
+{
+  "streams": [
+    {
+      "index": 0,
+      "codec_type": "video",
+      "codec_name": "hevc",
+      "width": 1080,
+      "height": 1920,
+      "pix_fmt": "yuv420p10le",
+      "color_space": "bt2020nc",
+      "color_primaries": "bt2020",
+      "color_transfer": "arib-std-b67"
+    }
+  ],
+  "format": {
+    "duration": "1.000000"
+  }
+}

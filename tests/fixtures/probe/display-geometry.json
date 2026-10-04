@@ -1,0 +1,22 @@
+{
+  "streams": [
+    {
+      "index": 0,
+      "codec_type": "video",
+      "codec_name": "h264",
+      "width": 641,
+      "height": 479,
+      "sample_aspect_ratio": "16:15",
+      "avg_frame_rate": "24/1",
+      "side_data_list": [
+        {
+          "side_data_type": "Display Matrix",
+          "rotation": 90
+        }
+      ]
+    }
+  ],
+  "format": {
+    "duration": "1.000000"
+  }
+}

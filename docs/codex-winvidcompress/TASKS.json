@@ -192,7 +192,7 @@
       "title": "Establish the regression harness and generated fixtures",
       "milestone": "M0",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         18,
         19
