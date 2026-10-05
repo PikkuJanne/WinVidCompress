@@ -15,7 +15,9 @@ $record = [pscustomobject]@{
     Edition = $PSVersionTable.PSEdition
 }
 $json = $record | ConvertTo-Json -Depth 5 -Compress
-Write-Output ('WVC_ARGV:' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json)))
+if ($env:WVC_ARGV_AUTOMATED -eq '1') {
+    Write-Output ('WVC_ARGV:' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json)))
+}
 if (-not $env:WVC_ARGV_REPORT -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot '.wvc-manual-recorder'))) {
     $env:WVC_ARGV_REPORT = Join-Path $PSScriptRoot ('argv-' + [guid]::NewGuid().ToString('N') + '.json')
 }
@@ -30,5 +32,6 @@ if ($env:WVC_ARGV_REPORT) {
     Write-Output ('Local argument report: ' + $env:WVC_ARGV_REPORT)
 }
 if ($env:WVC_ARGV_AUTOMATED -eq '1') { exit 0 }
-Write-Output $json
+Write-Output ('Received {0} path(s):' -f $received.Count)
+foreach ($value in $received) { Write-Output ('  ' + [IO.Path]::GetFileName($value)) }
 Write-Output 'Argument recorder only. Type exit to close this PowerShell prompt.'

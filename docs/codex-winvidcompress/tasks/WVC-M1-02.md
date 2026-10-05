@@ -23,10 +23,14 @@ Existing source files are authoritative. Paths for future tests/helpers are inte
 
 ## Acceptance
 
-- **WVC-M1-02-A01** (manual): Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths.
-- **WVC-M1-02-A02** (manual): Test literal %PATH% and !NAME! filename segments with matching environment variables set; no environment substitution or command execution occurs.
+- **WVC-M1-02-A01** (manual): Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component; those paths use the literal-path menu or direct PS1 from PowerShell with literal string arguments.
+- **WVC-M1-02-A02** (manual): Test literal %PATH% and !NAME! segments with matching environment variables set through the literal-path menu and direct PS1 from PowerShell; no environment substitution or command execution occurs in these supported routes. BAT !NAME! preservation remains required; the recorded BAT %PATH% substitution is an explicitly unsupported path under owner-approved D005.
 - **WVC-M1-02-A03** (targeted): No Invoke-Expression, dynamically constructed cmd /c pipeline or broad execution-policy changes are introduced.
 - **WVC-M1-02-A04** (manual): Missing .ps1 and inaccessible dependencies result in actionable launcher errors.
+
+## Owner-approved boundary
+
+D005, 2026-10-05: owner replied “the proposed filename restriction accepted”. This revises A01/A02 as written above. Preserve historical BAT %PATH% failure evidence; verification still requires the applicable supported-route tests and actual Windows observations.
 
 ## Completion and handoff
 

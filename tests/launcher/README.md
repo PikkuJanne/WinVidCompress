@@ -28,8 +28,10 @@ command expands before BAT starts; a caller with `/V:ON` can similarly expand
 `!NAME!`. BAT cannot recover already-changed arguments. This is measured as a
 limitation, not a passing literal-percent round trip. For these names, use the real
 menu's literal-path prompt or invoke PS1 from PowerShell with single-quoted paths.
-Actual Explorer drops still require separate observation and may expose the same
-outer-shell limitation. Do not mark A01/A02 passed from these automated tests.
+Owner-approved D005 excludes variable-shaped percent segments anywhere in a BAT
+drop path. Ordinary percent names and BAT !NAME! preservation remain required.
+The historical direct Explorer %PATH% failure stays recorded. Verify the supported
+menu/direct PS1 routes; approval alone does not pass A01/A02.
 
 In a CMD/BAT command, omit a quoted folder's trailing backslash. Use `D:\.` for a
 drive root, or paste `D:\` into the menu. The recorder demonstrates that a closing
@@ -46,7 +48,37 @@ Primary references: [Microsoft CMD limits](https://learn.microsoft.com/en-us/tro
 [Windows PowerShell CLI](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe?view=powershell-5.1),
 [setlocal](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/setlocal).
 
-## Actual Explorer checks
+## Supported Explorer and literal-path checks
+
+The short D005 kit is prepared with:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/launcher/New-LauncherSupportedFixture.ps1
+```
+
+It needs two direct Explorer drops (one folder, ten supported filenames) and one
+menu session. Follow its short Instructions.txt; the agent checks full local JSON.
+Recorder console output shows only counts/leaf names, while native/bound values
+remain in reports. Grade the new drop reports from PowerShell with:
+
+```powershell
+& .\tests\launcher\Test-LauncherManualReports.ps1 -Manifest '<manifest>' -Case @('folder','multiple')
+```
+
+Default grading still includes all four shapes and validates every record
+against the full allowed set. Old failed records are never filtered into passes.
+
+The menu helper dot-sources a byte-identical application copy, runs the real
+Run-TUI/Prompt-Path, and replaces only Process-Paths with a recorder. Matching
+PATH/NAME and APPDATA/output are isolated. It observes selection, not startup,
+encoding or media integrity. Check menu report paths/host/source/helper hashes
+separately from native argv. No encoder/dependency download/ACL change is needed.
+`Test-LauncherSupportedFixture.ps1` scripts that fixture session and checks exact
+menu/native paths, matching variables, source sentinels, no config writes and all
+five hashes; run it from the repository root on both hosts. It cleans only its
+owned fixture and explicitly does not establish human Explorer acceptance.
+
+## Historical full-character characterization kit
 
 Prepare an owned temporary kit with:
 

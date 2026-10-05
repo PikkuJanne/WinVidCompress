@@ -8,6 +8,10 @@ Capture native exit code and stderr. Do not interpret any stderr output as autom
 
 The .bat wrapper remains thin. Test actual incoming argv with benign filename fixtures and a recorder. Windows shell expansion, PowerShell -File binding, .bat command-line limits and native argument marshalling are separate layers; avoiding delayed expansion alone does not prove all layers correct. Do not double-evaluate arguments with CALL. Keep interactive and unattended launch modes explicit.
 
+## Supported filename boundary
+
+Owner-approved D005 (2026-10-05): BAT drag/drop excludes environment-variable-shaped percent segments such as `%PATH%` anywhere in the full path. Use menu option 2/3 with a literal path or invoke the PS1 from PowerShell with single-quoted literal string arguments. Ordinary percent names remain supported. Direct Explorer percent substitution is retained as a measured limitation, not repaired behavior. Shell limits and delayed expansion in an outer CMD caller still apply.
+
 ## Optional CLI
 
 Preserve positional file/folder paths. Proposed small controls: -OutputDir, -CollisionMode rename|skip, -WhatIf, -CheckEnvironment; opt-in -Resume / -ManifestPath, -PreserveSubfolders and stronger-identity choice may be added as the associated tasks mature. Only expose options actually implemented and tested; no speculative full preset menu. A per-run override does not implicitly rewrite config.

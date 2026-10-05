@@ -23,9 +23,10 @@ Describe 'Manual argv evidence integrity [WVC-M1-02]' {
                 Edition = 'Desktop'; PowerShell = '5.1.26100.9444'
             })
         }
-        function Invoke-ReportCheck {
-            Invoke-WvcTestProcess (Get-Process -Id $PID).Path @('-NoProfile','-ExecutionPolicy','Bypass',
-                '-File',$Checker,'-Manifest',$Manifest)
+        function Invoke-ReportCheck([string]$Case) {
+            $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$Checker,'-Manifest',$Manifest)
+            if ($Case) { $arguments += @('-Case',$Case) }
+            Invoke-WvcTestProcess (Get-Process -Id $PID).Path $arguments
         }
     }
     AfterEach { Remove-WvcTestRoot $ReportOwner }
@@ -61,5 +62,35 @@ Describe 'Manual argv evidence integrity [WVC-M1-02]' {
         $result = Invoke-ReportCheck
         $result.ExitCode | Should -Be 1
         ($result.StdOut | ConvertFrom-Json).Counts.Failed | Should -Be 1
+    }
+
+    It 'grades only a requested shape while accepting other valid report shapes' {
+        Write-RecorderReport @('one.mov')
+        Write-RecorderReport @('folder')
+        $result = Invoke-ReportCheck 'folder'
+        $result.ExitCode | Should -Be 0
+        $report = $result.StdOut | ConvertFrom-Json
+        $report.Counts.Passed | Should -Be 1
+        $report.Counts.NotRun | Should -Be 0
+    }
+
+    It 'does not hide a malformed earlier report when grading one requested shape' {
+        Write-RecorderReport @('folder')
+        Write-RecorderReport @('one.mov') @('changed.mov')
+        $result = Invoke-ReportCheck 'folder'
+        $result.ExitCode | Should -Be 1
+        ($result.StdOut | ConvertFrom-Json).Counts.Failed | Should -Be 1
+    }
+
+    It 'reads UTF8 Unicode paths literally on both supported hosts' {
+        $unicode = 'Finnish ' + [char]0x00e4 + [char]0x00f6 + ' ' + [char]0x4e2d + '.mov'
+        $metadata = Get-Content -LiteralPath $Manifest -Raw -Encoding UTF8 | ConvertFrom-Json
+        $metadata.Inputs = @($unicode,'two.mov')
+        # Rewriting this owned synthetic manifest is intentional for the regression.
+        [IO.File]::WriteAllText($Manifest, ($metadata | ConvertTo-Json -Depth 5), (New-Object Text.UTF8Encoding($false)))
+        Write-RecorderReport @($unicode)
+        $result = Invoke-ReportCheck 'single'
+        $result.ExitCode | Should -Be 0
+        ($result.StdOut | ConvertFrom-Json).Counts.Passed | Should -Be 1
     }
 }

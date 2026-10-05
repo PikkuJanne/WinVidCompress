@@ -3,7 +3,7 @@ param([Parameter(Mandatory = $true)][string]$Manifest)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'LauncherTestSupport.ps1')
-$metadata = Get-Content -LiteralPath $Manifest -Raw | ConvertFrom-Json
+$metadata = Get-Content -LiteralPath $Manifest -Raw -Encoding UTF8 | ConvertFrom-Json
 $root = Assert-WvcTestRoot $metadata.Owner
 foreach ($saved in $metadata.RestoreAcls) {
     $target = [IO.Path]::GetFullPath($saved.Path)

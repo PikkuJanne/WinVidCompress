@@ -1,15 +1,19 @@
 [CmdletBinding()]
-param([Parameter(Mandatory = $true)][string]$Manifest)
+param(
+    [Parameter(Mandatory = $true)][string]$Manifest,
+    [ValidateSet('zero','single','folder','multiple')]
+    [string[]]$Case = @('zero','single','folder','multiple')
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'LauncherTestSupport.ps1')
-$metadata = Get-Content -LiteralPath $Manifest -Raw | ConvertFrom-Json
+$metadata = Get-Content -LiteralPath $Manifest -Raw -Encoding UTF8 | ConvertFrom-Json
 [void](Assert-WvcTestRoot $metadata.Owner)
 if ((Get-FileHash -LiteralPath (Join-Path $metadata.ArgumentApp 'WinVidCompress.bat')).Hash -ne $metadata.LauncherSHA256) {
     throw 'Prepared BAT hash changed.'
 }
 $reports = @(Get-ChildItem -LiteralPath $metadata.ArgumentApp -Filter 'argv-*.json' -File | ForEach-Object {
-    Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json
+    Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
 })
 $expected = @(
     @{ Id = 'zero'; Paths = @() },
@@ -37,13 +41,13 @@ function Test-RawArguments($Record) {
     }
     return $Record.Edition -eq 'Desktop' -and $Record.PowerShell -like '5.1.*'
 }
-foreach ($case in $expected) {
+foreach ($expectedCase in @($expected | Where-Object { $_.Id -in $Case })) {
     $matches = @($reports | Where-Object {
         # Explorer selection order is not guaranteed; count and ordinal membership are.
-        (Test-RawArguments $_) -and (Test-ExactPaths $_ @($case.Paths))
+        (Test-RawArguments $_) -and (Test-ExactPaths $_ @($expectedCase.Paths))
     })
     $state = if ($matches.Count) { 'Passed' } else { 'NotRun' }
-    $checks += New-WvcTestCase $case.Id $state 'Data check only; Explorer/human observation must be recorded separately.'
+    $checks += New-WvcTestCase $expectedCase.Id $state 'Data check only; Explorer/human observation must be recorded separately.'
 }
 $unmatched = @($reports | Where-Object {
     $record = $_

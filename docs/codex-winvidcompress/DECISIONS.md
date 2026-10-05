@@ -10,6 +10,8 @@ D003: Preserve the established simple default workflow and encoding profile whil
 
 D004: Local and GitHub work must remain synchronized at meaningful checkpoints and session handoffs; preserve current work/history.
 
+D005 / 2026-10-05 / WVC-M1-02: owner accepted the proposed filename restriction (“the proposed filename restriction accepted”). BAT drops do not support environment-variable-shaped percent segments such as %PATH% in any path component. Use literal-path menu entry or direct PS1 invocation from PowerShell with literal string arguments for those paths; ordinary percent names and BAT !NAME! preservation remain supported requirements. A01/A02 are revised explicitly, retaining the observed direct BAT %PATH% substitution as historical evidence. Applicable supported-route tests and human observations must pass before verified. No launcher reconstruction, system association change or automatic rename is authorized by this decision.
+
 ## Conservative implementation choices for this roadmap
 
 P001: Use a feature branch and draft PR; main is not automatically updated. Feature pushes are part of this work; merge/publication is gated.

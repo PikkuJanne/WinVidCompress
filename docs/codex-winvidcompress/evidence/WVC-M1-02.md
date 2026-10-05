@@ -1,6 +1,6 @@
 # WVC-M1-02 evidence — 2026-10-05
 
-Implemented/tested at `e32fa11067bc8bb5133e8913840561deba79573f`, based on owner-merged M1-01 main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67`. [Exact JSON](WVC-M1-02.json), [session](WVC-M1-02-session.md), [launcher workflow](../../../tests/launcher/README.md). A01/A02 failed in the prepared Explorer run for literal %PATH%; A03/A04 pass. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. No full/release acceptance.
+Implemented/tested at `e32fa11067bc8bb5133e8913840561deba79573f`, based on owner-merged M1-01 main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67`. [Exact JSON](WVC-M1-02.json), [session](WVC-M1-02-session.md), [launcher workflow](../../../tests/launcher/README.md). Current A01/A02 are not_run under owner-approved D005, pending revised supported-route observations; A03/A04 pass. Historical direct BAT percent failure is retained below. No full/release acceptance.
 
 Valid initial regression: original application plus eight new uncommitted tests, PS5.1, 3 passed/5 failed, exit 1. The BAT erased ! from its own script path and reconstructed folder arguments incorrectly. A preceding harness attempt accidentally omitted PowerShell from PATH (1 pass/7 failed); it is not application defect evidence.
 
@@ -25,8 +25,8 @@ Pester 5.7.1/analyzer 1.24.0 reused externally. Quick is 97 Pester checks (22 ne
 
 | Criterion | Status | Actual evidence/remaining work |
 |---|---|---|
-| A01 | failed | Prepared Explorer multiple run preserves 10/11 names; literal %PATH% changes. Single parentheses name preserved. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. |
-| A02 | failed | Direct Explorer BAT drop also substitutes literal %PATH%, so Check.bat is not the sole cause. Initial matching-NAME fixture preserves !NAME!. |
+| A01 | not_run | D005 now excludes variable-shaped percent paths from BAT drops. Revised manual observations pending; historical evidence: Prepared Explorer multiple run preserves 10/11 names; literal %PATH% changes. Single parentheses name preserved. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. |
+| A02 | not_run | D005 now requires literal menu/direct PS1 routes for these paths. Revised manual observations pending; historical evidence: Direct Explorer BAT drop also substitutes literal %PATH%, so Check.bat is not the sole cause. Initial matching-NAME fixture preserves !NAME!. |
 | A03 | passed | Direct -File %*, DisableDelayedExpansion, no ARGS/CALL/expression eval/cmd pipeline/broad policy change; both-host static/targeted pass. |
 | A04 | passed | Owner reported prepared error checks passed on 2026-10-05; tentative wording retained. Seven automated scenarios also pass. |
 
@@ -52,7 +52,7 @@ Exact earlier expansion stage is not isolated by these records; the proven bound
 
 No new application/test code, dependency download, policy/association change or broad test rerun. Prior clean Quick/Targeted results retained; owned-root/hash/sentinel/data/schema/whitespace checks performed. A03/A04 remain passed. Task stays implemented and PR draft. Exact next is an explicit owner decision on a documented BAT %NAME% filename restriction (literal-path menu/direct PS1 route), or separately scoped launcher work under unchanged requirements. No acceptance change/waiver is inferred. Folder/multiple fixture subcases still require correct inputs after resolving that decision.
 
-## Proposed supported-path boundary — not approved or applied
+## Proposed supported-path boundary — historical pre-approval record
 
 The concrete proposal for the owner's decision is:
 
@@ -60,3 +60,11 @@ The concrete proposal for the owner's decision is:
 - A02 tests literal %PATH% and !NAME! with matching variables through those supported literal-path routes; BAT !NAME! preservation remains required. The observed BAT %PATH% failure stays recorded as the reason for the restriction.
 
 This changes the existing A02 requirement, not its test result. TASKS.json and the task brief are unchanged. Approval would authorize documentation/criteria updates and focused verification of the supported routes; it would not immediately make M1-02 verified. Folder and multiple-file checks still need the requested inputs. Keeping the existing requirement requires separately scoped launcher work, with its design and acceptance reviewed before implementation.
+
+## Accepted boundary D005 — 2026-10-05
+
+The owner replied “the proposed filename restriction accepted”. D005 is applied explicitly in TASKS.json, the task brief, process/testing/full-matrix documentation, README and application help. BAT drops exclude variable-shaped percent segments such as %PATH% in any full-path component; these use literal-path menu entry or direct PS1 invocation from PowerShell with literal string arguments. Ordinary percent and BAT !NAME! support remain required. Historical direct BAT substitution remains recorded, not repaired.
+
+Current revised A01/A02 are not_run while supported folder/multiple/menu observations remain pending. A03/A04 retain passing evidence; the task remains implemented. A new short owned kit provides ten supported BAT names and a folder plus the actual Run-TUI/Prompt-Path with only Process-Paths replaced by a recorder. APPDATA/PATH/NAME/output are isolated, no encoder runs, and a supplemental direct native PowerShell call records literal file/folder values. This establishes selection/binding, not compression integrity or full production startup.
+
+Two menu regressions and three checker regressions are added. Case-limited grading validates all records; full defaults remain unchanged. Explicit UTF8 metadata/report reads fix PS5.1 Unicode decoding. Initial dirty-tree Quick checker failure and smoke decoding failure are retained in JSON; focused fixes/smoke passed. Exact clean-commit Quick/Targeted and fresh human checks are pending at this implementation checkpoint.

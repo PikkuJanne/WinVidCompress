@@ -53,6 +53,42 @@ BeforeAll {
 
 AfterAll { if ($Owner) { Remove-WvcTestRoot $Owner } }
 
+Describe 'Accepted literal-path menu route [WVC-M1-02-A02]' {
+    BeforeAll {
+        $script:MenuEnvironment = @{ APPDATA = $env:APPDATA; PATH = $env:PATH; NAME = $env:NAME }
+        $env:APPDATA = Join-Path $Owner.Path 'menu-appdata'
+        $env:PATH = 'WVC_PATH_SENTINEL'
+        $env:NAME = 'WVC_NAME_SENTINEL'
+        . (Join-Path $RepoRoot 'WinVidCompress.ps1')
+        $script:LiteralMenuFolder = Join-Path $Owner.Path 'Folder %PATH% !NAME! [literal]'
+        [void][IO.Directory]::CreateDirectory($LiteralMenuFolder)
+        $script:LiteralMenuFile = Join-Path $LiteralMenuFolder 'literal %PATH% !NAME!.mov'
+        [IO.File]::WriteAllText($LiteralMenuFile, 'synthetic filename sentinel')
+    }
+    AfterAll {
+        foreach ($key in $MenuEnvironment.Keys) { [Environment]::SetEnvironmentVariable($key, $MenuEnvironment[$key], 'Process') }
+    }
+    It 'passes a literal variable-like <Kind> selection to processing without expansion' -TestCases @(
+        @{ Kind = 'file'; Choice = '2' }, @{ Kind = 'folder'; Choice = '3' }
+    ) {
+        param($Kind,$Choice)
+        $selected = if ($Kind -eq 'file') { $LiteralMenuFile } else { $LiteralMenuFolder }
+        $script:MenuResponses = New-Object 'Collections.Generic.Queue[string]'
+        foreach ($response in @($Choice,$selected,'4')) { $script:MenuResponses.Enqueue($response) }
+        Mock Read-Host { $script:MenuResponses.Dequeue() }
+        Mock Write-Host {}
+        Mock Process-Paths {}
+        Mock Save-Config { throw 'Unexpected config save' }
+        Run-TUI 'unused-encoder' 'unused-probe' ([pscustomobject]@{ OutputDir = (Join-Path $Owner.Path 'output') })
+        Should -Invoke Process-Paths -Times 1 -Exactly -ParameterFilter {
+            $paths.Count -eq 1 -and $paths[0] -ceq $selected
+        }
+        $script:MenuResponses.Count | Should -Be 0
+        [IO.File]::ReadAllText($LiteralMenuFile) | Should -BeExactly 'synthetic filename sentinel'
+        Test-Path -LiteralPath (Join-Path $env:APPDATA 'WinVidCompress/config.json') | Should -BeFalse
+    }
+}
+
 Describe 'Measured launcher arguments [WVC-M1-02]' {
     It 'forwards zero arguments for double-click menu startup' {
         $record = Invoke-BatchRecord @()

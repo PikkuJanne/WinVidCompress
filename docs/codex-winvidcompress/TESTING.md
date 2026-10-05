@@ -31,7 +31,7 @@ Use ffmpeg-generated short test patterns/audio when installed, and normalized FF
 
 Menu/launcher, literal paths, empty/single/multi enumeration, missing/offline/invalid config, source/output overlap, duplicates, reparse policy, dependency selection, probe errors, silent/multi-stream/cover-art media, rotation/SAR/odd dimensions, SDR/HDR classification, date validity, native stderr/exit/progress, non-writing WhatIf, cancellations, manifest tampering/changed inputs, no-clobber races, larger outputs and clean ZIP extraction.
 
-Actual Explorer argv tests must cover `!`, `%PATH%`, `!NAME!`, `&`, parentheses, brackets, apostrophes, spaces and Finnish/German/non-Latin characters. Record Windows filename/command-line limitations honestly; do not put forbidden Windows filename characters into a test and claim the resulting inability is a codec bug.
+Actual Explorer argv tests must cover `!`, ordinary `%`, `!NAME!`, `&`, parentheses, brackets, apostrophes, spaces and Finnish/German/non-Latin characters. Under owner-approved D005, `%PATH%` and other variable-shaped percent path segments use literal-path menu/direct PS1 routes; test these with matching variables set, and retain the historical direct BAT percent failure. Grade the supported boundary explicitly rather than erasing prior failures. Record Windows filename/command-line limitations honestly; do not put forbidden Windows filename characters into a test and claim the resulting inability is a codec bug.
 
 ## Evidence requirements
 

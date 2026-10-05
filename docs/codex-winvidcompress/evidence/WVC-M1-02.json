@@ -322,12 +322,12 @@
   ],
   "acceptance": {
     "A01": {
-      "status": "failed",
-      "evidence": "Direct actual Explorer percent-file drop on byte-identical BAT substitutes literal %PATH%; A01 remains failed. Initial prepared cohort preserves the other ten names. Requested direct folder and eleven-file inputs are absent from their two reports, so those subcases remain unverified."
+      "status": "not_run",
+      "evidence": "D005 boundary explicitly approved/applied. Historical BAT percent substitution retained outside the supported boundary. Applicable supported folder/multiple/menu human observations remain pending; approval and automation alone do not pass this manual criterion."
     },
     "A02": {
-      "status": "failed",
-      "evidence": "Owner-confirmed direct Explorer BAT drop substitutes literal %PATH% in both native argv and bound Path. The failure is not solely caused by the Check.bat wrapper. Earlier matching-NAME prepared run preserves !NAME!. Exact pre-binding stage is not isolated; no scope waiver."
+      "status": "not_run",
+      "evidence": "D005 boundary explicitly approved/applied. Historical BAT percent substitution retained outside the supported boundary. Applicable supported folder/multiple/menu human observations remain pending; approval and automation alone do not pass this manual criterion."
     },
     "A03": {
       "status": "passed",
@@ -339,16 +339,22 @@
     }
   },
   "sanitized_artifacts": [],
-  "owner_approval": null,
+  "owner_approval": {
+    "decision": "D005",
+    "date": "2026-10-05",
+    "observer": "Repository owner (user)",
+    "confirmation": "the proposed filename restriction accepted",
+    "scope": "Apply the proposed supported-path boundary and verify those routes; approval alone does not mark the task verified."
+  },
   "source_hashes": {
     "WinVidCompress_ps1_sha256": "7FA44646974209A763E7AE149FEDB006329F85FA0F943BE281C1579B7DB18C7F",
     "WinVidCompress_bat_sha256": "9B8A045AB990B87DF4756427A83F2E29D60E1C06A2F042F8D4D6A3ADCDE6CA4D"
   },
   "previous_verified_sync": {
-    "checked_at": "2026-10-05T13:49:03.759010+00:00",
-    "head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
-    "live_fetch_head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
-    "live_push_head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
+    "checked_at": "2026-10-05T16:04:19.090752+02:00",
+    "head": "03c53afed10c307ef81c5cff0c5456de7cf66208",
+    "live_fetch_head": "03c53afed10c307ef81c5cff0c5456de7cf66208",
+    "live_push_head": "03c53afed10c307ef81c5cff0c5456de7cf66208",
     "status": "SYNCHRONIZED",
     "dirty": false,
     "operations": []
@@ -363,7 +369,7 @@
   },
   "final_handoff_push": "pending when committed; verify final local/live fetch/live push equality and clean state externally",
   "limitations": [
-    "Owner-confirmed direct Explorer BAT percent drop fails A01/A02; A03/A04 pass. Direct folder/multiple reports contain different inputs, so those subcases remain unverified. No waiver/supported-path redefinition.",
+    "Historical direct Explorer BAT percent drop failed the original A01/A02. Owner-approved D005 now excludes variable-shaped percent BAT paths; revised manual criteria remain not_run pending supported observations. A03/A04 passed; no milestone/release acceptance.",
     "Raw CMD characterization expands %PATH% before its BAT starts; /V:ON can expand !NAME!. Actual direct Explorer records prove literal %PATH% is already changed by script binding, but do not isolate the earlier stage. Trailing-backslash quoting/8191-character limits stay documented.",
     "Windows CMD/batch expanded command lines are limited to 8191 characters; use folder drops or smaller selections.",
     "The retained -NoExit keeps startup errors visible at a prompt. A subsequent plain exit can return zero; no new unattended startup-exit contract is claimed.",
@@ -373,7 +379,7 @@
     "Manual fixture and raw reports contain local paths/possible environment expansion; all stay outside Git. No private media, dependency binaries, configuration or raw logs committed.",
     "Read-only subagent review fixed a report-integrity defect and clarified /V:ON test wording. One checkout writer; no automatic dependency download, main push/merge, policy change, release, deployment or settings/secrets change."
   ],
-  "next_task": "WVC-M1-02 — owner decision on documenting a restricted BAT drop boundary for %NAME% filenames versus separately scoped launcher work. Keep A01/A02 failed until an authorized solution and applicable tests pass. Folder/multiple fixture subcases still unverified. Next independent code task WVC-M1-03.",
+  "next_task": "WVC-M1-02 — complete revised supported-route manual verification under approved D005. Next independent code task WVC-M1-03.",
   "supplementary_runs": [
     {
       "kind": "Optional hidden Windows ShellExecute probe, not human Explorer and not part of tier counts",
@@ -403,15 +409,104 @@
       "git -c core.whitespace=cr-at-eol diff --cached --check"
     ],
     "review": "Read-only independent feasibility review: thin BAT cannot undo earlier substitution; raw-command-line recovery needs CMD-specific parsing, cannot undo earlier execution and is outside this task instruction to avoid multi-stage reconstruction.",
-    "owner_scope_decision": "not requested/received yet when this evidence is committed",
+    "owner_scope_decision": "Historical direct-follow-up checkpoint preceded approval. Owner subsequently approved D005; see owner_approval and approved_boundary_followup.",
     "final_handoff_sync": "pending after this documentation commit; report externally"
   },
   "proposed_scope_decision": {
-    "status": "not approved or applied",
+    "status": "explicitly approved and applied under D005 on 2026-10-05",
     "A01": "Retain listed characters and all four invocation shapes. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component; use the literal-path menu or direct PS1 invocation from PowerShell with literal string arguments for these paths.",
     "A02": "Test literal %PATH% and !NAME! with matching variables through those supported literal-path routes; retain BAT !NAME! preservation. Preserve the observed BAT %PATH% failure as the documented reason for the restriction.",
-    "authorization_needed": "Explicit owner decision because this changes existing A02. Neither TASKS.json acceptance descriptions nor the task brief has been changed.",
+    "authorization_needed": "Received exact owner confirmation; see owner_approval. TASKS.json/task brief acceptance descriptions updated explicitly under D005.",
     "after_approval": "Update supported-path documentation/criteria and verify the applicable supported routes. Correct fixture folder/multiple observations remain required; approval alone is not verification.",
     "alternative": "Retain current criteria and scope launcher work separately before implementation."
+  },
+  "acceptance_before_D005": {
+    "A01": {
+      "status": "failed",
+      "evidence": "Direct actual Explorer percent-file drop on byte-identical BAT substitutes literal %PATH%; A01 remains failed. Initial prepared cohort preserves the other ten names. Requested direct folder and eleven-file inputs are absent from their two reports, so those subcases remain unverified."
+    },
+    "A02": {
+      "status": "failed",
+      "evidence": "Owner-confirmed direct Explorer BAT drop substitutes literal %PATH% in both native argv and bound Path. The failure is not solely caused by the Check.bat wrapper. Earlier matching-NAME prepared run preserves !NAME!. Exact pre-binding stage is not isolated; no scope waiver."
+    },
+    "A03": {
+      "status": "passed",
+      "evidence": "Actual BAT has one direct -File %* invocation, DisableDelayedExpansion, no ARGS/CALL/-Command/Invoke-Expression/cmd pipeline/Set-ExecutionPolicy. Existing process-only Bypass retained; static parse/analyzer/encoding/tracker and targeted tests pass both hosts."
+    },
+    "A04": {
+      "status": "passed",
+      "evidence": "Owner performed prepared Explorer checks then reported all appeared to pass on 2026-10-05. Missing PS1/FFmpeg/FFprobe/read-denied diagnostics in the kit are covered by that direct observation; owner's tentative wording retained. Seven automated errors independently pass; no real encoder validation."
+    }
+  },
+  "approved_boundary_followup": {
+    "date": "2026-10-05",
+    "baseline": "03c53afed10c307ef81c5cff0c5456de7cf66208",
+    "scope": "Documentation/help plus narrow test-fixture changes; no compression/quality/runtime behavior changes.",
+    "changes": [
+      "D005 ledger; task/brief/process/testing/full-matrix/user documentation explicitly define supported percent paths.",
+      "Actual menu/Prompt-Path regressions cover variable-like file/folder paths with matching PATH/NAME; processing is mocked.",
+      "Manual recorder displays count/leaf names while preserving full native/bound JSON; automated Base64 output unchanged.",
+      "Fresh supported kit: ten BAT names/folder plus isolated real menu with Process-Paths replaced and supplemental real PowerShell native call.",
+      "Case-limited checker still validates every report against the full allowed set; case selection cannot hide a corrupt report.",
+      "Manual metadata/report/cleanup JSON is explicitly UTF8 for PS5.1 Unicode compatibility."
+    ],
+    "preliminary_runs": [
+      {
+        "kind": "Dirty-tree Quick PS5.1 before checker correction",
+        "counts": {
+          "Passed": 99,
+          "Failed": 4,
+          "Skipped": 0,
+          "NotRun": 4
+        },
+        "exit_code": 1,
+        "reason": "New Case parameter collided case-insensitively with old foreach loop variable; fixed loop variable. Menu cases passed. Exact clean rerun pending."
+      },
+      {
+        "kind": "Dirty-tree focused launcher/checker PS5.1 after loop correction, before Unicode regression",
+        "counts": {
+          "Passed": 26,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "exit_code": 0
+      },
+      {
+        "kind": "Dirty-tree supported-kit scripted smoke",
+        "hosts": [
+          "5.1.26100.9444 Desktop",
+          "7.6.5 Core"
+        ],
+        "checks": [
+          "menu file exact",
+          "menu folder exact",
+          "direct native/bound exact",
+          "sources preserved",
+          "no config write",
+          "five prepared hashes match"
+        ],
+        "exit_codes": [
+          0,
+          0
+        ],
+        "limitation": "Scripted input, not human Explorer. Initial PS5.1 smoke failed on ANSI decoding of UTF8 metadata and cleaned its owned root; explicit UTF8 read fixes passed on PS5.1. PS7 initial run passed."
+      }
+    ],
+    "exact_commit_tiers": "pending after implementation checkpoint",
+    "manual_status": "not_run; fresh clean-commit kit pending",
+    "final_sync": "pending final handoff commit/push; report externally",
+    "corrected_dirty_quick51": {
+      "Command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath <new-local-report>",
+      "Counts": {
+        "Passed": 106,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 4
+      },
+      "ExitCode": 0,
+      "TreeDirty": true,
+      "SourceCommit": "03c53afed10c307ef81c5cff0c5456de7cf66208"
+    }
   }
 }

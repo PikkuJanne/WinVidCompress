@@ -388,18 +388,18 @@
       "acceptance": [
         {
           "id": "WVC-M1-02-A01",
-          "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths.",
+          "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component; those paths use the literal-path menu or direct PS1 from PowerShell with literal string arguments.",
           "tier": "manual",
-          "status": "failed",
-          "notes": "Owner-confirmed direct Explorer BAT drop substitutes literal %PATH%. Folder/multiple follow-up reports contain different inputs; those subcases remain unverified. No waiver.",
+          "status": "not_run",
+          "notes": "D005 explicitly approved by owner on 2026-10-05. Historical BAT percent failure retained; revised supported-route manual observations pending. Approval alone is not verification.",
           "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A02",
-          "description": "Test literal %PATH% and !NAME! filename segments with matching environment variables set; no environment substitution or command execution occurs.",
+          "description": "Test literal %PATH% and !NAME! segments with matching environment variables set through the literal-path menu and direct PS1 from PowerShell; no environment substitution or command execution occurs in these supported routes. BAT !NAME! preservation remains required; the recorded BAT %PATH% substitution is an explicitly unsupported path under owner-approved D005.",
           "tier": "manual",
-          "status": "failed",
-          "notes": "Direct Explorer BAT drop substitutes literal %PATH% before PS1 binding; exact earlier stage not isolated. Matching-NAME initial fixture preserves !NAME!. No scope waiver.",
+          "status": "not_run",
+          "notes": "D005 explicitly approved by owner on 2026-10-05. Historical BAT percent failure retained; revised supported-route manual observations pending. Approval alone is not verification.",
           "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
@@ -421,7 +421,7 @@
       "approval_gate": null,
       "implementation_commits": ["e32fa11067bc8bb5133e8913840561deba79573f"],
       "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"],
-      "notes": "Implemented; automation passes PS5.1/PS7. Owner-confirmed direct Explorer percent drop fails A01/A02; A03/A04 pass. Requested folder/multiple fixture inputs absent from new reports, still unverified. Next: owner decision on BAT %NAME% support boundary or separate launcher design; no waiver/release acceptance. Next independent code task M1-03."
+      "notes": "Implemented. Owner accepted D005 percent-name restriction on 2026-10-05. A01/A02 revised and not_run pending supported folder/multiple/menu observations; A03/A04 retained passed. Historical direct BAT %PATH% failure remains recorded outside supported boundary. Next is focused supported-route verification; next independent code task M1-03."
     },
     {
       "id": "WVC-M1-03",

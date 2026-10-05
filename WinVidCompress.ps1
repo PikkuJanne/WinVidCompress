@@ -74,10 +74,10 @@ USAGE
         - Or:   .\WinVidCompress.ps1  "D:\Interviews\FolderWithVideos"
 
 NOTES
-    - The .bat forwards quoted paths without delayed expansion. An outer cmd shell can
-      expand %NAME% (and !NAME! with delayed expansion) before the launcher starts.
-      For literal variable-like names, paste the path into menu option 2/3 or call
-      this PS1 from PowerShell with a single-quoted literal path.
+    - BAT drag/drop does not support %NAME% segments such as %PATH% anywhere in
+      the full path, including folder names. Paste these literal paths into menu
+      option 2/3 or call this PS1 from PowerShell with a single-quoted literal path.
+      An outer CMD caller can also expand !NAME! when delayed expansion is enabled.
     - In a CMD/BAT command, omit a quoted folder's trailing backslash; for a drive
       root use D:\. or paste D:\ into the menu. Native quoting can change the slash.
     - CMD/batch command lines are limited to 8191 characters, including expanded

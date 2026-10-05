@@ -2,7 +2,7 @@
 
 Updated: 2026-10-05. Repository: `PikkuJanne/WinVidCompress`.
 
-M0-01/M0-02/M0-03/M1-01 are verified. **M1-02 is implemented: A01/A02 failed in the prepared Explorer run due literal %PATH% substitution; A03/A04 pass. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified.** The owner reported all appeared to pass; recorded argv contradicts the literal-percent result. Remaining 27 tasks are todo; 108 criteria are not_run. TASKS.json is authoritative. No milestone/release acceptance.
+M0-01/M0-02/M0-03/M1-01 are verified. **M1-02 is implemented: owner approved D005; revised A01/A02 are not_run pending supported-route observations; A03/A04 pass.** Historical direct BAT %PATH% substitution remains recorded outside the accepted supported boundary. Remaining 27 tasks are todo; 110 criteria are not_run. TASKS.json is authoritative. No milestone/release acceptance.
 
 ## Repository and reconciliation
 
@@ -38,7 +38,7 @@ NoExit leaves startup exceptions visible at a prompt; a later plain exit may ret
 
 Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open against main; zero implementation check/workflow runs, no CI pass. Previous clean live equality at `2026-10-05T13:49:03.759010+00:00` describes documentation checkpoint `77fc14f`, with tested application still `e32fa11`. Final documentation handoff push/live check pending when committed, reported externally afterwards without a self-SHA loop.
 
-Exact next: **WVC-M1-02 — decide BAT percent-name support boundary or separately scoped launcher work**. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. No main push/merge, quality change, release/deployment/settings/secrets action.
+Exact next: **WVC-M1-02 — complete supported-route verification under approved D005**. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. No main push/merge, quality change, release/deployment/settings/secrets action.
 
 ## Direct Explorer follow-up — 2026-10-05
 
@@ -49,3 +49,11 @@ The new percent-file record (13:48:03 UTC) contains one substituted path in both
 Exact earlier expansion stage is not isolated by these records; the proven boundary is before PS1 parameter binding. A read-only review found no robust thin-forwarding fix that reconstructs already-substituted arguments within the current task constraints. Raw parent-command-line recovery would require specialized shell parsing, cannot undo earlier execution, and conflicts with avoiding multi-stage reconstruction.
 
 No new application/test code, dependency download, policy/association change or broad test rerun. Prior clean Quick/Targeted results retained; owned-root/hash/sentinel/data/schema/whitespace checks performed. A03/A04 remain passed. Task stays implemented and PR draft. Exact next is an explicit owner decision on a documented BAT %NAME% filename restriction (literal-path menu/direct PS1 route), or separately scoped launcher work under unchanged requirements. No acceptance change/waiver is inferred. Folder/multiple fixture subcases still require correct inputs after resolving that decision.
+
+## Accepted boundary D005 — 2026-10-05
+
+The owner replied “the proposed filename restriction accepted”. D005 is applied explicitly in TASKS.json, the task brief, process/testing/full-matrix documentation, README and application help. BAT drops exclude variable-shaped percent segments such as %PATH% in any full-path component; these use literal-path menu entry or direct PS1 invocation from PowerShell with literal string arguments. Ordinary percent and BAT !NAME! support remain required. Historical direct BAT substitution remains recorded, not repaired.
+
+Current revised A01/A02 are not_run while supported folder/multiple/menu observations remain pending. A03/A04 retain passing evidence; the task remains implemented. A new short owned kit provides ten supported BAT names and a folder plus the actual Run-TUI/Prompt-Path with only Process-Paths replaced by a recorder. APPDATA/PATH/NAME/output are isolated, no encoder runs, and a supplemental direct native PowerShell call records literal file/folder values. This establishes selection/binding, not compression integrity or full production startup.
+
+Two menu regressions and three checker regressions are added. Case-limited grading validates all records; full defaults remain unchanged. Explicit UTF8 metadata/report reads fix PS5.1 Unicode decoding. Initial dirty-tree Quick checker failure and smoke decoding failure are retained in JSON; focused fixes/smoke passed. Exact clean-commit Quick/Targeted and fresh human checks are pending at this implementation checkpoint.
