@@ -241,9 +241,7 @@ Describe 'Isolated config and enumeration' {
     }
 }
 
-# These assert desired behavior. Run separately with -KnownDefects: failures are
-# baseline evidence for later tasks, never converted to passing application tests.
-Describe 'Known baseline defects' -Tag 'KnownDefect' {
+Describe 'Repaired strict enumeration regressions [WVC-M1-04]' {
     It 'empty folder collection returns an empty queue [WVC-M1-04]' {
         $empty = Join-Path $TestDrive 'empty'
         New-Item -ItemType Directory -Path $empty | Out-Null
