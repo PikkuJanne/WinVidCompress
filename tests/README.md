@@ -30,7 +30,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 - **Quick**: current-host Pester characterization/harness/fixture checks, parse, pinned error-severity analyzer, new PS1 encoding policy and task/evidence schema.
 - **Targeted**: Quick plus actual direct PS1/BAT entry smoke with native recorders and runtime fixture generation/probing. With FFmpeg unavailable, four media cases are explicitly skipped and eight synthetic JSON cases copied/tested.
-- **Full**: defaults to both required hosts, includes the remaining four known baseline regressions on each, and runs Targeted components. It also records remaining manual/future coverage as NotRun. This presently fails on the known application defects; full-harness execution is not completed release acceptance.
+- **Full**: defaults to both required hosts, includes the remaining three enumeration regressions on each, and runs Targeted components. It also records remaining manual/future coverage as NotRun. This presently fails on the known application defects; full-harness execution is not completed release acceptance.
 - **Manual**: creates an unfilled checklist for Explorer, real cancellation, playback, paths and benchmarks. It performs no manual checks and returns incomplete; an agent must not mark those checks passed from mocks.
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
@@ -42,6 +42,8 @@ For an isolated human menu check when real encoders are unavailable, run `powers
 The tier runner automatically discovers all nested `tests/**/*.Tests.ps1` in stable path order, so later unit/integration regressions are included without changing a hard-coded suite list.
 
 M1-02 adds measured PS1/BAT argv and actionable startup-error regressions in [launcher](launcher/README.md), including an isolated actual Explorer check kit. The current BAT forwards `%*` once with delayed expansion disabled and retains its PowerShell prompt. The six older native entry case labels retain their historical `original-bat` name but execute the current launcher. Automated caller/recorder results never establish Explorer/manual acceptance.
+
+M1-03 adds [config regressions](unit/Config.Tests.ps1) with a new isolated APPDATA/output root per case, malformed-byte backups, no silent destination fallback, unknown nested keys, timestamp strings and excessive-depth refusal. Real Windows ACL listing denial, file-as-directory, read/replace sharing denial, lock contention and no-clobber backup/temp primitives complement simulated offline drive/UNC and write/promotion faults. The fixture ACL is restored in finally. The repaired wrong-shaped config characterization is now normal coverage. These checks do not require FFmpeg or Explorer and do not claim real disconnected-share/crash durability coverage.
 
 Choose `-Hosts Current`, `WindowsPowerShell`, or `PowerShell7`; Full's default is both named hosts. Executable overrides are `-WindowsPowerShell` and `-PowerShell7`. The harness verifies each host's actual version/edition before assigning its label. An explicit missing override is unavailable, rather than a request to fall back silently to PATH.
 
