@@ -671,7 +671,7 @@
       "title": "Add dependency and output-environment diagnostics",
       "milestone": "M1",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         17
       ],
@@ -698,35 +698,52 @@
           "id": "WVC-M1-06-A01",
           "description": "Missing, non-executable, wrong tool and unsupported encoder cases fail before processing.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-06.md",
+            "evidence/WVC-M1-06.json"
+          ]
         },
         {
           "id": "WVC-M1-06-A02",
           "description": "Doctor output shows exactly which binaries would run, without downloading or replacing them.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-06.md",
+            "evidence/WVC-M1-06.json"
+          ]
         },
         {
           "id": "WVC-M1-06-A03",
           "description": "Capability checks time out and fail clearly; no elevated rights or system PATH edits are required.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-06.md",
+            "evidence/WVC-M1-06.json"
+          ]
         },
         {
           "id": "WVC-M1-06-A04",
           "description": "Unwritable/offline destinations are diagnosed without changing saved preferences.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-06.md",
+            "evidence/WVC-M1-06.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "a91bfa6b2d35839e3296570843beeeb34a81f2ef"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-06.md",
+        "evidence/WVC-M1-06.json"
+      ],
+      "notes": "Verified; A01-A04 passed. Clean a91bfa6: each real PS5.1.26100.9444/PS7.6.5 host Focused112/0/0/0, Quick231/0/0/0, Targeted247/0/4/0 exit0. Thirty-one controlled Windows native/ACL environment regressions and eight entry cases. PATH-before-adjacent, bounded capability calls and -CheckEnvironment exact paths/builds; existing/absent/malformed config preserved. Owned temporary destination write before startup/menu save/batch; current capacity advisory. No actual FFmpeg/FFprobe available, four media skips per host; no new Full/manual/Explorer/milestone/release claim. Filesystem/process-start total deadlines and detached descendants remain explicit limits. Draft PR/actual zero implementation CI recorded. Next WVC-M2-01."
     },
     {
       "id": "WVC-M2-01",
