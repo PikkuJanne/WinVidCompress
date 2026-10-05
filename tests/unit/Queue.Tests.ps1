@@ -199,6 +199,27 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
             try { $stream.WriteByte(1) } finally { $stream.Dispose() }
             $global:LASTEXITCODE = 0
         }
+        Mock Invoke-EncodeProcess {
+            & $script:Recorder @Arguments
+            [pscustomobject]@{ Succeeded=$true; StdOutTruncated=$false; StdErrTruncated=$false }
+        }
+    }
+
+    It 'aborts the batch when owned encoder cleanup fails instead of starting the next job [WVC-M2-03]' {
+        $source = Join-Path $script:Root 'first.mov'
+        $second = Join-Path $script:Root 'second.mov'
+        foreach ($file in @($source,$second)) { [IO.File]::WriteAllText($file,'source sentinel') }
+        $output = Join-Path $script:Root 'output'
+        [void][IO.Directory]::CreateDirectory($output)
+        Mock Invoke-EncodeProcess {
+            $abort = New-Object InvalidOperationException 'Injected owned encoder cleanup failure'
+            $abort.Data['WvcAbortBatch'] = $true
+            throw $abort
+        }
+        { Process-Paths @($source,$second) 'unused' 'unused' ([pscustomobject]@{OutputDir=$output}) } | Should -Throw '*cleanup failure*'
+        Should -Invoke Invoke-EncodeProcess -Times 1 -Exactly
+        $script:RecordedJobs.Count | Should -Be 0
+        [IO.File]::ReadAllText($second) | Should -BeExactly 'source sentinel'
     }
 
     It 'encodes a same-directory MP4 into a new suffix and preserves existing sources/finals [A03 A04]' {

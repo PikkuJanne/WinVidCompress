@@ -908,7 +908,7 @@
       "title": "Isolate command construction and native process execution",
       "milestone": "M2",
       "priority": "P0",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         2,
         8,

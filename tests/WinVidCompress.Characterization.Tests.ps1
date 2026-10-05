@@ -108,11 +108,15 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
             $script:RecordedArguments = @($args)
             $global:LASTEXITCODE = $script:EncoderExit
         }
+        Mock Invoke-EncodeProcess {
+            $script:RecordedArguments = @($Arguments)
+            [pscustomobject]@{ Succeeded=($script:EncoderExit -eq 0); FailureKind='NonZeroExit'; Error="FFmpeg exit code: $script:EncoderExit"; StdOutTruncated=$false; StdErrTruncated=$false }
+        }
     }
 
     It 'preserves the complete default argument sequence and flat MP4 naming' {
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
-        $expected = @('-hide_banner','-stats','-n','-i',$script:Source,
+        $expected = @('-hide_banner','-nostdin','-stats','-n','-i',$script:Source,
             '-map','0:0','-map','0:1',
             '-c:v','libx264','-preset','veryfast','-crf','22','-c:a','aac','-b:a','160k',
             '-movflags','+faststart','-metadata','title=Band Name 29092025 - CamA',
@@ -159,7 +163,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         $specialSource = Join-Path $script:SourceRoot 'Band & (A) [x] !NAME! %PATH% 29092025.mov'
         Set-Content -LiteralPath $specialSource -Value 'synthetic'
         Compress-One $script:Recorder 'unused-probe' $specialSource $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
-        $script:RecordedArguments[4] | Should -Be $specialSource
+        $script:RecordedArguments[[array]::IndexOf($script:RecordedArguments,'-i')+1] | Should -Be $specialSource
         $script:RecordedArguments | Should -Contain 'artist=Band & (A) [x] !NAME! %PATH%'
     }
 
