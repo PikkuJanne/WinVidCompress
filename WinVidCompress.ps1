@@ -722,7 +722,9 @@ function ConvertFrom-ProbeJson([string]$Json) {
             $kind = 'InvalidStructure'
             if ($raw -isnot [Management.Automation.PSCustomObject]) { throw 'Each probe stream must be an object.' }
             $index = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'index')
-            $type = ConvertTo-ProbeString (Get-ProbeProperty $raw 'codec_type')
+            $rawType = Get-ProbeProperty $raw 'codec_type'
+            # FFprobe's explicit unknown stream type is still an identifiable omitted stream.
+            $type = $(if ($rawType -is [string] -and $rawType -eq 'unknown') { 'unknown' } else { ConvertTo-ProbeString $rawType })
             if ($null -eq $index -or -not $indices.Add($index) -or $null -eq $type) {
                 throw 'Every stream needs a unique nonnegative integer index and codec type.'
             }
@@ -814,7 +816,7 @@ function ConvertFrom-ProbeJson([string]$Json) {
             $result.Warnings += 'Source duration is unknown; progress is indeterminate; duration comparison is unavailable for validation.'
             $result.Limitations += 'Source/output duration comparison is unavailable without a known source duration.'
         }
-        $result.Limitations += 'Display geometry transforms and explicit encoder stream mapping remain later tasks.'
+        $result.Limitations += 'Display geometry transforms remain a later task.'
         $result.Succeeded = $true; $result.Stage = 'Ready'
     } catch {
         $result.FailureKind = $kind; $result.Reason = $_.Exception.Message
@@ -847,6 +849,55 @@ function Get-MediaInspection([string]$FFprobe, [string]$InputPath,
     $result = ConvertFrom-ProbeJson $native.StdOut
     $result.InputPath = $InputPath; $result.ResolvedInputPath = $source.FullName; $result.Native = $native
     return $result
+}
+
+function Get-StreamPlan($Inspection) {
+    if (-not $Inspection.Succeeded -or $null -eq $Inspection.PrimaryVideo -or
+        $null -eq $Inspection.PrimaryVideoIndex) { throw 'A stream plan requires a successful real-video inspection.' }
+    # The normalizer already selected the first real video. Carry that same object.
+    $video = $Inspection.PrimaryVideo
+    $audioStreams = @($Inspection.Streams | Where-Object { $_.CodecType -eq 'audio' } | Sort-Object Index)
+    $defaults = @($audioStreams | Where-Object { $_.Disposition.Default })
+    $audio = $null; $audioSelection = 'None'
+    if ($defaults.Count -eq 1) { $audio = $defaults[0]; $audioSelection = 'UniqueDefault' }
+    elseif ($audioStreams.Count) { $audio = $audioStreams[0]; $audioSelection = 'FirstByIndex' }
+    $audioIndex = $(if ($null -ne $audio) { $audio.Index } else { $null })
+    $maps = @('-map',('0:' + $Inspection.PrimaryVideoIndex))
+    if ($null -ne $audio) { $maps += @('-map',('0:' + $audioIndex)) }
+    $omitted = @($Inspection.Streams | Where-Object {
+        $_.Index -ne $Inspection.PrimaryVideoIndex -and ($null -eq $audioIndex -or $_.Index -ne $audioIndex)
+    } | Sort-Object Index | ForEach-Object {
+        $reason = if ($_.Disposition.AttachedPicture) { 'AttachedPicture' }
+            elseif ($_.CodecType -eq 'video') { 'AlternateVideo' }
+            elseif ($_.CodecType -eq 'audio') { 'AlternateAudio' } else { 'UnsupportedType' }
+        [pscustomobject]@{ Index = $_.Index; CodecType = $_.CodecType; CodecName = $_.CodecName; Reason = $reason }
+    })
+    $reasons = @{ AttachedPicture = 'attached artwork'; AlternateVideo = 'alternate video';
+        AlternateAudio = 'alternate audio'; UnsupportedType = 'not included in this output' }
+    return [pscustomobject]@{ SchemaVersion = 1; Video = $video; VideoIndex = $Inspection.PrimaryVideoIndex;
+        VideoSelection = 'FirstRealByIndex'; Audio = $audio; AudioIndex = $audioIndex;
+        AudioSelection = $audioSelection; MapArguments = $maps; OmittedStreams = $omitted;
+        Warnings = @($omitted | ForEach-Object { "Omitting stream $($_.Index) ($($_.CodecType)): $($reasons[$_.Reason])." }) }
+}
+
+function Write-StreamPlan($Plan) {
+    Write-Host ("Video stream: {0} ({1}, {2}x{3}; first real video by index)." -f
+        $Plan.VideoIndex,$Plan.Video.CodecName,$Plan.Video.Width,$Plan.Video.Height)
+    if ($null -eq $Plan.Audio) {
+        Write-Host 'Audio stream: none (silent input).'
+    } else {
+        $audio = $Plan.Audio
+        $channels = $(if ($null -ne $audio.Channels) { [string]$audio.Channels } else { 'unknown' })
+        $layout = $(if ($audio.ChannelLayout) { $audio.ChannelLayout } else { 'unknown' })
+        $rate = $(if ($null -ne $audio.SampleRate) { [string]$audio.SampleRate } else { 'unknown' })
+        $language = $(if ($audio.Language) { $audio.Language } else { 'unknown' })
+        $flags = @($audio.Disposition.Flags.Keys | Sort-Object | Where-Object { $audio.Disposition.Flags[$_] -eq 1 }) -join ','
+        if (-not $flags) { $flags = 'none' }
+        $selection = $(if ($Plan.AudioSelection -eq 'UniqueDefault') { 'unique default audio' } else { 'first audio by index' })
+        Write-Host ("Audio stream: {0} ({1} channels; layout {2}; sample rate {3}; language {4}; {5}; dispositions {6})." -f
+            $Plan.AudioIndex,$channels,$layout,$rate,$language,$selection,$flags)
+    }
+    foreach ($warning in $Plan.Warnings) { Write-Host $warning -ForegroundColor Yellow }
 }
 
 function Next-CompressedPath([string]$targetPath) {
@@ -1052,7 +1103,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             throw "Probe failed [$($inspection.FailureKind)] at $($inspection.Stage): $($inspection.Reason)"
         }
         foreach ($warning in $inspection.Warnings) { Write-Host $warning -ForegroundColor Yellow }
-        $h = $inspection.PrimaryVideo.Height
+        $streamPlan = Get-StreamPlan $inspection
+        Write-StreamPlan $streamPlan
+        $h = $streamPlan.Video.Height
 
         $args = @(
             '-hide_banner',
@@ -1060,16 +1113,17 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             '-n',                      # never overwrite
             '-i', $inPath
         )
+        $args += $streamPlan.MapArguments
 
         if ($h -and $h -gt 1080) {
             $args += @('-vf','scale=-2:1080')
         }
 
         $args += @(
-            '-c:v','libx264','-preset','veryfast','-crf',"$crf",
-            '-c:a','aac','-b:a','160k',
-            '-movflags','+faststart'
+            '-c:v','libx264','-preset','veryfast','-crf',"$crf"
         )
+        if ($null -ne $streamPlan.Audio) { $args += @('-c:a','aac','-b:a','160k') }
+        $args += @('-movflags','+faststart')
 
         if ($meta.Title) { $args += @('-metadata',"title=$($meta.Title)") }
         if ($meta.Band)  { $args += @('-metadata',"artist=$($meta.Band)") }
