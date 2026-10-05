@@ -66,7 +66,8 @@ try {
                     (Join-Path $testsRoot 'Invoke-PesterRun.ps1'),'-ModuleRoot',$ModuleRoot,
                     '-TestPath',($selected -join '|'),'-ReportPath',$childPath)
                 if ($includeBaseline) { $arguments += '-IncludeKnownDefects' }
-                $child = Invoke-WvcTestProcess $executable $arguments -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
+                # Bound the complete suite separately from its short per-process fixture deadlines.
+                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 120000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stdout.log')), $child.StdOut)
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stderr.log')), $child.StdErr)
                 $childReport = Read-WvcChildReport $childPath $child.ExitCode

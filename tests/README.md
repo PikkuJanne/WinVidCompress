@@ -35,6 +35,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
 
+The tier runner bounds the complete Pester subprocess at 120 seconds; individual native fixture deadlines remain separate. M2-02's additional owned native compilers exposed the former 60-second whole-suite deadline in one PS7 Targeted run. A timeout still fails the gate and retains owned diagnostics; the allowance does not turn an incomplete suite into a pass.
+
 M1-01 replaces the old AST-only Quit defect probe with normal nested menu/path regressions that execute the real menu function with bounded mocked input. Quit returns to its caller; the unchanged BAT's `-NoExit` leaves its PowerShell prompt open. Actual Explorer double-click acceptance must still be recorded separately.
 
 For an isolated human menu check when real encoders are unavailable, run `powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-MenuManualFixture.ps1`. It copies the actual PS1/BAT bytes into an owned temp root, supplies startup-only native dependency sentinels, and creates `Check-Menu.bat` to isolate APPDATA/PATH before calling the unchanged launcher. Double-click that preparation wrapper in Explorer, select 4 once, verify a usable PowerShell prompt remains, then type `exit`. Record the wrapper/sentinel limitation and actual observer/result; preparation or scripted stdin is not manual acceptance. Clean only this returned Owner using `Remove-WvcTestRoot` after closing its console.
