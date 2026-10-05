@@ -8,7 +8,7 @@
     "WVC-M1-01-A03",
     "WVC-M1-01-A04"
   ],
-  "recorded_at": "2026-10-04",
+  "recorded_at": "2026-10-05",
   "tested_commit": "6337b73d41cf65b9f12cb412800bc3d68780693c",
   "base_commit": "e8b54d1fdd03bdd3e0135c67c38335788a6f8112",
   "branch": "codex/wvc-m1-01-menu-paths",
@@ -294,15 +294,15 @@
       "evidence": "Blank/whitespace/quoted whitespace cancels; literal bracket and Finnish/German/CJK file/folder/output names resolve exactly. Wildcard-lookalike neighbor and file/source/output sentinels remain unchanged. Mocked access denial and real file-blocked creation report errors and permit cancellation."
     },
     "A04": {
-      "status": "not_run",
-      "evidence": "Actual human Explorer double-click/menu/Quit observation requested asynchronously; response pending. Native desktop control disabled in this session. Automated/native redirected stdin does not pass this criterion."
+      "status": "passed",
+      "evidence": "On 2026-10-05 the repository owner quoted the prepared actual Explorer double-click / choose 4 / usable PowerShell prompt / exit instructions and replied 'Confirmed'. This is direct human observation, not scripted stdin. The prepared PS1/BAT copy hashes were rechecked against the tested implementation."
     }
   },
   "manual_checks": [
     {
       "acceptance_id": "WVC-M1-01-A04",
-      "status": "not_run",
-      "observer": null,
+      "status": "passed",
+      "observer": "Repository owner (user)",
       "preparation_command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-MenuManualFixture.ps1",
       "prepared_source_commit": "6337b73d41cf65b9f12cb412800bc3d68780693c",
       "steps": [
@@ -311,7 +311,19 @@
         "Type exit to close the isolated shell; report observed result."
       ],
       "isolation": "Owned temporary root; copies of actual PS1/BAT; ephemeral APPDATA/PATH/PSModulePath wrapper; startup-only local compiled dependency sentinels return 13 if invoked. No real user config/media touched.",
-      "limitation": "Preparation wrapper calls unchanged BAT; native dependency startup is stubbed. Not direct FFmpeg/dependency or media validation. Preparation is not manual execution."
+      "limitation": "Preparation wrapper calls unchanged BAT; native dependency startup is stubbed. Not direct FFmpeg/dependency or media validation. Preparation is not manual execution.",
+      "confirmed_on": "2026-10-05",
+      "confirmation": "Confirmed",
+      "confirmation_context": "User quoted the exact Explorer double-click Check-Menu.bat / enter 4 / confirm usable PowerShell prompt / type exit steps and confirmed them in this chat.",
+      "counts": {
+        "Passed": 1,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "source_copy_hashes_rechecked": true,
+      "ApplicationSHA256": "46BF016996FF6A18372A77577ABF7D9C193E7F5AB542F317A5ACB5B93C4AC3D4",
+      "LauncherSHA256": "C5A38591DDE911446A97B210F2E7C520F52DCFD456DCF381A2A351B94D4A9F6D"
     }
   ],
   "owner_approval": null,
@@ -320,10 +332,10 @@
     "unchanged_WinVidCompress_bat_sha256": "C5A38591DDE911446A97B210F2E7C520F52DCFD456DCF381A2A351B94D4A9F6D"
   },
   "previous_verified_sync": {
-    "checked_at": "2026-10-04T17:27:56.672063+00:00",
-    "head": "6337b73d41cf65b9f12cb412800bc3d68780693c",
-    "live_fetch_head": "6337b73d41cf65b9f12cb412800bc3d68780693c",
-    "live_push_head": "6337b73d41cf65b9f12cb412800bc3d68780693c",
+    "checked_at": "2026-10-05T12:42:56.214979+00:00",
+    "head": "17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae",
+    "live_fetch_head": "17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae",
+    "live_push_head": "17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae",
     "status": "SYNCHRONIZED",
     "dirty": false,
     "operations": []
@@ -338,7 +350,7 @@
   },
   "final_handoff_push": "pending when committed; verify final live fetch/push equality and clean state externally",
   "limitations": [
-    "A04 pending actual user observation; do not label task verified from automated checks.",
+    "A04 passes from the owner's direct confirmation of the actual isolated Explorer check; this does not establish broader Explorer argv/drag-drop, dependency, media or release acceptance.",
     "Full fails on four remaining known config/enumeration assertions per host, plus four skipped media and eight NotRun coverage records. No full/release acceptance.",
     "FFmpeg/FFprobe unavailable; no real media generation/probe/playback or special-character Explorer drop validation.",
     "Quick pass count: 75 individual Pester checks plus four static/schema gates. Targeted adds six native entry cases and eight copied synthetic probe JSON cases.",
@@ -347,5 +359,15 @@
     "Read-only subagent reviewed fix/tests; no concurrent writer. No dependency download, main push/merge, history rewrite, release or repository settings/secrets change.",
     "Raw diagnostics, manual copies/executables/config/path and tokens stay outside Git; commit only sanitized logical metadata."
   ],
-  "next_task": "Complete WVC-M1-01-A04 actual Explorer observation; next bounded coding task WVC-M1-02"
+  "next_task": "WVC-M1-02 — Harden the .bat launcher using measured argument round trips",
+  "automated_test_date": "2026-10-04",
+  "confirmation_update": {
+    "date": "2026-10-05",
+    "scope": "Documentation-only: owner-confirmed A04 passed, M1-01 verified, next task M1-02. No application/test code change and no broad automated rerun; 2026-10-04 exact-commit results retained.",
+    "checks": [
+      "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "git -c core.whitespace=cr-at-eol diff --cached --check",
+      "Manual fixture PS1/BAT SHA256 compared with prepared manifest and tested implementation"
+    ]
+  }
 }

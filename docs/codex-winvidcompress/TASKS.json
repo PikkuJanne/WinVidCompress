@@ -280,7 +280,7 @@
       "title": "Repair menu exit and separate source/output folder selection",
       "milestone": "M1",
       "priority": "P0",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         1,
         4
@@ -339,12 +339,12 @@
           "id": "WVC-M1-01-A04",
           "description": "Double-click launch reaches the menu and Quit leaves the console in its documented state.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M1-01.md",
             "evidence/WVC-M1-01.json"
           ],
-          "notes": "Actual human Explorer double-click/menu/Quit observation requested asynchronously; result pending. Native desktop control disabled. Prepared isolated copied PS1/BAT fixture with startup-only sentinels and APPDATA/PATH wrapper. Preparation/scripted stdin is not manual acceptance."
+          "notes": "On 2026-10-05 the owner quoted and confirmed the actual Explorer double-click Check-Menu.bat / choose 4 / usable PowerShell prompt / exit steps. Prepared PS1/BAT hashes match tested commit 6337b73. Actual human observation with isolated APPDATA/PATH wrapper and startup-only sentinels; no broader media/argv acceptance."
         }
       ],
       "approval_gate": null,
@@ -356,7 +356,7 @@
         "evidence/WVC-M1-01.json",
         "evidence/WVC-M1-01-session.md"
       ],
-      "notes": "Menu/path fix implemented; A01-A03 pass, A04 actual Explorer observation remains not_run. Each host Quick 79 passed, Targeted 93 passed/4 skipped; Full 168 passed/8 remaining config/enumeration failures/4 skipped/8 NotRun, exit 1. No verified task/owner/release acceptance yet. Final handoff push/check pending at commit time; report externally. Exact remaining M1-01-A04; subsequent coding task WVC-M1-02."
+      "notes": "Bounded menu/path task verified: A01-A03 automated pass; owner confirmed actual Explorer A04 on 2026-10-05. Existing 2026-10-04 clean commit 6337b73 results retained: each Quick 79 passed, Targeted 93 passed/4 skipped; Full 168 passed/8 remaining config/enumeration failures/4 skipped/8 NotRun, exit 1. Documentation-only confirmation update, no automated rerun/broader release acceptance. Final handoff push/check pending at commit time; report externally. Next WVC-M1-02."
     },
     {
       "id": "WVC-M1-02",
