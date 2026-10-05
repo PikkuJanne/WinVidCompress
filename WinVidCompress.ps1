@@ -565,6 +565,47 @@ function Collect-InputFiles([string]$p) {
     return (Get-InputScan $p).Files
 }
 
+function Get-QueuePathKey([string]$fullPath) {
+    # Provider normalization also supports long paths on Windows PowerShell 5.1.
+    $key = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($fullPath)
+    # Ordinary extended drive/UNC spellings are aliases, not different sources.
+    # Keep special extended literals (e.g. trailing dots/spaces) distinct.
+    $ordinary = $null
+    if ($key.StartsWith('\\?\UNC\', [StringComparison]::OrdinalIgnoreCase)) {
+        $ordinary = '\\' + $key.Substring(8)
+    } elseif ($key -match '^\\\\\?\\[A-Za-z]:\\') {
+        $ordinary = $key.Substring(4)
+    }
+    if ($ordinary -and $ordinary -notmatch '[. ](?:\\|$)' -and $ordinary -notmatch '/') {
+        $key = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ordinary)
+    }
+    return $key
+}
+
+function Get-InputQueue([string[]]$paths) {
+    $scans = New-Object 'Collections.Generic.List[object]'
+    $sources = New-Object 'Collections.Generic.Dictionary[string,string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($p in $paths) {
+        $scan = Get-InputScan $p
+        $scans.Add($scan)
+        foreach ($file in $scan.Files) {
+            $key = Get-QueuePathKey $file
+            if (-not $sources.ContainsKey($key)) {
+                $sources.Add($key, $file)
+            } elseif ([StringComparer]::Ordinal.Compare($file, $sources[$key]) -lt 0) {
+                # Stable spelling even when aliases arrive in a different order.
+                $sources[$key] = $file
+            }
+        }
+    }
+    $keys = [string[]]@($sources.Keys)
+    [array]::Sort($keys, [StringComparer]::OrdinalIgnoreCase)
+    $files = @($keys | ForEach-Object { $sources[$_] })
+    # No ownership manifest/temp protocol exists yet. Never infer ownership from
+    # OutputDir, extension or a compressed/partial suffix; keep ambiguous files.
+    return [pscustomobject]@{ Files = $files; Scans = $scans.ToArray() }
+}
+
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
     try {
         if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
@@ -584,7 +625,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 
         $out = Join-Path $outDir ($base + '.mp4')
 
-        if (Test-Path -LiteralPath $out) {
+        $sourceKey = Get-QueuePathKey $inPath
+        if ([StringComparer]::OrdinalIgnoreCase.Equals($sourceKey, (Get-QueuePathKey $out)) -or
+            (Test-Path -LiteralPath $out)) {
             if ($CollisionMode -eq 'skip') {
                 Write-Host "Skipping (exists): $out" -ForegroundColor DarkYellow
                 $counters.Value.Skipped++
@@ -592,6 +635,10 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             } else {
                 $out = Next-CompressedPath $out
             }
+        }
+
+        if ([StringComparer]::OrdinalIgnoreCase.Equals($sourceKey, (Get-QueuePathKey $out))) {
+            throw 'Output path must differ from the input path.'
         }
 
         $h = Get-VideoHeight $ffprobe $inPath
@@ -646,8 +693,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0; Scanned = 0; ScanErrors = 0 }
 
-    foreach ($p in $paths) {
-        $scan = Get-InputScan $p
+    # Complete every selection before an encoder can create any new input candidates.
+    $queue = Get-InputQueue $paths
+    foreach ($scan in $queue.Scans) {
         $targets = @($scan.Files)
         if ($scan.Succeeded) { $counters.Scanned++ }
         $counters.ScanErrors += $scan.Errors.Count
@@ -655,15 +703,12 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
             Write-Host ("Scan error [{0}]: {1}`n    {2}" -f $failure.Kind,$failure.Path,$failure.Message) -ForegroundColor Yellow
         }
         if ($targets.Count -eq 0) {
-            if ($scan.Succeeded) { Write-Host "No videos found: $p" -ForegroundColor Yellow }
-            continue
+            if ($scan.Succeeded) { Write-Host "No videos found: $($scan.InputPath)" -ForegroundColor Yellow }
         }
-
-        $counters.Found += $targets.Count
-
-        foreach ($f in $targets) {
-            Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF ([ref]$counters)
-        }
+    }
+    $counters.Found = $queue.Files.Count
+    foreach ($f in $queue.Files) {
+        Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF ([ref]$counters)
     }
 
     Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
