@@ -307,6 +307,7 @@ Describe 'Configuration validation and recovery [WVC-M1-03]' {
         foreach ($choice in @('1','4')) { $script:Choices.Enqueue($choice) }
         Mock Read-Host { $script:Choices.Dequeue() }
         Mock Prompt-Path { Join-Path $env:APPDATA 'new-output' }
+        Mock Get-OutputEnvironment {}
         Mock Save-Config { throw 'Synthetic save failure' }
         { Run-TUI 'unused' 'unused' $cfg } | Should -Not -Throw
         $cfg.OutputDir | Should -Be $script:Output

@@ -60,6 +60,9 @@ Describe 'Helper loading and entry compatibility' {
 
     It 'retains direct path dispatch in the actual entry statements' {
         Mock Ensure-Tool { $exe }
+        Mock Get-ToolEnvironment {}
+        Mock Get-OutputEnvironment {}
+        Mock Write-EnvironmentReport {}
         Mock Load-Config { [pscustomobject]@{ OutputDir = $script:OutputRoot } }
         Mock Process-Paths {}
         Mock Run-TUI {}
@@ -76,6 +79,9 @@ Describe 'Helper loading and entry compatibility' {
 
     It 'retains no-argument menu dispatch with the menu mocked' {
         Mock Ensure-Tool { $exe }
+        Mock Get-ToolEnvironment {}
+        Mock Get-OutputEnvironment {}
+        Mock Write-EnvironmentReport {}
         Mock Load-Config { [pscustomobject]@{ OutputDir = $script:OutputRoot } }
         Mock Process-Paths {}
         Mock Run-TUI {}

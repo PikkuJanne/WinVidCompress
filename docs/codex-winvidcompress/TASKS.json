@@ -671,7 +671,7 @@
       "title": "Add dependency and output-environment diagnostics",
       "milestone": "M1",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         17
       ],

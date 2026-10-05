@@ -88,4 +88,6 @@ Repository instructions and contextual instruction discovery; consult current do
 
 ## Verification boundary
 
+M1-06 option reference (consulted 2026-10-05): [FFprobe documentation](https://ffmpeg.org/ffprobe.html) for show_program_version/show_entries/select_streams, CSV/JSON writers and FFREPORT; [FFmpeg documentation](https://ffmpeg.org/ffmpeg.html) for version, encoders and component-specific help. These describe the interface; synthetic Windows recorder tests do not verify a real installed FFmpeg build.
+
 Public documentation is a reference, not a guarantee of the exact installed build. Codex must verify supported versions/capabilities when implementing. Container network access was not available to exercise live Git operations during helper tests; remote-query behaviour is tested against disposable local Git fixtures via a test-only transport seam. The live repository anchor was read through the GitHub connector. No Windows PowerShell, Explorer launch or actual interview conversion was executed by this bundle.

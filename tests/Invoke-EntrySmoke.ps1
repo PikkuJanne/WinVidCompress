@@ -9,6 +9,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'TestSupport.ps1')
+. (Join-Path $PSScriptRoot 'EnvironmentTestSupport.ps1')
 if ($PowerShell7 -and -not (Get-WvcHostInfo $PowerShell7 'PowerShell7')) { $PowerShell7 = $null }
 if ($PSVersionTable.PSEdition -ne 'Desktop') { throw 'Run this smoke harness with Windows PowerShell 5.1.' }
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -51,6 +52,17 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
         $output = $stdout.Result
         $errors = $stderr.Result
         if ($process.ExitCode -ne 0 -or $errors) { throw "Entry smoke failed: exit $($process.ExitCode); $errors" }
+        if ($Mode -eq 'Doctor') {
+            if ($output -notmatch [regex]::Escape("FFmpeg: $(Join-Path $bin 'ffmpeg.exe')") -or
+                $output -notmatch [regex]::Escape("FFprobe: $(Join-Path $bin 'ffprobe.exe')") -or
+                $output -notmatch 'Temporary create/write/remove check passed' -or
+                $output -match 'WVC_NATIVE_RECORDER|========== Summary|========== WinVidCompress ==========' -or
+                (Get-FileHash -LiteralPath $configPath).Hash -ne $configHash -or
+                @(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 0) {
+                throw "Doctor did not preserve isolated preferences/output or avoid conversion/menu: $output"
+            }
+            return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
+        }
         if ($Mode -ne 'Batch') {
             if ([regex]::Matches($output, [regex]::Escape('========== WinVidCompress ==========')).Count -ne 1 -or
                 $output -match 'WVC_NATIVE_RECORDER' -or ($Mode -eq 'MenuShell' -and $output -notmatch 'WVC_QUIT_RETURNED')) {
@@ -112,6 +124,8 @@ try {
     $expectedOutputTwo = Join-Path $outputRoot 'Other Band 29092025.mp4'
     [pscustomobject]@{ OutputDir = $outputRoot } | ConvertTo-Json |
         Set-Content -LiteralPath (Join-Path $configDir 'config.json') -Encoding UTF8
+    $configPath = Join-Path $configDir 'config.json'
+    $configHash = (Get-FileHash -LiteralPath $configPath).Hash
 
     $recorderCode = @'
 using System;
@@ -119,6 +133,7 @@ using System.IO;
 using System.Text;
 public static class WvcEntryRecorder {
     public static int Main(string[] args) {
+        if (WvcEnvironmentResponder.Respond(args)) return 0;
         if (Path.GetFileName(Environment.GetCommandLineArgs()[0]).Equals("ffprobe.exe", StringComparison.OrdinalIgnoreCase)) {
             Console.WriteLine("720");
         } else {
@@ -129,7 +144,7 @@ public static class WvcEntryRecorder {
     }
 }
 '@
-    Add-Type -TypeDefinition $recorderCode -OutputAssembly (Join-Path $bin 'ffmpeg.exe') -OutputType ConsoleApplication
+    Add-Type -TypeDefinition ($recorderCode + (Get-WvcEnvironmentResponderSource)) -OutputAssembly (Join-Path $bin 'ffmpeg.exe') -OutputType ConsoleApplication
     Copy-Item -LiteralPath (Join-Path $bin 'ffmpeg.exe') -Destination (Join-Path $bin 'ffprobe.exe')
 
     $application = Join-Path $repoRoot 'WinVidCompress.ps1'
@@ -140,6 +155,8 @@ public static class WvcEntryRecorder {
     $definitions = @(
         @{ Id = 'direct-ps51'; Executable = $windowsPowerShell; Arguments = $directArguments; Mode = 'Batch' },
         @{ Id = 'direct-ps7'; Executable = $PowerShell7; Arguments = $directArguments; Mode = 'Batch' },
+        @{ Id = 'doctor-ps51'; Executable = $windowsPowerShell; Arguments = ($directArguments + ' -CheckEnvironment'); Mode = 'Doctor' },
+        @{ Id = 'doctor-ps7'; Executable = $PowerShell7; Arguments = ($directArguments + ' -CheckEnvironment'); Mode = 'Doctor' },
         @{ Id = 'original-bat'; Executable = $env:ComSpec; Arguments = ('/d /s /c ""' + $launcher + '" "' + $inputRoot + '""'); Mode = 'Batch' },
         @{ Id = 'menu-ps51'; Executable = $windowsPowerShell; Arguments = $menuArguments; Mode = 'Menu' },
         @{ Id = 'menu-ps7'; Executable = $PowerShell7; Arguments = $menuArguments; Mode = 'Menu' },

@@ -55,6 +55,8 @@ M1-05 adds [queue regressions](unit/Queue.Tests.ps1) for overlapping/repeated se
 
 ## Reports and exit codes
 
+M1-06 adds `unit/Environment.Tests.ps1` with real Windows processes compiled from synthetic C# recorders under PS5.1. Cases cover PATH/adjacent precedence, command shadows, unreadable/non-executable/wrong binaries, exact capabilities, native exits/stderr, hung checks, inherited pipe handles, large concurrent streams, argv and actual create-file ACL denial. Doctor tests isolate APPDATA/output and preserve saved/absent/malformed preferences; menu selection and batch checks refuse inaccessible destinations. The shared environment responder keeps the existing entry/manual fixtures usable. Two actual PS1 `-CheckEnvironment` entry cases join the six existing dispatch cases. No recorder establishes real FFmpeg/media support or Explorer acceptance; installed-tool media omissions remain explicit.
+
 `-ReportPath` selects a new report file; existing reports are never overwritten. Without it, the harness prints the location of a unique JSON report in temp. Reports use a stable schema and sorted case IDs, contain source SHA/dirty state, observed host/tool versions and real counts, and omit absolute fixture/module paths. They do not include elapsed-time or random fixture-root fields. Fixture recipes use relative files/output placeholders.
 
 - **0**: selected Quick/Targeted checks succeeded; any excluded/skipped work stays visible as `PassedWithOmissions`.
