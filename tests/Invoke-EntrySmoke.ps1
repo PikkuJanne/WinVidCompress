@@ -135,7 +135,7 @@ public static class WvcEntryRecorder {
     public static int Main(string[] args) {
         if (WvcEnvironmentResponder.Respond(args)) return 0;
         if (Path.GetFileName(Environment.GetCommandLineArgs()[0]).Equals("ffprobe.exe", StringComparison.OrdinalIgnoreCase)) {
-            Console.WriteLine("720");
+            Console.WriteLine("{\"streams\":[{\"index\":0,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":1280,\"height\":720}],\"format\":{\"duration\":\"1.000000\"}}");
         } else {
             Console.WriteLine("WVC_NATIVE_RECORDER");
             foreach (string arg in args) Console.WriteLine("WVC_ARG:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));

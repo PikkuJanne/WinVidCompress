@@ -189,7 +189,10 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         $script:RecordedJobs = New-Object 'Collections.Generic.List[object]'
         $script:Counters = [pscustomobject]@{ Done = 0; Skipped = 0; Failed = 0 }
         Mock Write-Host {}
-        Mock Get-VideoHeight { 1080 }
+        Mock Get-MediaInspection {
+            [pscustomobject]@{ Succeeded = $true; Native = $null; Warnings = @();
+                PrimaryVideo = [pscustomobject]@{ Height = 1080 } }
+        }
         $script:Recorder = {
             $inputIndex = [array]::IndexOf($args, '-i') + 1
             $script:RecordedJobs.Add([pscustomobject]@{ Input = $args[$inputIndex]; Output = $args[-1] })
@@ -237,7 +240,7 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         Compress-One $script:Recorder 'unused' $source $script:Root $DefaultCRF ([ref]$script:Counters)
         $script:RecordedJobs.Count | Should -Be 0
         $script:Counters.Failed | Should -Be 1
-        Should -Invoke Get-VideoHeight -Times 0 -Exactly
+        Should -Invoke Get-MediaInspection -Times 0 -Exactly
         [IO.File]::ReadAllText($source) | Should -Be 'source sentinel'
     }
 
@@ -252,7 +255,7 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         } finally { $CollisionMode = $previousCollisionMode }
         $script:RecordedJobs.Count | Should -Be 0
         $script:Counters.Skipped | Should -Be 1
-        Should -Invoke Get-VideoHeight -Times 0 -Exactly
+        Should -Invoke Get-MediaInspection -Times 0 -Exactly
         [IO.File]::ReadAllText($source) | Should -Be 'source sentinel'
     }
 
