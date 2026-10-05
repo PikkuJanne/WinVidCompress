@@ -750,7 +750,7 @@
       "title": "Expand FFprobe into normalized JSON media inspection",
       "milestone": "M2",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         7
       ],
@@ -776,35 +776,52 @@
           "id": "WVC-M2-01-A01",
           "description": "Probe exit failure, timeout, invalid JSON and missing required video fields yield structured failure.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-01.md",
+            "evidence/WVC-M2-01.json"
+          ]
         },
         {
           "id": "WVC-M2-01-A02",
           "description": "Audio-only input and attached artwork without real video do not start video compression.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-01.md",
+            "evidence/WVC-M2-01.json"
+          ]
         },
         {
           "id": "WVC-M2-01-A03",
           "description": "Valid video with absent duration proceeds with indeterminate progress and an explicit validation limitation.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-01.md",
+            "evidence/WVC-M2-01.json"
+          ]
         },
         {
           "id": "WVC-M2-01-A04",
           "description": "Probe output parsing is culture-independent and tolerates additional unknown fields.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-01.md",
+            "evidence/WVC-M2-01.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "8efa0b82224fd1793715b2f7369697c71b73fb87"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-01.md",
+        "evidence/WVC-M2-01.json"
+      ],
+      "notes": "Verified; A01-A04 passed. Clean 8efa0b8: each PS5.1.26100.9444/PS7.6.5 host Focused123/0/0/0, Quick275/0/0/0, Targeted291/0/4/0 exit0. Forty-four probe regressions: one bounded UTF-8 JSON inspection, native exit/stderr/timeout, strict required video schema, audio/artwork refusal, nullable duration/indeterminate limitation, invariant optional metadata and unknown fields. Minimal helper/mock/entry-responder scope additions documented. Actual FFmpeg/FFprobe absent/four Targeted media skips per host; no new Full/manual/Explorer/milestone/release claim. Explicit encoder mapping M2-02 and display transforms M3-01 remain. Draft PR/actual implementation CI recorded. Next WVC-M2-02."
     },
     {
       "id": "WVC-M2-02",

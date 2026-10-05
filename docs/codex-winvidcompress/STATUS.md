@@ -2,28 +2,26 @@
 
 Updated: 2026-10-05. Repository: PikkuJanne/WinVidCompress.
 
-**WVC-M1-06 is verified; A01-A04 passed.** M0-01/M0-02/M0-03/M1-01/M1-02/M1-03/M1-04/M1-05/M1-06 are verified; 23 tasks remain todo. Criteria: 36 passed, 92 not_run. TASKS.json is authoritative. No milestone/release acceptance.
+**WVC-M2-01 is verified; A01-A04 passed.** M0/M1 tasks and M2-01 are verified: 10 verified/22 todo, 40 criteria passed/88 not_run. TASKS.json is authoritative. No milestone/release acceptance.
 
 ## Behavior and supported boundary
 
-Exact FFmpeg/FFprobe applications resolve PATH before script-adjacent copies; shell shadows are refused. Seven bounded native checks identify versions/build details and required libx264/AAC/MP4-faststart/scale/probe CSV-JSON capabilities. PS5.1-compatible arguments, concurrent stdout/stderr, checked exits, timeout/pipe deadlines and child FFREPORT removal preserve diagnostics without persistent native reports. Normal probing/encoding remain their existing adapters until M2 tasks.
+One bounded UTF-8 all-stream/format JSON probe replaces height-only probing. Structured native/source/JSON/video failure retains diagnostics and stops encoding. Normalization preserves stream indices/dispositions, coded geometry/rotation/SAR/DAR, pixel/colour/frame-rate/time-base metadata, audio details and nullable duration. Artwork is excluded from first-real-video candidates. Unknown/invalid duration remains null with indeterminate-progress warning and an unavailable duration-comparison limitation. Parsing is invariant; extra fields tolerated.
 
-`-CheckEnvironment` reports the actual paths/builds/capabilities and output environment without conversion/config persistence. It uses read-only config parsing; invalid preferences fail untouched, absent config stays absent. The disclosed GUID/CreateNew/DeleteOnClose temporary one-byte output check creates no config, backups or folders. Startup, menu save and batch boundaries check writing before processing/saving. Current capacity is advisory, unknown for UNC/reparse/mount-point destinations, with no output-size guarantee. Filesystem/network/process-start calls lack total deadlines; timeout cleanup tracks only the directly started process.
+Compression uses first-real-video coded height, while encoder selection remains automatic until M2-02. DisplayGeometry is null/MetadataOnly; display transforms remain M3-01. Probe file whitelist/playlist response checks do not guarantee offline encoder execution or eliminate UNC access. Native calls have process/pipe deadlines plus bounded direct-process cleanup; filesystem/network/process-start calls lack total deadlines and detached descendants are not tracked.
 
-M1-05 deterministic complete queue, unique Found counts, visible pre-encode scan diagnostics and source/output nonidentity guard remain verified. Ambiguous destination/compressed/partial originals remain eligible without a trusted ownership protocol. Freeze covers paths rather than bytes/file IDs; source-change detection, structural validation, owned media-temp promotion and manifests remain later work. Defaults, flat output, sequential processing and FFmpeg -n remain.
-
-M1-03 config safety, M1-02 owner-approved D005 launcher routes and M1-04 actual owner path observations remain verified. No completed manual check repeated. Broader Explorer multi-drop/remote SMB/media/milestone/release acceptance remains incomplete.
+Prior config/launcher/path/queue/environment acceptance remains. PATH-before-adjacent exact dependency/capability checks, read-only doctor config and disclosed temporary destination write checks remain verified. Destination capacity is advisory. Queue freezes paths, not immutable bytes/file IDs. Source-change checks, owned media-temp/no-clobber promotion, structural validation and manifests remain later tasks. Defaults, menu/drag-drop boundary, flat output, sequential batches and FFmpeg -n remain.
 
 ## Verification
 
-Clean implementation `a91bfa6b2d35839e3296570843beeeb34a81f2ef`, Windows 11 Pro 10.0.26300 UBR9457 (26H2), PS5.1.26100.9444 Desktop/PS7.6.5 Core. Existing Pester5.7.1/analyzer1.24.0 reused. Each host: Focused112/0/0/0, Quick231/0/0/0, Targeted247/0/4/0 (passed/failed/skipped/NotRun), exit0, serial runs. Thirty-one Environment regressions include actual process hang/inherited pipes/dual streams, argv, real create-file ACL denial and unchanged preferences/final sentinels. Eight entry cases include both real PS1 doctor launches. Four media skips per Targeted run lack FFmpeg/FFprobe; no actual binary/media success, new Full/manual or CI pass claimed.
+Clean implementation `8efa0b82224fd1793715b2f7369697c71b73fb87`, Windows 11 Pro 10.0.26300 UBR9457 (26H2), PS5.1.26100.9444/PS7.6.5. Existing pinned Pester5.7.1/analyzer1.24.0; each host Focused123/0/0/0, Quick275/0/0/0, Targeted291/0/4/0, exit0, serial. Forty-four Probe regressions include actual native JSON/UTF-8/exit/timeout and encoder refusal/hash checks. Eight entry cases pass. Four media skips per Targeted host lack FFmpeg/FFprobe. No actual binary/media success, new Full/manual/Explorer or CI pass claimed. Existing owner manual evidence is retained.
 
-Final read-only review found no material issue. [Evidence](evidence/WVC-M1-06.md), [exact commands/results](evidence/WVC-M1-06.json), [session](evidence/WVC-M1-06-session.md). Raw reports/logs stay under ignored .test-results/m106; passing Pester/owned harness roots are cleaned. Draft compiler/recorder/scope test failures were fixed and retained locally.
+[Evidence](evidence/WVC-M2-01.md), [exact commands/results](evidence/WVC-M2-01.json), [session](evidence/WVC-M2-01-session.md). Read-only review found no remaining material blocker. Raw reports/logs remain ignored .test-results/m201; passing roots cleaned.
 
 ## Git and next task
 
-Feature/upstream `codex/wvc-m1-06-environment` / `origin/codex/wvc-m1-06-environment` at D:/projects/WinVidCompress-main; sole origin fetch/push https://github.com/PikkuJanne/WinVidCompress.git. Owner merged PR8; inspected main `a8272ef15097141b18a79960404b827f270cc889` retains previous feature and has the same tree as that feature. Open [draft PR](https://github.com/PikkuJanne/WinVidCompress/pull/9); implementation CI has zero checks/statuses/workflow runs.
+Feature/upstream `codex/wvc-m2-01-probe` / `origin/codex/wvc-m2-01-probe` at D:/projects/WinVidCompress-main; sole origin fetch/push https://github.com/PikkuJanne/WinVidCompress.git. Owner merged PR9; inspected base `118d5f1534a82d06b6fc534a6c5e03237d45faff` retains prior feature and reviewed baseline ancestry. Open [draft PR](https://github.com/PikkuJanne/WinVidCompress/pull/10); implementation CI 0 checks/0 statuses/0 workflow runs.
 
-Previous clean live local/fetch/push equality at `2026-10-05T17:07:35.638654+00:00` describes implementation `a91bfa6b2d35839e3296570843beeeb34a81f2ef`. Final documentation commit/push equality is pending here and reported externally; no self-SHA loop.
+Clean live local/fetch/push equality at `2026-10-05T17:30:34.704492+00:00` describes implementation `8efa0b82224fd1793715b2f7369697c71b73fb87`. Final documentation commit/push equality is pending here and reported externally; no self-SHA loop.
 
-Exact next: **WVC-M2-01 - Expand FFprobe into normalized JSON media inspection**. No M1-06 task blocker or new owner approval remains. Stop after this handoff.
+Exact next: **WVC-M2-02 - Select and map the same real video and intended audio**. No M2-01 task blocker/new owner approval. Stop after this handoff.
