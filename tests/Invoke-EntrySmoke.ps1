@@ -18,7 +18,7 @@ if (-not [IO.Path]::GetFullPath($fixtureRoot).StartsWith($temporaryRoot, [String
     throw 'Fixture root is outside the temporary directory.'
 }
 
-function Invoke-SmokeProcess([string]$Executable, [string]$Arguments) {
+function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$Mode) {
     $start = New-Object Diagnostics.ProcessStartInfo
     $start.FileName = $Executable
     $start.Arguments = $Arguments
@@ -38,6 +38,11 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments) {
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
         # The unchanged BAT uses -NoExit. Close its isolated shell through stdin.
+        if ($Mode -ne 'Batch') { $process.StandardInput.WriteLine('4') }
+        if ($Mode -eq 'MenuShell') {
+            # Split the marker in the input so echoed command text cannot pass this check.
+            $process.StandardInput.WriteLine('Write-Output ("WVC_QUIT_" + "RETURNED")')
+        }
         $process.StandardInput.WriteLine('exit')
         $process.StandardInput.Close()
         if (-not $process.WaitForExit(15000)) {
@@ -46,6 +51,13 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments) {
         $output = $stdout.Result
         $errors = $stderr.Result
         if ($process.ExitCode -ne 0 -or $errors) { throw "Entry smoke failed: exit $($process.ExitCode); $errors" }
+        if ($Mode -ne 'Batch') {
+            if ([regex]::Matches($output, [regex]::Escape('========== WinVidCompress ==========')).Count -ne 1 -or
+                $output -match 'WVC_NATIVE_RECORDER' -or ($Mode -eq 'MenuShell' -and $output -notmatch 'WVC_QUIT_RETURNED')) {
+                throw "Menu did not return once to its documented caller/shell: $output"
+            }
+            return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
+        }
         if ($output -notmatch 'WVC_NATIVE_RECORDER' -or $output -notmatch 'Done:\s+2' -or $output -notmatch 'Failed:\s+0') {
             throw "Entry smoke did not reach existing folder processing: $output"
         }
@@ -123,11 +135,15 @@ public static class WvcEntryRecorder {
     $application = Join-Path $repoRoot 'WinVidCompress.ps1'
     $launcher = Join-Path $repoRoot 'WinVidCompress.bat'
     $directArguments = '-NoProfile -ExecutionPolicy Bypass -File "' + $application + '" "' + $inputRoot + '"'
+    $menuArguments = '-NoProfile -ExecutionPolicy Bypass -File "' + $application + '"'
     $windowsPowerShell = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
     $definitions = @(
-        @{ Id = 'direct-ps51'; Executable = $windowsPowerShell; Arguments = $directArguments },
-        @{ Id = 'direct-ps7'; Executable = $PowerShell7; Arguments = $directArguments },
-        @{ Id = 'original-bat'; Executable = $env:ComSpec; Arguments = ('/d /s /c ""' + $launcher + '" "' + $inputRoot + '""') }
+        @{ Id = 'direct-ps51'; Executable = $windowsPowerShell; Arguments = $directArguments; Mode = 'Batch' },
+        @{ Id = 'direct-ps7'; Executable = $PowerShell7; Arguments = $directArguments; Mode = 'Batch' },
+        @{ Id = 'original-bat'; Executable = $env:ComSpec; Arguments = ('/d /s /c ""' + $launcher + '" "' + $inputRoot + '""'); Mode = 'Batch' },
+        @{ Id = 'menu-ps51'; Executable = $windowsPowerShell; Arguments = $menuArguments; Mode = 'Menu' },
+        @{ Id = 'menu-ps7'; Executable = $PowerShell7; Arguments = $menuArguments; Mode = 'Menu' },
+        @{ Id = 'menu-original-bat'; Executable = $env:ComSpec; Arguments = ('/d /s /c ""' + $launcher + '""'); Mode = 'MenuShell' }
     )
     $cases = @()
     foreach ($definition in $definitions) {
@@ -136,7 +152,7 @@ public static class WvcEntryRecorder {
             continue
         }
         try {
-            $observation = Invoke-SmokeProcess $definition.Executable $definition.Arguments
+            $observation = Invoke-SmokeProcess $definition.Executable $definition.Arguments $definition.Mode
             $case = New-WvcTestCase $definition.Id 'Passed'
             $case | Add-Member NoteProperty NativeArguments $observation.NativeArguments
             $cases += $case

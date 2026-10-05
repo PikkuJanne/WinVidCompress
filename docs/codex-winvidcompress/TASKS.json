@@ -280,7 +280,7 @@
       "title": "Repair menu exit and separate source/output folder selection",
       "milestone": "M1",
       "priority": "P0",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         1,
         4
@@ -306,35 +306,57 @@
           "id": "WVC-M1-01-A01",
           "description": "Choosing 4 exits the menu function without redisplaying it or terminating a caller runspace.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-01.md",
+            "evidence/WVC-M1-01.json"
+          ],
+          "notes": "Real bounded Run-TUI reads Quit/renders once and caller continues on both hosts. Actual PS1 menu processes return; unchanged BAT executes a split output marker in its retained shell after Quit."
         },
         {
           "id": "WVC-M1-01-A02",
           "description": "A missing source directory remains missing after selection; only a selected output path can be created.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-01.md",
+            "evidence/WVC-M1-01.json"
+          ],
+          "notes": "Missing source through real menu/prompt remains absent and is not processed. Only explicit output option passes CreateIfMissing; real output-menu integration creates nested selection and saves that choice. Source/file/output sentinels preserved."
         },
         {
           "id": "WVC-M1-01-A03",
           "description": "Blank input cancels; literal brackets and Unicode paths are not expanded as wildcards.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-01.md",
+            "evidence/WVC-M1-01.json"
+          ],
+          "notes": "Blank/whitespace/quoted whitespace cancels. Literal [] and Finnish/German/CJK source/file/output names resolve exactly, wildcard-lookalike neighbor remains unchanged; access denial/creation errors clearly report and permit cancellation on both hosts."
         },
         {
           "id": "WVC-M1-01-A04",
           "description": "Double-click launch reaches the menu and Quit leaves the console in its documented state.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-01.md",
+            "evidence/WVC-M1-01.json"
+          ],
+          "notes": "On 2026-10-05 the owner quoted and confirmed the actual Explorer double-click Check-Menu.bat / choose 4 / usable PowerShell prompt / exit steps. Prepared PS1/BAT hashes match tested commit 6337b73. Actual human observation with isolated APPDATA/PATH wrapper and startup-only sentinels; no broader media/argv acceptance."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "6337b73d41cf65b9f12cb412800bc3d68780693c"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-01.md",
+        "evidence/WVC-M1-01.json",
+        "evidence/WVC-M1-01-session.md"
+      ],
+      "notes": "Bounded menu/path task verified: A01-A03 automated pass; owner confirmed actual Explorer A04 on 2026-10-05. Existing 2026-10-04 clean commit 6337b73 results retained: each Quick 79 passed, Targeted 93 passed/4 skipped; Full 168 passed/8 remaining config/enumeration failures/4 skipped/8 NotRun, exit 1. Documentation-only confirmation update, no automated rerun/broader release acceptance. Final handoff push/check pending at commit time; report externally. Next WVC-M1-02."
     },
     {
       "id": "WVC-M1-02",
