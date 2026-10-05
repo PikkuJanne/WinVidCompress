@@ -1,32 +1,30 @@
 # Next session
 
-Next bounded task: **WVC-M1-02 — Harden the .bat launcher using measured argument round trips**. WVC-M1-01 is verified: the owner confirmed actual Explorer A04 steps on 2026-10-05. Do not repeat the completed confirmation or silently implement the rest of M1.
+Exact next task: **resolve WVC-M1-02 literal %PATH% failure or obtain an explicit owner decision; finish folder/direct-BAT follow-up**. Implementation/automation complete; prepared Explorer argv fails A01/A02 for literal %PATH%; A03/A04 pass. Folder/direct-BAT follow-up pending. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. Do not repeat completed M1-01 acceptance or implement the rest of M1 silently.
 
-## Start from actual state
+## Actual state
 
-- Root `D:/projects/WinVidCompress-main`; branch `codex/wvc-m1-01-menu-paths`; upstream `origin/codex/wvc-m1-01-menu-paths`.
-- Origin has one fetch/push destination `https://github.com/PikkuJanne/WinVidCompress.git`.
-- Tested implementation `6337b73d41cf65b9f12cb412800bc3d68780693c`; automated tests ran 2026-10-04. Documentation-only manual confirmation followed 2026-10-05, with no automated rerun.
-- Previous clean live equality at `2026-10-05T12:42:56.214979+00:00` describes prior documentation HEAD `17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae`. Final confirmation SHA is externally reported after push; verify independently.
-- Draft [PR #4](https://github.com/PikkuJanne/WinVidCompress/pull/4) open against main; no workflow/check runs.
-- Owner merged PR #3 before M1-01. Inspected main `e8b54d1fdd03bdd3e0135c67c38335788a6f8112` has the same tree as M0-03's final feature; M1-01 branch starts from it. Confirmation fetch found no newer main/feature change.
+- Root `D:/projects/WinVidCompress-main`; feature/upstream `codex/wvc-m1-02-launcher` / `origin/codex/wvc-m1-02-launcher`.
+- One expected origin fetch/push destination: `https://github.com/PikkuJanne/WinVidCompress.git`.
+- Clean implementation/tested commit `e32fa11067bc8bb5133e8913840561deba79573f`, Quick/Targeted both hosts dated 2026-10-05.
+- Previous live equality at `2026-10-05T13:10:20.088784+00:00` describes implementation, not final documentation. Final handoff SHA reported externally; independently verify it.
+- Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5), zero implementation check/workflow runs.
+- Owner merged PR #4; this feature starts at inspected main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67`.
 
-Read AGENTS/INDEX/STATUS/GIT_SYNC/TASKS, M1-02 brief/PROCESS_AND_CLI/TESTING, and targeted M1-01 launcher evidence. Inspect status/branch/upstream/HEAD, operations/conflicts/hooks, effective URLs and live state. Run `git fetch --no-tags origin` then `python -B tools/codex-winvidcompress/check_repo_sync.py --repo "D:/projects/WinVidCompress-main"`.
+Read AGENTS/INDEX/STATUS/GIT_SYNC/TASKS, targeted brief and [M1-02 evidence](evidence/WVC-M1-02.md). Inspect branch/upstream/HEAD, dirty ownership, operations/conflicts/hooks and effective/live URLs. Fetch with `git fetch --no-tags origin`, then `python -B tools/codex-winvidcompress/check_repo_sync.py --repo D:/projects/WinVidCompress-main`. Preserve unknown changes; one writer only. If PR #5 merged inspect main; otherwise retain this feature ancestry.
 
-Preserve unknown changes. If PR #4 merged, start launcher work from inspected current main; otherwise retain M1-01 ancestry in the next codex/wvc-* branch. Never rely on cached refs or reset to the historical baseline. One writer only.
+## Pending manual completion
 
-## Exact launcher scope
+Prepare with `powershell -NoProfile -ExecutionPolicy Bypass -File tests/launcher/New-LauncherManualFixture.ps1` if no kit remains on this machine. Follow returned Instructions.txt. The owner ran the clean e32fa11 kit and reported all appeared to pass; exact data contradicts literal %PATH% preservation. Ten other multiple names and a single parentheses name arrived unchanged. A04 is owner-reported pass; folder/direct-BAT follow-up pending. Require observer/date/completed Explorer steps, then use `Test-LauncherManualReports.ps1 -Manifest <manifest>` for exact native/bound data and BAT-hash checks. Data checker alone does not establish human Explorer use. Keep raw paths/environment/report/ACL data outside Git. Close consoles then run `Remove-LauncherManualFixture.ps1`; it restores the one owned synthetic ACL and checks cleanup containment/reparse points.
 
-M1-02 should measure actual argv through a dedicated recorder, remove unnecessary delayed expansion/multi-stage argument reconstruction, and preserve double-click/one-file/folder/multiple selection on PS5.1. Test spaces, !, &, parentheses, apostrophes, [], %, Finnish/German/non-Latin, literal %PATH%/!NAME! with matching variables. Do not execute payload-like names or promise unlimited Windows command lines. Missing PS1/dependencies must produce actionable errors. Several criteria require actual Windows Explorer observation.
+Kit: zero/single/folder/multiple, eleven benign special-character/Unicode names, matching PATH/NAME variables, visible missing PS1/FFmpeg/FFprobe and read-denied FFmpeg diagnostics. Arguments use byte-identical actual BAT plus dedicated recorder PS1; error checks use production PS1/BAT copies. Per-process wrapper isolates APPDATA/PATH/NAME and forwards once without CALL; disclose its extra shell layer. No real media/config/encoder.
 
-Use the existing tier runner with nested tests automatically discovered. New PS1 stays ASCII or UTF-8 BOM; BAT CRLF. External temporary Pester 5.7.1/analyzer 1.24.0 modules may not persist; no automatic download in application/runners.
+Raw outer CMD expands %PATH% before BAT starts; /V:ON can expand !NAME!. Quoted folder trailing backslash has native quoting loss; documented CMD spelling omits slash or uses D:\. Actual Explorer must determine variable-like filenames. Any mismatch stays failed and blocks verification; do not waive A01/A02 or substitute env-seeded automation. No system association/policy rewrite or broad raw-commandline recovery in this slice. M1-02 remains implemented until all applicable manual items pass.
 
-M1-01's completed manual check used an isolated environment wrapper calling byte-identical PS1/BAT copies with startup-only native sentinels. Owner-confirmed Explorer launch, Quit returning to a usable PowerShell prompt, then exit passes only the menu/console criterion. Prepared hashes match tested commit `6337b73`. Broader special-character argv/drop/dependency checks still belong to M1-02; do not treat this as their evidence.
+## Tested scope and handoff
 
-## Tested outcomes and limits
+Each host Quick 101/0/0/4; Targeted 115/0/4/4 (passed/failed/skipped/NotRun), exit 0. Windows 11 Pro 10.0.26300, PS5.1.26100.9444/PS7.6.5, external pinned Pester 5.7.1/analyzer 1.24.0 reused. Quick includes 22 new +75 existing Pester and four static gates; Targeted adds six native entry/menu/eight synthetic JSON. Four known config/enumeration defects excluded; four media recipes skipped for absent FFmpeg/FFprobe; Full not rerun.
 
-Clean implementation: each host Quick 79 passed/0 failed/0 skipped/4 NotRun, exit 0; Targeted 93 passed/0 failed/4 skipped/4 NotRun, exit 0. Full both hosts 168 passed/8 known failures/4 skipped/8 NotRun, exit 1. Counts include 75 Pester checks plus static/native/JSON cases. Twenty menu/path regressions pass per host; six native batch/menu entries pass. M1-01-A04 has one actual owner-confirmed manual pass dated 2026-10-05.
+BAT directly forwards %* with DisableDelayedExpansion, installed PS5.1, retained NoExit/process-only Bypass and visible startup failures. Minimal Ensure-Tool application/leaf/readability check reports underlying permission details before config creation; it does not validate format/execute ACL/capabilities. NoExit startup errors may later exit zero. Defaults/media processing and existing PS1 encoding/CRLF preserved; BAT ASCII/CRLF.
 
-Remaining Full failures: config shape and empty/single enumeration defects (M1-03/M1-04). Four media recipes skip because FFmpeg/FFprobe were absent. No real encoding/probe/playback, comprehensive special-character drag/drop, cancellation/UNC/long-path/benchmark pass is claimed. Compression defaults and BAT bytes retained.
-
-No M1-01 blocker remains. Stop after the bounded M1-02 slice, then record its actual criteria/tests/manual limitations and exact next task. End with task/evidence/status/next/session updates, intentional feature commits/push, live fetch/push equality/clean check and draft PR status. Main push/merge, release/tags/settings/secrets/deployment or quality changes need explicit owner approval.
+End with task/evidence/status/next/session updates, intentional commit/push and clean live fetch/push equality check; update draft PR/check state. Main push/merge, release/tags/settings/secrets/deployment and quality changes need explicit owner approval.

@@ -2,42 +2,40 @@
 
 Updated: 2026-10-05. Repository: `PikkuJanne/WinVidCompress`.
 
-M0-01/M0-02/M0-03/M1-01 are verified for their bounded criteria. **The owner confirmed M1-01's actual Explorer A04 steps on 2026-10-05; all four criteria pass.** The remaining 28 tasks are todo; 112 criteria remain not_run. TASKS.json is the authority. No broader milestone/release acceptance is claimed.
+M0-01/M0-02/M0-03/M1-01 are verified. **M1-02 is implemented: A01/A02 failed in the prepared Explorer run due literal %PATH% substitution; A03/A04 pass. Folder/direct-BAT follow-up pending.** The owner reported all appeared to pass; recorded argv contradicts the literal-percent result. Remaining 27 tasks are todo; 108 criteria are not_run. TASKS.json is authoritative. No milestone/release acceptance.
 
 ## Repository and reconciliation
 
-- Root `D:/projects/WinVidCompress-main`; branch `codex/wvc-m1-01-menu-paths`, upstream `origin/codex/wvc-m1-01-menu-paths`.
-- Origin fetch/push: `https://github.com/PikkuJanne/WinVidCompress.git`, one destination each.
-- Initial checkout clean at M0-03 handoff `2a103b6ff4274208be6ac70bcbdb8f0a8ecf123d`, matching both live endpoints; no unknown changes, operations/conflicts or active hooks.
-- Owner merged PR #3 before this session. Fetch found main `e8b54d1fdd03bdd3e0135c67c38335788a6f8112`, a descendant with the identical tree. Created this task branch from that inspected main. No reset/stash/clean/history rewrite.
-- Implementation/tested commit `6337b73d41cf65b9f12cb412800bc3d68780693c`. Quit returns to its caller. Source selection validates an existing literal path; only explicit output selection can create a directory. Access/creation errors display the actual diagnostic and allow retry/cancel.
-- Four-option workflow, defaults/quality, source processing and BAT bytes retained. PS1 existing encoding/CRLF preserved by bounded ASCII edits; help documents BAT's retained PowerShell prompt.
-- Confirmation follow-up began clean at `17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae`; fetch revealed no newer main/feature change. Only documentation changes in this follow-up, with original automated results retained.
+- Root `D:/projects/WinVidCompress-main`; feature/upstream `codex/wvc-m1-02-launcher` / `origin/codex/wvc-m1-02-launcher`.
+- Single expected fetch/push destination: `https://github.com/PikkuJanne/WinVidCompress.git`.
+- Began clean at M1-01 confirmation `bf4b3416db1d404600f0430512b86ebf3ffc4675`, live synchronized, no operations/conflicts/active hooks/unknown changes.
+- Owner merged PR #4. Fetched main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67` descended from that feature with the identical tree. Created this feature from inspected main; no reset/stash/clean/history rewrite.
+- Implementation/tested commit `e32fa11067bc8bb5133e8913840561deba79573f`: BAT disables delayed expansion and directly forwards `%*` once to installed Windows PowerShell 5.1, retaining NoExit/process-only Bypass. Missing script/host and native launch failures display diagnostics/remedies.
+- Minimal Ensure-Tool application/leaf/readability check reports permission details before config creation. Defaults/media processing unchanged. Existing PS1 encoding/CRLF and BAT ASCII/CRLF retained.
 
-## Actual evidence
+## Evidence
 
-[Evidence](evidence/WVC-M1-01.md), [exact JSON commands/results](evidence/WVC-M1-01.json), [session](evidence/WVC-M1-01-session.md). Prior [M0-03 harness evidence](evidence/WVC-M0-03.md) remains historical.
+[Evidence](evidence/WVC-M1-02.md), [exact JSON commands/results](evidence/WVC-M1-02.json), [session](evidence/WVC-M1-02-session.md), [launcher workflow](../../tests/launcher/README.md). Earlier [M1-01 evidence](evidence/WVC-M1-01.md) is historical; its completed menu check does not establish new argv criteria.
 
-Windows 11 Pro 10.0.26300; separately tested PS5.1.26100.9444 Desktop and PS7.6.5 Core. Pester 5.7.1/analyzer 1.24.0 reused externally; no dependency download.
+Windows 11 Pro 10.0.26300 (UBR 9457), PS5.1.26100.9444 Desktop and PS7.6.5 Core. External pinned Pester 5.7.1/analyzer 1.24.0 reused without download.
 
-| Clean implementation run, 2026-10-04 | Passed | Failed | Skipped | NotRun | Exit |
+| Clean implementation, 2026-10-05 | Passed | Failed | Skipped | NotRun | Exit |
 |---|---:|---:|---:|---:|---:|
-| Quick, each host | 79 | 0 | 0 | 4 | 0 |
-| Targeted, each host | 93 | 0 | 4 | 4 | 0 |
-| Full, both hosts | 168 | 8 | 4 | 8 | 1 |
+| Quick, each host | 101 | 0 | 0 | 4 | 0 |
+| Targeted, each host | 115 | 0 | 4 | 4 | 0 |
 
-Quick includes 75 Pester checks and four static/schema gates. Twenty focused menu/path checks cover caller survival, real menu/prompt selection, missing-source preservation, explicit output creation, cancellation, literal bracket/Finnish/German/CJK paths, existing-file/neighbor sentinels and permission/creation diagnostics. The repaired obsolete AST-only Quit probe was replaced with normal menu coverage.
+Quick is 97 Pester checks (22 new) plus four static/schema gates. New coverage measures native argv and production-matching Path for zero/single/folder/multiple arguments, eleven special-character/Unicode names, matching PATH/NAME variables and a special-character script directory; seven startup-error cases include a real read-denied synthetic dependency with restored ACL. Four report-integrity tests reject absent/wrong/duplicate/raw-bound-mismatched evidence. Sources/APPDATA/output are isolated. Targeted adds six native entry/menu and eight synthetic JSON cases. BAT exercises actual PS5.1 under both suites; direct PS1 also exercises PS7.
 
-Targeted adds six native PS1/BAT batch/menu cases and eight copied/hashed synthetic JSON fixtures. BAT's scripted menu case executes a split output marker after Quit, proving its retained shell survives without accepting echoed input. Scripted stdin is not actual Explorer/manual acceptance.
+Four unrelated config/empty/single enumeration defects remain NotRun per host (M1-03/M1-04). Four media recipes skip for absent FFmpeg/FFprobe. Full not rerun for this bounded task; earlier failed Full remains historical.
 
-Full's eight failures are four remaining baseline assertions per host: wrong-shaped valid JSON/config recovery, empty-folder FullName, single-video folder Count, explicit single-file Count. These remain M1-03/M1-04 work. Full is failed, not verified application/release acceptance. Four media recipes skip because FFmpeg/FFprobe are absent; eight broader manual/future records remain NotRun.
+## Manual state and limits
 
-## Manual confirmation and continuity
+The clean implementation Explorer kit and source hashes were verified. It uses byte-identical BAT plus recorder PS1, per-process APPDATA/PATH/NAME setup and production-script error cases. Preparation/data checks are not human Explorer observations. Owner reported all prepared checks appeared to pass. Four reports show zero args, an unchanged single parentheses filename and 10/11 unchanged multiple paths; literal %PATH% changed. Folder/direct-BAT follow-up pending. A04 passes from the owner's direct report; tentative wording retained.
 
-On 2026-10-05 the owner quoted and confirmed the actual Explorer double-click Check-Menu.bat / enter 4 / usable PowerShell prompt / exit steps: A04 has 1 manual pass, 0 failed/skipped/NotRun. Prepared PS1/BAT hashes were rechecked against the tested implementation. The wrapper isolates APPDATA/PATH and uses startup-only dependency sentinels; the observation establishes menu/console behavior. Real media, Explorer argv/drag-drop, playback, cancellation, UNC/long-path and benchmarks remain untested.
+Measured caller limits: raw outer CMD expands `%PATH%`, /V:ON can expand `!NAME!`, and a quoted CMD folder ending in one backslash can arrive with a literal closing quote. BAT cannot recover already-altered arguments. Use menu literal-path entry/direct PS1 single-quoted paths where needed; omit CMD folder trailing slashes or use `D:\.`. CMD/batch expanded text has an 8,191-character limit. Any actual Explorer mismatch must remain failed, not waived.
 
-Draft [PR #4](https://github.com/PikkuJanne/WinVidCompress/pull/4) open against main. No workflow runs or PR checks at the tested implementation; no CI pass.
+NoExit leaves startup exceptions visible at a prompt; a later plain exit may return zero. No unattended startup-exit contract. Readability does not establish executable format/execute ACLs/capabilities/media integrity.
 
-Previous verified sync: `17a49c0cd9c8193b983b0acfc3bbcfeea3e03aae` at `2026-10-05T12:42:56.214979+00:00`; local/live fetch/live push heads equal, clean, matching upstream, no operations/conflicts. This describes the preceding documentation checkpoint. Final confirmation handoff push/check is pending when committed and reported externally afterwards, without a self-SHA loop.
+Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open against main; zero implementation check/workflow runs, no CI pass. Previous clean live equality at `2026-10-05T13:10:20.088784+00:00` describes `e32fa11`. Final documentation handoff push/live check pending when committed, reported externally afterwards without a self-SHA loop.
 
-Exact next task: **WVC-M1-02 — Harden the .bat launcher using measured argument round trips**. No M1-01 blocker/remaining criterion. This agent made no main push/merge, release/deployment/settings/secrets or quality change.
+Exact next: **resolve WVC-M1-02 literal %PATH% failure or obtain an explicit owner decision; finish folder/direct-BAT follow-up**. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. No main push/merge, quality change, release/deployment/settings/secrets action.
