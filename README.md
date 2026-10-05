@@ -73,6 +73,8 @@ Container: -movflags +faststart
 Scaling: -vf scale=-2:1080 only if source height > 1080
 Invokes FFmpeg via PowerShell call operator (&) to keep quoting correct.
 
+Stream selection: first real video by index, excluding cover artwork; unique default audio when present, otherwise first audio by index. Silent video stays silent. The console lists selected streams, audio channels and omitted alternatives/subtitles/data/attachments. Explicit maps keep scaling tied to the inspected video; no channel-count or frame-rate override is added.
+
 **Tweaks (optional):**
 Smaller files → increase CRF to 23–24 (lower quality).
 H.265/HEVC (slower, smaller) → swap libx264 to libx265 and use CRF ~27.

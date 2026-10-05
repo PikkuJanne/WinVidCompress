@@ -190,8 +190,7 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         $script:Counters = [pscustomobject]@{ Done = 0; Skipped = 0; Failed = 0 }
         Mock Write-Host {}
         Mock Get-MediaInspection {
-            [pscustomobject]@{ Succeeded = $true; Native = $null; Warnings = @();
-                PrimaryVideo = [pscustomobject]@{ Height = 1080 } }
+            ConvertFrom-ProbeJson '{"streams":[{"index":0,"codec_type":"video","codec_name":"h264","width":1920,"height":1080}],"format":{"duration":"1"}}'
         }
         $script:Recorder = {
             $inputIndex = [array]::IndexOf($args, '-i') + 1

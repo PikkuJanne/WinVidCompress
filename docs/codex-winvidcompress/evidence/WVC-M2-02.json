@@ -1,0 +1,409 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M2-02",
+  "task_status": "implemented",
+  "acceptance_ids": [
+    "WVC-M2-02-A01",
+    "WVC-M2-02-A02",
+    "WVC-M2-02-A03",
+    "WVC-M2-02-A04"
+  ],
+  "recorded_at": "2026-10-05T17:55:55.836731+00:00",
+  "tested_commits": [
+    "ed3a91676c350d6718741d30b7b9f4127286f528"
+  ],
+  "base_commit": "aac681a0f8873792dc46e9ba599801d4ff11f9b4",
+  "branch": "codex/wvc-m2-02-streams",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "WinVidCompress.ps1 pure stream plan/console report and exact maps/conditional audio options",
+    "Minimal normalizer fix for explicit unknown codec_type; omission and malformed-type regressions",
+    "13 Stream regressions/new owned native argument recorder; two optional real-output integration checks",
+    "Existing characterization/queue mocks and unknown-duration map assertion updated",
+    "Minimal tier-runner 120-second full-Pester-child allowance after observed 60-second timeout",
+    "Product/media/source/test documentation and task/acceptance/status/next/session handoff"
+  ],
+  "runs": [
+    {
+      "name": "focused51-ed3a916",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m202/focused51-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/focused51-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 105,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "bb31d175ff95809ce7827da0e3630350e8814550d3d2688365bf1ef67358598f",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "014:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "015:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "focused7-ed3a916",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m202/focused7-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/focused7-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 105,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "a206c6506124ede1a1d4e6fe0b1feafb0bf128d2bc4d6dd8f59efc58ca805ab9",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "014:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "015:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick51-ed3a916",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m202/quick51-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/quick51-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 288,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "99c7af995d3f69acb45def9d02ae0fdad6159c4a53b583ceeda19c265d8beadd",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/034:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/035:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick7-ed3a916",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m202/quick7-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/quick7-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 288,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "4e89c7c132b650ab34a37a4f355f190f4a0cc6575a6ddb13f631a0552e281884",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/034:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/035:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "targeted51-ed3a916",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m202/targeted51-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/targeted51-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 304,
+        "Failed": 0,
+        "Skipped": 6,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "303fcd3ef8af161c35e735a70faee9fb8fa68a8ca59db6a5e780e0feda63853f",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/034:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/035:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    },
+    {
+      "name": "targeted7-ed3a916",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m202/targeted7-ed3a916.json",
+      "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m202/targeted7-ed3a916.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 304,
+        "Failed": 0,
+        "Skipped": 6,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "5fdf2bc46206cea5d22b114aba1d8c7c6f99c996cfd44c4d6185be0070fb1205",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/034:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/035:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    }
+  ],
+  "acceptance": {
+    "WVC-M2-02-A01": {
+      "status": "skipped",
+      "basis": "Native recorder passes exact inspected VideoIndex-to-map and height coupling with shuffled/noncontiguous multi-video indices. Actual encoded output confirmation is skipped without FFmpeg/FFprobe; recorder argv does not prove produced-media identity."
+    },
+    "WVC-M2-02-A02": {
+      "status": "passed",
+      "basis": "Oversized attached artwork is excluded from the selected real-video index, height cap and native encoder maps; omission is explicit. Actual probe/encoder recorders on both hosts."
+    },
+    "WVC-M2-02-A03": {
+      "status": "skipped",
+      "basis": "Silent native recorder dispatch has only the video map and no audio options; unique/no/multiple-default audio policy and omitted alternatives are visible. Actual silent encode/output-no-audio confirmation is skipped without FFmpeg/FFprobe."
+    },
+    "WVC-M2-02-A04": {
+      "status": "passed",
+      "basis": "The same in-memory plan and console report include selected video/audio indices, coded geometry, known/unknown channels/layout/rate/language/dispositions, and every omitted index/type/reason including artwork, alternate video/audio, subtitle/data/attachment/unknown. No persistent job-report subsystem is introduced."
+    }
+  },
+  "implementation_checkpoint_sync": {
+    "checked_at": "2026-10-05T17:55:31.725417+00:00",
+    "head": "ed3a91676c350d6718741d30b7b9f4127286f528",
+    "branch": "codex/wvc-m2-02-streams",
+    "upstream": "origin/codex/wvc-m2-02-streams",
+    "dirty": false,
+    "operations": [],
+    "live_fetch_head": "ed3a91676c350d6718741d30b7b9f4127286f528",
+    "live_push_head": "ed3a91676c350d6718741d30b7b9f4127286f528",
+    "status": "SYNCHRONIZED"
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-05T17:35:20.754477+00:00",
+    "head": "19a48c63aa853c6af1cfa693517aa6c4fbb624d8",
+    "branch": "codex/wvc-m2-01-probe",
+    "dirty": false,
+    "live_fetch_head": "19a48c63aa853c6af1cfa693517aa6c4fbb624d8",
+    "live_push_head": "19a48c63aa853c6af1cfa693517aa6c4fbb624d8",
+    "status": "SYNCHRONIZED"
+  },
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "codex/wvc-m2-02-streams",
+    "headRefOid": "ed3a91676c350d6718741d30b7b9f4127286f528",
+    "isDraft": true,
+    "mergeStateStatus": "CLEAN",
+    "number": 11,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/11"
+  },
+  "implementation_ci": {
+    "checked_at": "2026-10-05T17:55:53.8894812Z",
+    "tested_commit": "ed3a91676c350d6718741d30b7b9f4127286f528",
+    "check_runs": 0,
+    "statuses": 0,
+    "workflow_runs": 0
+  },
+  "read_only_review": "One subagent reviewed scope/selection/metadata/tests without writes or Git mutations; APPDATA-before-include and FFREPORT containment fixes applied; final review found no material blocker.",
+  "draft_runs": [
+    {
+      "report": "regression-before-ps51.json",
+      "counts": "1/11/0/0",
+      "exit_code": 1,
+      "issue": "Missing stream plan/map behavior established before implementation; failed-inspection refusal already passed."
+    },
+    {
+      "report": "streams-draft-ps51.json",
+      "counts": "3/9/0/0",
+      "exit_code": 1,
+      "issue": "Explicit unknown codec_type was treated as missing metadata; preserve it as an identifiable omitted stream and retain array rejection."
+    },
+    {
+      "report": "focused-draft2-ps51.json",
+      "counts": "104/0/0/0",
+      "exit_code": 0,
+      "issue": "Corrected normalization and minimal affected mock/assertion contracts."
+    },
+    {
+      "report": "focused-draft-ps7.json",
+      "counts": "104/0/2/0",
+      "exit_code": 0,
+      "issue": "Initial two optional installed-tool checks skipped; final clean gates add malformed-type regression and containment/prose fixes."
+    },
+    {
+      "report": "targeted7-0daf325.json",
+      "tested_commit": "0daf3250ac3db6b99dd533a9bbc6d2e31dc6f530",
+      "counts": "20/1/4/0",
+      "exit_code": 1,
+      "issue": "Full Pester child exceeded prior 60-second whole-suite bound; owned diagnostics retained. Tier runner now allows a bounded 120 seconds while fixture process deadlines remain separate. All clean final gates rerun on ed3a916."
+    }
+  ],
+  "manual_checks": [],
+  "owner_approval": null,
+  "limitations": [
+    "Actual FFmpeg/FFprobe absent from PATH and adjacent folder. Native recorders produce no media; actual encoded output identity, silent completion, channel/metadata/disposition read-back remain unverified.",
+    "Two real-output integration tests are skipped in Focused/Quick and Targeted. Targeted additionally skips four existing installed-tool media fixtures, six skips per host. Integration checks currently resolve PATH applications.",
+    "M2-02 remains implemented: A02/A04 passed, A01/A03 skipped pending real-media confirmation. Later safe M2-03 work may use implemented behavior under INDEX dependency rules; do not silently mark these criteria passed.",
+    "No new Full, Explorer, playback, UNC/SMB, milestone or release acceptance. Existing owner launcher/path evidence is retained.",
+    "First real video/coded height is reused; rotation/SAR display transforms remain M3-01. No forced channel/sample-rate/FPS options or changed compression quality defaults.",
+    "Selected metadata/dispositions rely on mapped-stream defaults and require actual muxer read-back. The encoder retains the prior call operator until M2-03; progress/transaction/validation/source-change/manifest work remains later.",
+    "Probe file whitelist does not guarantee offline encoding or eliminate UNC access. Filesystem/network/process creation lack total deadlines; cleanup tracks only directly started processes. Structural validation cannot prove full visual/audio integrity."
+  ],
+  "pending_action": "Supply already-installed FFmpeg/FFprobe applications on PATH and rerun the focused stream unit/integration suite on both hosts, retaining exact binary versions/SHA and output read-back evidence. No automatic download or fabricated completion.",
+  "final_handoff_sync": "Pending inside this record; final documentation commit/push/live equality is reported externally to avoid a self-SHA loop.",
+  "next_task": "WVC-M2-03 - Isolate command construction and native process execution"
+}

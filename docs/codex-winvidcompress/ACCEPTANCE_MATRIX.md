@@ -11,7 +11,7 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | QUEUE | Overlap, duplicates, same input/output root, nested destination, originals named compressed | Queue tests + integration | PASSED A01-A04 for [M1-05](evidence/WVC-M1-05.md); both Windows hosts, synthetic file-writing recorders; file-ID/source-change/ownership/media limits recorded |
 | TOOLS | PATH/adjacent selection, invalid executable, missing encoder, timeout, destination write access | Controlled real native processes + actual Windows ACL | PASSED A01-A04 for [M1-06](evidence/WVC-M1-06.md); both hosts; actual FFmpeg absent/media skipped; filesystem/descendant limits recorded |
 | PROBE | Probe failures, audio-only, attached pictures, missing/invalid duration, malformed probe JSON | Fixture JSON + synthetic native processes/files | PASSED A01-A04 for [M2-01](evidence/WVC-M2-01.md); both hosts; real FFmpeg/media omitted; mapping/transforms later |
-| STREAM | Multiple video/audio streams, silent clip, discarded subtitles/data | Synthetic media + output probe | NOT RUN |
+| STREAM | Multiple video/audio streams, artwork, silent clip, discarded types | Native argv recorder + plan/report; optional actual output probe | IMPLEMENTED [M2-02](evidence/WVC-M2-02.md): A02/A04 passed, A01/A03 skipped without FFmpeg; actual output confirmation open |
 | GEOMETRY | Small, 1080p, 4K, portrait, rotation, odd dimensions, SAR, ultrawide | Probe + visual test patterns | NOT RUN |
 | COLOUR | SDR, 10-bit SDR, PQ/HLG metadata, ambiguous colour fields | Synthetic/JSON + owner visual review | NOT RUN |
 | METADATA | Valid dates, leap day, impossible dates, ambiguous digits, Unicode/tag precedence | Unit + tag read-back | NOT RUN |

@@ -828,7 +828,7 @@
       "title": "Select and map the same real video and intended audio",
       "milestone": "M2",
       "priority": "P0",
-      "status": "todo",
+      "status": "implemented",
       "improvements": [
         8
       ],
@@ -854,35 +854,54 @@
           "id": "WVC-M2-02-A01",
           "description": "A multi-video fixture proves the inspected and encoded indices are identical.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "skipped",
+          "evidence": [
+            "evidence/WVC-M2-02.md",
+            "evidence/WVC-M2-02.json"
+          ],
+          "notes": "Native recorder passes exact inspected VideoIndex-to-map and height coupling with shuffled/noncontiguous multi-video indices. Actual encoded output confirmation is skipped without FFmpeg/FFprobe; recorder argv does not prove produced-media identity."
         },
         {
           "id": "WVC-M2-02-A02",
           "description": "Cover artwork is not mistaken for the primary video.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-02.md",
+            "evidence/WVC-M2-02.json"
+          ]
         },
         {
           "id": "WVC-M2-02-A03",
           "description": "Silent video completes without inventing an audio stream; multi-audio omission is visible.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "skipped",
+          "evidence": [
+            "evidence/WVC-M2-02.md",
+            "evidence/WVC-M2-02.json"
+          ],
+          "notes": "Silent native recorder dispatch has only the video map and no audio options; unique/no/multiple-default audio policy and omitted alternatives are visible. Actual silent encode/output-no-audio confirmation is skipped without FFmpeg/FFprobe."
         },
         {
           "id": "WVC-M2-02-A04",
           "description": "Selected video, audio, channels and any discarded stream types are present in the job plan/report.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-02.md",
+            "evidence/WVC-M2-02.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "ed3a91676c350d6718741d30b7b9f4127286f528"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-02.md",
+        "evidence/WVC-M2-02.json"
+      ],
+      "notes": "Implemented; A02/A04 passed, A01/A03 skipped pending actual output confirmation without FFmpeg/FFprobe. Clean ed3a916 on both PS5.1.26100.9444/PS7.6.5: Focused 105/0/2/0, Quick 288/0/2/0, Targeted 304/0/6/0, all exit0. Thirteen Stream regressions prove requested absolute maps/height coupling, artwork exclusion, unique/no/multiple-default audio, silence/no audio options, nullable selected metadata and all omitted indices/types. Two real-output tests skipped in all scopes; four additional Targeted media skips. Recorder argv does not prove produced-media identity or actual silent completion. Pre-repair PS7 Targeted whole-suite timeout recorded; bounded Pester-child budget120 seconds, fixture deadlines unchanged. No new Full/manual/Explorer/milestone/release claim. Normalizer explicit unknown type and existing mocks/assertions updated minimally. No channel/FPS/default-quality drift. Next safe implemented-dependency task WVC-M2-03; retain skipped confirmation until installed-tool runs pass."
     },
     {
       "id": "WVC-M2-03",

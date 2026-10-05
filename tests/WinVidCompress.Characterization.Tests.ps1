@@ -99,9 +99,9 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         $script:EncoderExit = 0
         $script:Counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0 }
         Mock Get-MediaInspection {
-            [pscustomobject]@{ Succeeded = ($null -ne $script:Height); Native = $null; Warnings = @();
-                PrimaryVideo = [pscustomobject]@{ Height = $script:Height }; FailureKind = 'InvalidVideo';
-                Stage = 'Validation'; Reason = 'Missing coded video height.' }
+            ConvertFrom-ProbeJson ('{"streams":[{"index":0,"codec_type":"video","codec_name":"h264","width":1920,"height":' +
+                $(if ($null -ne $script:Height) { $script:Height } else { 'null' }) +
+                '},{"index":1,"codec_type":"audio","codec_name":"aac","channels":2}],"format":{"duration":"1"}}')
         }
         Mock Write-Host {}
         $script:Recorder = {
@@ -113,6 +113,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
     It 'preserves the complete default argument sequence and flat MP4 naming' {
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
         $expected = @('-hide_banner','-stats','-n','-i',$script:Source,
+            '-map','0:0','-map','0:1',
             '-c:v','libx264','-preset','veryfast','-crf','22','-c:a','aac','-b:a','160k',
             '-movflags','+faststart','-metadata','title=Band Name 29092025 - CamA',
             '-metadata','artist=Band Name','-metadata','date=2025-09-29',
