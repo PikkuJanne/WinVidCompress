@@ -31,6 +31,12 @@ On first run the tool creates %APPDATA%\WinVidCompress\config.json and sets the 
 Drag a single video file (or a folder) onto WinVidCompress.bat.
 The compressed .mp4 appears in %USERPROFILE%\Videos.
 Window stays open so you can see progress/logs.
+
+Paths containing `%NAME%` segments, such as `literal %PATH%.mov`, are unsupported for BAT drag/drop because Windows shell expansion can change them. This applies to folder names too; keep the BAT/script installation path free of these segments. Double-click the BAT and paste the literal source path in menu option 2/3, or invoke the PS1 from PowerShell with single quotes:
+
+```powershell
+.\WinVidCompress.ps1 'D:\Interviews\literal %PATH% !NAME!.mov'
+```
 1. TUI (double-click)
 Double-click WinVidCompress.bat to open the TUI:
 Set output folder (persists in config)

@@ -5,7 +5,7 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | Area | Required scenarios | Evidence method | Initial status |
 |---|---|---|---|
 | ENTRY | Double-click menu/Quit; single/file-folder/multi-drop; unattended exit | Windows Explorer + both shells | NOT RUN |
-| ARGV | Spaces, !, %PATH%, !NAME!, &, (), apostrophes, [], Unicode; long selection limits | Native recorder + actual Windows launch | NOT RUN |
+| ARGV | Spaces, !, ordinary %, !NAME!, &, (), apostrophes, [], Unicode; %PATH% through menu/direct PS1 under D005; long selection limits | Native recorder + actual Windows launch | NOT RUN |
 | CONFIG | Missing, malformed, wrong-shaped JSON; file-vs-dir; offline drive; failed save | Pester + filesystem fault injection | NOT RUN |
 | SCAN | Zero/one/many files; inaccessible subtree; invalid explicit input; reparse cycle | Pester + disposable filesystem | NOT RUN |
 | QUEUE | Overlap, duplicates, same input/output root, nested destination, originals named compressed | Queue tests + integration | NOT RUN |

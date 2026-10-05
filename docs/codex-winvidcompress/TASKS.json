@@ -363,7 +363,7 @@
       "title": "Harden the .bat launcher using measured argument round trips",
       "milestone": "M1",
       "priority": "P0",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         2
       ],
@@ -388,37 +388,40 @@
       "acceptance": [
         {
           "id": "WVC-M1-02-A01",
-          "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths.",
+          "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component; those paths use the literal-path menu or direct PS1 from PowerShell with literal string arguments.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "notes": "D005 supported routes verified from owner-confirmed Explorer folder/ten-file drops and literal menu session on 2026-10-05; exact native/bound paths, source/helper hashes and sentinels agree. Earlier zero/single retained; historical unsupported BAT percent failure preserved.",
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A02",
-          "description": "Test literal %PATH% and !NAME! filename segments with matching environment variables set; no environment substitution or command execution occurs.",
+          "description": "Test literal %PATH% and !NAME! segments with matching environment variables set through the literal-path menu and direct PS1 from PowerShell; no environment substitution or command execution occurs in these supported routes. BAT !NAME! preservation remains required; the recorded BAT %PATH% substitution is an explicitly unsupported path under owner-approved D005.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "notes": "Owner-confirmed real menu file/folder preserves %PATH% and !NAME! with matching variables. Supplemental native PS1 subcheck preserves both; automatic within human session, not separately typed. Matching-variable BAT and both-host direct coverage retained under D005.",
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A03",
           "description": "No Invoke-Expression, dynamically constructed cmd /c pipeline or broad execution-policy changes are introduced.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A04",
           "description": "Missing .ps1 and inaccessible dependencies result in actionable launcher errors.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "notes": "Owner reported prepared Explorer checks passed; tentative wording preserved in evidence.",
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": ["e32fa11067bc8bb5133e8913840561deba79573f", "67bb0e80b347817e3072fa7b23bdbafc892226cd"],
+      "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"],
+      "notes": "Verified under explicitly owner-approved D005 on 2026-10-05: all A01-A04 passed. Owner completed actual supported Explorer/menu checks; exact data/source/helper hashes/sentinels agree, automatic direct subcheck labelled. Clean 67bb0e8 Quick106/0/0/4 and Targeted120/0/4/4 each host retained, exit0. Documentation-only completion; no broad rerun/full-release acceptance. Historical unsupported BAT percent failure archived locally and recorded. Owned fixtures cleaned/ACL restored; next WVC-M1-03."
     },
     {
       "id": "WVC-M1-03",
