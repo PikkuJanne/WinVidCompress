@@ -12,8 +12,8 @@ Supported kit: two direct Explorer drops (folder and all ten files) plus one rea
 
 - Root D:/projects/WinVidCompress-main; feature/upstream codex/wvc-m1-02-launcher / origin/codex/wvc-m1-02-launcher.
 - One origin fetch/push destination https://github.com/PikkuJanne/WinVidCompress.git; draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5).
-- Previous clean live equality 2026-10-05T14:04:19.090752+00:00 describes 03c53afed10c307ef81c5cff0c5456de7cf66208. New implementation/final handoff sync reported externally; independently verify it.
-- Original clean implementation e32fa11067bc8bb5133e8913840561deba79573f: each host Quick 101/0/0/4 and Targeted 115/0/4/4 (passed/failed/skipped/NotRun). D005 follow-up exact-commit tiers pending at this checkpoint.
+- Previous clean live equality 2026-10-05T14:18:28.852039+00:00 describes 67bb0e80b347817e3072fa7b23bdbafc892226cd. New implementation/final handoff sync reported externally; independently verify it.
+- Original clean implementation e32fa11067bc8bb5133e8913840561deba79573f: each host Quick 101/0/0/4 and Targeted 115/0/4/4 (passed/failed/skipped/NotRun). D005 follow-up clean 67bb0e80b347817e3072fa7b23bdbafc892226cd: Quick106/0/0/4 and Targeted120/0/4/4 on each host, all exits0; supported-fixture scripted smoke passes both. Actual supported-route human checks remain pending in a fresh clean-commit kit already prepared.
 - Real Windows 11 Pro 10.0.26300 UBR9457; PS5.1.26100.9444 and PS7.6.5. Pester5.7.1/analyzer1.24.0 reused externally. Four absent-media skips/four known config/enumeration NotRun; Full not rerun. No CI runs/pass.
 
 Read AGENTS/INDEX/STATUS/GIT_SYNC, task/brief and [evidence](evidence/WVC-M1-02.md). Inspect branch/upstream/HEAD/dirty ownership, operation/conflict/hook state and effective URLs. Fetch --no-tags, then run tools/codex-winvidcompress/check_repo_sync.py against this root. Preserve unknown changes; one writer. If PR5 merged inspect current main before continuing.
