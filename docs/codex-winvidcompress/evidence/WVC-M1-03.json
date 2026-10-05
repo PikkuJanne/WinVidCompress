@@ -1,0 +1,448 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M1-03",
+  "acceptance_ids": [
+    "WVC-M1-03-A01",
+    "WVC-M1-03-A02",
+    "WVC-M1-03-A03",
+    "WVC-M1-03-A04"
+  ],
+  "recorded_at": "2026-10-05T15:12:04.868895+00:00",
+  "tested_commits": [
+    "4582ce187ee7b3179785bc29b7e61352c8e7cb76"
+  ],
+  "base_commit": "2f6f4eed33bf8458f520b90da4b0f24efdd7ec32",
+  "branch": "codex/wvc-m1-03-config",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "WinVidCompress.ps1 config helpers/help and transactional menu preference update",
+    "tests/unit/Config.Tests.ps1",
+    "tests/WinVidCompress.Characterization.Tests.ps1 graduate repaired config regression",
+    "tests/README.md and configuration specification",
+    "task/acceptance/evidence/status/next/session handoff"
+  ],
+  "runs": [
+    {
+      "name": "focused51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-focused51-4582ce1.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/unit/Config.Tests.ps1 -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; $taskData | Select-Object PowerShell,Edition,Pester,Counts | ConvertTo-Json -Depth 3; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 47,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-focused51-4582ce1.json"
+    },
+    {
+      "name": "focused7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-focused7-4582ce1.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/unit/Config.Tests.ps1 -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw | ConvertFrom-Json; $taskData | Select-Object PowerShell,Edition,Pester,Counts | ConvertTo-Json -Depth 3; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 47,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-focused7-4582ce1.json"
+    },
+    {
+      "name": "quick51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-quick51-4582ce1.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='quick51';ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 154,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 3
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [
+        "Current/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-quick51-4582ce1.json"
+    },
+    {
+      "name": "target51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-target51-4582ce1.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='target51';ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 168,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 3
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "Current/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-target51-4582ce1.json"
+    },
+    {
+      "name": "quick7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-quick7-4582ce1.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='quick7';ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 1,
+      "status": "Failed",
+      "counts": {
+        "Passed": 4,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [
+        "Current/harness"
+      ],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-quick7-4582ce1.json"
+    },
+    {
+      "name": "target7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-target7-4582ce1.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='target7';ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 1,
+      "status": "Failed",
+      "counts": {
+        "Passed": 18,
+        "Failed": 1,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "failed_case_ids": [
+        "Current/harness"
+      ],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-target7-4582ce1.json"
+    },
+    {
+      "name": "full",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m103-full-4582ce1.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='full';ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "host": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 1,
+      "status": "Failed",
+      "counts": {
+        "Passed": 318,
+        "Failed": 6,
+        "Skipped": 4,
+        "NotRun": 8
+      },
+      "failed_case_ids": [
+        "PowerShell7/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "PowerShell7/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "PowerShell7/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]",
+        "WindowsPowerShell/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "WindowsPowerShell/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "WindowsPowerShell/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "coverage/future-media-cli-safety-packaging",
+        "manual/explorer-file-folder-multi-drop",
+        "manual/explorer-menu-quit",
+        "manual/explorer-special-character-argv",
+        "manual/playback-sdr-hdr-audio",
+        "manual/real-ctrl-c-and-console-close",
+        "manual/representative-benchmarks",
+        "manual/unc-long-paths"
+      ],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-full-4582ce1.json"
+    },
+    {
+      "name": "quick7-serial",
+      "command": "$taskFinalExit = 0; foreach ($taskTier in @('Quick','Targeted')) { $taskKey = if ($taskTier -eq 'Quick') { 'quick7-serial' } else { 'target7-serial' }; $taskReport = Join-Path $env:TEMP ('wvc-m103-' + $taskKey + '-4582ce1.json'); $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier $taskTier -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name=$taskKey;ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; if ($taskExit -ne 0) { $taskFinalExit = $taskExit } }; exit $taskFinalExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 154,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 3
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [
+        "Current/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-quick7-serial-4582ce1.json"
+    },
+    {
+      "name": "target7-serial",
+      "command": "$taskFinalExit = 0; foreach ($taskTier in @('Quick','Targeted')) { $taskKey = if ($taskTier -eq 'Quick') { 'quick7-serial' } else { 'target7-serial' }; $taskReport = Join-Path $env:TEMP ('wvc-m103-' + $taskKey + '-4582ce1.json'); $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier $taskTier -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name=$taskKey;ExitCode=$taskExit;SourceCommit=$taskData.SourceCommit;Dirty=$taskData.Dirty;Status=$taskData.Status;Counts=$taskData.Counts;Hosts=$taskData.Hosts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; if ($taskExit -ne 0) { $taskFinalExit = $taskExit } }; exit $taskFinalExit",
+      "tested_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 168,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 3
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [
+        "Current/151:empty folder collection returns an empty queue [WVC-M1-04]",
+        "Current/152:single-video folder reaches processing without scalar Count failure [WVC-M1-04]",
+        "Current/153:explicit single file reaches processing without scalar Count failure [WVC-M1-04]"
+      ],
+      "local_artifact": ".test-results/m103-4582ce1/wvc-m103-target7-serial-4582ce1.json"
+    }
+  ],
+  "acceptance": {
+    "WVC-M1-03-A01": {
+      "status": "passed",
+      "evidence": "First-run OutputDir-only creation plus 20 empty/malformed/root/property/path cases; exact original diagnostic backups and explicit recovery notices."
+    },
+    "WVC-M1-03-A02": {
+      "status": "passed",
+      "evidence": "Offline drive/UNC simulated; simulated access exception, real Windows listing ACL denial and real file-as-directory retain exact config bytes without default fallback."
+    },
+    "WVC-M1-03-A03": {
+      "status": "passed",
+      "evidence": "Isolated APPDATA per case; real read/replace sharing failures, lock contention, stale snapshots, simulated temp/backup/promotion faults, no-clobber temp/backup/file races and menu rollback preserve sentinels."
+    },
+    "WVC-M1-03-A04": {
+      "status": "passed",
+      "evidence": "Unchanged legacy valid load, nested arrays/null/bool/numeric/Unicode and timestamp round-trip, previous exact-byte backup, depth100 refusal; older PS7 timestamp normalization documented."
+    }
+  },
+  "manual_checks": [],
+  "owner_approval": null,
+  "ci": {
+    "implementation_commit": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+    "check_runs": 0,
+    "workflow_runs": 0,
+    "ci_pass_claimed": false
+  },
+  "pull_request": {
+    "number": 6,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/6",
+    "state": "OPEN",
+    "draft": true,
+    "implementation_head": "4582ce187ee7b3179785bc29b7e61352c8e7cb76"
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-05T15:08:48.811892+00:00",
+    "local_head": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+    "live_fetch_head": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+    "live_push_head": "4582ce187ee7b3179785bc29b7e61352c8e7cb76",
+    "clean": true,
+    "command": "python tools/codex-winvidcompress/check_repo_sync.py --repo D:/projects/WinVidCompress-main"
+  },
+  "sanitized_artifacts": [
+    "Evidence contains commands/counts and case IDs; raw reports/environment/path diagnostics stay in ignored .test-results/m103-4582ce1.",
+    "18 raw reports/logs copied with SHA256 equality verified; five owned diagnostic roots archived (49 files) with hashes checked and removed only after ownership/containment/reparse/process checks."
+  ],
+  "final_handoff_push": "pending; verify externally after final documentation commit",
+  "limitations": [
+    "Initial overlapping PS7 Quick/Targeted hit the harness timeout (Quick 4/1/0/0; Targeted 18/1/4/0, exit1). One termination raced an already exited PID; later no active owned fixture processes remained. Serial reruns passed and original failed reports are retained. Concurrency is an observed circumstance, not a measured root-cause diagnosis.",
+    "Full exits1 solely on six existing M1-04 discovery failures (three per host); four media fixtures skip because FFmpeg/FFprobe are absent and eight broader manual/future coverage checks remain NotRun.",
+    "No actual disconnected external drive/UNC, network replacement atomicity, power-loss durability or uncoordinated editor race guarantee. Native ACL/read-sharing/replace-sharing/file-as-directory/collision checks complement fault injection.",
+    "Unknown nesting above100 is refused. Hosts without DateKind String can normalize ISO timestamp representation through standard PS7 DateTime parsing; PS5.1 and tested PS7.6.5 preserve the tested string exactly.",
+    "No config-specific manual/approval gate; broader Explorer/media/manual milestone and release acceptance are not established by these checks. WhatIf/CheckEnvironment remain later CLI work."
+  ],
+  "next_task": "WVC-M1-04"
+}

@@ -428,7 +428,7 @@
       "title": "Make configuration validation and recovery safe",
       "milestone": "M1",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         3
       ],
@@ -453,35 +453,56 @@
           "id": "WVC-M1-03-A01",
           "description": "Missing file, empty file, invalid JSON, null, {}, [], numeric root and wrong OutputDir types all have explicit tested outcomes.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-03.md",
+            "evidence/WVC-M1-03.json"
+          ],
+          "notes": "First-run OutputDir-only creation plus 20 empty/malformed/root/property/path cases; exact original diagnostic backups and explicit recovery notices."
         },
         {
           "id": "WVC-M1-03-A02",
           "description": "Offline output drive, permission denial and existing file-as-directory do not silently redirect or overwrite saved preferences.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-03.md",
+            "evidence/WVC-M1-03.json"
+          ],
+          "notes": "Offline drive/UNC simulated; simulated access exception, real Windows listing ACL denial and real file-as-directory retain exact config bytes without default fallback."
         },
         {
           "id": "WVC-M1-03-A03",
           "description": "A failed save does not destroy the last valid config; tests isolate APPDATA.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-03.md",
+            "evidence/WVC-M1-03.json"
+          ],
+          "notes": "Isolated APPDATA per case; real read/replace sharing failures, lock contention, stale snapshots, simulated temp/backup/promotion faults, no-clobber temp/backup/file races and menu rollback preserve sentinels."
         },
         {
           "id": "WVC-M1-03-A04",
           "description": "Unknown compatible keys survive load/save or a documented migration; no unnecessary schema reset occurs.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-03.md",
+            "evidence/WVC-M1-03.json"
+          ],
+          "notes": "Unchanged legacy valid load, nested arrays/null/bool/numeric/Unicode and timestamp round-trip, previous exact-byte backup, depth100 refusal; older PS7 timestamp normalization documented."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "4582ce187ee7b3179785bc29b7e61352c8e7cb76"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-03.md",
+        "evidence/WVC-M1-03.json"
+      ],
+      "notes": "All A01-A04 passed on clean 4582ce1 under PS5.1/PS7.6.5; focused47 each, Quick154/0/0/3 and Targeted168/0/4/3 each (pass/fail/skip/NotRun), exit0. Full318/6/4/8 exit1: all failures M1-04. Initial overlapping PS7 timeouts retained; serial reruns pass. Safe backups/locking/stale detection, no silent destination fallback and unknown-key/depth handling; network/external-writer limits documented. No config-specific manual/owner gate; broader milestone/release unaccepted. Next WVC-M1-04."
     },
     {
       "id": "WVC-M1-04",
