@@ -592,7 +592,7 @@
       "title": "Freeze and deduplicate the full batch before encoding",
       "milestone": "M1",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         5
       ],
@@ -618,35 +618,53 @@
           "id": "WVC-M1-05-A01",
           "description": "File+parent-folder, parent+child-folder and repeated selections encode a source once.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-05.md",
+            "evidence/WVC-M1-05.json"
+          ]
         },
         {
           "id": "WVC-M1-05-A02",
           "description": "Output files created during a run cannot become new inputs in the same run.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-05.md",
+            "evidence/WVC-M1-05.json"
+          ]
         },
         {
           "id": "WVC-M1-05-A03",
           "description": "Original MP4s in the destination or names containing (compressed) are not excluded solely by their name.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-05.md",
+            "evidence/WVC-M1-05.json"
+          ]
         },
         {
           "id": "WVC-M1-05-A04",
           "description": "New output is never the same normalized path as its input; discovery failures remain visible.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-05.md",
+            "evidence/WVC-M1-05.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "e5b2c86acdad84d33500fc8b5d37fe538271215d"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-05.md",
+        "evidence/WVC-M1-05.json",
+        "evidence/WVC-M1-05-session.md"
+      ],
+      "notes": "Verified; A01-A04 passed. Clean e5b2c86: each real PS5.1.26100.9444/PS7.6.5 host Focused69/0/0/0, Quick200/0/0/0, Targeted214/0/4/0, exit0. Four media skips per host lack FFmpeg/FFprobe. Complete deterministic unique queue and pre-encode diagnostics; source/output alias guard retains rename/skip and -n. Preserves ambiguous existing destination/compressed/partial originals because no current trusted ownership artifacts exist. Hard links/other file-ID aliases and source-change/temp/manifest work remain explicit later boundaries. Draft PR and zero CI checks/runs recorded in evidence. No new owner gate or milestone/release acceptance. Next WVC-M1-06."
     },
     {
       "id": "WVC-M1-06",
