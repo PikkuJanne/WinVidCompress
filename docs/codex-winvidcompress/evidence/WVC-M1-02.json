@@ -481,16 +481,72 @@
       },
       "host": "5.1.26100.9444 Desktop",
       "limitation": "Direct drop proves Check.bat is not the sole cause. Native/bound equality proves corruption before script parameter binding, not the exact earlier Explorer/ShellExecute/CMD stage. No private expansion value/raw reports committed."
+    },
+    {
+      "kind": "Completed supported-route observations under D005",
+      "acceptance_ids": [
+        "WVC-M1-02-A01",
+        "WVC-M1-02-A02"
+      ],
+      "status": "passed",
+      "observer": "Repository owner (user)",
+      "confirmed_on": "2026-10-05",
+      "confirmation": "Completed both Explorer drops and the menu check",
+      "prepared_source_commit": "67bb0e80b347817e3072fa7b23bdbafc892226cd",
+      "prepared_source_dirty": false,
+      "human_steps": [
+        "Direct Explorer folder drop",
+        "Direct Explorer selection of all ten supported files",
+        "Menu option 2 literal file, option 3 literal folder, then Quit/exit"
+      ],
+      "report_last_write_times_utc": [
+        "2026-10-05T14:41:12.3569137Z",
+        "2026-10-05T14:42:01.5350874Z",
+        "2026-10-05T14:43:23.8806760Z",
+        "2026-10-05T14:43:42.5258586Z",
+        "2026-10-05T14:43:44.8613779Z"
+      ],
+      "host": "5.1.26100.9444 Desktop",
+      "data": {
+        "folder_exact": true,
+        "multiple_argument_count": 10,
+        "multiple_exact_ordinal_membership": true,
+        "drop_native_and_bound_agree": true,
+        "menu_file_literal_segments": "%PATH% and !NAME!",
+        "menu_folder_literal_segments": "%PATH% and !NAME!",
+        "menu_file_exact": true,
+        "menu_folder_exact": true,
+        "matching_PATH_and_NAME_explicitly_set": true,
+        "supplemental_direct_native_and_bound_exact": true,
+        "supplemental_direct_argument_count": 2,
+        "five_current_prepared_hashes_match": true,
+        "eleven_source_sentinels_unchanged": true,
+        "config_created": false
+      },
+      "drop_data_checker": {
+        "command": "& ./tests/launcher/Test-LauncherManualReports.ps1 -Manifest <local-manifest> -Case @('folder','multiple')",
+        "command_redaction": "Only the private local manifest argument is redacted; all flags/cases are exact.",
+        "exit_code": 0,
+        "counts": {
+          "Passed": 2,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "limitation": "Data checker alone does not establish human Explorer; owner confirmation supplies actual observation."
+      },
+      "supplemental_direct_call": "Automatic native PS1 subcheck after the human menu selections, not an independently typed manual PS1 invocation or another Explorer action. It inherits explicit matching PATH/NAME from the hash-verified menu runner.",
+      "limitations": "Recorder measures argv/selection with processing replaced; no encoder/media-integrity claim. Direct Explorer drops do not themselves establish matching NAME. Historical unsupported BAT %PATH% failure retained."
     }
   ],
   "acceptance": {
     "A01": {
-      "status": "not_run",
-      "evidence": "D005 boundary explicitly approved/applied. Historical BAT percent substitution retained outside the supported boundary. Applicable supported folder/multiple/menu human observations remain pending; approval and automation alone do not pass this manual criterion."
+      "status": "passed",
+      "evidence": "Owner confirmed actual supported Explorer folder and ten-file drops and literal menu selections on 2026-10-05. Exact native/bound ordinal paths, all five current/prepared hashes and eleven source sentinels agree. Cohort covers all required supported characters/Unicode including ordinary percent and !NAME!. Retained zero/single observations use unchanged BAT hash; both-host automation passes clean 67bb0e8. D005 explicitly excludes variable-shaped percent BAT paths; historical failure retained."
     },
     "A02": {
-      "status": "not_run",
-      "evidence": "D005 boundary explicitly approved/applied. Historical BAT percent substitution retained outside the supported boundary. Applicable supported folder/multiple/menu human observations remain pending; approval and automation alone do not pass this manual criterion."
+      "status": "passed",
+      "evidence": "Actual real-menu file/folder paths each preserve literal %PATH% and !NAME! with matching variables explicitly set. Supplemental real native PS1 child preserves both paths in native argv and bound Path; it is an automatic subcheck of the human session, supported by both-host direct coverage. Current helper/source hashes agree, no config write or filename execution observed. BAT !NAME! preserved in supported cohort plus earlier matching-variable test/observation; unsupported percent BAT failure remains documented under owner-approved D005."
     },
     "A03": {
       "status": "passed",
@@ -514,10 +570,10 @@
     "WinVidCompress_bat_sha256": "9B8A045AB990B87DF4756427A83F2E29D60E1C06A2F042F8D4D6A3ADCDE6CA4D"
   },
   "previous_verified_sync": {
-    "checked_at": "2026-10-05T14:18:28.852039+00:00",
-    "head": "67bb0e80b347817e3072fa7b23bdbafc892226cd",
-    "live_fetch_head": "67bb0e80b347817e3072fa7b23bdbafc892226cd",
-    "live_push_head": "67bb0e80b347817e3072fa7b23bdbafc892226cd",
+    "checked_at": "2026-10-05T14:44:20.084546+00:00",
+    "head": "32e13889a4e60985fac03b67931c8bcb437aa198",
+    "live_fetch_head": "32e13889a4e60985fac03b67931c8bcb437aa198",
+    "live_push_head": "32e13889a4e60985fac03b67931c8bcb437aa198",
     "status": "SYNCHRONIZED",
     "dirty": false,
     "operations": []
@@ -532,7 +588,7 @@
   },
   "final_handoff_push": "pending when committed; verify final local/live fetch/live push equality and clean state externally",
   "limitations": [
-    "Historical direct Explorer BAT percent drop failed the original A01/A02. Owner-approved D005 now excludes variable-shaped percent BAT paths; revised manual criteria remain not_run pending supported observations. A03/A04 passed; no milestone/release acceptance.",
+    "Task verified under explicitly owner-approved D005; all four revised criteria passed. Historical unsupported BAT percent substitution is retained. Recorder data does not establish full compression/media integrity or milestone/release acceptance.",
     "Raw CMD characterization expands %PATH% before its BAT starts; /V:ON can expand !NAME!. Actual direct Explorer records prove literal %PATH% is already changed by script binding, but do not isolate the earlier stage. Trailing-backslash quoting/8191-character limits stay documented.",
     "Windows CMD/batch expanded command lines are limited to 8191 characters; use folder drops or smaller selections.",
     "The retained -NoExit keeps startup errors visible at a prompt. A subsequent plain exit can return zero; no new unattended startup-exit contract is claimed.",
@@ -542,7 +598,7 @@
     "Manual fixture and raw reports contain local paths/possible environment expansion; all stay outside Git. No private media, dependency binaries, configuration or raw logs committed.",
     "Read-only subagent review fixed a report-integrity defect and clarified /V:ON test wording. One checkout writer; no automatic dependency download, main push/merge, policy change, release, deployment or settings/secrets change."
   ],
-  "next_task": "WVC-M1-02 — complete revised supported-route manual verification under approved D005. Next independent code task WVC-M1-03.",
+  "next_task": "WVC-M1-03 — Make configuration validation and recovery safe. Stop this bounded thread after handoff.",
   "supplementary_runs": [
     {
       "kind": "Optional hidden Windows ShellExecute probe, not human Explorer and not part of tier counts",
@@ -684,7 +740,7 @@
         0
       ]
     },
-    "manual_status": "not_run; owner asked to perform two direct Explorer drops and one short menu session in a fresh clean-commit kit. No new human completion confirmed yet.",
+    "manual_status": "passed on 2026-10-05: owner confirmation and exact supported reports agree. A01-A04 passed; task verified under D005.",
     "final_sync": "pending final handoff commit/push; report externally",
     "corrected_dirty_quick51": {
       "Command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath <new-local-report>",
@@ -733,13 +789,29 @@
       "application_SHA256": "52A76C2367E062EE0A3052A5C66AFD2FD3E132837A3F2DFFCA922CEB78E6B451",
       "argument_and_direct_recorder_SHA256": "971085F415FEF297FE8BB0DB5A2E3E2C5D864EE59752128308DACECE9AD3C3E4",
       "menu_recorder_SHA256": "8625845378D85069CB75F280DA97123408955D393413905353040077A3F51980",
-      "observations_pending": [
+      "matching_variables": "NAME/PATH explicitly set in menu/direct session; new direct Explorer drops alone do not establish a matching NAME environment.",
+      "data_privacy": "All five supported and seven historical raw reports plus manifests archived locally under ignored .test-results, with report-copy SHA256 equality verified. Both owned fixture roots removed after confirming no fixture processes; the historical synthetic read-deny ACL was restored. No private paths/environment/raw reports committed.",
+      "observations_completed": [
         "direct Explorer folder",
         "direct Explorer ten-file selection",
         "real menu literal file/folder selection"
-      ],
-      "matching_variables": "NAME/PATH explicitly set in menu/direct session; new direct Explorer drops alone do not establish a matching NAME environment.",
-      "data_privacy": "Owned manifest/raw reports/instructions/actual paths stay local and outside Git; historical kit retained separately."
+      ]
     }
+  },
+  "confirmation_completion": {
+    "date": "2026-10-05",
+    "scope": "Documentation-only verification/cleanup after owner completion. No application/test code change or broad suite rerun; clean 67bb0e8 results retained.",
+    "baseline_handoff": "32e13889a4e60985fac03b67931c8bcb437aa198",
+    "checks": [
+      "Supported drop data checker: 2 passed, 0 failed/skipped/NotRun, exit0",
+      "Exact native/bound/drop membership and ordered menu/direct values",
+      "Five current/prepared source/helper hashes, eleven source sentinels and no config write",
+      "Independent read-only acceptance review supports verified under D005",
+      "Twelve raw report copies hash-match in ignored local archive; zero active fixture processes; both owned cleanups pass with historical ACL restore",
+      "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "git -c core.whitespace=cr-at-eol diff --cached --check"
+    ],
+    "result": "verified under D005; no milestone/release/full media acceptance",
+    "final_handoff_sync": "pending after this documentation commit; report externally"
   }
 }

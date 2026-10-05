@@ -1,23 +1,21 @@
 # Next session
 
-Exact next task: **WVC-M1-02 — complete supported-route verification under approved D005**. Task implemented; revised A01/A02 not_run, A03/A04 passed. Next independent code task **WVC-M1-03 — Make configuration validation and recovery safe**. Do not implement another task silently.
+Exact next task: **WVC-M1-03 — Make configuration validation and recovery safe**. M1-02 is verified under D005; do not repeat its completed acceptance or implement the rest of M1 silently.
 
-## Accepted boundary and evidence
+## Current state
 
-Owner replied “the proposed filename restriction accepted” on 2026-10-05. D005 excludes variable-shaped percent segments such as %PATH% anywhere in a BAT drop path. Use literal-path menu or direct PS1 from PowerShell for those paths. Ordinary percent names and BAT !NAME! support remain required. Historical direct BAT percent failure stays recorded; approval is not a passing test.
+- Repository root D:/projects/WinVidCompress-main; branch/upstream codex/wvc-m1-02-launcher / origin/codex/wvc-m1-02-launcher; single origin fetch/push https://github.com/PikkuJanne/WinVidCompress.git.
+- Draft [PR5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open, no CI/check/workflow runs. Do not merge automatically. If owner merges, inspect fetched main ancestry; otherwise retain feature work when preparing the next branch.
+- Previous clean live equality 2026-10-05T14:44:20.084546+00:00 describes documentation checkpoint 32e13889a4e60985fac03b67931c8bcb437aa198. Final handoff SHA reported externally; independently verify live refs before editing.
 
-Supported kit: two direct Explorer drops (folder and all ten files) plus one real menu selection session. The menu helper dot-sources the byte-identical PS1 and replaces only Process-Paths; isolates APPDATA/PATH/NAME/output and invokes no encoder. Supplemental direct-native call is automated and labelled separately. Human observers and exact path/source/helper/hash/host data must agree before verifying A01/A02. Use fresh reports; do not erase/filter old failures. No full production compression/visual integrity claim.
+Read AGENTS/INDEX/STATUS/GIT_SYNC, M1-03 task entry/brief and targeted configuration evidence. Inspect branch/upstream/HEAD/dirty ownership, operation/conflict/hook state, effective URLs and live refs. Fetch --no-tags and run tools/codex-winvidcompress/check_repo_sync.py against the real root. Preserve unknown changes; one writer. Never reset/stash/clean/force to reconcile.
 
-## Current checkpoint
+## Verified M1-02 constraints and evidence
 
-- Root D:/projects/WinVidCompress-main; feature/upstream codex/wvc-m1-02-launcher / origin/codex/wvc-m1-02-launcher.
-- One origin fetch/push destination https://github.com/PikkuJanne/WinVidCompress.git; draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5).
-- Previous clean live equality 2026-10-05T14:18:28.852039+00:00 describes 67bb0e80b347817e3072fa7b23bdbafc892226cd. New implementation/final handoff sync reported externally; independently verify it.
-- Original clean implementation e32fa11067bc8bb5133e8913840561deba79573f: each host Quick 101/0/0/4 and Targeted 115/0/4/4 (passed/failed/skipped/NotRun). D005 follow-up clean 67bb0e80b347817e3072fa7b23bdbafc892226cd: Quick106/0/0/4 and Targeted120/0/4/4 on each host, all exits0; supported-fixture scripted smoke passes both. Actual supported-route human checks remain pending in a fresh clean-commit kit already prepared.
-- Real Windows 11 Pro 10.0.26300 UBR9457; PS5.1.26100.9444 and PS7.6.5. Pester5.7.1/analyzer1.24.0 reused externally. Four absent-media skips/four known config/enumeration NotRun; Full not rerun. No CI runs/pass.
+Owner accepted D005 and confirmed both direct Explorer drops/menu session on 2026-10-05. Exact folder/ten-file native/bound, literal menu file/folder with matching PATH/NAME, automatic native PS1 subcheck, hashes and source sentinels agree; A01-A04 passed. Supplemental direct call is automatic within the human session, not independently typed. Historical percent BAT failure remains outside supported boundary. Variable-shaped percent paths use literal menu/direct PowerShell; ordinary percent and BAT !NAME! support remain required. Do not promise shell-independent/unlimited drops or full encoder integrity.
 
-Read AGENTS/INDEX/STATUS/GIT_SYNC, task/brief and [evidence](evidence/WVC-M1-02.md). Inspect branch/upstream/HEAD/dirty ownership, operation/conflict/hook state and effective URLs. Fetch --no-tags, then run tools/codex-winvidcompress/check_repo_sync.py against this root. Preserve unknown changes; one writer. If PR5 merged inspect current main before continuing.
+Clean tested implementation 67bb0e80b347817e3072fa7b23bdbafc892226cd: each host Quick106/0/0/4, Targeted120/0/4/4, all exits0; supported-fixture smoke passes both. Windows11 Pro10.0.26300 UBR9457, PS5.1.26100.9444/PS7.6.5; pinned Pester5.7.1/analyzer1.24.0 reused. Four absent-media skips and four known config/enumeration NotRun remain for M1-03/M1-04. Full not rerun. Detailed [evidence](evidence/WVC-M1-02.md) retains exact commands/history/limitations.
 
-New short fixture: powershell -NoProfile -ExecutionPolicy Bypass -File tests/launcher/New-LauncherSupportedFixture.ps1. Preparation and scripted smoke are not human acceptance. Give short exact instructions, inspect full UTF8 reports and source/helper hashes, keep private paths outside Git. Retain historical reports; close consoles before owned cleanup with Remove-LauncherManualFixture.ps1 (old full-character kit has one synthetic ACL to restore).
+Both manual kits cleaned, historical synthetic ACL restored; twelve raw reports/manifests retained in an ignored local archive with report-copy hash equality. Raw paths/environment values stay out of Git. No manual completion blocker remains for M1-02.
 
-End with intentional evidence/status/next/session commit/push, live fetch/push equality and clean state; report exact SHAs/PR/CI/tests/omissions. No self-SHA loop. Main/merge/release/policy/quality/settings/secrets changes need explicit owner approval.
+End with intentional task/evidence/status/next/session commit/push, clean live fetch/push equality, PR/CI/tests/omissions and exact SHAs. No self-SHA loop. Main/merge/release/quality/policy/settings/secrets changes need separate owner authorization.
