@@ -16,7 +16,7 @@ Owner confirmed “Completed both Explorer drops and the menu check”. Exact fo
 
 Clean tested implementation 67bb0e80b347817e3072fa7b23bdbafc892226cd, Windows11 Pro10.0.26300 UBR9457, PS5.1.26100.9444 Desktop/PS7.6.5 Core. Each host Quick106/0/0/4 and Targeted120/0/4/4 (passed/failed/skipped/NotRun), exit0. Pester5.7.1/analyzer1.24.0 reused. Four absent-media skips/four known config/enumeration NotRun; Full not rerun. Supported-fixture scripted smoke passes both. Completion follow-up is documentation-only, with schema/whitespace/privacy/data checks rather than a broad rerun.
 
-[Evidence](evidence/WVC-M1-02.md), [exact JSON commands/results](evidence/WVC-M1-02.json), [session](evidence/WVC-M1-02-session.md). Twelve raw reports/manifests archived locally under ignored .test-results with report-copy hashes verified. Both owned manual kits cleaned after no active fixture processes; historical synthetic read-deny ACL restored. No private paths/raw environment values uploaded.
+[Evidence](evidence/WVC-M1-02.md), [exact JSON commands/results](evidence/WVC-M1-02.json), [session](evidence/WVC-M1-02-session.md). Twelve raw reports plus manifests archived locally under ignored .test-results with report-copy hashes verified. Both owned manual kits cleaned after no active fixture processes; historical synthetic read-deny ACL restored. No private paths/raw environment values uploaded.
 
 ## Git and next task
 

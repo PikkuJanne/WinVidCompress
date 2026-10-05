@@ -30,7 +30,7 @@ Exact earlier expansion stage is not isolated by these records; the proven bound
 
 No new application/test code, dependency download, policy/association change or broad test rerun. Prior clean Quick/Targeted results retained; owned-root/hash/sentinel/data/schema/whitespace checks performed. A03/A04 remain passed. Task stays implemented and PR draft. Exact next is an explicit owner decision on a documented BAT %NAME% filename restriction (literal-path menu/direct PS1 route), or separately scoped launcher work under unchanged requirements. No acceptance change/waiver is inferred. Folder/multiple fixture subcases still require correct inputs after resolving that decision.
 
-## Accepted boundary D005 — 2026-10-05
+## Accepted boundary D005 — initial application checkpoint, 2026-10-05
 
 The owner replied “the proposed filename restriction accepted”. D005 is applied explicitly in TASKS.json, the task brief, process/testing/full-matrix documentation, README and application help. BAT drops exclude variable-shaped percent segments such as %PATH% in any full-path component; these use literal-path menu entry or direct PS1 invocation from PowerShell with literal string arguments. Ordinary percent and BAT !NAME! support remain required. Historical direct BAT substitution remains recorded, not repaired.
 
@@ -38,7 +38,7 @@ Current revised A01/A02 are not_run while supported folder/multiple/menu observa
 
 Two menu regressions and three checker regressions are added. Case-limited grading validates all records; full defaults remain unchanged. Explicit UTF8 metadata/report reads fix PS5.1 Unicode decoding. Initial dirty-tree Quick checker failure and smoke decoding failure are retained in JSON; focused fixes/smoke passed. Exact clean-commit Quick/Targeted and fresh human checks are pending at this implementation checkpoint.
 
-## D005 clean-commit validation and manual handoff
+## D005 clean-commit validation and manual handoff — before owner completion
 
 Tested clean implementation 67bb0e80b347817e3072fa7b23bdbafc892226cd on Windows 11 Pro 10.0.26300 UBR9457, PS5.1.26100.9444 Desktop and PS7.6.5 Core. Each host: Quick 106 passed/0 failed/0 skipped/4 NotRun; Targeted 120 passed/0 failed/4 skipped/4 NotRun; all exits 0. Quick includes 102 Pester cases (27 launcher/checker) plus four gates. Targeted adds six native entry and eight JSON fixture cases. Four absent-media recipes skip and four known config/enumeration cases remain NotRun. Full not rerun. Exact commands/counts/case IDs retained in JSON; pinned modules reused, no downloads.
 

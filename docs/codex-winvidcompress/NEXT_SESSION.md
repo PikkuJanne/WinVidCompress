@@ -16,6 +16,6 @@ Owner accepted D005 and confirmed both direct Explorer drops/menu session on 202
 
 Clean tested implementation 67bb0e80b347817e3072fa7b23bdbafc892226cd: each host Quick106/0/0/4, Targeted120/0/4/4, all exits0; supported-fixture smoke passes both. Windows11 Pro10.0.26300 UBR9457, PS5.1.26100.9444/PS7.6.5; pinned Pester5.7.1/analyzer1.24.0 reused. Four absent-media skips and four known config/enumeration NotRun remain for M1-03/M1-04. Full not rerun. Detailed [evidence](evidence/WVC-M1-02.md) retains exact commands/history/limitations.
 
-Both manual kits cleaned, historical synthetic ACL restored; twelve raw reports/manifests retained in an ignored local archive with report-copy hash equality. Raw paths/environment values stay out of Git. No manual completion blocker remains for M1-02.
+Both manual kits cleaned, historical synthetic ACL restored; twelve raw reports plus manifests retained in an ignored local archive with report-copy hash equality. Raw paths/environment values stay out of Git. No manual completion blocker remains for M1-02.
 
 End with intentional task/evidence/status/next/session commit/push, clean live fetch/push equality, PR/CI/tests/omissions and exact SHAs. No self-SHA loop. Main/merge/release/quality/policy/settings/secrets changes need separate owner authorization.

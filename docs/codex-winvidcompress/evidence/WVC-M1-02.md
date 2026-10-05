@@ -59,7 +59,7 @@ The concrete proposal for the owner's decision is:
 - A01 retains the listed characters and all four invocation shapes. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component. Such paths use the literal-path menu or direct PS1 invocation from PowerShell with literal string arguments.
 - A02 tests literal %PATH% and !NAME! with matching variables through those supported literal-path routes; BAT !NAME! preservation remains required. The observed BAT %PATH% failure stays recorded as the reason for the restriction.
 
-This changes the existing A02 requirement, not its test result. TASKS.json and the task brief are unchanged. Approval would authorize documentation/criteria updates and focused verification of the supported routes; it would not immediately make M1-02 verified. Folder and multiple-file checks still need the requested inputs. Keeping the existing requirement requires separately scoped launcher work, with its design and acceptance reviewed before implementation.
+At this pre-approval checkpoint, the proposal changes the existing A02 requirement, not its test result; TASKS.json and the task brief are still unchanged. Approval would authorize documentation/criteria updates and focused verification of the supported routes; it would not immediately make M1-02 verified. Folder and multiple-file checks still need the requested inputs. Keeping the existing requirement requires separately scoped launcher work, with its design and acceptance reviewed before implementation.
 
 ## Accepted boundary D005 — initial application checkpoint, 2026-10-05
 
