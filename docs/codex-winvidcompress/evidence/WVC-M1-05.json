@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M1-05",
+  "acceptance_ids": [
+    "WVC-M1-05-A01",
+    "WVC-M1-05-A02",
+    "WVC-M1-05-A03",
+    "WVC-M1-05-A04"
+  ],
+  "recorded_at": "2026-10-05T16:42:54.615652+00:00",
+  "tested_commits": [
+    "e5b2c86acdad84d33500fc8b5d37fe538271215d"
+  ],
+  "base_commit": "8081fd5275aa8aa56ebe41b2002881dd1c69e70c",
+  "branch": "codex/wvc-m1-05-queue",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "WinVidCompress.ps1 queue collection/path keys and explicit source/output guard",
+    "tests/unit/Queue.Tests.ps1 (22 queue/path/file-recorder regressions)",
+    "CONFIG_AND_DISCOVERY.md and tests/README.md behavior/support boundary",
+    "task/acceptance/matrix/evidence/status/next/session handoff"
+  ],
+  "runs": [
+    {
+      "name": "focused51",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -TestPath 'tests/unit/Queue.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/focused51-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 69,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/focused51-e5b2c86.json",
+      "artifact_sha256": "8664bd252061b2ea20eb1154a10e5cb5b79f0f1a16039d4e5a03166387344b05"
+    },
+    {
+      "name": "focused7",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -TestPath 'tests/unit/Queue.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/focused7-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 69,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/focused7-e5b2c86.json",
+      "artifact_sha256": "b239519a93c54faa16aaa4c24135d886a9aaebb460c44e62d13e592ff02849c2"
+    },
+    {
+      "name": "quick51",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/quick51-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 200,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/quick51-e5b2c86.json",
+      "artifact_sha256": "d9655b955c0c621a7563934cd3fe779dd7fe02a955d02cd37dd3fa45d0fa741b"
+    },
+    {
+      "name": "targeted51",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/targeted51-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 214,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/targeted51-e5b2c86.json",
+      "artifact_sha256": "d61bfb3c30be14a2c54561b204009ae17621e013cd9872b9f55dba0d77166da2"
+    },
+    {
+      "name": "quick7",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/quick7-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 200,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/quick7-e5b2c86.json",
+      "artifact_sha256": "5b2a29bbf9b52d329e1220345f640607cba2ad04b8f7ca1e95bae1d1283a32c6"
+    },
+    {
+      "name": "targeted7",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath (Join-Path (Get-Location) '.test-results/m105/targeted7-e5b2c86.json')",
+      "tested_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 214,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m105/targeted7-e5b2c86.json",
+      "artifact_sha256": "a48ed7cfcbcb99549f7454d7b893de617ce58f465e911febb2afc479f6a54ef6"
+    }
+  ],
+  "command_execution": "Commands above are the exact child arguments expressed with the same Join-Path report/module expressions. Runs were serialized in the listed order. Child stdout was captured to each local_artifact + .stdout.log; every observed child exit was 0. Focused child reports do not store SourceCommit; the enclosing clean Git state was inspected before and after the six-run sequence. Quick/Targeted reports independently store exact SourceCommit and Dirty=false.",
+  "regression_first": {
+    "base_commit": "8081fd5275aa8aa56ebe41b2002881dd1c69e70c",
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/unit/Queue.Tests.ps1 -ReportPath (Join-Path (Get-Location) '.test-results/m105/red51.json')",
+    "tested_tree_dirty": true,
+    "exit_code": 1,
+    "counts": {
+      "Passed": 3,
+      "Failed": 12,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "note": "Initial 15-case regression draft exercised the unmodified application and reproduced duplicates, ordering, re-ingestion and identity-check defects. Later tests add edge coverage. One draft Write-Host array substring assertion was corrected; final failures are zero."
+  },
+  "acceptance_evidence": {
+    "WVC-M1-05-A01": "Queue overlap/repetition, normalized aliases, ordinal culture/order, stable spelling and long-key regressions; real hard-link paths remain explicitly separate.",
+    "WVC-M1-05-A02": "Every scan precedes every encode; encoder-created MP4/partial candidates stay out; actual sequential dispatch plus CreateNew file recorder passes equal/nested output roots.",
+    "WVC-M1-05-A03": "Destination MP4/compressed/partial originals retained; source/existing-final hashes preserved by same-root and nested-root recorder jobs.",
+    "WVC-M1-05-A04": "Ordinary/extended source-output equality races trigger safe suffix or skip; identical renamed output rejected before probe; missing/partial scan diagnostics visible before readable-source encode."
+  },
+  "manual_checks": [
+    {
+      "name": "New Explorer batch acceptance",
+      "status": "not_run",
+      "reason": "All four task criteria are targeted; no new launcher/menu UI change or owner approval gate. Prior M1-02/M1-04 manual evidence stays in its original tasks. Broader Explorer/release acceptance remains incomplete."
+    }
+  ],
+  "sanitized_artifacts": [
+    "evidence/WVC-M1-05.md",
+    "evidence/WVC-M1-05.json",
+    "evidence/WVC-M1-05-session.md"
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "checked_at": "2026-10-05T16:42:19.730864+00:00",
+    "head": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+    "live_fetch_head": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+    "live_push_head": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "pr": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/8",
+    "state": "OPEN",
+    "is_draft": true,
+    "implementation_commit": "e5b2c86acdad84d33500fc8b5d37fe538271215d",
+    "check_runs": 0,
+    "statuses": 0,
+    "workflow_runs": 0
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "Freeze covers candidate paths, not immutable media bytes. Concurrent source size/mtime changes are not detected by this task.",
+    "Hard links, 8.3 names, mapped-drive versus UNC and other filesystem-ID aliases may remain distinct jobs.",
+    "No trusted ownership manifest or managed media-temp protocol exists yet. All ambiguous pre-existing supported files remain eligible; actual ownership exclusions accompany M2-04/M3-07.",
+    "Long-path queue regression injects normalized scan paths; UNC key regression is synthetic. Existing M1-04 Windows IO/manual evidence is retained, not reclassified as a new queue/manual test.",
+    "File-writing recorders are synthetic encoders, not FFmpeg media validation. Four Targeted fixture skips per host lack installed FFmpeg/FFprobe.",
+    "New Explorer multi-drop, Full, playback, concurrent-source detection, transactional temp/validation/promotion, milestone and release acceptance remain outstanding.",
+    "No CI checks/statuses/workflow runs exist for the implementation checkpoint; no CI pass is claimed."
+  ],
+  "next_task": "WVC-M1-06 - Add dependency and output-environment diagnostics"
+}
