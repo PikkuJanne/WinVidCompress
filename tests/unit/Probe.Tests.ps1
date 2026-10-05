@@ -34,6 +34,7 @@ Describe 'Normalized bounded media inspection [WVC-M2-01]' {
         $script:Encoder = { $script:Encoded.Add(@($args)); $global:LASTEXITCODE = 0 }
         Mock Invoke-EncodeProcess {
             $script:Encoded.Add(@($Arguments))
+            [IO.File]::WriteAllText($Arguments[-1],'synthetic encoded sentinel')
             [pscustomobject]@{ Succeeded=$true; StdOutTruncated=$false; StdErrTruncated=$false }
         }
         Mock Write-Host {}

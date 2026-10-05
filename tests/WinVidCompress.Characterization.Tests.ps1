@@ -110,6 +110,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         }
         Mock Invoke-EncodeProcess {
             $script:RecordedArguments = @($Arguments)
+            if ($script:EncoderExit -eq 0) { [IO.File]::WriteAllText($Arguments[-1],'synthetic encoded sentinel') }
             [pscustomobject]@{ Succeeded=($script:EncoderExit -eq 0); FailureKind='NonZeroExit'; Error="FFmpeg exit code: $script:EncoderExit"; StdOutTruncated=$false; StdErrTruncated=$false }
         }
     }
@@ -122,11 +123,13 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
             '-movflags','+faststart','-metadata','title=Band Name 29092025 - CamA',
             '-metadata','artist=Band Name','-metadata','date=2025-09-29',
             '-metadata','comment=Interview date 29.09.2025; Band: Band Name',
-            (Join-Path $script:OutputRoot 'Band Name 29092025 - CamA.mp4'))
+            $script:RecordedArguments[-1])
         ($script:RecordedArguments -join "`n") | Should -Be ($expected -join "`n")
         $script:Counters.Done | Should -Be 1
         $script:Counters.Failed | Should -Be 0
         Test-Path -LiteralPath $expected[-1] | Should -BeFalse
+        [IO.Path]::GetFileName($expected[-1]) | Should -BeExactly 'encode.partial.mp4'
+        Test-Path -LiteralPath (Join-Path $script:OutputRoot 'Band Name 29092025 - CamA.mp4') | Should -BeTrue
     }
 
     It 'adds only the height-cap filter above 1080' {
@@ -173,7 +176,8 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         $sourceHash = (Get-FileHash -LiteralPath $script:Source).Hash
         $finalHash = (Get-FileHash -LiteralPath $final).Hash
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
-        $script:RecordedArguments[-1] | Should -Be (Join-Path $script:OutputRoot 'Band Name 29092025 - CamA (compressed).mp4')
+        [IO.Path]::GetFileName($script:RecordedArguments[-1]) | Should -BeExactly 'encode.partial.mp4'
+        Test-Path -LiteralPath (Join-Path $script:OutputRoot 'Band Name 29092025 - CamA (compressed).mp4') | Should -BeTrue
         (Get-FileHash -LiteralPath $script:Source).Hash | Should -Be $sourceHash
         (Get-FileHash -LiteralPath $final).Hash | Should -Be $finalHash
     }

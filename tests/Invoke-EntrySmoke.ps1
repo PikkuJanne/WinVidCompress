@@ -76,12 +76,17 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
         $captured = @($output -split '\r?\n' | Where-Object { $_.StartsWith('WVC_ARG:') } | ForEach-Object {
             [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_.Substring(8)))
         })
-        foreach ($expectedArgument in @($source,$sourceTwo,$expectedOutput,$expectedOutputTwo)) {
+        foreach ($expectedArgument in @($source,$sourceTwo)) {
             if ($captured -notcontains $expectedArgument) { throw 'Native recorder did not receive the expected source/output paths.' }
         }
-        if ((Test-Path -LiteralPath $expectedOutput) -or (Test-Path -LiteralPath $expectedOutputTwo)) {
-            throw 'Recorder unexpectedly created a media output.'
+        $temporaryTargets = @($captured | Where-Object { $_ -match '\.wvc-job-[0-9a-f]{32}[\\/]encode\.partial\.mp4$' })
+        if ($temporaryTargets.Count -ne 2 -or @($temporaryTargets | Select-Object -Unique).Count -ne 2) { throw 'Recorder did not receive two distinct owned temporary targets.' }
+        foreach ($final in @($expectedOutput,$expectedOutputTwo)) {
+            if (-not (Test-Path -LiteralPath $final -PathType Leaf) -or [IO.File]::ReadAllText($final) -ne 'synthetic publication sentinel') {
+                throw 'Synthetic recorder sentinel was not published at the expected final path.'
+            }
         }
+        if (@(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 2) { throw 'Owned publication left unexpected artifacts.' }
         if ((Get-FileHash -LiteralPath $source).Hash -ne $sourceHash -or
             (Get-FileHash -LiteralPath $sourceTwo).Hash -ne $sourceHashTwo) { throw 'Synthetic source changed.' }
         [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = $captured.Count; Passed = $true }
@@ -139,6 +144,10 @@ public static class WvcEntryRecorder {
         } else {
             Console.WriteLine("WVC_NATIVE_RECORDER");
             foreach (string arg in args) Console.WriteLine("WVC_ARG:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));
+            using (var output = new FileStream(args[args.Length-1], FileMode.CreateNew, FileAccess.Write, FileShare.None)) {
+                byte[] payload = Encoding.UTF8.GetBytes("synthetic publication sentinel");
+                output.Write(payload,0,payload.Length);
+            }
         }
         return 0;
     }

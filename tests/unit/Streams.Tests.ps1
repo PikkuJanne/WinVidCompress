@@ -160,10 +160,11 @@ Describe 'One explicit video/audio stream plan [WVC-M2-02]' {
         Compress-One $EncoderExe $ProbeExe $Source $Output $DefaultCRF ([ref]$Counters)
         $arguments = Read-EncoderArguments
         foreach ($token in @('-n','libx264','veryfast','22','aac','160k','+faststart')) { $arguments | Should -Contain $token }
-        $arguments[-1] | Should -BeExactly (Next-CompressedPath $final)
+        [IO.Path]::GetFileName($arguments[-1]) | Should -BeExactly 'encode.partial.mp4'
+        Test-Path -LiteralPath (Join-Path $Output ([IO.Path]::GetFileNameWithoutExtension($Source)+' (compressed).mp4')) | Should -BeTrue
         (Get-FileHash -LiteralPath $Source).Hash | Should -BeExactly $sourceHash
         (Get-FileHash -LiteralPath $final).Hash | Should -BeExactly $finalHash
-        @(Get-ChildItem -LiteralPath $Output -Force).Count | Should -Be 1
+        @(Get-ChildItem -LiteralPath $Output -Force).Count | Should -Be 2
     }
 
     It 'refuses plans for failed inspection without launching a native encoder' {
