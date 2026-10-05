@@ -1060,6 +1060,165 @@ function Get-InputQueue([string[]]$paths) {
     return [pscustomobject]@{ Files = $files; Scans = $scans.ToArray() }
 }
 
+function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPlan, [int]$CRF, $Metadata) {
+    # Pure token construction: paths and metadata never become shell expressions.
+    $tokens = @('-hide_banner','-nostdin','-stats','-n','-i',$InputPath)
+    $tokens += $StreamPlan.MapArguments
+    if ($StreamPlan.Video.Height -gt 1080) { $tokens += @('-vf','scale=-2:1080') }
+    $tokens += @('-c:v','libx264','-preset','veryfast','-crf',"$CRF")
+    if ($null -ne $StreamPlan.Audio) { $tokens += @('-c:a','aac','-b:a','160k') }
+    $tokens += @('-movflags','+faststart')
+    if ($null -ne $Metadata) {
+        if ($Metadata.Title) { $tokens += @('-metadata',"title=$($Metadata.Title)") }
+        if ($Metadata.Band) { $tokens += @('-metadata',"artist=$($Metadata.Band)") }
+        if ($Metadata.DateISO) { $tokens += @('-metadata',"date=$($Metadata.DateISO)") }
+        if ($Metadata.DateHuman -and $Metadata.Band) {
+            $tokens += @('-metadata',"comment=Interview date $($Metadata.DateHuman); Band: $($Metadata.Band)")
+        }
+    }
+    $tokens += $OutputPath
+    return $tokens
+}
+
+function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
+    [ValidateRange(100,30000)][int]$DrainTimeoutMilliseconds = 10000,
+    [ValidateRange(4096,1048576)][int]$CaptureLimitCharacters = 1048576) {
+    $start = New-Object Diagnostics.ProcessStartInfo
+    $start.FileName = $Executable
+    # ArgumentList is unavailable on .NET Framework. Use the tested Windows CRT quoting.
+    $start.Arguments = (@($Arguments | ForEach-Object { ConvertTo-NativeArgument $_ }) -join ' ')
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $start.RedirectStandardInput = $true
+    $start.RedirectStandardOutput = $true
+    $start.RedirectStandardError = $true
+    $start.StandardOutputEncoding = New-Object Text.UTF8Encoding($false)
+    $start.StandardErrorEncoding = New-Object Text.UTF8Encoding($false)
+    $start.EnvironmentVariables.Remove('FFREPORT')
+    $process = New-Object Diagnostics.Process
+    $process.StartInfo = $start
+    $started = $false
+    $exitCode = $null
+    $failureKind = $null
+    $errorText = $null
+    $streams = @()
+    $readers = @()
+    $inputWriter = $null
+    $clock = [Diagnostics.Stopwatch]::StartNew()
+    $exitClock = $null
+    try {
+        [void]$process.Start()
+        $started = $true
+        $inputWriter = $process.StandardInput
+        $readers = @($process.StandardOutput,$process.StandardError)
+        foreach ($reader in $readers) {
+            $buffer = New-Object char[] 4096
+            $streams += @{ Reader=$reader; Buffer=$buffer; Text=(New-Object Text.StringBuilder);
+                Task=$reader.ReadAsync($buffer,0,$buffer.Length); Closed=$false; Characters=[long]0; Truncated=$false }
+        }
+        $inputWriter.Close()
+        # Tasks do IO only. Console output and all PowerShell run on this runspace.
+        while ($true) {
+            foreach ($stream in $streams) {
+                if (-not $stream.Closed -and $stream.Task.IsCompleted) {
+                    $count = $stream.Task.GetAwaiter().GetResult()
+                    if ($count -eq 0) { $stream.Closed = $true; continue }
+                    $chunk = [string]::new($stream.Buffer,0,$count)
+                    $stream.Characters += $count
+                    [void]$stream.Text.Append($chunk)
+                    if ($stream.Text.Length -gt $CaptureLimitCharacters) {
+                        [void]$stream.Text.Remove(0,$stream.Text.Length-$CaptureLimitCharacters)
+                        $stream.Truncated = $true
+                    }
+                    Write-Host $chunk -NoNewline
+                    $stream.Task = $stream.Reader.ReadAsync($stream.Buffer,0,$stream.Buffer.Length)
+                }
+            }
+            if ($process.HasExited) {
+                if ($null -eq $exitClock) {
+                    $exitCode = $process.ExitCode
+                    $exitClock = [Diagnostics.Stopwatch]::StartNew()
+                }
+                if ($streams[0].Closed -and $streams[1].Closed) { break }
+                if ($exitClock.ElapsedMilliseconds -ge $DrainTimeoutMilliseconds) {
+                    $failureKind = 'PipeDrainTimeout'
+                    $errorText = "Timed out draining encoder pipes after $DrainTimeoutMilliseconds ms."
+                    break
+                }
+                Start-Sleep -Milliseconds 10
+            } else {
+                # No total encoding deadline; short waits allow pipeline interruption.
+                [void]$process.WaitForExit(10)
+            }
+        }
+        if ($null -eq $failureKind -and $exitCode -ne 0) {
+            $failureKind = 'NonZeroExit'
+            $errorText = "FFmpeg exit code: $exitCode"
+        }
+    } catch [Management.Automation.PipelineStoppedException] {
+        throw
+    } catch {
+        $failureKind = if ($started) { 'ProcessFailed' } else { 'StartFailed' }
+        $errorText = $_.Exception.Message
+        if ($started -and $process.HasExited) { $exitCode = $process.ExitCode }
+    } finally {
+        try {
+            if ($started -and -not $process.HasExited) {
+                try {
+                    $process.Kill()
+                    if (-not $process.WaitForExit(2000)) { throw 'Owned encoder did not exit after termination.' }
+                } catch {
+                    # Exit can race Kill(). Only failure to stop a live child is fatal.
+                    if (-not $process.HasExited) {
+                        $abort = New-Object InvalidOperationException ('Could not stop the owned encoder: ' + $_.Exception.Message)
+                        $abort.Data['WvcAbortBatch'] = $true
+                        throw $abort
+                    }
+                }
+            }
+        } finally {
+            try {
+                # .NET Framework Process.Dispose does not close these readers.
+                foreach ($resource in (@($inputWriter) + $readers)) {
+                    if ($null -ne $resource) {
+                        try { $resource.Dispose() } catch {
+                            # Continue closing the other pipe; preserve any earlier failure.
+                            if ($null -eq $failureKind) {
+                                $failureKind = 'ResourceCleanupFailed'
+                                $errorText = $_.Exception.Message
+                            }
+                        }
+                    }
+                }
+            } finally {
+                $process.Dispose()
+                $clock.Stop()
+                foreach ($stream in $streams) {
+                    # Closing an inherited pipe can fault its pending read. Observe
+                    # that task without an unbounded wait or replacing the failure.
+                    try {
+                        if ($stream.Task.Wait(100)) { [void]$stream.Task.GetAwaiter().GetResult() }
+                    } catch { } # Disposal-related read faults are expected here.
+                }
+            }
+        }
+    }
+    $outputText = ''; $diagnosticText = ''
+    $outputCount = [long]0; $diagnosticCount = [long]0
+    $outputTruncated = $false; $diagnosticTruncated = $false
+    if ($streams.Count -eq 2) {
+        $outputText = $streams[0].Text.ToString(); $diagnosticText = $streams[1].Text.ToString()
+        $outputCount = $streams[0].Characters; $diagnosticCount = $streams[1].Characters
+        $outputTruncated = $streams[0].Truncated; $diagnosticTruncated = $streams[1].Truncated
+    }
+    return [pscustomobject]@{ SchemaVersion=1; Started=$started;
+        Succeeded=($started -and $null -eq $failureKind -and $exitCode -eq 0); ExitCode=$exitCode;
+        FailureKind=$failureKind; Error=$errorText; StdOut=$outputText; StdErr=$diagnosticText;
+        StdOutCharacters=$outputCount; StdErrCharacters=$diagnosticCount;
+        StdOutTruncated=$outputTruncated; StdErrTruncated=$diagnosticTruncated;
+        ElapsedSeconds=$clock.Elapsed.TotalSeconds }
+}
+
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
     try {
         if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
@@ -1105,50 +1264,27 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         foreach ($warning in $inspection.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $streamPlan = Get-StreamPlan $inspection
         Write-StreamPlan $streamPlan
-        $h = $streamPlan.Video.Height
-
-        $args = @(
-            '-hide_banner',
-            '-stats',
-            '-n',                      # never overwrite
-            '-i', $inPath
-        )
-        $args += $streamPlan.MapArguments
-
-        if ($h -and $h -gt 1080) {
-            $args += @('-vf','scale=-2:1080')
-        }
-
-        $args += @(
-            '-c:v','libx264','-preset','veryfast','-crf',"$crf"
-        )
-        if ($null -ne $streamPlan.Audio) { $args += @('-c:a','aac','-b:a','160k') }
-        $args += @('-movflags','+faststart')
-
-        if ($meta.Title) { $args += @('-metadata',"title=$($meta.Title)") }
-        if ($meta.Band)  { $args += @('-metadata',"artist=$($meta.Band)") }
-        if ($meta.DateISO) { $args += @('-metadata',"date=$($meta.DateISO)") }
-        if ($meta.DateHuman -and $meta.Band) {
-            $args += @('-metadata',"comment=Interview date $($meta.DateHuman); Band: $($meta.Band)")
-        }
-
-        $args += $out
+        $encodeArguments = @(Get-EncodeArguments $inPath $out $streamPlan $crf $meta)
 
         Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
         Write-Host $inPath
         Write-Host "    -> $out"
 
-        & $ffmpeg @args
-        $ec = $LASTEXITCODE
-
-        if ($ec -eq 0) {
+        $native = Invoke-EncodeProcess $ffmpeg $encodeArguments
+        if ($native.StdOutTruncated -or $native.StdErrTruncated) {
+            Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; console output was streamed.' -ForegroundColor Yellow
+        }
+        if ($native.Succeeded) {
             Write-Host "Done." -ForegroundColor Green
             $counters.Value.Done++
         } else {
-            Write-Host "FFmpeg exit code: $ec" -ForegroundColor Red
+            Write-Host ("Encoder failed [$($native.FailureKind)]: $($native.Error)") -ForegroundColor Red
             $counters.Value.Failed++
         }
+    } catch [Management.Automation.PipelineStoppedException] {
+        throw
     } catch {
+        if ($_.Exception.Data.Contains('WvcAbortBatch')) { throw }
         Write-Host "Failed: $inPath" -ForegroundColor Red
         Write-Host $_.Exception.Message -ForegroundColor DarkRed
         $counters.Value.Failed++

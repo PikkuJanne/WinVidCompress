@@ -98,7 +98,7 @@ Describe 'One explicit video/audio stream plan [WVC-M2-02]' {
         ((Read-Maps $arguments) -join ',') | Should -BeExactly '0:3,0:7'
         $arguments | Should -Not -Contain '-vf'
         @($arguments | Where-Object { $_ -in @('-ac','-ar','-r','-filter_complex','-disposition:a:0') }).Count | Should -Be 0
-        $arguments[4] | Should -BeExactly $Source
+        $arguments[[array]::IndexOf($arguments,'-i')+1] | Should -BeExactly $Source
         @((Get-Content -LiteralPath $env:WVC_PROBE_ARGV) | Where-Object { $_ -eq 'CALL' }).Count | Should -Be 1
         @((Get-Content -LiteralPath $env:WVC_STREAM_ARGV) | Where-Object { $_ -eq 'CALL' }).Count | Should -Be 1
     }

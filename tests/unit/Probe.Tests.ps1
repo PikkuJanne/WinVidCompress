@@ -32,6 +32,10 @@ Describe 'Normalized bounded media inspection [WVC-M2-01]' {
         $script:Counters = [pscustomobject]@{ Done = 0; Skipped = 0; Failed = 0 }
         $script:Encoded = New-Object 'Collections.Generic.List[object]'
         $script:Encoder = { $script:Encoded.Add(@($args)); $global:LASTEXITCODE = 0 }
+        Mock Invoke-EncodeProcess {
+            $script:Encoded.Add(@($Arguments))
+            [pscustomobject]@{ Succeeded=$true; StdOutTruncated=$false; StdErrTruncated=$false }
+        }
         Mock Write-Host {}
     }
 

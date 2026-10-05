@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M2-03",
+  "task_status": "verified",
+  "acceptance_ids": [
+    "WVC-M2-03-A01",
+    "WVC-M2-03-A02",
+    "WVC-M2-03-A03",
+    "WVC-M2-03-A04"
+  ],
+  "recorded_at": "2026-10-05T18:25:10.555412+00:00",
+  "tested_commits": [
+    "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218"
+  ],
+  "base_commit": "2be234cf79eba6c413e6a13c624d929bab7f688a",
+  "branch": "codex/wvc-m2-03-process",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "Pure encoder argument helper and owned native process adapter in WinVidCompress.ps1",
+    "Six argument cases, ten actual native process cases, one queue fatal-cleanup regression, dedicated three-case manual argv inspection",
+    "Minimal existing recorder mock/index migrations across characterization/Probe/Queue/Streams tests",
+    "Process/test docs and task/acceptance/status/next/session evidence; no new product runtime"
+  ],
+  "runs": [
+    {
+      "name": "focused51-c2e7145",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m203/focused51-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/focused51-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 122,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "657107f1f93dacf0b03e64e456227f48e799fc64c9a78b2abd1c5ec3828ec43d",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "030:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "031:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "focused7-c2e7145",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m203/focused7-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/focused7-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 122,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "e9574206b5af5c50a2e3e5b41c4f186fc729e2374301a3b2b5eb47b20ab52659",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "030:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "031:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick51-c2e7145",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m203/quick51-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/quick51-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 305,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "c555cb827292913b7845cd646a2c24b420cab5a516fa36e9a90266d05340d70d",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/044:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/045:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick7-c2e7145",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m203/quick7-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/quick7-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 305,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "61425c02c15b2b3ae107adc70401cb81802b6874428300366a62f3952d1aecb1",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/044:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/045:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "targeted51-c2e7145",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m203/targeted51-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/targeted51-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 321,
+        "Failed": 0,
+        "Skipped": 6,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "a9465cc36f0df1a02c3337925a6b0bac335435e360d9326c2f669a32f330e99f",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/044:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/045:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    },
+    {
+      "name": "targeted7-c2e7145",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m203/targeted7-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/targeted7-c2e7145.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 321,
+        "Failed": 0,
+        "Skipped": 6,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "3bc0b8e0107f8ce8619c65f23b5addfc5a0f4ed9f716f0385bec64b9a6534731",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/044:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/045:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    },
+    {
+      "name": "manualargv51-c2e7145",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath .test-results/m203/manualargv51-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "ManualArgv",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/manualargv51-c2e7145.json",
+      "status": "Passed",
+      "counts": {
+        "Passed": 3,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "00c190c9b9e43a00daefef76d3b5ef03ce27d069f99523fe027d43b682dbe72f",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": []
+    },
+    {
+      "name": "manualargv7-c2e7145",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath .test-results/m203/manualargv7-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "tested_tree_dirty": false,
+      "tier": "ManualArgv",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m203/manualargv7-c2e7145.json",
+      "status": "Passed",
+      "counts": {
+        "Passed": 3,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "db0753023d715fd34e7b09cad8d9b68e0f05360d22c8b0138812bf05676e5fed",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": []
+    }
+  ],
+  "acceptance": {
+    "WVC-M2-03-A01": {
+      "status": "passed",
+      "basis": "Six pure argument cases assert the full default sequence, exact paths/metadata/CRF, maps, height boundaries, silent audio omission and unchanged plan with no filesystem access. Existing characterization verifies caller integration."
+    },
+    "WVC-M2-03-A02": {
+      "status": "passed",
+      "basis": "Agent executed and inspected the dedicated manual-tier native argv harness under actual Windows PS5.1 and PS7 on the clean implementation. Three exact token/source-hash cases per host preserve supported punctuation/Unicode filenames, D005 literal PowerShell variable-shaped percent routes and quoted/backslash/shell-looking metadata. Native exits0; no new owner observation/approval or Explorer/media claim."
+    },
+    "WVC-M2-03-A03": {
+      "status": "passed",
+      "basis": "Actual compiled native fixture emits over1Mi characters on each simultaneous stdout/stderr stream without deadlock. Bounded tails/truncation and UTF-8 end markers pass. Nonzero17 with empty stderr and stale LASTEXITCODE is recognized; exit0 stderr stays diagnostics. Both hosts."
+    },
+    "WVC-M2-03-A04": {
+      "status": "passed",
+      "basis": "Actual native round trips preserve empty/quoted/backslash/Unicode/shell-looking tokens without shell evaluation. Structured native start/nonzero/pipe-drain/console faults, closed stdin, cleared child FFREPORT, no running encode deadline and direct-owned-process termination pass. Queue cleanup-failure injection proves no second job starts. Explicit stdin/readers/process disposal; no PowerShell callbacks."
+    }
+  },
+  "manual_checks": [
+    {
+      "observer": "Codex agent",
+      "reviewed_at": "2026-10-05T18:25:10.555412+00:00",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath .test-results/m203/manualargv51-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "host": {
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop"
+      },
+      "counts": {
+        "Passed": 3,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "cases": [
+        {
+          "Case": "Band & (A) [x] !NAME! 25% O'Brien äöü中 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        },
+        {
+          "Case": "Band %PATH% !NAME! äöü中 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        },
+        {
+          "Case": "Quoted metadata 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        }
+      ],
+      "owner_observation_required": false,
+      "basis": "Criterion concerns exact native argv; the harness establishes every required comparison. No Explorer or human visual judgement required."
+    },
+    {
+      "observer": "Codex agent",
+      "reviewed_at": "2026-10-05T18:25:10.555412+00:00",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath .test-results/m203/manualargv7-c2e7145.json",
+      "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+      "host": {
+        "Version": "7.6.5",
+        "Edition": "Core"
+      },
+      "counts": {
+        "Passed": 3,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "cases": [
+        {
+          "Case": "Band & (A) [x] !NAME! 25% O'Brien äöü中 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        },
+        {
+          "Case": "Band %PATH% !NAME! äöü中 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        },
+        {
+          "Case": "Quoted metadata 29092025.mov",
+          "NativeExitCode": 0,
+          "ExactTokens": true,
+          "SourcePreserved": true,
+          "TokenCount": 31,
+          "Passed": true
+        }
+      ],
+      "owner_observation_required": false,
+      "basis": "Criterion concerns exact native argv; the harness establishes every required comparison. No Explorer or human visual judgement required."
+    }
+  ],
+  "owner_approval": null,
+  "implementation_checkpoint_sync": {
+    "checked_at": "2026-10-05T18:24:44.059808+00:00",
+    "head": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+    "branch": "codex/wvc-m2-03-process",
+    "upstream": "origin/codex/wvc-m2-03-process",
+    "dirty": false,
+    "operations": [],
+    "live_fetch_head": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+    "live_push_head": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+    "status": "SYNCHRONIZED"
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-05T18:07:02.473581+00:00",
+    "head": "d954216f76769357561100febb995c1938f692af",
+    "branch": "codex/wvc-m2-02-streams",
+    "dirty": false,
+    "live_fetch_head": "d954216f76769357561100febb995c1938f692af",
+    "live_push_head": "d954216f76769357561100febb995c1938f692af",
+    "status": "SYNCHRONIZED"
+  },
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "codex/wvc-m2-03-process",
+    "headRefOid": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+    "isDraft": true,
+    "mergeStateStatus": "CLEAN",
+    "number": 12,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/12"
+  },
+  "implementation_ci": {
+    "checked_at": "2026-10-05T18:25:03.1994390Z",
+    "tested_commit": "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218",
+    "check_runs": 0,
+    "statuses": 0,
+    "workflow_runs": 0
+  },
+  "read_only_review": "One subagent reviewed tokens/quoting/native resources/test containment without writes or Git mutations. Explicit reader/input disposal, per-resource cleanup, exit/Kill race, APPDATA and child identity fixes applied; final review found no material blocker. Agent ran no independent tests.",
+  "draft_runs": [
+    {
+      "artifact": "red.log",
+      "exit_code": 1,
+      "counts": null,
+      "issue": "Initial developer invocation omitted process-only ExecutionPolicy Bypass and was rejected before tests. No policy changes or regression result claimed."
+    },
+    {
+      "artifact": "development51.json",
+      "exit_code": 1,
+      "counts": "6/9/0/0",
+      "issue": "Fixture compiler Add-Type interpreted brackets in executable destination. Compile to unique owned plain path then literal no-clobber Move."
+    },
+    {
+      "artifact": "development51b.json",
+      "exit_code": 1,
+      "counts": "9/6/0/0",
+      "issue": "New-Object string argument wrapping failed on PS5.1. Use the PS5.1-supported existing string(char[],int,int) constructor."
+    },
+    {
+      "artifact": "development51c.json",
+      "exit_code": 0,
+      "counts": "120/0/0/0",
+      "issue": "Dirty focused draft after constructor repair; later cleanup/containment/queue/deadline cases are covered by final clean gates."
+    },
+    {
+      "artifact": "development7.json",
+      "exit_code": 0,
+      "counts": "121/0/0/0",
+      "issue": "Dirty focused PS7 draft; all final clean gates rerun after remaining resource fixes."
+    },
+    {
+      "artifact": "final-development51.json",
+      "exit_code": 0,
+      "counts": "39/0/0/0",
+      "issue": "Affected argument/native/queue draft with explicit reader disposal; final gates include last guarded writer/disposal/Kill-race refinements."
+    }
+  ],
+  "technical_reference": {
+    "topic": ".NET Framework Process.Close does not close redirected stream readers/writer; explicit disposal retained.",
+    "url": "https://raw.githubusercontent.com/microsoft/referencesource/main/System/services/monitoring/system/diagnosticts/Process.cs"
+  },
+  "limitations": [
+    "FFmpeg/FFprobe remain absent on PATH/adjacent. Native recorders produce no media; M2-02 A01/A03 actual output confirmation remains skipped and that task remains implemented.",
+    "Focused/Quick skip two existing real-output tests; Targeted also skips four existing installed-tool media fixtures, six skips per host. All executed required M2-03 cases passed.",
+    "A02 manual-tier check is agent-executed native argument inspection on actual Windows hosts. Earlier owner D005/Explorer evidence is retained; no new Explorer/visual/playback/Full/milestone/release acceptance or owner approval is claimed.",
+    "There is no total encoder deadline. Process creation/filesystem/network resolution are Windows API boundaries. Post-exit drain defaults10 seconds; owned termination waits2 seconds. Direct process only; detached descendants, full Ctrl+C/console-close/graceful cancellation remain M3-06.",
+    "Captured stdout/stderr retain the last1048576 characters per stream with totals/truncation flags and a caller warning; complete chunks stream live to console. No persistent log or progress parser/ETA is implemented.",
+    "Current Done still reflects successful native execution; owned temporary media/no-clobber promotion and structural validation remain M2-04/M2-05. Structural validation cannot prove full visual/audio integrity.",
+    "Default libx264/veryfast/CRF22/AAC160k/faststart and no-upscale height cap/maps/filename metadata are preserved. No new -ac/-ar/-r override, source-change/manifest/geometry/colour change."
+  ],
+  "pending_action": "Retain M2-02 skipped output confirmation; use already-installed FFmpeg/FFprobe when supplied. No dependency download or invented media result.",
+  "final_handoff_sync": "Pending inside this record; final documentation commit/push/live equality is reported externally to avoid a self-SHA loop.",
+  "next_task": "WVC-M2-04 - Implement owned temporary output and no-clobber promotion"
+}
