@@ -199,6 +199,13 @@ Describe 'Filename metadata and collision helpers' {
 }
 
 Describe 'Isolated config and enumeration' {
+    It 'wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]' {
+        Mock Get-DefaultOutputDir { $script:OutputRoot }
+        New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
+        Set-Content -LiteralPath $ConfigPath -Value '{}'
+        { Load-Config } | Should -Not -Throw
+    }
+
     It 'round-trips a valid config entirely inside fixture APPDATA' {
         Save-Config ([pscustomobject]@{ OutputDir = $script:OutputRoot })
         (Load-Config).OutputDir | Should -Be $script:OutputRoot
@@ -237,12 +244,6 @@ Describe 'Isolated config and enumeration' {
 # These assert desired behavior. Run separately with -KnownDefects: failures are
 # baseline evidence for later tasks, never converted to passing application tests.
 Describe 'Known baseline defects' -Tag 'KnownDefect' {
-    It 'wrong-shaped valid JSON recovers without a property exception [WVC-M1-03]' {
-        New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
-        Set-Content -LiteralPath $ConfigPath -Value '{}'
-        { Load-Config } | Should -Not -Throw
-    }
-
     It 'empty folder collection returns an empty queue [WVC-M1-04]' {
         $empty = Join-Path $TestDrive 'empty'
         New-Item -ItemType Directory -Path $empty | Out-Null

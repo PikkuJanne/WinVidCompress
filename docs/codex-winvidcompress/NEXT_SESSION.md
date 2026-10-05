@@ -1,21 +1,23 @@
 # Next session
 
-Exact next task: **WVC-M1-03 — Make configuration validation and recovery safe**. M1-02 is verified under D005; do not repeat its completed acceptance or implement the rest of M1 silently.
+Exact next task: **WVC-M1-04 — Normalize file discovery and expose scan failures**. M1-03 is verified/A01-A04 passed; do not repeat completed config acceptance or implement the rest of M1 silently.
 
 ## Current state
 
-- Repository root D:/projects/WinVidCompress-main; branch/upstream codex/wvc-m1-02-launcher / origin/codex/wvc-m1-02-launcher; single origin fetch/push https://github.com/PikkuJanne/WinVidCompress.git.
-- Draft [PR5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open, no CI/check/workflow runs. Do not merge automatically. If owner merges, inspect fetched main ancestry; otherwise retain feature work when preparing the next branch.
-- Previous clean live equality 2026-10-05T14:44:20.084546+00:00 describes documentation checkpoint 32e13889a4e60985fac03b67931c8bcb437aa198. Final handoff SHA reported externally; independently verify live refs before editing.
+- Root D:/projects/WinVidCompress-main; branch/upstream codex/wvc-m1-03-config / origin/codex/wvc-m1-03-config; single origin fetch/push https://github.com/PikkuJanne/WinVidCompress.git.
+- Draft [PR6](https://github.com/PikkuJanne/WinVidCompress/pull/6) open; zero implementation check/workflow runs. Owner merged PR5; M1-03 started from inspected fetched main2f6f4eed33bf8458f520b90da4b0f24efdd7ec32. Do not merge automatically. If owner merges, inspect fetched main ancestry; otherwise retain usable feature work on the next feature branch.
+- Previous clean live local/fetch/push equality at2026-10-05T15:08:48.811892+00:00 describes implementation4582ce187ee7b3179785bc29b7e61352c8e7cb76. Final handoff SHA is reported externally; independently verify live refs before editing.
 
-Read AGENTS/INDEX/STATUS/GIT_SYNC, M1-03 task entry/brief and targeted configuration evidence. Inspect branch/upstream/HEAD/dirty ownership, operation/conflict/hook state, effective URLs and live refs. Fetch --no-tags and run tools/codex-winvidcompress/check_repo_sync.py against the real root. Preserve unknown changes; one writer. Never reset/stash/clean/force to reconcile.
+Read AGENTS/INDEX/STATUS/GIT_SYNC, M1-04 entry/brief and targeted discovery spec/evidence. Inspect branch/upstream/HEAD/dirty ownership, operation/conflict/hook state, effective URLs and live refs. Fetch --no-tags and run tools/codex-winvidcompress/check_repo_sync.py against the real root. One writer; preserve unknown changes. Never reset/stash/clean/force to reconcile.
 
-## Verified M1-02 constraints and evidence
+## Verified behavior and remaining tests
 
-Owner accepted D005 and confirmed both direct Explorer drops/menu session on 2026-10-05. Exact folder/ten-file native/bound, literal menu file/folder with matching PATH/NAME, automatic native PS1 subcheck, hashes and source sentinels agree; A01-A04 passed. Supplemental direct call is automatic within the human session, not independently typed. Historical percent BAT failure remains outside supported boundary. Variable-shaped percent paths use literal menu/direct PowerShell; ordinary percent and BAT !NAME! support remain required. Do not promise shell-independent/unlimited drops or full encoder integrity.
+M1-03 validates config shape/path syntax, preserves exact malformed/previous copies, stops on unavailable saved output without preference fallback, coordinates config transactions through persistent sidecar lock and rejects stale saves. Menu updates active preference only after successful save. Unknown compatible keys survive; depth100 refusal and older PS7 timestamp-normalization/network/external-editor limitations are in CONFIG_AND_DISCOVERY. Keep tests isolated; do not replace safe config writes during discovery refactoring.
 
-Clean tested implementation 67bb0e80b347817e3072fa7b23bdbafc892226cd: each host Quick106/0/0/4, Targeted120/0/4/4, all exits0; supported-fixture smoke passes both. Windows11 Pro10.0.26300 UBR9457, PS5.1.26100.9444/PS7.6.5; pinned Pester5.7.1/analyzer1.24.0 reused. Four absent-media skips and four known config/enumeration NotRun remain for M1-03/M1-04. Full not rerun. Detailed [evidence](evidence/WVC-M1-02.md) retains exact commands/history/limitations.
+M1-02 D005 remains: variable-shaped percent BAT drop segments use literal menu/direct PS1; ordinary percent and BAT !NAME! remain supported. Owner completed supported Explorer/menu checks; do not reopen that acceptance without a relevant change.
 
-Both manual kits cleaned, historical synthetic ACL restored; twelve raw reports plus manifests retained in an ignored local archive with report-copy hash equality. Raw paths/environment values stay out of Git. No manual completion blocker remains for M1-02.
+Clean4582ce1 on Windows11 Pro10.0.26300 UBR9457, PS5.1.26100.9444/PS7.6.5: each host Focused47/0/0/0, Quick154/0/0/3, Targeted168/0/4/3 exit0. Full both318/6/4/8 exit1: exactly three remaining M1-04 discovery failures per host (empty folder, single-video folder, explicit single file). Four media skips lack FFmpeg/FFprobe; broader manual/future coverage remains NotRun. Initial overlapping PS7 attempts timed out; serial retries passed. Prefer serial broad suites on this workstation. Reuse external pinned modules from Join-Path $env:TEMP 'wvc-m0-02-dev-modules'; no automatic downloads.
+
+[Exact config evidence](evidence/WVC-M1-03.json), [session](evidence/WVC-M1-03-session.md). Eighteen raw report/log files plus five diagnostic roots are archived under ignored .test-results/m103-4582ce1 with hashes checked. Owned roots cleaned after no active fixture processes and ownership/containment/reparse checks; fixture ACL restored. Raw paths/environment values stay out of Git. No M1-03 task blocker or config-specific manual/approval gate; milestone/release gates remain.
 
 End with intentional task/evidence/status/next/session commit/push, clean live fetch/push equality, PR/CI/tests/omissions and exact SHAs. No self-SHA loop. Main/merge/release/quality/policy/settings/secrets changes need separate owner authorization.

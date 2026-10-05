@@ -1,5 +1,7 @@
 # Session log index
 
+2026-10-05 — WVC-M1-03 — `codex/wvc-m1-03-config` — implementation/tested checkpoint `4582ce187ee7b3179785bc29b7e61352c8e7cb76` — [session](evidence/WVC-M1-03-session.md), [evidence](evidence/WVC-M1-03.md) — verified/A01-A04 passed; each host Focused47, Quick154/0/0/3 and Targeted168/0/4/3 exit0; Full318/6/4/8 exit1 solely M1-04 failures; failed overlapping PS7 attempts retained and serial reruns pass — draft PR6, no CI runs — final documentation handoff push/check pending at commit time — exact next WVC-M1-04; no config-task blocker, broader manual/media/release gates remain.
+
 The external bundle author ran no application implementation sessions. The first actual local session follows; no private media/config/raw logs/credentials are recorded here.
 
 2026-10-04 — WVC-M0-01 — `codex/wvc-m0-01-handoff` — imported/tested checkpoint `7fce9895d5e14554b78d82958c1ed7917a4b20ac` — [evidence](evidence/WVC-M0-01.md) — verified at the preceding live-sync checkpoint; final evidence handoff push/check pending at commit time — next WVC-M0-02 — no blocker; Windows symlink helper test skipped.

@@ -83,7 +83,9 @@ NOTES
     - CMD/batch command lines are limited to 8191 characters, including expanded
       paths and quotes. Drop a folder or use smaller selections for large batches.
     - If you ever want smaller files, change $DefaultCRF from 22 to 23–24.
-    - If config becomes invalid or is deleted, OutputDir resets to your Videos folder automatically.
+    - Invalid config is preserved in a diagnostic backup before recovery to Videos.
+    - An unavailable saved output folder stops startup without changing the preference.
+    - Saves retain previous config backups and coordinate instances through config.json.lock.
     - No new output subfolders are created by default; files land directly in OutputDir.
 
 LIMITATIONS
@@ -116,6 +118,7 @@ $ErrorActionPreference = 'Stop'
 $AppName    = 'WinVidCompress'
 $ConfigDir  = Join-Path $env:APPDATA $AppName
 $ConfigPath = Join-Path $ConfigDir 'config.json'
+$script:ConfigSnapshot = $null
 
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
@@ -143,40 +146,213 @@ function Ensure-Tool([string]$exe) {
     return $candidate
 }
 
-function Save-Config($cfg) {
-    if (-not (Test-Path -LiteralPath $ConfigDir)) {
-        [void][IO.Directory]::CreateDirectory($ConfigDir)
+function Get-DefaultOutputDir {
+    [Environment]::GetFolderPath('MyVideos')
+}
+
+function Assert-ConfigShape($cfg) {
+    if ($null -eq $cfg -or $cfg -isnot [Management.Automation.PSCustomObject]) {
+        throw 'Config root must be a JSON object.'
     }
-    $cfg | ConvertTo-Json | Set-Content -Encoding UTF8 -Path $ConfigPath
+    $property = $cfg.PSObject.Properties['OutputDir']
+    if ($null -eq $property -or $property.Value -isnot [string] -or
+        [string]::IsNullOrWhiteSpace($property.Value)) {
+        throw 'Config OutputDir must be a nonempty string.'
+    }
+    $destination = $property.Value
+    # Only absolute Windows filesystem paths; never expand shell/provider values.
+    if ($destination -notmatch '^(?:[A-Za-z]:[\\/]|\\\\[^\\/]+\\[^\\/]+(?:\\|$))' -or
+        $destination.Substring(2) -match '[<>:"|?*\x00-\x1f]') {
+        throw 'Config OutputDir must be an absolute drive or UNC directory path without wildcards.'
+    }
+    [void][IO.Path]::GetFullPath($destination)
+}
+
+function ConvertFrom-ConfigText([string]$Text) {
+    # PS5.1 can unwrap a one-element JSON array, so inspect the raw root too.
+    if (-not $Text.TrimStart().StartsWith('{')) { throw 'Config root must be a JSON object.' }
+    $jsonArguments = @{ InputObject = $Text; ErrorAction = 'Stop' }
+    if ((Get-Command ConvertFrom-Json).Parameters.ContainsKey('DateKind')) {
+        $jsonArguments.DateKind = 'String'
+    }
+    $cfg = ConvertFrom-Json @jsonArguments
+    Assert-ConfigShape $cfg
+    return $cfg
+}
+
+function Assert-OutputDirectory([string]$Destination) {
+    try {
+        $item = Get-Item -LiteralPath $Destination -Force -ErrorAction Stop
+        if ($item.PSProvider.Name -ne 'FileSystem' -or -not $item.PSIsContainer) {
+            throw 'The destination is not a filesystem directory.'
+        }
+        # Force directory access without creating a test file or output.
+        $entries = [IO.Directory]::EnumerateFileSystemEntries($Destination).GetEnumerator()
+        try { [void]$entries.MoveNext() } finally { $entries.Dispose() }
+    } catch {
+        throw "Output folder '$Destination' is unavailable or inaccessible. Check the drive/share and permissions. Saved preferences were not redirected. Details: $($_.Exception.Message)"
+    }
+}
+
+function Open-ConfigLock {
+    try {
+        [void][IO.Directory]::CreateDirectory($ConfigDir)
+        # Keep this small sidecar: deleting it after unlock races another writer.
+        return [IO.File]::Open(($ConfigPath + '.lock'), [IO.FileMode]::OpenOrCreate,
+            [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+    } catch {
+        throw "Cannot acquire config lock. Another instance may be saving, or the config folder is inaccessible. Retry after checking permissions. Details: $($_.Exception.Message)"
+    }
+}
+
+function Read-ConfigFile {
+    $stream = $null
+    try {
+        $stream = [IO.File]::Open($ConfigPath, [IO.FileMode]::Open,
+            [IO.FileAccess]::Read, [IO.FileShare]::Read)
+        $memory = New-Object IO.MemoryStream
+        try {
+            $stream.CopyTo($memory)
+            $bytes = $memory.ToArray()
+            $memory.Position = 0
+            $reader = New-Object IO.StreamReader($memory, [Text.Encoding]::UTF8, $true)
+            try { $text = $reader.ReadToEnd() } finally { $reader.Dispose() }
+        } finally { $memory.Dispose() }
+        return [pscustomobject]@{ Path = $ConfigPath; Exists = $true;
+            Signature = [Convert]::ToBase64String($bytes); Text = $text }
+    } catch [IO.FileNotFoundException] {
+        return [pscustomobject]@{ Path = $ConfigPath; Exists = $false; Signature = ''; Text = '' }
+    } catch {
+        throw "Cannot read config '$ConfigPath'. No recovery was attempted. Details: $($_.Exception.Message)"
+    } finally { if ($null -ne $stream) { $stream.Dispose() } }
+}
+
+function Write-ConfigTemporaryFile([string]$TemporaryPath, [byte[]]$Bytes) {
+    $stream = [IO.File]::Open($TemporaryPath, [IO.FileMode]::CreateNew,
+        [IO.FileAccess]::Write, [IO.FileShare]::None)
+    try {
+        $stream.Write($Bytes, 0, $Bytes.Length)
+        $stream.Flush($true)
+    } catch {
+        $stream.Dispose()
+        [IO.File]::Delete($TemporaryPath)  # Only the file this call created.
+        throw
+    } finally { $stream.Dispose() }
+}
+
+function Backup-ConfigFile([string]$BackupPath) {
+    [IO.File]::Copy($ConfigPath, $BackupPath, $false)
+}
+
+function Publish-ConfigFile([string]$TemporaryPath, [bool]$Replacing) {
+    if ($Replacing) {
+        [IO.File]::Replace($TemporaryPath, $ConfigPath, [NullString]::Value)
+    } else {
+        [IO.File]::Move($TemporaryPath, $ConfigPath)
+    }
+}
+
+function Assert-ConfigDepth($cfg) {
+    # PS5.1 silently truncates deep JSON without the warning emitted by PS7.
+    $pending = New-Object 'Collections.Generic.Stack[object]'
+    $pending.Push([pscustomobject]@{ Value = $cfg; Depth = 0 })
+    while ($pending.Count) {
+        $entry = $pending.Pop()
+        $value = $entry.Value
+        $children = @()
+        if ($value -is [Management.Automation.PSCustomObject]) {
+            if ($entry.Depth -gt 100) { throw 'Config nesting exceeds the supported JSON depth of 100.' }
+            foreach ($property in $value.PSObject.Properties) {
+                $pending.Push([pscustomobject]@{ Value = $property.Value; Depth = ($entry.Depth + 1) })
+            }
+        } elseif ($value -is [Collections.IDictionary] -or $value -is [array]) {
+            if ($entry.Depth -gt 100) { throw 'Config nesting exceeds the supported JSON depth of 100.' }
+            if ($value -is [Collections.IDictionary]) { $children = @($value.Values) }
+            else { $children = $value }
+            foreach ($child in $children) {
+                $pending.Push([pscustomobject]@{ Value = $child; Depth = ($entry.Depth + 1) })
+            }
+        }
+    }
+}
+
+function Write-ConfigFile($cfg, $Previous, [string]$BackupKind = 'previous') {
+    $temporary = Join-Path $ConfigDir ('config.' + [guid]::NewGuid().ToString('N') + '.tmp')
+    $ownedTemporary = $false
+    $backup = $null
+    try {
+        Assert-ConfigDepth $cfg
+        $json = ConvertTo-Json -InputObject $cfg -Depth 100 -WarningAction Stop
+        [void](ConvertFrom-ConfigText $json)
+        $bytes = (New-Object Text.UTF8Encoding($false)).GetBytes($json + "`r`n")
+        Write-ConfigTemporaryFile $temporary $bytes
+        $ownedTemporary = $true
+        if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($temporary)) -cne [Convert]::ToBase64String($bytes)) {
+            throw 'Temporary config verification failed.'
+        }
+        if ($Previous.Exists) {
+            $backup = Join-Path $ConfigDir ('config.' + $BackupKind + '-' + [guid]::NewGuid().ToString('N') + '.json')
+            Backup-ConfigFile $backup
+            if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($backup)) -cne $Previous.Signature) {
+                throw 'Config changed while creating its backup; reload before saving.'
+            }
+        }
+        Publish-ConfigFile $temporary $Previous.Exists
+        $script:ConfigSnapshot = [pscustomobject]@{ Path = $ConfigPath; Exists = $true;
+            Signature = [Convert]::ToBase64String($bytes); Text = $json }
+        return $backup
+    } catch {
+        throw "Cannot save config '$ConfigPath'. The previous file was not intentionally removed; any completed backup is retained. Details: $($_.Exception.Message)"
+    } finally {
+        if ($ownedTemporary -and [IO.File]::Exists($temporary)) { [IO.File]::Delete($temporary) }
+    }
+}
+
+function Save-Config($cfg) {
+    Assert-ConfigShape $cfg
+    Assert-OutputDirectory $cfg.OutputDir
+    $lock = Open-ConfigLock
+    try {
+        $current = Read-ConfigFile
+        if ($null -eq $script:ConfigSnapshot -or $script:ConfigSnapshot.Path -ne $ConfigPath) {
+            if ($current.Exists) { throw 'Please load config before replacing an existing preference file.' }
+        } elseif ($script:ConfigSnapshot.Exists -ne $current.Exists -or
+            $script:ConfigSnapshot.Signature -cne $current.Signature) {
+            throw 'Config changed since it was loaded/saved; reload before saving.'
+        }
+        [void](Write-ConfigFile $cfg $current)
+    } finally { $lock.Dispose() }
 }
 
 function Load-Config {
-    if (-not (Test-Path -LiteralPath $ConfigDir)) {
-        [void][IO.Directory]::CreateDirectory($ConfigDir)
-    }
-
-    $videos = [Environment]::GetFolderPath('MyVideos')  # e.g. C:\Users\<you>\Videos
-
-    if (-not (Test-Path -LiteralPath $ConfigPath)) {
-        $cfg = [pscustomobject]@{ OutputDir = $videos }
-        Save-Config $cfg
-        return $cfg
-    }
-
+    $lock = Open-ConfigLock
     try {
-        $cfg = Get-Content $ConfigPath -Raw | ConvertFrom-Json
-    } catch {
-        $cfg = [pscustomobject]@{ OutputDir = $videos }
-        Save-Config $cfg
+        $current = Read-ConfigFile
+        $cfg = $null
+        $invalidReason = $null
+        if ($current.Exists) {
+            try { $cfg = ConvertFrom-ConfigText $current.Text }
+            catch { $invalidReason = $_.Exception.Message }
+        }
+        if (-not $current.Exists -or $null -ne $invalidReason) {
+            try {
+                $cfg = [pscustomobject]@{ OutputDir = (Get-DefaultOutputDir) }
+                Assert-ConfigShape $cfg
+                Assert-OutputDirectory $cfg.OutputDir
+            } catch {
+                throw "Cannot use the default Videos folder. Config was not replaced. Details: $($_.Exception.Message)"
+            }
+            $backup = Write-ConfigFile $cfg $current 'invalid'
+            if ($null -ne $invalidReason) {
+                Write-Host "Invalid config: $invalidReason Original bytes preserved at '$backup'. Using the default Videos folder '$($cfg.OutputDir)'." -ForegroundColor Yellow
+            }
+        } else {
+            # Availability failures are operational errors, never schema recovery.
+            Assert-OutputDirectory $cfg.OutputDir
+            $script:ConfigSnapshot = $current
+        }
         return $cfg
-    }
-
-    if (-not $cfg.OutputDir -or -not (Test-Path -LiteralPath $cfg.OutputDir)) {
-        $cfg.OutputDir = $videos
-        Save-Config $cfg
-    }
-
-    return $cfg
+    } finally { $lock.Dispose() }
 }
 
 function Prompt-Path([string]$prompt, [switch]$Folder, [switch]$CreateIfMissing) {
@@ -420,8 +596,14 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
             '1' {
                 $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder -CreateIfMissing
                 if ($p) {
-                    $cfg.OutputDir = $p
-                    Save-Config $cfg
+                    $candidate = $cfg.PSObject.Copy()
+                    $candidate.OutputDir = $p
+                    try {
+                        Save-Config $candidate
+                        $cfg.OutputDir = $p
+                    } catch {
+                        Write-Host "Output preference was not changed: $($_.Exception.Message)" -ForegroundColor Yellow
+                    }
                 }
             }
             '2' {
