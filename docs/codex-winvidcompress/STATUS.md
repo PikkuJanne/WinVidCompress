@@ -2,7 +2,7 @@
 
 Updated: 2026-10-05. Repository: `PikkuJanne/WinVidCompress`.
 
-M0-01/M0-02/M0-03/M1-01 are verified. **M1-02 is implemented: A01/A02 failed in the prepared Explorer run due literal %PATH% substitution; A03/A04 pass. Folder/direct-BAT follow-up pending.** The owner reported all appeared to pass; recorded argv contradicts the literal-percent result. Remaining 27 tasks are todo; 108 criteria are not_run. TASKS.json is authoritative. No milestone/release acceptance.
+M0-01/M0-02/M0-03/M1-01 are verified. **M1-02 is implemented: A01/A02 failed in the prepared Explorer run due literal %PATH% substitution; A03/A04 pass. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified.** The owner reported all appeared to pass; recorded argv contradicts the literal-percent result. Remaining 27 tasks are todo; 108 criteria are not_run. TASKS.json is authoritative. No milestone/release acceptance.
 
 ## Repository and reconciliation
 
@@ -30,12 +30,22 @@ Four unrelated config/empty/single enumeration defects remain NotRun per host (M
 
 ## Manual state and limits
 
-The clean implementation Explorer kit and source hashes were verified. It uses byte-identical BAT plus recorder PS1, per-process APPDATA/PATH/NAME setup and production-script error cases. Preparation/data checks are not human Explorer observations. Owner reported all prepared checks appeared to pass. Four reports show zero args, an unchanged single parentheses filename and 10/11 unchanged multiple paths; literal %PATH% changed. Folder/direct-BAT follow-up pending. A04 passes from the owner's direct report; tentative wording retained.
+The clean implementation Explorer kit and source hashes were verified. It uses byte-identical BAT plus recorder PS1, per-process APPDATA/PATH/NAME setup and production-script error cases. Preparation/data checks are not human Explorer observations. Owner reported all prepared checks appeared to pass. Four reports show zero args, an unchanged single parentheses filename and 10/11 unchanged multiple paths; literal %PATH% changed. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. A04 passes from the owner's direct report; tentative wording retained.
 
 Measured caller limits: raw outer CMD expands `%PATH%`, /V:ON can expand `!NAME!`, and a quoted CMD folder ending in one backslash can arrive with a literal closing quote. BAT cannot recover already-altered arguments. Use menu literal-path entry/direct PS1 single-quoted paths where needed; omit CMD folder trailing slashes or use `D:\.`. CMD/batch expanded text has an 8,191-character limit. Any actual Explorer mismatch must remain failed, not waived.
 
 NoExit leaves startup exceptions visible at a prompt; a later plain exit may return zero. No unattended startup-exit contract. Readability does not establish executable format/execute ACLs/capabilities/media integrity.
 
-Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open against main; zero implementation check/workflow runs, no CI pass. Previous clean live equality at `2026-10-05T13:10:20.088784+00:00` describes `e32fa11`. Final documentation handoff push/live check pending when committed, reported externally afterwards without a self-SHA loop.
+Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5) open against main; zero implementation check/workflow runs, no CI pass. Previous clean live equality at `2026-10-05T13:49:03.759010+00:00` describes documentation checkpoint `77fc14f`, with tested application still `e32fa11`. Final documentation handoff push/live check pending when committed, reported externally afterwards without a self-SHA loop.
 
-Exact next: **resolve WVC-M1-02 literal %PATH% failure or obtain an explicit owner decision; finish folder/direct-BAT follow-up**. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. No main push/merge, quality change, release/deployment/settings/secrets action.
+Exact next: **WVC-M1-02 — decide BAT percent-name support boundary or separately scoped launcher work**. Next code task: **WVC-M1-03 — Make configuration validation and recovery safe**. No main push/merge, quality change, release/deployment/settings/secrets action.
+
+## Direct Explorer follow-up — 2026-10-05
+
+The owner confirmed: “Completed all three drops using Explorer and WinVidCompress.bat directly.” Prepared BAT/PS1 hashes still match tested e32fa11; all eleven synthetic source sentinels are unchanged.
+
+The new percent-file record (13:48:03 UTC) contains one substituted path in both native argv and bound Path. This confirms a direct BAT failure independent of Check.bat, so A01/A02 remain failed. The next report contains a different existing folder; the last contains one generated argv JSON file instead of eleven .mov fixtures. Those requested subcases remain unverified; neither is evidence of launcher argument loss. Private paths/expanded environment values are omitted.
+
+Exact earlier expansion stage is not isolated by these records; the proven boundary is before PS1 parameter binding. A read-only review found no robust thin-forwarding fix that reconstructs already-substituted arguments within the current task constraints. Raw parent-command-line recovery would require specialized shell parsing, cannot undo earlier execution, and conflicts with avoiding multi-stage reconstruction.
+
+No new application/test code, dependency download, policy/association change or broad test rerun. Prior clean Quick/Targeted results retained; owned-root/hash/sentinel/data/schema/whitespace checks performed. A03/A04 remain passed. Task stays implemented and PR draft. Exact next is an explicit owner decision on a documented BAT %NAME% filename restriction (literal-path menu/direct PS1 route), or separately scoped launcher work under unchanged requirements. No acceptance change/waiver is inferred. Folder/multiple fixture subcases still require correct inputs after resolving that decision.

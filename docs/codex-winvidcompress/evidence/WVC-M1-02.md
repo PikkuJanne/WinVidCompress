@@ -1,6 +1,6 @@
 # WVC-M1-02 evidence — 2026-10-05
 
-Implemented/tested at `e32fa11067bc8bb5133e8913840561deba79573f`, based on owner-merged M1-01 main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67`. [Exact JSON](WVC-M1-02.json), [session](WVC-M1-02-session.md), [launcher workflow](../../../tests/launcher/README.md). A01/A02 failed in the prepared Explorer run for literal %PATH%; A03/A04 pass. Folder/direct-BAT follow-up pending. No full/release acceptance.
+Implemented/tested at `e32fa11067bc8bb5133e8913840561deba79573f`, based on owner-merged M1-01 main `096c65c7fb1b7d02ee6bc2efcaffedd7a8952b67`. [Exact JSON](WVC-M1-02.json), [session](WVC-M1-02-session.md), [launcher workflow](../../../tests/launcher/README.md). A01/A02 failed in the prepared Explorer run for literal %PATH%; A03/A04 pass. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. No full/release acceptance.
 
 Valid initial regression: original application plus eight new uncommitted tests, PS5.1, 3 passed/5 failed, exit 1. The BAT erased ! from its own script path and reconstructed folder arguments incorrectly. A preceding harness attempt accidentally omitted PowerShell from PATH (1 pass/7 failed); it is not application defect evidence.
 
@@ -25,8 +25,8 @@ Pester 5.7.1/analyzer 1.24.0 reused externally. Quick is 97 Pester checks (22 ne
 
 | Criterion | Status | Actual evidence/remaining work |
 |---|---|---|
-| A01 | failed | Prepared Explorer multiple run preserves 10/11 names; literal %PATH% changes. Single parentheses name preserved. Folder/direct-BAT follow-up pending. |
-| A02 | failed | Prepared Explorer record substitutes literal %PATH%; !NAME! unchanged. Direct copied-BAT follow-up isolates the extra wrapper layer. |
+| A01 | failed | Prepared Explorer multiple run preserves 10/11 names; literal %PATH% changes. Single parentheses name preserved. Direct BAT percent failure confirmed; folder/multiple fixture subcases remain unverified. |
+| A02 | failed | Direct Explorer BAT drop also substitutes literal %PATH%, so Check.bat is not the sole cause. Initial matching-NAME fixture preserves !NAME!. |
 | A03 | passed | Direct -File %*, DisableDelayedExpansion, no ARGS/CALL/expression eval/cmd pipeline/broad policy change; both-host static/targeted pass. |
 | A04 | passed | Owner reported prepared error checks passed on 2026-10-05; tentative wording retained. Seven automated scenarios also pass. |
 
@@ -40,4 +40,23 @@ NoExit leaves startup exceptions visible; user exit may later return zero. No un
 
 Draft [PR #5](https://github.com/PikkuJanne/WinVidCompress/pull/5), zero implementation check/workflow runs. Previous clean live local/fetch/push equality at `2026-10-05T13:10:20.088784+00:00` describes e32fa11. Final documentation sync externally reported after commit/push, not embedded in its own commit.
 
-Exact next: resolve M1-02 literal %PATH% failure or obtain an explicit owner decision, and record folder/direct-BAT follow-up; next code task WVC-M1-03 configuration validation/recovery.
+Exact next: resolve M1-02 literal %PATH% failure or obtain an explicit owner decision, and retain unverified folder/multiple fixture subcases; next code task WVC-M1-03 configuration validation/recovery.
+
+## Direct Explorer follow-up — 2026-10-05
+
+The owner confirmed: “Completed all three drops using Explorer and WinVidCompress.bat directly.” Prepared BAT/PS1 hashes still match tested e32fa11; all eleven synthetic source sentinels are unchanged.
+
+The new percent-file record (13:48:03 UTC) contains one substituted path in both native argv and bound Path. This confirms a direct BAT failure independent of Check.bat, so A01/A02 remain failed. The next report contains a different existing folder; the last contains one generated argv JSON file instead of eleven .mov fixtures. Those requested subcases remain unverified; neither is evidence of launcher argument loss. Private paths/expanded environment values are omitted.
+
+Exact earlier expansion stage is not isolated by these records; the proven boundary is before PS1 parameter binding. A read-only review found no robust thin-forwarding fix that reconstructs already-substituted arguments within the current task constraints. Raw parent-command-line recovery would require specialized shell parsing, cannot undo earlier execution, and conflicts with avoiding multi-stage reconstruction.
+
+No new application/test code, dependency download, policy/association change or broad test rerun. Prior clean Quick/Targeted results retained; owned-root/hash/sentinel/data/schema/whitespace checks performed. A03/A04 remain passed. Task stays implemented and PR draft. Exact next is an explicit owner decision on a documented BAT %NAME% filename restriction (literal-path menu/direct PS1 route), or separately scoped launcher work under unchanged requirements. No acceptance change/waiver is inferred. Folder/multiple fixture subcases still require correct inputs after resolving that decision.
+
+## Proposed supported-path boundary — not approved or applied
+
+The concrete proposal for the owner's decision is:
+
+- A01 retains the listed characters and all four invocation shapes. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component. Such paths use the literal-path menu or direct PS1 invocation from PowerShell with literal string arguments.
+- A02 tests literal %PATH% and !NAME! with matching variables through those supported literal-path routes; BAT !NAME! preservation remains required. The observed BAT %PATH% failure stays recorded as the reason for the restriction.
+
+This changes the existing A02 requirement, not its test result. TASKS.json and the task brief are unchanged. Approval would authorize documentation/criteria updates and focused verification of the supported routes; it would not immediately make M1-02 verified. Folder and multiple-file checks still need the requested inputs. Keeping the existing requirement requires separately scoped launcher work, with its design and acceptance reviewed before implementation.

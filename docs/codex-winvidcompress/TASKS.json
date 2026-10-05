@@ -391,7 +391,7 @@
           "description": "Arguments containing spaces, !, &, parentheses, apostrophes, [], %, Finnish/German characters and non-Latin names arrive unchanged in supported launch paths.",
           "tier": "manual",
           "status": "failed",
-          "notes": "Actual Explorer records preserve 10/11 special filenames but literal %PATH% expands; folder follow-up pending. No waiver.",
+          "notes": "Owner-confirmed direct Explorer BAT drop substitutes literal %PATH%. Folder/multiple follow-up reports contain different inputs; those subcases remain unverified. No waiver.",
           "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
@@ -399,7 +399,7 @@
           "description": "Test literal %PATH% and !NAME! filename segments with matching environment variables set; no environment substitution or command execution occurs.",
           "tier": "manual",
           "status": "failed",
-          "notes": "Actual Explorer caller substitutes literal %PATH% before BAT starts; !NAME! preserved. No accepted workaround or criterion waiver.",
+          "notes": "Direct Explorer BAT drop substitutes literal %PATH% before PS1 binding; exact earlier stage not isolated. Matching-NAME initial fixture preserves !NAME!. No scope waiver.",
           "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
@@ -421,7 +421,7 @@
       "approval_gate": null,
       "implementation_commits": ["e32fa11067bc8bb5133e8913840561deba79573f"],
       "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"],
-      "notes": "Implemented and automated tests pass on real PS5.1/PS7. Actual owner Explorer records fail A01/A02: literal %PATH% expands before BAT starts. A03/A04 pass. Folder follow-up pending; no waiver or release acceptance. Exact next is failed M1-02 criterion resolution/owner decision; next independent code task M1-03."
+      "notes": "Implemented; automation passes PS5.1/PS7. Owner-confirmed direct Explorer percent drop fails A01/A02; A03/A04 pass. Requested folder/multiple fixture inputs absent from new reports, still unverified. Next: owner decision on BAT %NAME% support boundary or separate launcher design; no waiver/release acceptance. Next independent code task M1-03."
     },
     {
       "id": "WVC-M1-03",

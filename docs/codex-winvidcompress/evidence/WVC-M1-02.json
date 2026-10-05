@@ -230,9 +230,9 @@
       "observer": "Repository owner (user), actual Explorer checks performed 2026-10-05",
       "reply": "I’ll run the prepared checks now",
       "isolation": "Owned temporary synthetic fixture root. Argument checks use byte-identical actual BAT plus dedicated recorder PS1; Check.bat sets per-process APPDATA/PATH/NAME and forwards once without CALL. Error checks use production PS1/BAT copies; only a single owned synthetic dependency has a read-deny ACL, restored by the cleanup script.",
-      "limitation": "Owner's overall impression does not override exact recorded argv mismatch. A04 human-visible error checks reported as passed, with tentative wording retained. Folder report not yet present.",
+      "limitation": "Initial Check.bat observation is retained. Direct BAT follow-up also fails literal %PATH%; requested folder/multiple fixture data is still unverified.",
       "confirmation": "I think all checks passed. Some of them were a bit too wall of text for human iteration, but I'm pretty sure all passed.",
-      "confirmation_context": "Owner stated they would perform the prepared checks, then reported all appeared to pass. Recorded native/bound argv contradicts literal %PATH% preservation. A folder-specific follow-up remains pending. A second short owner check requests literal %PATH% directly onto the byte-identical WinVidCompress.bat to isolate the Check.bat shell layer; no result yet.",
+      "confirmation_context": "Owner undertook the prepared checks and reported all appeared to pass. Initial native/bound argv contradicts literal %PATH% preservation. The owner-confirmed direct follow-up is recorded separately below: it confirms percent substitution, while the requested fixture folder/multiple cohort remain unverified.",
       "data": {
         "reports": 4,
         "zero_arguments_exact": true,
@@ -263,16 +263,71 @@
         "Skipped": 0,
         "NotRun": 0
       }
+    },
+    {
+      "kind": "Direct Explorer drop follow-up",
+      "acceptance_ids": [
+        "WVC-M1-02-A01",
+        "WVC-M1-02-A02"
+      ],
+      "observer": "Repository owner (user)",
+      "confirmed_on": "2026-10-05",
+      "confirmation": "Completed all three drops using Explorer and WinVidCompress.bat directly.",
+      "prepared_source_commit": "e32fa11067bc8bb5133e8913840561deba79573f",
+      "source_hashes_rechecked": true,
+      "synthetic_input_sentinels_unchanged": true,
+      "steps": [
+        "Drop literal %PATH%.mov directly onto arguments/WinVidCompress.bat; exit.",
+        "Drop Folder ! & (name) [literal] directly onto the same BAT; exit.",
+        "Drop all eleven .mov fixtures directly onto the same BAT; exit."
+      ],
+      "data": [
+        {
+          "recorded_at_utc": "2026-10-05T13:48:03.1485745Z",
+          "expected": "one literal %PATH%.mov fixture",
+          "argument_count": 1,
+          "raw_and_bound_agree": true,
+          "literal_percent_preserved": false,
+          "observed": "literal [expanded PATH value].mov",
+          "status": "failed"
+        },
+        {
+          "recorded_at_utc": "2026-10-05T13:48:13.9691142Z",
+          "expected": "one Folder ! & (name) [literal] fixture",
+          "argument_count": 1,
+          "raw_and_bound_agree": true,
+          "observed": "a different existing folder; private path omitted",
+          "status": "not_run",
+          "reason": "Expected fixture path absent; do not count this as a launcher-corruption result."
+        },
+        {
+          "recorded_at_utc": "2026-10-05T13:48:29.5966595Z",
+          "expected": "eleven .mov fixtures",
+          "argument_count": 1,
+          "raw_and_bound_agree": true,
+          "observed": "one generated fixture argv JSON report",
+          "status": "not_run",
+          "reason": "Expected eleven-file cohort absent; do not count this as argument loss."
+        }
+      ],
+      "counts": {
+        "Passed": 0,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 2
+      },
+      "host": "5.1.26100.9444 Desktop",
+      "limitation": "Direct drop proves Check.bat is not the sole cause. Native/bound equality proves corruption before script parameter binding, not the exact earlier Explorer/ShellExecute/CMD stage. No private expansion value/raw reports committed."
     }
   ],
   "acceptance": {
     "A01": {
       "status": "failed",
-      "evidence": "Owner performed Explorer checks. Exact native/bound records show 10 of 11 multiple-drop filenames unchanged, but literal %PATH%.mov expanded. Retain A01 failed conservatively for the whole required special-character cohort; folder observation additionally pending."
+      "evidence": "Direct actual Explorer percent-file drop on byte-identical BAT substitutes literal %PATH%; A01 remains failed. Initial prepared cohort preserves the other ten names. Requested direct folder and eleven-file inputs are absent from their two reports, so those subcases remain unverified."
     },
     "A02": {
       "status": "failed",
-      "evidence": "Actual Explorer-launched Check.bat recorder shows literal %PATH% substituted with PATH before the actual BAT starts; !NAME! arrives unchanged. Automated env-seeded passes do not supersede this failed real caller path. No payload-like names executed."
+      "evidence": "Owner-confirmed direct Explorer BAT drop substitutes literal %PATH% in both native argv and bound Path. The failure is not solely caused by the Check.bat wrapper. Earlier matching-NAME prepared run preserves !NAME!. Exact pre-binding stage is not isolated; no scope waiver."
     },
     "A03": {
       "status": "passed",
@@ -290,10 +345,10 @@
     "WinVidCompress_bat_sha256": "9B8A045AB990B87DF4756427A83F2E29D60E1C06A2F042F8D4D6A3ADCDE6CA4D"
   },
   "previous_verified_sync": {
-    "checked_at": "2026-10-05T13:10:20.088784+00:00",
-    "head": "e32fa11067bc8bb5133e8913840561deba79573f",
-    "live_fetch_head": "e32fa11067bc8bb5133e8913840561deba79573f",
-    "live_push_head": "e32fa11067bc8bb5133e8913840561deba79573f",
+    "checked_at": "2026-10-05T13:49:03.759010+00:00",
+    "head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
+    "live_fetch_head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
+    "live_push_head": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
     "status": "SYNCHRONIZED",
     "dirty": false,
     "operations": []
@@ -308,8 +363,8 @@
   },
   "final_handoff_push": "pending when committed; verify final local/live fetch/live push equality and clean state externally",
   "limitations": [
-    "Actual owner Explorer run fails A01/A02 due literal %PATH% substitution; A04 passes from owner report. Folder-specific observation is still pending. Task stays implemented and draft; no waiver/supported-path redefinition.",
-    "Outer CMD expands literal %PATH% and /V:ON may expand !NAME! before BAT starts. Quoted CMD/BAT paths ending in one backslash can arrive with a literal closing quote. These remain measured limits; no unlimited/shell-independent drop guarantee.",
+    "Owner-confirmed direct Explorer BAT percent drop fails A01/A02; A03/A04 pass. Direct folder/multiple reports contain different inputs, so those subcases remain unverified. No waiver/supported-path redefinition.",
+    "Raw CMD characterization expands %PATH% before its BAT starts; /V:ON can expand !NAME!. Actual direct Explorer records prove literal %PATH% is already changed by script binding, but do not isolate the earlier stage. Trailing-backslash quoting/8191-character limits stay documented.",
     "Windows CMD/batch expanded command lines are limited to 8191 characters; use folder drops or smaller selections.",
     "The retained -NoExit keeps startup errors visible at a prompt. A subsequent plain exit can return zero; no new unattended startup-exit contract is claimed.",
     "Readability checks do not validate executable format, execute ACLs, FFmpeg capabilities or codec behavior; those broader checks belong to later tasks.",
@@ -318,7 +373,7 @@
     "Manual fixture and raw reports contain local paths/possible environment expansion; all stay outside Git. No private media, dependency binaries, configuration or raw logs committed.",
     "Read-only subagent review fixed a report-integrity defect and clarified /V:ON test wording. One checkout writer; no automatic dependency download, main push/merge, policy change, release, deployment or settings/secrets change."
   ],
-  "next_task": "WVC-M1-02 — resolve or obtain an explicit owner decision on the failed literal %PATH% Explorer criterion; record folder result. Next independent code task WVC-M1-03 — Make configuration validation and recovery safe.",
+  "next_task": "WVC-M1-02 — owner decision on documenting a restricted BAT drop boundary for %NAME% filenames versus separately scoped launcher work. Keep A01/A02 failed until an authorized solution and applicable tests pass. Folder/multiple fixture subcases still unverified. Next independent code task WVC-M1-03.",
   "supplementary_runs": [
     {
       "kind": "Optional hidden Windows ShellExecute probe, not human Explorer and not part of tier counts",
@@ -334,5 +389,29 @@
       ],
       "reason": "Both attempts timed out before a complete observation; launched processes were stopped and owned fixtures removed. No direct ShellExecute/Explorer argv result inferred. Primary exact-commit Quick/Targeted results remain unchanged."
     }
-  ]
+  ],
+  "confirmation_followup": {
+    "date": "2026-10-05",
+    "scope": "Documentation-only update after owner-confirmed three direct drops. No application/test code change; earlier exact-commit Quick/Targeted retained without rerun.",
+    "baseline_handoff": "77fc14f5a1a68d8adf223eda79916be4f6e6895e",
+    "checks": [
+      "Owned fixture root validation",
+      "BAT/PS1 prepared/current SHA256 equality",
+      "Synthetic source contents preserved",
+      "Ordinal expected/native/bound comparison of three new reports",
+      "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "git -c core.whitespace=cr-at-eol diff --cached --check"
+    ],
+    "review": "Read-only independent feasibility review: thin BAT cannot undo earlier substitution; raw-command-line recovery needs CMD-specific parsing, cannot undo earlier execution and is outside this task instruction to avoid multi-stage reconstruction.",
+    "owner_scope_decision": "not requested/received yet when this evidence is committed",
+    "final_handoff_sync": "pending after this documentation commit; report externally"
+  },
+  "proposed_scope_decision": {
+    "status": "not approved or applied",
+    "A01": "Retain listed characters and all four invocation shapes. BAT drops exclude environment-variable-shaped percent segments such as %PATH% in any path component; use the literal-path menu or direct PS1 invocation from PowerShell with literal string arguments for these paths.",
+    "A02": "Test literal %PATH% and !NAME! with matching variables through those supported literal-path routes; retain BAT !NAME! preservation. Preserve the observed BAT %PATH% failure as the documented reason for the restriction.",
+    "authorization_needed": "Explicit owner decision because this changes existing A02. Neither TASKS.json acceptance descriptions nor the task brief has been changed.",
+    "after_approval": "Update supported-path documentation/criteria and verify the applicable supported routes. Correct fixture folder/multiple observations remain required; approval alone is not verification.",
+    "alternative": "Retain current criteria and scope launcher work separately before implementation."
+  }
 }
