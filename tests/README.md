@@ -41,6 +41,8 @@ For an isolated human menu check when real encoders are unavailable, run `powers
 
 The tier runner automatically discovers all nested `tests/**/*.Tests.ps1` in stable path order, so later unit/integration regressions are included without changing a hard-coded suite list.
 
+M1-02 adds measured PS1/BAT argv and actionable startup-error regressions in [launcher](launcher/README.md), including an isolated actual Explorer check kit. The current BAT forwards `%*` once with delayed expansion disabled and retains its PowerShell prompt. The six older native entry case labels retain their historical `original-bat` name but execute the current launcher. Automated caller/recorder results never establish Explorer/manual acceptance.
+
 Choose `-Hosts Current`, `WindowsPowerShell`, or `PowerShell7`; Full's default is both named hosts. Executable overrides are `-WindowsPowerShell` and `-PowerShell7`. The harness verifies each host's actual version/edition before assigning its label. An explicit missing override is unavailable, rather than a request to fall back silently to PATH.
 
 ## Reports and exit codes

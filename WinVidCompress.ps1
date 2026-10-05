@@ -74,7 +74,14 @@ USAGE
         - Or:   .\WinVidCompress.ps1  "D:\Interviews\FolderWithVideos"
 
 NOTES
-    - Paths, spaces, and special characters are handled correctly when using the provided .bat.
+    - The .bat forwards quoted paths without delayed expansion. An outer cmd shell can
+      expand %NAME% (and !NAME! with delayed expansion) before the launcher starts.
+      For literal variable-like names, paste the path into menu option 2/3 or call
+      this PS1 from PowerShell with a single-quoted literal path.
+    - In a CMD/BAT command, omit a quoted folder's trailing backslash; for a drive
+      root use D:\. or paste D:\ into the menu. Native quoting can change the slash.
+    - CMD/batch command lines are limited to 8191 characters, including expanded
+      paths and quotes. Drop a folder or use smaller selections for large batches.
     - If you ever want smaller files, change $DefaultCRF from 22 to 23–24.
     - If config becomes invalid or is deleted, OutputDir resets to your Videos folder automatically.
     - No new output subfolders are created by default; files land directly in OutputDir.
@@ -120,13 +127,20 @@ $CollisionMode = 'rename'
 
 # --- Helpers ---
 function Ensure-Tool([string]$exe) {
-    $cmd = Get-Command $exe -ErrorAction SilentlyContinue
-    if ($cmd) { return $cmd.Source }
-
-    $local = Join-Path (Split-Path -Parent $PSCommandPath) $exe
-    if (Test-Path -LiteralPath $local) { return $local }
-
-    throw "$exe not found. Put it in PATH or next to this script."
+    $cmd = Get-Command $exe -CommandType Application -ErrorAction SilentlyContinue
+    $candidate = Join-Path (Split-Path -Parent $PSCommandPath) $exe
+    if ($cmd) { $candidate = $cmd.Source }
+    if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
+        throw "$exe not found. Put it in PATH or next to this script."
+    }
+    try {
+        $stream = [IO.File]::Open($candidate, [IO.FileMode]::Open,
+            [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+        $stream.Dispose()
+    } catch {
+        throw "$exe cannot be read at '$candidate'. Check read/execute permissions or use an accessible copy in PATH or next to this script. Details: $($_.Exception.Message)"
+    }
+    return $candidate
 }
 
 function Save-Config($cfg) {

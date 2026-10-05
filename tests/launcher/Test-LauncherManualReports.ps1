@@ -1,0 +1,56 @@
+[CmdletBinding()]
+param([Parameter(Mandatory = $true)][string]$Manifest)
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'LauncherTestSupport.ps1')
+$metadata = Get-Content -LiteralPath $Manifest -Raw | ConvertFrom-Json
+[void](Assert-WvcTestRoot $metadata.Owner)
+if ((Get-FileHash -LiteralPath (Join-Path $metadata.ArgumentApp 'WinVidCompress.bat')).Hash -ne $metadata.LauncherSHA256) {
+    throw 'Prepared BAT hash changed.'
+}
+$reports = @(Get-ChildItem -LiteralPath $metadata.ArgumentApp -Filter 'argv-*.json' -File | ForEach-Object {
+    Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json
+})
+$expected = @(
+    @{ Id = 'zero'; Paths = @() },
+    @{ Id = 'single'; Paths = @($metadata.Inputs[0]) },
+    @{ Id = 'folder'; Paths = @($metadata.Folder) },
+    @{ Id = 'multiple'; Paths = @($metadata.Inputs) }
+)
+$checks = @()
+function Test-ExactPaths($Record, [string[]]$Expected) {
+    $received = @($Record.Paths)
+    if ($received.Count -ne $Expected.Count) { return $false }
+    foreach ($value in $Expected) {
+        if (@($received | Where-Object { [string]::Equals($_, $value, [StringComparison]::Ordinal) }).Count -ne 1) { return $false }
+    }
+    return $true
+}
+function Test-RawArguments($Record) {
+    $raw = @($Record.RawArguments)
+    $paths = @($Record.Paths)
+    $index = [Array]::IndexOf([object[]]$raw, '-File')
+    if ($index -lt 0 -or $raw.Count -ne ($index + 2 + $paths.Count) -or
+        $raw[$index + 1] -cne (Join-Path $metadata.ArgumentApp 'WinVidCompress.ps1')) { return $false }
+    for ($i = 0; $i -lt $paths.Count; $i++) {
+        if (-not [string]::Equals($raw[$index + 2 + $i], $paths[$i], [StringComparison]::Ordinal)) { return $false }
+    }
+    return $Record.Edition -eq 'Desktop' -and $Record.PowerShell -like '5.1.*'
+}
+foreach ($case in $expected) {
+    $matches = @($reports | Where-Object {
+        # Explorer selection order is not guaranteed; count and ordinal membership are.
+        (Test-RawArguments $_) -and (Test-ExactPaths $_ @($case.Paths))
+    })
+    $state = if ($matches.Count) { 'Passed' } else { 'NotRun' }
+    $checks += New-WvcTestCase $case.Id $state 'Data check only; Explorer/human observation must be recorded separately.'
+}
+$unmatched = @($reports | Where-Object {
+    $record = $_
+    -not (Test-RawArguments $record) -or -not @($expected | Where-Object { Test-ExactPaths $record @($_.Paths) }).Count
+})
+if ($unmatched.Count) { $checks += New-WvcTestCase 'unexpected-arguments' 'Failed' 'Recorded paths differ from the fixture; inspect local reports for caller expansion.' }
+$summary = Get-WvcTierSummary 'Manual' $checks
+[pscustomobject]@{ Kind = 'ManualRecorderData'; Counts = $summary.Counts; Cases = $checks;
+    Reports = $reports.Count; HumanExplorerObservation = 'Not established by this checker' } | ConvertTo-Json -Depth 5
+exit $summary.ExitCode
