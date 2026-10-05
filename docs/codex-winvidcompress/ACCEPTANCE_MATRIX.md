@@ -9,7 +9,7 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | CONFIG | Missing, malformed, wrong-shaped JSON; file-vs-dir; offline drive; failed save | Pester + filesystem fault injection | PASSED for [M1-03](evidence/WVC-M1-03.md); actual disconnected-share/crash durability untested |
 | SCAN | Zero/one/many files; inaccessible subtree; invalid explicit input; reparse cycle | Pester + disposable filesystem | PASSED A01-A04 for [M1-04](evidence/WVC-M1-04.md); tested localhost UNC/local paths only, broader SMB/media limits recorded |
 | QUEUE | Overlap, duplicates, same input/output root, nested destination, originals named compressed | Queue tests + integration | PASSED A01-A04 for [M1-05](evidence/WVC-M1-05.md); both Windows hosts, synthetic file-writing recorders; file-ID/source-change/ownership/media limits recorded |
-| TOOLS | PATH/adjacent selection, invalid executable, missing encoder, timeout | Mocks + installed-tool check | NOT RUN |
+| TOOLS | PATH/adjacent selection, invalid executable, missing encoder, timeout, destination write access | Controlled real native processes + actual Windows ACL | PASSED A01-A04 for [M1-06](evidence/WVC-M1-06.md); both hosts; actual FFmpeg absent/media skipped; filesystem/descendant limits recorded |
 | PROBE | Corrupt input, audio-only, attached pictures, missing duration, malformed probe JSON | Fixture JSON + synthetic files | NOT RUN |
 | STREAM | Multiple video/audio streams, silent clip, discarded subtitles/data | Synthetic media + output probe | NOT RUN |
 | GEOMETRY | Small, 1080p, 4K, portrait, rotation, odd dimensions, SAR, ultrawide | Probe + visual test patterns | NOT RUN |

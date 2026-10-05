@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param(
+    [switch]$CheckEnvironment,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )

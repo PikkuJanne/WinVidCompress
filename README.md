@@ -16,7 +16,7 @@ Supports simple batch processing:
 Windows 11
 PowerShell (Windows PowerShell is fine)
 FFmpeg + FFprobe in PATH or placed next to the script
-(any recent static build is fine)
+(must include libx264, AAC, MP4/faststart, scale and FFprobe CSV/JSON support)
 
 **Installation**
 Download a recent static FFmpeg build for Windows (includes ffmpeg.exe and ffprobe.exe).
@@ -78,6 +78,10 @@ Smaller files → increase CRF to 23–24 (lower quality).
 H.265/HEVC (slower, smaller) → swap libx264 to libx265 and use CRF ~27.
 
 **Troubleshooting**
+Run `.\WinVidCompress.ps1 -CheckEnvironment` from PowerShell to report the exact executable paths, versions/build details, required capabilities, output access and available capacity. Applications found in PATH take precedence over copies next to the script; aliases/functions are refused. Each native check has a 10-second timeout, including pipe draining. The tool does not download or replace dependencies, edit PATH or request elevation.
+
+The diagnostic command never converts media or saves/repairs configuration. It uses the saved destination (Videos if no config exists), creates a unique temporary file in that existing directory to test writing, and removes it on close. It creates no config, backups or output folders. Invalid configuration, offline destinations and write denials fail clearly. Normal startup, output selection and each batch also check destination access. Free space is advisory and output size is not guaranteed; permissions and capacity can change after the check. UNC/mount-point capacity may be unknown.
+
 “ffmpeg not found” → put ffmpeg.exe and ffprobe.exe next to the script or add them to PATH.
 TUI appears when dragging a file → the argument didn’t reach the script cleanly; try again, or open the TUI and choose option 2/3.
 Reset output folder → delete %APPDATA%\WinVidCompress\config.json and rerun (defaults to Videos).

@@ -47,6 +47,7 @@ Describe 'Menu exit and selection intent [WVC-M1-01]' {
         $script:Choices.Enqueue('1')
         $script:Choices.Enqueue('4')
         Mock Prompt-Path { Join-Path $TestDrive 'selected-output' }
+        Mock Get-OutputEnvironment {}
         Run-TUI 'unused-encoder' 'unused-probe' $script:Config
         Should -Invoke Prompt-Path -Times 1 -Exactly -ParameterFilter { $Folder -and $CreateIfMissing }
         Should -Invoke Save-Config -Times 1 -Exactly -ParameterFilter {

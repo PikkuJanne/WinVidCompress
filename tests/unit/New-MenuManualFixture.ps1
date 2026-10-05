@@ -20,8 +20,9 @@ try {
     foreach ($file in @('WinVidCompress.ps1','WinVidCompress.bat')) {
         Copy-Item -LiteralPath (Join-Path $repoRoot $file) -Destination (Join-Path $app $file)
     }
-    # Startup dependency sentinels, never encoders. An accidental invocation fails.
-    Add-Type -TypeDefinition 'public static class WvcMenuSentinel { public static int Main(string[] args) { return 13; } }' `
+    # Respond only to startup diagnostics; an accidental encode still fails.
+    . (Join-Path (Split-Path -Parent $PSScriptRoot) 'EnvironmentTestSupport.ps1')
+    Add-Type -TypeDefinition ('public static class WvcMenuSentinel { public static int Main(string[] args) { return WvcEnvironmentResponder.Respond(args) ? 0 : 13; } }' + (Get-WvcEnvironmentResponderSource)) `
         -OutputAssembly (Join-Path $bin 'ffmpeg.exe') -OutputType ConsoleApplication
     Copy-Item -LiteralPath (Join-Path $bin 'ffmpeg.exe') -Destination (Join-Path $bin 'ffprobe.exe')
     Write-WvcTestJson (Join-Path $config 'config.json') ([pscustomobject]@{ OutputDir = $output })

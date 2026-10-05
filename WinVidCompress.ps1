@@ -72,6 +72,10 @@ USAGE
     C) Direct PowerShell
         - Run:  .\WinVidCompress.ps1  "D:\Interviews\Band 29092025 - CamA.mov"
         - Or:   .\WinVidCompress.ps1  "D:\Interviews\FolderWithVideos"
+        - Diagnose without conversion: .\WinVidCompress.ps1 -CheckEnvironment
+          Reports exact PATH-before-adjacent binaries, versions and capabilities.
+          Checks writing with an owned temporary file removed on close; no config,
+          backups or output folders are created. Capacity is advisory.
 
 NOTES
     - BAT drag/drop does not support %NAME% segments such as %PATH% anywhere in
@@ -107,6 +111,7 @@ LICENSE / WARRANTY
 
 [CmdletBinding()]
 param(
+    [switch]$CheckEnvironment,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )
@@ -130,7 +135,11 @@ $CollisionMode = 'rename'
 
 # --- Helpers ---
 function Ensure-Tool([string]$exe) {
-    $cmd = Get-Command $exe -CommandType Application -ErrorAction SilentlyContinue
+    # Preserve PATH-before-adjacent selection, but refuse shell-command shadows.
+    $cmd = Get-Command $exe -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($cmd -and $cmd.CommandType -ne 'Application') {
+        throw "$exe resolves to a $($cmd.CommandType), not an application. Remove the shadowing command before retrying."
+    }
     $candidate = Join-Path (Split-Path -Parent $PSCommandPath) $exe
     if ($cmd) { $candidate = $cmd.Source }
     if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
@@ -143,11 +152,191 @@ function Ensure-Tool([string]$exe) {
     } catch {
         throw "$exe cannot be read at '$candidate'. Check read/execute permissions or use an accessible copy in PATH or next to this script. Details: $($_.Exception.Message)"
     }
-    return $candidate
+    return (Get-Item -LiteralPath $candidate -Force).FullName
 }
 
 function Get-DefaultOutputDir {
     [Environment]::GetFolderPath('MyVideos')
+}
+
+function ConvertTo-NativeArgument([string]$Value) {
+    # Windows argv quoting, including quotes and trailing backslashes. No shell.
+    '"' + [regex]::Replace($Value, '(\\*)"', '$1$1\"') +
+        ('\' * ([regex]::Match($Value, '\\*$').Length)) + '"'
+}
+
+function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    $start = New-Object Diagnostics.ProcessStartInfo
+    $start.FileName = $Executable
+    $start.Arguments = (@($Arguments | ForEach-Object { ConvertTo-NativeArgument $_ }) -join ' ')
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $start.RedirectStandardOutput = $true
+    $start.RedirectStandardError = $true
+    $start.RedirectStandardInput = $true
+    # FFREPORT would otherwise create logs during even a version/help check.
+    $start.EnvironmentVariables.Remove('FFREPORT')
+    $process = New-Object Diagnostics.Process
+    $process.StartInfo = $start
+    $started = $false
+    $stdout = $null
+    $stderr = $null
+    $clock = [Diagnostics.Stopwatch]::StartNew()
+    try {
+        [void]$process.Start()
+        $started = $true
+        $stdout = $process.StandardOutput.ReadToEndAsync()
+        $stderr = $process.StandardError.ReadToEndAsync()
+        $process.StandardInput.Close()
+        $remaining = [Math]::Max(0, $TimeoutMilliseconds - [int]$clock.ElapsedMilliseconds)
+        if (-not $process.WaitForExit($remaining)) {
+            throw "Timed out after $TimeoutMilliseconds ms."
+        }
+        # An exited child can leave inherited pipe handles open; bound drains too.
+        foreach ($reader in @($stdout,$stderr)) {
+            $remaining = [Math]::Max(0, $TimeoutMilliseconds - [int]$clock.ElapsedMilliseconds)
+            if (-not $reader.Wait($remaining)) { throw "Timed out draining diagnostics after $TimeoutMilliseconds ms." }
+        }
+        $result = [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $stdout.Result; StdErr = $stderr.Result }
+        if ($result.ExitCode -ne 0) {
+            throw "Exit code $($result.ExitCode). stderr: $($result.StdErr) stdout: $($result.StdOut)"
+        }
+        return $result
+    } catch {
+        $reason = $_.Exception.Message
+        if ($started) {
+            if (-not $process.HasExited) {
+                $process.Kill()
+                if (-not $process.WaitForExit(2000)) { throw 'Could not stop the owned environment-check process.' }
+            }
+            # Preserve available diagnostics on timeout too, without an unbounded Result.
+            try {
+                if ($null -ne $stderr -and $stderr.Wait(500) -and $stderr.Result) {
+                    $reason += " stderr: $($stderr.Result)"
+                }
+            } catch { } # A failed drain must not hide the original diagnostic.
+        }
+        throw "Environment check failed for '$Executable' [$($Arguments -join ' ')]: $reason"
+    } finally {
+        try {
+            if ($started -and -not $process.HasExited) {
+                # Kill only the process we started; this is available on .NET Framework.
+                $process.Kill()
+                if (-not $process.WaitForExit(2000)) { throw 'Could not stop the owned environment-check process.' }
+            }
+        } finally { $process.Dispose() }
+    }
+}
+
+function Get-ToolEnvironment([string]$FFmpeg, [string]$FFprobe,
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    $calls = New-Object 'Collections.Generic.List[object]'
+    $versions = @{}
+    foreach ($tool in @(@{ Name = 'ffmpeg'; Path = $FFmpeg }, @{ Name = 'ffprobe'; Path = $FFprobe })) {
+        $call = Invoke-EnvironmentCall $tool.Path @('-version') $TimeoutMilliseconds
+        $calls.Add($call)
+        if ($call.StdOut -notmatch ('(?m)^' + $tool.Name + ' version\s+\S+')) {
+            throw "Wrong tool at '$($tool.Path)': expected $($tool.Name) version identification. stderr: $($call.StdErr)"
+        }
+        $versions[$tool.Name] = $call.StdOut.Trim()
+    }
+    $encoders = Invoke-EnvironmentCall $FFmpeg @('-hide_banner','-encoders') $TimeoutMilliseconds
+    $calls.Add($encoders)
+    foreach ($encoder in @(@{ Name = 'libx264'; Kind = 'V' }, @{ Name = 'aac'; Kind = 'A' })) {
+        if ($encoders.StdOut -notmatch ('(?m)^\s*' + $encoder.Kind + '[A-Z.]{5}\s+' + $encoder.Name + '\s')) {
+            throw "Required encoder '$($encoder.Name)' is unavailable in '$FFmpeg'. stderr: $($encoders.StdErr)"
+        }
+    }
+    $muxer = Invoke-EnvironmentCall $FFmpeg @('-hide_banner','-h','muxer=mp4') $TimeoutMilliseconds
+    $calls.Add($muxer)
+    if ($muxer.StdOut -notmatch '(?m)^Muxer mp4\s' -or $muxer.StdOut -notmatch '\bfaststart\b') {
+        throw "Required MP4 muxer/faststart capability is unavailable in '$FFmpeg'. stderr: $($muxer.StdErr)"
+    }
+    $filter = Invoke-EnvironmentCall $FFmpeg @('-hide_banner','-h','filter=scale') $TimeoutMilliseconds
+    $calls.Add($filter)
+    if ($filter.StdOut -notmatch '(?m)^Filter scale\s') {
+        throw "Required scale filter is unavailable in '$FFmpeg'. stderr: $($filter.StdErr)"
+    }
+    # Program metadata exercises the actual writers/options without a media file.
+    $csv = Invoke-EnvironmentCall $FFprobe @('-v','error','-show_program_version',
+        '-show_entries','program_version=version','-select_streams','v:0','-of','csv=p=0') $TimeoutMilliseconds
+    $calls.Add($csv)
+    if ([string]::IsNullOrWhiteSpace($csv.StdOut)) {
+        throw "FFprobe CSV/program inspection returned no version at '$FFprobe'. stderr: $($csv.StdErr)"
+    }
+    $json = Invoke-EnvironmentCall $FFprobe @('-v','error','-show_program_version',
+        '-show_entries','program_version=version','-select_streams','v:0','-of','json') $TimeoutMilliseconds
+    $calls.Add($json)
+    try {
+        $program = $json.StdOut | ConvertFrom-Json
+        if (-not $program.program_version.version -or
+            $program.program_version.version -isnot [string]) { throw 'Missing program version.' }
+    } catch { throw "FFprobe JSON/program inspection failed at '$FFprobe': $($_.Exception.Message) stderr: $($json.StdErr)" }
+    return [pscustomobject]@{
+        FFmpeg = $FFmpeg; FFprobe = $FFprobe
+        FFmpegBuild = $versions.ffmpeg; FFprobeBuild = $versions.ffprobe
+        Capabilities = 'libx264, AAC, MP4/faststart, scale, FFprobe CSV/JSON and selection/entries options'
+        Calls = $calls.ToArray()
+    }
+}
+
+function Get-OutputEnvironment([string]$Destination) {
+    Assert-OutputDirectory $Destination
+    $temporary = Join-Path $Destination ('.wvc-write-check-' + [guid]::NewGuid().ToString('N') + '.tmp')
+    $stream = $null
+    try {
+        # CreateNew cannot clobber a neighbor. DeleteOnClose removes only this handle's file.
+        $stream = New-Object IO.FileStream($temporary, [IO.FileMode]::CreateNew,
+            [IO.FileAccess]::ReadWrite, [IO.FileShare]::None, 4096, [IO.FileOptions]::DeleteOnClose)
+        $stream.WriteByte(0)
+        $stream.Flush()
+    } catch {
+        throw "Output folder '$Destination' cannot safely create/write/remove a temporary file. Check permissions and capacity. Saved preferences were not changed. Details: $($_.Exception.Message)"
+    } finally { if ($null -ne $stream) { $stream.Dispose() } }
+    $available = $null
+    try {
+        # Drive-root bytes can misrepresent nested mount points; stay conservative.
+        $item = Get-Item -LiteralPath $Destination -Force
+        while ($null -ne $item) {
+            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Reparse/mount destination.' }
+            $item = $item.Parent
+        }
+        $root = [IO.Path]::GetPathRoot($Destination)
+        if ($root.StartsWith('\\')) { throw 'UNC capacity unavailable.' }
+        $drive = New-Object IO.DriveInfo($root)
+        $available = $drive.AvailableFreeSpace
+    } catch { } # Unknown capacity is an advisory, never a reason to redirect output.
+    return [pscustomobject]@{ Destination = $Destination; AvailableBytes = $available }
+}
+
+function Get-EnvironmentConfig {
+    # Doctor must not create config, locks, backups or recover malformed preferences.
+    if (Test-Path -LiteralPath $ConfigPath) { return (ConvertFrom-ConfigText (Read-ConfigFile).Text) }
+    $cfg = [pscustomobject]@{ OutputDir = (Get-DefaultOutputDir) }
+    Assert-ConfigShape $cfg
+    return $cfg
+}
+
+function Write-EnvironmentReport($Tools, $Output) {
+    Write-Host "Dependency selection: PATH before script-adjacent applications."
+    Write-Host "FFmpeg: $($Tools.FFmpeg)"
+    Write-Host $Tools.FFmpegBuild
+    Write-Host "FFprobe: $($Tools.FFprobe)"
+    Write-Host $Tools.FFprobeBuild
+    Write-Host "Capabilities: $($Tools.Capabilities)"
+    foreach ($call in $Tools.Calls) {
+        if ($call.StdErr) { Write-Host ("Tool diagnostics: " + $call.StdErr.Trim()) -ForegroundColor Yellow }
+    }
+    Write-Host "Output folder: $($Output.Destination)"
+    Write-Host 'Temporary create/write/remove check passed (point-in-time only).'
+    if ($null -eq $Output.AvailableBytes) {
+        Write-Host 'Available capacity: unknown for this destination.' -ForegroundColor Yellow
+    } else {
+        Write-Host "Available capacity now: $($Output.AvailableBytes) bytes."
+        if ($Output.AvailableBytes -lt 1GB) { Write-Host 'Capacity concern: less than 1 GiB available.' -ForegroundColor Yellow }
+    }
+    Write-Host 'Output size is not guaranteed; free space and permissions can change during a batch.'
 }
 
 function Assert-ConfigShape($cfg) {
@@ -691,6 +880,8 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 }
 
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+    # Recheck at every requested batch, including after a menu preference change.
+    [void](Get-OutputEnvironment $cfg.OutputDir)
     $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0; Scanned = 0; ScanErrors = 0 }
 
     # Complete every selection before an encoder can create any new input candidates.
@@ -740,6 +931,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
                     $candidate = $cfg.PSObject.Copy()
                     $candidate.OutputDir = $p
                     try {
+                        [void](Get-OutputEnvironment $candidate.OutputDir)
                         Save-Config $candidate
                         $cfg.OutputDir = $p
                     } catch {
@@ -771,7 +963,16 @@ if ($MyInvocation.InvocationName -eq '.') { return }
 # --- Main ---
 $ffmpeg  = Ensure-Tool 'ffmpeg.exe'
 $ffprobe = Ensure-Tool 'ffprobe.exe'
+$tools   = Get-ToolEnvironment $ffmpeg $ffprobe
+if ($CheckEnvironment) {
+    $cfg = Get-EnvironmentConfig
+    $output = Get-OutputEnvironment $cfg.OutputDir
+    Write-EnvironmentReport $tools $output
+    return
+}
 $cfg     = Load-Config
+$output  = Get-OutputEnvironment $cfg.OutputDir
+Write-EnvironmentReport $tools $output
 
 # If args were provided, queue and process immediately.
 if ($Path -and $Path.Count -gt 0) {
