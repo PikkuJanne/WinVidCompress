@@ -166,7 +166,7 @@ function ConvertTo-NativeArgument([string]$Value) {
 }
 
 function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
-    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000, [switch]$ReturnFailure, [switch]$Utf8Output) {
     $start = New-Object Diagnostics.ProcessStartInfo
     $start.FileName = $Executable
     $start.Arguments = (@($Arguments | ForEach-Object { ConvertTo-NativeArgument $_ }) -join ' ')
@@ -175,6 +175,10 @@ function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
     $start.RedirectStandardOutput = $true
     $start.RedirectStandardError = $true
     $start.RedirectStandardInput = $true
+    if ($Utf8Output) {
+        $start.StandardOutputEncoding = New-Object Text.UTF8Encoding($false)
+        $start.StandardErrorEncoding = New-Object Text.UTF8Encoding($false)
+    }
     # FFREPORT would otherwise create logs during even a version/help check.
     $start.EnvironmentVariables.Remove('FFREPORT')
     $process = New-Object Diagnostics.Process
@@ -182,6 +186,8 @@ function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
     $started = $false
     $stdout = $null
     $stderr = $null
+    $exitCode = $null
+    $timedOut = $false
     $clock = [Diagnostics.Stopwatch]::StartNew()
     try {
         [void]$process.Start()
@@ -191,20 +197,27 @@ function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
         $process.StandardInput.Close()
         $remaining = [Math]::Max(0, $TimeoutMilliseconds - [int]$clock.ElapsedMilliseconds)
         if (-not $process.WaitForExit($remaining)) {
+            $timedOut = $true
             throw "Timed out after $TimeoutMilliseconds ms."
         }
+        $exitCode = $process.ExitCode
         # An exited child can leave inherited pipe handles open; bound drains too.
         foreach ($reader in @($stdout,$stderr)) {
             $remaining = [Math]::Max(0, $TimeoutMilliseconds - [int]$clock.ElapsedMilliseconds)
-            if (-not $reader.Wait($remaining)) { throw "Timed out draining diagnostics after $TimeoutMilliseconds ms." }
+            if (-not $reader.Wait($remaining)) {
+                $timedOut = $true
+                throw "Timed out draining diagnostics after $TimeoutMilliseconds ms."
+            }
         }
-        $result = [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $stdout.Result; StdErr = $stderr.Result }
+        $result = [pscustomobject]@{ Succeeded = ($exitCode -eq 0); ExitCode = $exitCode;
+            StdOut = $stdout.Result; StdErr = $stderr.Result; TimedOut = $false; Error = $null }
         if ($result.ExitCode -ne 0) {
             throw "Exit code $($result.ExitCode). stderr: $($result.StdErr) stdout: $($result.StdOut)"
         }
         return $result
     } catch {
         $reason = $_.Exception.Message
+        $outputText = ''; $errorText = ''
         if ($started) {
             if (-not $process.HasExited) {
                 $process.Kill()
@@ -212,11 +225,17 @@ function Invoke-EnvironmentCall([string]$Executable, [string[]]$Arguments,
             }
             # Preserve available diagnostics on timeout too, without an unbounded Result.
             try {
-                if ($null -ne $stderr -and $stderr.Wait(500) -and $stderr.Result) {
-                    $reason += " stderr: $($stderr.Result)"
-                }
+                if ($null -ne $stdout -and $stdout.Wait(500)) { $outputText = $stdout.Result }
             } catch { } # A failed drain must not hide the original diagnostic.
+            try {
+                if ($null -ne $stderr -and $stderr.Wait(500)) { $errorText = $stderr.Result }
+            } catch { }
         }
+        if ($ReturnFailure) {
+            return [pscustomobject]@{ Succeeded = $false; ExitCode = $exitCode; StdOut = $outputText;
+                StdErr = $errorText; TimedOut = $timedOut; Error = $reason }
+        }
+        if ($errorText) { $reason += " stderr: $errorText" }
         throw "Environment check failed for '$Executable' [$($Arguments -join ' ')]: $reason"
     } finally {
         try {
@@ -627,12 +646,207 @@ function Parse-MetadataFromName([string]$fileName) {
     }
 }
 
-function Get-VideoHeight($ffprobe, [string]$inPath) {
-    $out = & $ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 -- $inPath 2>$null
-    $out = ($out | Out-String).Trim()
-    $h = 0
-    if ([int]::TryParse($out, [ref]$h)) { return $h }
+function Get-ProbeProperty($Object, [string]$Name) {
+    if ($null -ne $Object -and $Object -is [Management.Automation.PSCustomObject]) {
+        $property = $Object.PSObject.Properties[$Name]
+        if ($null -ne $property) { return ,$property.Value }
+    }
     return $null
+}
+
+function ConvertTo-ProbeNumber($Value) {
+    if ($null -eq $Value -or $Value -is [bool] -or
+        ($Value -isnot [string] -and $Value -isnot [ValueType])) { return $null }
+    $number = 0.0
+    $text = [Convert]::ToString($Value, [Globalization.CultureInfo]::InvariantCulture)
+    if ([double]::TryParse($text, [Globalization.NumberStyles]::Float,
+        [Globalization.CultureInfo]::InvariantCulture, [ref]$number) -and
+        -not [double]::IsNaN($number) -and -not [double]::IsInfinity($number)) { return $number }
+    return $null
+}
+
+function ConvertTo-ProbeInteger($Value) {
+    $number = ConvertTo-ProbeNumber $Value
+    if ($null -ne $number -and $number -ge 0 -and $number -le [int]::MaxValue -and
+        [Math]::Truncate($number) -eq $number) { return [int]$number }
+    return $null
+}
+
+function ConvertTo-ProbeString($Value) {
+    if ($Value -is [string] -and -not [string]::IsNullOrWhiteSpace($Value) -and
+        $Value -notin @('N/A','unknown','unspecified')) { return $Value }
+    return $null
+}
+
+function ConvertTo-ProbeRatio($Value, [string]$Separator = '/') {
+    if ($Value -isnot [string]) { return $null }
+    $parts = $Value -split [regex]::Escape($Separator)
+    if ($parts.Count -ne 2) { return $null }
+    $numerator = ConvertTo-ProbeInteger $parts[0]
+    $denominator = ConvertTo-ProbeInteger $parts[1]
+    if ($null -eq $numerator -or $null -eq $denominator -or $numerator -le 0 -or $denominator -le 0) { return $null }
+    return [pscustomobject]@{ Raw = $Value; Numerator = $numerator; Denominator = $denominator;
+        Value = ([double]$numerator / $denominator) }
+}
+
+function New-ProbeResult {
+    [pscustomobject]@{ SchemaVersion = 1; Succeeded = $false; Stage = 'Json'; FailureKind = $null; Reason = $null;
+        InputPath = $null; ResolvedInputPath = $null; Native = $null; Streams = @(); RealVideoIndices = @();
+        PrimaryVideoIndex = $null; PrimaryVideo = $null; FormatName = $null;
+        DurationSeconds = $null; DurationState = 'Unknown'; DurationSource = $null; ProgressMode = 'Indeterminate';
+        GeometryState = 'MetadataOnly'; DisplayGeometry = $null; Warnings = @(); Limitations = @() }
+}
+
+function ConvertFrom-ProbeJson([string]$Json) {
+    $result = New-ProbeResult
+    $kind = 'InvalidJson'
+    try {
+        # PS5.1 can unwrap a one-object root array. The root must be an object.
+        if (-not $Json.TrimStart().StartsWith('{')) { throw 'Probe JSON root must be an object.' }
+        $document = ConvertFrom-Json -InputObject $Json -ErrorAction Stop
+        $kind = 'InvalidStructure'
+        $rawStreams = Get-ProbeProperty $document 'streams'
+        if ($rawStreams -isnot [array]) { throw 'Probe streams must be an array.' }
+        $format = Get-ProbeProperty $document 'format'
+        if ($null -ne $format -and $format -isnot [Management.Automation.PSCustomObject]) {
+            throw 'Probe format must be an object when present.'
+        }
+        $result.FormatName = ConvertTo-ProbeString (Get-ProbeProperty $format 'format_name')
+        if ($result.FormatName -and @($result.FormatName -split ',' | Where-Object { $_ -in @('hls','dash','concat') }).Count) {
+            $kind = 'UnsupportedFormat'
+            throw 'Playlist/manifest demuxers are not supported video inputs.'
+        }
+        $streams = New-Object 'Collections.Generic.List[object]'
+        $indices = New-Object 'Collections.Generic.HashSet[int]'
+        foreach ($raw in $rawStreams) {
+            $kind = 'InvalidStructure'
+            if ($raw -isnot [Management.Automation.PSCustomObject]) { throw 'Each probe stream must be an object.' }
+            $index = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'index')
+            $type = ConvertTo-ProbeString (Get-ProbeProperty $raw 'codec_type')
+            if ($null -eq $index -or -not $indices.Add($index) -or $null -eq $type) {
+                throw 'Every stream needs a unique nonnegative integer index and codec type.'
+            }
+            $flags = Get-ProbeProperty $raw 'disposition'
+            if ($null -ne $flags -and $flags -isnot [Management.Automation.PSCustomObject]) {
+                throw "Stream $index disposition must be an object."
+            }
+            $disposition = @{}
+            if ($null -ne $flags) {
+                foreach ($flag in $flags.PSObject.Properties) {
+                    $value = ConvertTo-ProbeInteger $flag.Value
+                    if ($null -eq $value -or $value -notin @(0,1)) { throw "Stream $index has invalid disposition '$($flag.Name)'." }
+                    $disposition[$flag.Name] = $value
+                }
+            }
+            $attached = $disposition.ContainsKey('attached_pic') -and $disposition['attached_pic'] -eq 1
+            $codec = ConvertTo-ProbeString (Get-ProbeProperty $raw 'codec_name')
+            $width = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'width')
+            $height = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'height')
+            if ($type -eq 'video' -and -not $attached -and
+                ($null -eq $codec -or $null -eq $width -or $width -le 0 -or $null -eq $height -or $height -le 0)) {
+                $kind = 'InvalidVideo'
+                throw "Real video stream $index needs a codec and positive coded width/height."
+            }
+            $tags = Get-ProbeProperty $raw 'tags'
+            $rotation = $null; $rotationSource = $null; $matrix = $null
+            $sideData = Get-ProbeProperty $raw 'side_data_list'
+            if ($null -ne $sideData -and $sideData -isnot [array]) { throw "Stream $index side_data_list must be an array." }
+            foreach ($side in @($sideData)) {
+                if ((Get-ProbeProperty $side 'side_data_type') -eq 'Display Matrix') {
+                    $rotation = ConvertTo-ProbeNumber (Get-ProbeProperty $side 'rotation')
+                    $matrix = ConvertTo-ProbeString (Get-ProbeProperty $side 'displaymatrix')
+                    if ($null -ne $rotation) { $rotationSource = 'DisplayMatrix' }
+                    break
+                }
+            }
+            if ($null -eq $rotation) {
+                $rotation = ConvertTo-ProbeNumber (Get-ProbeProperty $tags 'rotate')
+                if ($null -ne $rotation) { $rotationSource = 'Tag' }
+            }
+            $sar = ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'sample_aspect_ratio') ':'
+            $dar = ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'display_aspect_ratio') ':'
+            $durationValue = Get-ProbeProperty $raw 'duration'
+            $duration = ConvertTo-ProbeNumber $durationValue
+            if ($null -ne $duration -and $duration -le 0) { $duration = $null }
+            $channels = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'channels')
+            $sampleRate = ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'sample_rate')
+            if ($null -ne $channels -and $channels -le 0) { $channels = $null }
+            if ($null -ne $sampleRate -and $sampleRate -le 0) { $sampleRate = $null }
+            $streams.Add([pscustomobject]@{
+                Index = $index; CodecType = $type; CodecName = $codec;
+                Disposition = [pscustomobject]@{ Default = ($disposition.ContainsKey('default') -and $disposition['default'] -eq 1);
+                    AttachedPicture = $attached; Flags = $disposition };
+                Width = $width; Height = $height; SampleAspectRatio = $(if ($null -ne $sar) { $sar.Raw } else { $null });
+                DisplayAspectRatio = $(if ($null -ne $dar) { $dar.Raw } else { $null });
+                RotationDegrees = $rotation; RotationSource = $rotationSource; DisplayMatrix = $matrix;
+                PixelFormat = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'pix_fmt'));
+                ColourPrimaries = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_primaries'));
+                ColourTransfer = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_transfer'));
+                ColourMatrix = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_space'));
+                ColourRange = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_range'));
+                AverageFrameRate = (ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'avg_frame_rate'));
+                RealFrameRate = (ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'r_frame_rate'));
+                TimeBase = (ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'time_base'));
+                Channels = $channels; SampleRate = $sampleRate;
+                ChannelLayout = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'channel_layout'));
+                Language = (ConvertTo-ProbeString (Get-ProbeProperty $tags 'language'));
+                DurationSeconds = $duration; DurationRaw = $durationValue
+            })
+        }
+        $result.Streams = @($streams.ToArray() | Sort-Object Index)
+        $videos = @($result.Streams | Where-Object { $_.CodecType -eq 'video' -and -not $_.Disposition.AttachedPicture })
+        $result.RealVideoIndices = @($videos | ForEach-Object { $_.Index })
+        if ($videos.Count -eq 0) { $kind = 'NoRealVideo'; throw 'Probe found no real video stream (attached artwork is excluded).' }
+        $result.PrimaryVideo = $videos[0]
+        $result.PrimaryVideoIndex = $videos[0].Index
+        $formatDurationRaw = Get-ProbeProperty $format 'duration'
+        $formatDuration = ConvertTo-ProbeNumber $formatDurationRaw
+        if ($null -ne $formatDuration -and $formatDuration -gt 0) {
+            $result.DurationSeconds = $formatDuration; $result.DurationSource = 'Format'
+        } elseif ($null -ne $videos[0].DurationSeconds) {
+            $result.DurationSeconds = $videos[0].DurationSeconds; $result.DurationSource = 'VideoStream'
+        }
+        if ($null -ne $result.DurationSeconds) {
+            $result.DurationState = 'Known'; $result.ProgressMode = 'DurationAvailable'
+        } else {
+            $rawDurations = @($formatDurationRaw,$videos[0].DurationRaw)
+            if (@($rawDurations | Where-Object { $null -ne $_ -and $_ -ne '' -and $_ -ne 'N/A' }).Count) { $result.DurationState = 'Invalid' }
+            $result.Warnings += 'Source duration is unknown; progress is indeterminate; duration comparison is unavailable for validation.'
+            $result.Limitations += 'Source/output duration comparison is unavailable without a known source duration.'
+        }
+        $result.Limitations += 'Display geometry transforms and explicit encoder stream mapping remain later tasks.'
+        $result.Succeeded = $true; $result.Stage = 'Ready'
+    } catch {
+        $result.FailureKind = $kind; $result.Reason = $_.Exception.Message
+        $result.Stage = $(if ($kind -eq 'InvalidJson') { 'Json' } else { 'Validation' })
+    }
+    return $result
+}
+
+function Get-MediaInspection([string]$FFprobe, [string]$InputPath,
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    $result = New-ProbeResult
+    $result.InputPath = $InputPath
+    try {
+        $source = Get-Item -LiteralPath $InputPath -Force -ErrorAction Stop
+        if ($source.PSProvider.Name -ne 'FileSystem' -or $source.PSIsContainer -or $source.Extension -notin $VideoExts) {
+            throw 'The probe input must be an existing supported local/UNC video file.'
+        }
+        $result.ResolvedInputPath = $source.FullName
+    } catch {
+        $result.Stage = 'Source'; $result.FailureKind = 'InvalidSource'; $result.Reason = $_.Exception.Message
+        return $result
+    }
+    $native = Invoke-EnvironmentCall $FFprobe @('-v','error','-protocol_whitelist','file',
+        '-show_streams','-show_format','-of','json','-i',$source.FullName) $TimeoutMilliseconds -ReturnFailure -Utf8Output
+    if (-not $native.Succeeded) {
+        $result.Stage = 'Probe'; $result.Native = $native; $result.Reason = $native.Error
+        $result.FailureKind = $(if ($native.TimedOut) { 'Timeout' } elseif ($null -eq $native.ExitCode) { 'NativeStart' } else { 'NativeExit' })
+        return $result
+    }
+    $result = ConvertFrom-ProbeJson $native.StdOut
+    $result.InputPath = $InputPath; $result.ResolvedInputPath = $source.FullName; $result.Native = $native
+    return $result
 }
 
 function Next-CompressedPath([string]$targetPath) {
@@ -830,7 +1044,15 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             throw 'Output path must differ from the input path.'
         }
 
-        $h = Get-VideoHeight $ffprobe $inPath
+        $inspection = Get-MediaInspection $ffprobe $inPath
+        if ($null -ne $inspection.Native -and $inspection.Native.StdErr) {
+            Write-Host ("Probe diagnostics: " + $inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
+        }
+        if (-not $inspection.Succeeded) {
+            throw "Probe failed [$($inspection.FailureKind)] at $($inspection.Stage): $($inspection.Reason)"
+        }
+        foreach ($warning in $inspection.Warnings) { Write-Host $warning -ForegroundColor Yellow }
+        $h = $inspection.PrimaryVideo.Height
 
         $args = @(
             '-hide_banner',

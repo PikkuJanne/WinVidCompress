@@ -98,7 +98,11 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         $script:Height = 1080
         $script:EncoderExit = 0
         $script:Counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0 }
-        Mock Get-VideoHeight { $script:Height }
+        Mock Get-MediaInspection {
+            [pscustomobject]@{ Succeeded = ($null -ne $script:Height); Native = $null; Warnings = @();
+                PrimaryVideo = [pscustomobject]@{ Height = $script:Height }; FailureKind = 'InvalidVideo';
+                Stage = 'Validation'; Reason = 'Missing coded video height.' }
+        }
         Mock Write-Host {}
         $script:Recorder = {
             $script:RecordedArguments = @($args)
@@ -135,11 +139,12 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         $script:RecordedArguments | Should -Not -Contain '-vf'
     }
 
-    It 'continues when probe height is unavailable' {
+    It 'refuses compression when required probe height is unavailable [WVC-M2-01]' {
         $script:Height = $null
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
-        $script:RecordedArguments | Should -Not -Contain '-vf'
-        $script:Counters.Done | Should -Be 1
+        $script:RecordedArguments | Should -BeNullOrEmpty
+        $script:Counters.Done | Should -Be 0
+        $script:Counters.Failed | Should -Be 1
     }
 
     It 'records an encoder failure instead of counting Done' {

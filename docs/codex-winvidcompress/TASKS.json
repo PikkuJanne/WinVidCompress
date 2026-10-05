@@ -750,7 +750,7 @@
       "title": "Expand FFprobe into normalized JSON media inspection",
       "milestone": "M2",
       "priority": "P0",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         7
       ],
