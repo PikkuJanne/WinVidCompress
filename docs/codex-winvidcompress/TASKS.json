@@ -908,7 +908,7 @@
       "title": "Isolate command construction and native process execution",
       "milestone": "M2",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         2,
         8,
@@ -937,35 +937,52 @@
           "id": "WVC-M2-03-A01",
           "description": "Default encoder tokens and exact input/output/metadata token values have unit assertions.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-03.md",
+            "evidence/WVC-M2-03.json"
+          ]
         },
         {
           "id": "WVC-M2-03-A02",
           "description": "Native argument round trips preserve supported filenames and metadata on both target shells.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-03.md",
+            "evidence/WVC-M2-03.json"
+          ]
         },
         {
           "id": "WVC-M2-03-A03",
           "description": "Large stderr output cannot deadlock the process; nonzero exit is always recognized.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-03.md",
+            "evidence/WVC-M2-03.json"
+          ]
         },
         {
           "id": "WVC-M2-03-A04",
           "description": "The adapter returns a structured process result and does not evaluate source paths as shell code.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-03.md",
+            "evidence/WVC-M2-03.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "c2e714589afc8bcc910ae9ea8e6aad0fc5ace218"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-03.md",
+        "evidence/WVC-M2-03.json"
+      ],
+      "notes": "Verified A01-A04 on clean c2e7145, both actual Windows PS5.1.26100.9444/PS7.6.5: Focused 122/0/2/0, Quick 305/0/2/0, Targeted 321/0/6/0, ManualArgv 3/0/0/0, all exit0. Six pure tokens/ten native process/one queue abort cases added; A02 explicit agent-executed manual native argv inspection has three exact token/source-hash PASS cases per host and no owner visual approval requirement. No new Explorer/media/Full/milestone/release claim. Both streams drain/live-display; native stderr is diagnostics, nonzero always recognized; closed stdin/-nostdin; CRT quoting; bounded explicit tails/truncation; no total encoder deadline; direct owned termination/guarded resource disposal; cleanup failure stops next job. Minimal existing recorder seam/index changes. M2-02 A01/A03 remain skipped without FFmpeg/FFprobe. Transaction/validation/progress/full cancellation remain later; exact next WVC-M2-04."
     },
     {
       "id": "WVC-M2-04",
