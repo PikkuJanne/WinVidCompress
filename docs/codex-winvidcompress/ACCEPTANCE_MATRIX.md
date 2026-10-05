@@ -7,7 +7,7 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | ENTRY | Double-click menu/Quit; single/file-folder/multi-drop; unattended exit | Windows Explorer + both shells | NOT RUN |
 | ARGV | Spaces, !, ordinary %, !NAME!, &, (), apostrophes, [], Unicode; %PATH% through menu/direct PS1 under D005; long selection limits | Native recorder + actual Windows launch | NOT RUN |
 | CONFIG | Missing, malformed, wrong-shaped JSON; file-vs-dir; offline drive; failed save | Pester + filesystem fault injection | PASSED for [M1-03](evidence/WVC-M1-03.md); actual disconnected-share/crash durability untested |
-| SCAN | Zero/one/many files; inaccessible subtree; invalid explicit input; reparse cycle | Pester + disposable filesystem | PASSED A01-A03 for [M1-04](evidence/WVC-M1-04.md); A04 human Windows path observation pending |
+| SCAN | Zero/one/many files; inaccessible subtree; invalid explicit input; reparse cycle | Pester + disposable filesystem | PASSED A01-A04 for [M1-04](evidence/WVC-M1-04.md); tested localhost UNC/local paths only, broader SMB/media limits recorded |
 | QUEUE | Overlap, duplicates, same input/output root, nested destination, originals named compressed | Queue tests + integration | NOT RUN |
 | TOOLS | PATH/adjacent selection, invalid executable, missing encoder, timeout | Mocks + installed-tool check | NOT RUN |
 | PROBE | Corrupt input, audio-only, attached pictures, missing duration, malformed probe JSON | Fixture JSON + synthetic files | NOT RUN |

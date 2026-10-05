@@ -1,4 +1,6 @@
-# WVC-M1-04 session â€” 2026-10-05
+# WVC-M1-04 session - 2026-10-05
+
+Original handoff below is historical; see the completion follow-up at the end for current state.
 
 Request: WVC-M1-04 next. Single writer at D:/projects/WinVidCompress-main; assistant subagent reviewed read-only and performed no edits, tests, Git writes or UI actions.
 
@@ -17,3 +19,13 @@ Pushed tested45e0145 with explicit feature refspec. Read-only live sync at2026-1
 Handoff updates TASKS/acceptance, STATUS, NEXT_SESSION, scan matrix and evidence. M1-04 implemented/A01-A03 passed/A04 pending; six tasks verified, one implemented,25 todo;27 criteria passed,101 not_run. Final handoff commit/push/live sync remains pending here and must be reported externally. No merge/default-branch push/release/tag/settings/secrets/deployment or compression-quality action occurred.
 
 Exact next: finish WVC-M1-04-A04 human path observation; next coding task WVC-M1-05. Keep pending manual and media/milestone gates explicit.
+
+## Completion follow-up - 2026-10-05
+
+Owner report: "Again path check seemingly pass, but these are very difficult for human testing". After clean preflight, fetch and live equality at4d21be7, inspected both real manual reports. They record PASS, Automated=false,4/4 matches and the original committed805e450 application hash. Tentative owner wording is retained; A04 passes for the tested local/localhost-UNC/long-path discovery boundary. M1-04 is verified, seven tasks verified/25 todo,28 criteria passed/100 not_run. No additional human check requested.
+
+Commit5c786f9fbf75fd12dde32519f04129e6dd1a877f changes only the manual helper presentation and guidance: concise rows, character sample, technical checks automatic, detailed reports saved, UNSURE remains incomplete. Both hosts helper quick parse/analyzer/encoding3 passed; targeted automatic path4 passed; a scripted UNSURE case on each returned expected2 and HumanObservation=NotRun. Scripted reports are labelled and cannot replace original actual human evidence. Existing application/regression files match clean45e0145, so prior broad results retained.
+
+Both owner reports copied to ignored original archive with SHA equality (29 raw files total). Follow-up synthetic reports archived separately. Original and follow-up roots removed through PS7 Remove-WvcTestRoot after no matching process and ownership/temp containment/reparse checks. Raw paths/logs remain local.
+
+Pushed helper checkpoint; read-only clean live local/fetch/push equality at2026-10-05T16:22:21.436206+00:00 matched5c786f9. PR7 remains open draft; zero helper-head CI/status/workflow checks/runs. Completion evidence/status/next/session and PR description are updated. Final documentation commit/push equality is reported externally after commit; no self-SHA loop. Exact next: WVC-M1-05. No M1-04 blocker or new owner approval required; broader milestone/release gates remain.

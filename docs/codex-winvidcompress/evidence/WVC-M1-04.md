@@ -1,6 +1,6 @@
 # WVC-M1-04 discovery evidence
 
-Recorded 2026-10-05. **Implemented; A01-A03 passed. A04 human Windows observation is pending.** No milestone/release acceptance.
+Recorded 2026-10-05. **Verified; A01-A04 passed.** No milestone/release acceptance.
 
 Implementation: `805e4500bbc8c727e70ba799c9e12218d937736d`. Clean required-test checkpoint: `45e014538d8174f63e70fdae7256017a423e992e` (same application/test bytes; tracker-formatting correction only). Base: fetched main `23f6fdd870b2649a3630a3d618c1c57d2fac1912`, which includes owner-merged PR6 and has the prior feature's identical tree.
 
@@ -34,7 +34,7 @@ Quick executes all three formerly KnownDefect enumeration cases normally, with n
 | A01 strict zero/one/many and mixed extensions | Passed | Both-host focused/Quick/Targeted and promoted characterizations |
 | A02 missing/unreadable and unsuccessful-scan records | Passed | Real ACL/read-sharing denial, partial/nonterminating listing faults, missing inputs and caller summary |
 | A03 reparse loop/broad-scan protection | Passed for stable-filesystem policy | Real loop/outside junctions, explicit links/ancestor selection and repeated-directory guard |
-| A04 Windows UNC/non-ASCII/long paths | NotRun: human observation pending | Both-host automated Windows path checks passed; prepared Explorer check remains available |
+| A04 Windows UNC/non-ASCII/long paths | Passed, bounded to tested cases | Owner-reported prepared check and both real PASS reports; source/hash/cases verified |
 
 ## Windows path observations and manual limitation
 
@@ -49,16 +49,18 @@ A clean805e450 application copy was verified against committed805e450 and45e0145
 
 No share, policy, elevation or dependency setup was performed. Localhost UNC does not prove remote/offline SMB behavior; discovery checks do not prove FFmpeg long-path support, video validity or playback. The preparation helper records HEAD as an anchor while copying working-tree bytes; future dirty preparations need tree/hash evidence.
 
-The owner was asked to launch the prepared Check-Discovery.bat in Explorer, inspect displayed paths/characters/counts, and enter PASS/FAIL on both hosts. No manual reports had arrived at this record. Keep A04 not_run until actual observation is confirmed. Exact local root is retained in ignored metadata; recreate with `pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-DiscoveryManualFixture.ps1` if needed.
+The owner reported on2026-10-05: "Again path check seemingly pass, but these are very difficult for human testing". This tentative wording is preserved. Both actual manual-Desktop/Core reports contain Automated=false, HumanObservation=Passed and4/4 matching source/hash cases, with the committed805e450 application hash. The paired reports and owner statement close A04 for the observed cases; no broader platform claim is implied. Native exit codes were not recorded in these human reports.
+
+Feedback-only commit5c786f9fbf75fd12dde32519f04129e6dd1a877f simplifies future manual presentation: four friendly PASS/FAIL rows, a character sample and one human observation question. Counts/hashes remain automatic; detailed JSON is saved without being displayed. UNSURE records NotRun/exit2. Both hosts passed helper parse/analyzer/encoding (3 checks) and automatic path checks (4 cases); scripted UNSURE tests preserved incompleteness with expected exit2. These scripted follow-up reports are not actual human acceptance. Application/discovery tests remain byte-identical to the clean45e0145 broad gates; no broad rerun or human repeat was requested. Future manual-check guidance is recorded in TESTING.md.
 
 ## Diagnostics, Git and continuation
 
 Uncommitted initial regressions failed17/17 because Get-InputScan did not exist. The first implementation draft passed16/failed1 because the partial-result mock emitted a shadowed local variable; script-scoped fixture correction then passed17,20 and47 in successive drafts. These draft runs are retained diagnostics, not clean acceptance evidence.
 
-Twenty-seven raw report/log/fixture files were copied to ignored `.test-results/m104-45e0145` with SHA256 equality. Pester fixtures cleaned normally after ACL/junction restoration. The synthetic manual root remains for the human check; automated workers completed and no interactive fixture console was launched by the agent. No private raw artifacts were pushed.
+Twenty-nine raw report/log/fixture files (including both actual manual reports) were copied to ignored `.test-results/m104-45e0145` with SHA256 equality. Pester fixtures cleaned normally after ACL/junction restoration. The original and follow-up owned synthetic roots were removed after no matching process and verified ownership/temp containment/reparse checks. Follow-up reports remain locally under ignored .test-results/m104-completion. No private raw artifacts were pushed.
 
-Feature `codex/wvc-m1-04-discovery`, upstream `origin/codex/wvc-m1-04-discovery`; sole effective fetch/push endpoint is PikkuJanne/WinVidCompress on github.com. Clean45e0145 live local/fetch/push equality was verified at2026-10-05T15:58:10.580196+00:00. Final documentation sync is pending commit/push and reported externally without a self-SHA loop.
+Feature `codex/wvc-m1-04-discovery`, upstream `origin/codex/wvc-m1-04-discovery`; sole effective fetch/push endpoint is PikkuJanne/WinVidCompress on github.com. Clean helper5c786f9 live local/fetch/push equality was verified at2026-10-05T16:22:21.436206+00:00; the earlier45e0145 test checkpoint remains historical. Final documentation sync is pending commit/push and reported externally without a self-SHA loop.
 
-[Draft PR7](https://github.com/PikkuJanne/WinVidCompress/pull/7) is open. Tested45e0145 has zero check runs, zero combined-status checks and zero workflow runs; the empty combined status is pending, not a CI pass. No implementation blocker remains; A04 human observation and broader acceptance are pending.
+[Draft PR7](https://github.com/PikkuJanne/WinVidCompress/pull/7) is open. Tested helper5c786f9 has zero check runs, zero combined-status checks and zero workflow runs; the empty combined status is pending, not a CI pass. No M1-04 task blocker remains; broader milestone/release/media acceptance is pending.
 
-Exact next: finish WVC-M1-04-A04 observation; next bounded coding task **WVC-M1-05 â€” Freeze and deduplicate the full batch before encoding**. Its implementation dependency may use demonstrated M1-04 behavior while manual/milestone acceptance remains explicit.
+Exact next: **WVC-M1-05 - Freeze and deduplicate the full batch before encoding**. M1-04 is verified; broader milestone/release acceptance remains explicit.

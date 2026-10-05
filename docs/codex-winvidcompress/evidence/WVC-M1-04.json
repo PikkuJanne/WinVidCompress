@@ -8,10 +8,11 @@
     "WVC-M1-04-A03",
     "WVC-M1-04-A04"
   ],
-  "recorded_at": "2026-10-05T16:00:17.506703+00:00",
+  "recorded_at": "2026-10-05T16:24:39.450969+00:00",
   "tested_commits": [
     "805e4500bbc8c727e70ba799c9e12218d937736d",
-    "45e014538d8174f63e70fdae7256017a423e992e"
+    "45e014538d8174f63e70fdae7256017a423e992e",
+    "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
   ],
   "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
   "branch": "codex/wvc-m1-04-discovery",
@@ -31,7 +32,8 @@
     "tests/unit/*Discovery* focused regressions and isolated Windows manual check",
     "tests/WinVidCompress.Characterization.Tests.ps1 promoted three repaired enumeration regressions",
     "tests/README.md and configuration/discovery specification",
-    "task/evidence/status/next/session handoff"
+    "task/evidence/status/next/session handoff",
+    "Owner feedback: compact manual-helper presentation, UNSURE incomplete outcome, human-check guidance"
   ],
   "runs": [
     {
@@ -405,27 +407,115 @@
   "manual_checks": [
     {
       "acceptance_id": "WVC-M1-04-A04",
-      "status": "not_run",
-      "required": "Actual owner Explorer launch, path/Unicode observation on both hosts.",
-      "prepared_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-DiscoveryManualFixture.ps1",
-      "launch": "Check-Discovery.bat inside the owned fixture; exact local root retained in ignored metadata.",
-      "observed_manual_report_count": 0
+      "status": "passed",
+      "observer": "repository owner",
+      "owner_statement": "Again path check seemingly pass, but these are very difficult for human testing",
+      "statement_date": "2026-10-05",
+      "powershell": "5.1.26100.9444",
+      "edition": "Desktop",
+      "source_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "automated": false,
+      "human_observation": "Passed",
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "exit_code": null,
+      "local_artifact": ".test-results/m104-45e0145/manual-Desktop.json",
+      "report_sha256": "c4f63770f20d3792d22e0edfa27dd5a005130b289fc98a17266d3a36e62fd042",
+      "source_copy_verified_against_commit": true
+    },
+    {
+      "acceptance_id": "WVC-M1-04-A04",
+      "status": "passed",
+      "observer": "repository owner",
+      "owner_statement": "Again path check seemingly pass, but these are very difficult for human testing",
+      "statement_date": "2026-10-05",
+      "powershell": "7.6.5",
+      "edition": "Core",
+      "source_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "automated": false,
+      "human_observation": "Passed",
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "exit_code": null,
+      "local_artifact": ".test-results/m104-45e0145/manual-Core.json",
+      "report_sha256": "477f79e39f8f3c418e5b68f816ef889fc7f669e93fb932dfece1b747cced46f4",
+      "source_copy_verified_against_commit": true
     }
   ],
   "criterion_results": {
     "WVC-M1-04-A01": "passed",
     "WVC-M1-04-A02": "passed",
     "WVC-M1-04-A03": "passed",
-    "WVC-M1-04-A04": "not_run"
+    "WVC-M1-04-A04": "passed"
   },
   "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
   "artifact_handling": {
-    "archived_files": 27,
+    "archived_files": 29,
     "copy_hash_equality": true,
     "root": ".test-results/m104-45e0145",
     "private_raw_artifacts_uploaded": false,
-    "manual_fixture_retained": true,
-    "reason": "Human path acceptance pending; automated workers completed, no interactive fixture console launched by the agent."
+    "manual_fixture_retained": false,
+    "reason": "Both real owner reports archived with hash equality. Original and follow-up synthetic roots removed after no matching process, ownership/temp containment/reparse checks.",
+    "followup_root": ".test-results/m104-completion",
+    "followup_reports_are_scripted": true
   },
   "sanitized_artifacts": [
     "evidence/WVC-M1-04.md",
@@ -434,7 +524,7 @@
   ],
   "owner_approval": null,
   "ci": {
-    "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+    "tested_commit": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
     "check_runs": 0,
     "combined_status_count": 0,
     "combined_status_state": "pending",
@@ -445,26 +535,115 @@
     "url": "https://github.com/PikkuJanne/WinVidCompress/pull/7",
     "state": "OPEN",
     "draft": true,
-    "head": "45e014538d8174f63e70fdae7256017a423e992e"
+    "head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
   },
   "previous_verified_sync": {
-    "checked_at": "2026-10-05T15:58:10.580196+00:00",
-    "head": "45e014538d8174f63e70fdae7256017a423e992e",
-    "live_fetch_head": "45e014538d8174f63e70fdae7256017a423e992e",
-    "live_push_head": "45e014538d8174f63e70fdae7256017a423e992e",
+    "checked_at": "2026-10-05T16:22:21.436206+00:00",
+    "head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "live_fetch_head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "live_push_head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
     "dirty": false,
     "status": "SYNCHRONIZED"
   },
   "final_handoff_push": "pending; verify externally after final documentation commit",
   "limitations": [
-    "A04 actual human Explorer observation is pending; preparation and automated Windows checks are not manual acceptance.",
     "UNC coverage is the existing localhost administrative share only; actual remote/offline SMB is untested.",
     "Directory selections are 97,208,310,109 characters; corresponding complete file paths are 116,227,329,128 characters. No FFmpeg/Explorer long-path support beyond the observed discovery test is claimed.",
     "FFmpeg/FFprobe are unavailable; four media fixtures per Targeted run are skipped. Structural/media integrity and playback are not established.",
     "No Full/Manual tier rerun for this bounded task; Quick now executes all three repaired enumeration regressions. Milestone/release/manual gates remain.",
     "Reparse checking and subsequent listing/open are separate path operations; concurrent filesystem replacement is outside the stable-filesystem policy.",
     "Full batch freezing/deduplication, hard-link identity and aggregate process exit semantics remain later task scope.",
-    "Manual kit records HEAD as an anchor while copying working-tree bytes. For this clean preparation, application SHA256 was verified against committed805e450 and45e0145; future dirty preparations require separate tree evidence."
+    "Manual kit records HEAD as an anchor while copying working-tree bytes. For this clean preparation, application SHA256 was verified against committed805e450 and45e0145; future dirty preparations require separate tree evidence.",
+    "Owner wording remains tentative. Both real reports agree; manual report format has no observed native exit code. Follow-up scripted UNSURE runs are developer helper checks, not human acceptance; the simplified presentation does not require a human repeat."
   ],
-  "next_task": "Finish WVC-M1-04-A04 human observation; next bounded coding task WVC-M1-05."
+  "next_task": "WVC-M1-05 - Freeze and deduplicate the full batch before encoding",
+  "owner_observation": {
+    "date": "2026-10-05",
+    "statement": "Again path check seemingly pass, but these are very difficult for human testing",
+    "tentative_wording_preserved": true,
+    "bounded_manual_acceptance": true,
+    "formal_milestone_approval": false
+  },
+  "cleanup": [
+    {
+      "Id": "original-manual-kit",
+      "State": "Removed",
+      "Reason": "No matching process; ownership/temp containment/reparse checks passed",
+      "MatchedProcessCount": 0
+    },
+    {
+      "Id": "helper-smoke-kit",
+      "State": "Removed",
+      "Reason": "No matching process; ownership/temp containment/reparse checks passed",
+      "MatchedProcessCount": 0
+    }
+  ],
+  "helper_followup": {
+    "tested_commit": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "application_unchanged": true,
+    "human_repeat_requested": false,
+    "interactive_presentation_human_retest": "not_run",
+    "automated_source": "fresh owned synthetic fixture copied from clean5c786f9",
+    "preparation_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-DiscoveryManualFixture.ps1",
+    "checks": [
+      {
+        "host": "5.1.26100.9444",
+        "quick": {
+          "Passed": 3,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "quick_command": "powershell -NoProfile -ExecutionPolicy Bypass -File .test-results/m104-completion/check-helper.ps1 -ReportPath (Join-Path (Get-Location) '.test-results/m104-completion/static-powershell.json')",
+        "quick_exit_code": 0,
+        "quick_artifact": ".test-results/m104-completion/static-powershell.json",
+        "targeted": {
+          "Passed": 4,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "targeted_command": "& powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata -Automated",
+        "targeted_exit_code": 0,
+        "targeted_artifact": ".test-results/m104-completion/automated-Desktop.json",
+        "fixture_variable": "$taskMetadata = Join-Path (Get-Content -Raw -Encoding UTF8 .test-results/m104-completion/fixture.json | ConvertFrom-Json).Owner.Path 'discovery-fixture.json'",
+        "scripted_uncertainty_command": "@('UNSURE','') | & powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata",
+        "scripted_uncertainty_exit_code": 2,
+        "scripted_uncertainty_expected_exit_code": 2,
+        "scripted_uncertainty_case_passed": true,
+        "scripted_human_observation": "NotRun",
+        "scripted_report_is_manual_acceptance": false,
+        "scripted_uncertainty_artifact": ".test-results/m104-completion/manual-Desktop.json"
+      },
+      {
+        "host": "7.6.5",
+        "quick": {
+          "Passed": 3,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "quick_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .test-results/m104-completion/check-helper.ps1 -ReportPath (Join-Path (Get-Location) '.test-results/m104-completion/static-pwsh.json')",
+        "quick_exit_code": 0,
+        "quick_artifact": ".test-results/m104-completion/static-pwsh.json",
+        "targeted": {
+          "Passed": 4,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "targeted_command": "& pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata -Automated",
+        "targeted_exit_code": 0,
+        "targeted_artifact": ".test-results/m104-completion/automated-Core.json",
+        "fixture_variable": "$taskMetadata = Join-Path (Get-Content -Raw -Encoding UTF8 .test-results/m104-completion/fixture.json | ConvertFrom-Json).Owner.Path 'discovery-fixture.json'",
+        "scripted_uncertainty_command": "@('UNSURE','') | & pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata",
+        "scripted_uncertainty_exit_code": 2,
+        "scripted_uncertainty_expected_exit_code": 2,
+        "scripted_uncertainty_case_passed": true,
+        "scripted_human_observation": "NotRun",
+        "scripted_report_is_manual_acceptance": false,
+        "scripted_uncertainty_artifact": ".test-results/m104-completion/manual-Core.json"
+      }
+    ]
+  }
 }

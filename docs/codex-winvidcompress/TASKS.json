@@ -509,7 +509,7 @@
       "title": "Normalize file discovery and expose scan failures",
       "milestone": "M1",
       "priority": "P0",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         4
       ],
@@ -567,24 +567,25 @@
           "id": "WVC-M1-04-A04",
           "description": "UNC, non-ASCII and longer paths are tested on Windows and limitations recorded.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M1-04.md",
             "evidence/WVC-M1-04.json"
           ],
-          "notes": "Automated Unicode/localhost UNC/208 and310 character-directory checks passed on both Windows hosts; actual human Explorer observation remains pending."
+          "notes": "Owner reported the prepared path check seemingly passed on2026-10-05; tentative wording preserved. Both real manual Desktop/Core reports record PASS, all4 cases match, source805e450/application hash verified. Localhost UNC/discovery-only limits remain; no repeat human check."
         }
       ],
       "approval_gate": null,
       "implementation_commits": [
-        "805e4500bbc8c727e70ba799c9e12218d937736d"
+        "805e4500bbc8c727e70ba799c9e12218d937736d",
+        "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
       ],
       "evidence": [
         "evidence/WVC-M1-04.md",
         "evidence/WVC-M1-04.json",
         "evidence/WVC-M1-04-session.md"
       ],
-      "notes": "Implemented; A01-A03 passed, A04 actual human Windows/Explorer observation pending. Clean45e0145 both hosts Focused47/0/0/0, Quick178/0/0/0, Targeted192/0/4/0 exit0. Four media skips lack native tools. Copied committed805e450 byte/hash verified; automated Unicode/local UNC/long checks passed4 each. DraftPR7, zero CI checks/runs. Preserve synthetic manual fixture pending human check; no milestone/release acceptance. Next bounded coding task WVC-M1-05."
+      "notes": "Verified; A01-A04 passed. Owner reported 'Again path check seemingly pass, but these are very difficult for human testing'; both saved real reports agree. Existing clean45e0145 broad gates retained: Focused47/0/0/0, Quick178/0/0/0, Targeted192/0/4/0 each host exit0; four media skips lack native tools. Feedback-only helper5c786f9: parse/analyzer/encoding3, automatic paths4 and scripted UNSURE remains NotRun/exit2 on both hosts. App code unchanged; no human repeat requested. Manual reports archived, both owned roots cleaned after process/ownership/containment/reparse checks. DraftPR7, zero CI checks/runs. Next WVC-M1-05; no milestone/release acceptance."
     },
     {
       "id": "WVC-M1-05",
