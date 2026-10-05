@@ -125,12 +125,6 @@ try {
     Set-Content -LiteralPath $sourceTwo -Value 'synthetic second source sentinel'
     $sourceHash = (Get-FileHash -LiteralPath $source).Hash
     $sourceHashTwo = (Get-FileHash -LiteralPath $sourceTwo).Hash
-    $expectedOutput = Join-Path $outputRoot 'Band Name 29092025.mp4'
-    $expectedOutputTwo = Join-Path $outputRoot 'Other Band 29092025.mp4'
-    [pscustomobject]@{ OutputDir = $outputRoot } | ConvertTo-Json |
-        Set-Content -LiteralPath (Join-Path $configDir 'config.json') -Encoding UTF8
-    $configPath = Join-Path $configDir 'config.json'
-    $configHash = (Get-FileHash -LiteralPath $configPath).Hash
 
     $recorderCode = @'
 using System;
@@ -178,6 +172,20 @@ public static class WvcEntryRecorder {
             continue
         }
         try {
+            # Published sentinels persist. Give every entry route its own output
+            # and preferences instead of deleting a prior case's final files.
+            $outputRoot = Join-Path $fixtureRoot ('output-' + $definition.Id)
+            [void][IO.Directory]::CreateDirectory($outputRoot)
+            $expectedOutput = Join-Path $outputRoot 'Band Name 29092025.mp4'
+            $expectedOutputTwo = Join-Path $outputRoot 'Other Band 29092025.mp4'
+            $caseAppData = Join-Path $fixtureRoot ('appdata-' + $definition.Id)
+            $appData = $caseAppData
+            $configDir = Join-Path $appData 'WinVidCompress'
+            [void][IO.Directory]::CreateDirectory($configDir)
+            $configPath = Join-Path $configDir 'config.json'
+            [pscustomobject]@{ OutputDir = $outputRoot } | ConvertTo-Json |
+                Set-Content -LiteralPath $configPath -Encoding UTF8
+            $configHash = (Get-FileHash -LiteralPath $configPath).Hash
             $observation = Invoke-SmokeProcess $definition.Executable $definition.Arguments $definition.Mode
             $case = New-WvcTestCase $definition.Id 'Passed'
             $case | Add-Member NoteProperty NativeArguments $observation.NativeArguments
