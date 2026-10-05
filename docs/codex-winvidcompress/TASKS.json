@@ -509,7 +509,7 @@
       "title": "Normalize file discovery and expose scan failures",
       "milestone": "M1",
       "priority": "P0",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         4
       ],
@@ -534,35 +534,58 @@
           "id": "WVC-M1-04-A01",
           "description": "Empty directory, one file, many files and mixed supported/unsupported extensions work under strict mode.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-04.md",
+            "evidence/WVC-M1-04.json"
+          ],
+          "notes": "Clean45e0145 focused/Quick/Targeted both hosts passed; exact commands and real ACL/read-sharing/junction/partial-scan evidence recorded."
         },
         {
           "id": "WVC-M1-04-A02",
           "description": "Unreadable or missing requested inputs produce explicit records and do not count as successful scans.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-04.md",
+            "evidence/WVC-M1-04.json"
+          ],
+          "notes": "Clean45e0145 focused/Quick/Targeted both hosts passed; exact commands and real ACL/read-sharing/junction/partial-scan evidence recorded."
         },
         {
           "id": "WVC-M1-04-A03",
           "description": "Reparse points cannot cause recursive loops or accidental broad scans.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-04.md",
+            "evidence/WVC-M1-04.json"
+          ],
+          "notes": "Clean45e0145 focused/Quick/Targeted both hosts passed; exact commands and real ACL/read-sharing/junction/partial-scan evidence recorded."
         },
         {
           "id": "WVC-M1-04-A04",
           "description": "UNC, non-ASCII and longer paths are tested on Windows and limitations recorded.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M1-04.md",
+            "evidence/WVC-M1-04.json"
+          ],
+          "notes": "Owner reported the prepared path check seemingly passed on2026-10-05; tentative wording preserved. Both real manual Desktop/Core reports record PASS, all4 cases match, source805e450/application hash verified. Localhost UNC/discovery-only limits remain; no repeat human check."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "805e4500bbc8c727e70ba799c9e12218d937736d",
+        "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-04.md",
+        "evidence/WVC-M1-04.json",
+        "evidence/WVC-M1-04-session.md"
+      ],
+      "notes": "Verified; A01-A04 passed. Owner reported 'Again path check seemingly pass, but these are very difficult for human testing'; both saved real reports agree. Existing clean45e0145 broad gates retained: Focused47/0/0/0, Quick178/0/0/0, Targeted192/0/4/0 each host exit0; four media skips lack native tools. Feedback-only helper5c786f9: parse/analyzer/encoding3, automatic paths4 and scripted UNSURE remains NotRun/exit2 on both hosts. App code unchanged; no human repeat requested. Manual reports archived, both owned roots cleaned after process/ownership/containment/reparse checks. DraftPR7, zero CI checks/runs. Next WVC-M1-05; no milestone/release acceptance."
     },
     {
       "id": "WVC-M1-05",

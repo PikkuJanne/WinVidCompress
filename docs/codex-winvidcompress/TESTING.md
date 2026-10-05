@@ -21,6 +21,10 @@ Full includes current KnownDefect regressions and reports remaining coverage; Ma
 
 Typical scope budgets are quick about 2 minutes and targeted about 10 minutes on the active workstation; these are planning targets, not promised execution times. Do not rerun long unrelated suites after every doc-only edit. If a failure is deterministic, isolate it, add/fix the relevant regression, rerun that scope, then run the next required gate. Never skip a relevant safety check to meet a budget.
 
+## Human check design
+
+The owner reported on 2026-10-05 that the path check seemingly passed but was difficult to judge. Keep future manual checks to one launch action and a short observable question. The harness should display clear PASS/FAIL rows and save detailed diagnostics itself. Automate file counts, hashes, exact argument/path comparisons and host/version checks; do not ask the owner to compare JSON, long temporary paths or logs. Ask the owner only about observations the harness cannot establish, such as an actual Explorer launch, readable text, real cancellation or playback. Provide an UNSURE outcome that remains incomplete rather than forcing a guess. Preserve tentative owner wording in evidence and combine it with recorded results; do not demand a repeat of an already evidenced passing check merely to validate simpler instructions.
+
 ## Isolation
 
 Inject or temporarily override application config/output roots inside an isolated test process. Never touch real APPDATA, Videos, external archives or production configuration. Use fixture-local sentinel files and compare hashes to prove no-clobber behaviour. Create synthetic fixtures at test runtime; no copyrighted/private interviews or FFmpeg binaries in Git. Clean only the fixture directory created by the test, with containment checks.

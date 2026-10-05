@@ -1,0 +1,649 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M1-04",
+  "acceptance_ids": [
+    "WVC-M1-04-A01",
+    "WVC-M1-04-A02",
+    "WVC-M1-04-A03",
+    "WVC-M1-04-A04"
+  ],
+  "recorded_at": "2026-10-05T16:24:39.450969+00:00",
+  "tested_commits": [
+    "805e4500bbc8c727e70ba799c9e12218d937736d",
+    "45e014538d8174f63e70fdae7256017a423e992e",
+    "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
+  ],
+  "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+  "branch": "codex/wvc-m1-04-discovery",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "WinVidCompress.ps1 discovery/helpers and Process-Paths scan records/summary",
+    "tests/unit/*Discovery* focused regressions and isolated Windows manual check",
+    "tests/WinVidCompress.Characterization.Tests.ps1 promoted three repaired enumeration regressions",
+    "tests/README.md and configuration/discovery specification",
+    "task/evidence/status/next/session handoff",
+    "Owner feedback: compact manual-helper presentation, UNSURE incomplete outcome, human-check guidance"
+  ],
+  "runs": [
+    {
+      "name": "focused51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-focused51-45e0145.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -TestPath 'tests/unit/Discovery.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='focused51';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 47,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-focused51-45e0145.json"
+    },
+    {
+      "name": "focused7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-focused7-45e0145.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -TestPath 'tests/unit/Discovery.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='focused7';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "host": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 47,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-focused7-45e0145.json"
+    },
+    {
+      "name": "quick51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-quick51-45e0145.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='quick51';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 178,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-quick51-45e0145.json"
+    },
+    {
+      "name": "targeted51",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-targeted51-45e0145.json'; $taskOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='targeted51';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 192,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-targeted51-45e0145.json"
+    },
+    {
+      "name": "quick7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-quick7-45e0145.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='quick7';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 178,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-quick7-45e0145.json"
+    },
+    {
+      "name": "targeted7",
+      "command": "$taskReport = Join-Path $env:TEMP 'wvc-m104-targeted7-45e0145.json'; $taskOutput = & pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath $taskReport; $taskExit = $LASTEXITCODE; [IO.File]::WriteAllText(($taskReport + '.stdout.log'), ($taskOutput -join \"`r`n\")); $taskData = Get-Content -LiteralPath $taskReport -Raw -Encoding UTF8 | ConvertFrom-Json; [pscustomobject]@{Name='targeted7';ExitCode=$taskExit;Counts=$taskData.Counts;Failed=@($taskData.Cases | Where-Object Status -eq 'Failed')} | ConvertTo-Json -Depth 6; exit $taskExit",
+      "tested_commit": "45e014538d8174f63e70fdae7256017a423e992e",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "host": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 192,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_case_ids": [],
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-targeted7-45e0145.json"
+    }
+  ],
+  "automated_windows_path_checks": [
+    {
+      "name": "windows-path-Desktop",
+      "command": "$taskFixture = Join-Path $env:TEMP 'wvc-tests-a2e5ecc6930a40fe9da3969903195f8b/discovery-fixture.json'; & powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskFixture -Automated",
+      "tested_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "copied_application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "source_copy_verified_against_commit": true,
+      "powershell": "5.1.26100.9444",
+      "exit_code": 0,
+      "automated": true,
+      "human_observation": "not_run",
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "local_artifact": ".test-results/m104-45e0145/automated-Desktop.json"
+    },
+    {
+      "name": "windows-path-Core",
+      "command": "$taskFixture = Join-Path $env:TEMP 'wvc-tests-a2e5ecc6930a40fe9da3969903195f8b/discovery-fixture.json'; & pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskFixture -Automated",
+      "tested_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "copied_application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "source_copy_verified_against_commit": true,
+      "powershell": "7.6.5",
+      "exit_code": 0,
+      "automated": true,
+      "human_observation": "not_run",
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "local_artifact": ".test-results/m104-45e0145/automated-Core.json"
+    }
+  ],
+  "precommit_diagnostic_runs": [
+    {
+      "name": "red51",
+      "counts": {
+        "Passed": 0,
+        "Failed": 17,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "powershell": "5.1.26100.9444",
+      "tested_tree_dirty": true,
+      "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+      "acceptance_evidence": false,
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-red51.json"
+    },
+    {
+      "name": "green51-1",
+      "counts": {
+        "Passed": 16,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "powershell": "5.1.26100.9444",
+      "tested_tree_dirty": true,
+      "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+      "acceptance_evidence": false,
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-green51-1.json"
+    },
+    {
+      "name": "green51-2",
+      "counts": {
+        "Passed": 17,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "powershell": "5.1.26100.9444",
+      "tested_tree_dirty": true,
+      "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+      "acceptance_evidence": false,
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-green51-2.json"
+    },
+    {
+      "name": "green51-3",
+      "counts": {
+        "Passed": 20,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "powershell": "5.1.26100.9444",
+      "tested_tree_dirty": true,
+      "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+      "acceptance_evidence": false,
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-green51-3.json"
+    },
+    {
+      "name": "precommit7",
+      "counts": {
+        "Passed": 47,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "powershell": "7.6.5",
+      "tested_tree_dirty": true,
+      "base_commit": "23f6fdd870b2649a3630a3d618c1c57d2fac1912",
+      "acceptance_evidence": false,
+      "local_artifact": ".test-results/m104-45e0145/wvc-m104-precommit7.json"
+    }
+  ],
+  "diagnostic_notes": "Initial uncommitted regressions failed17/17 because Get-InputScan was absent. First draft passed16/failed1: Pester mock referenced a shadowed local item, so the partial-result fixture emitted no file; changed to script-scoped PartialItem. Subsequent focused drafts passed17,20,47. These are retained diagnostics, not committed acceptance evidence.",
+  "manual_checks": [
+    {
+      "acceptance_id": "WVC-M1-04-A04",
+      "status": "passed",
+      "observer": "repository owner",
+      "owner_statement": "Again path check seemingly pass, but these are very difficult for human testing",
+      "statement_date": "2026-10-05",
+      "powershell": "5.1.26100.9444",
+      "edition": "Desktop",
+      "source_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "automated": false,
+      "human_observation": "Passed",
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "exit_code": null,
+      "local_artifact": ".test-results/m104-45e0145/manual-Desktop.json",
+      "report_sha256": "c4f63770f20d3792d22e0edfa27dd5a005130b289fc98a17266d3a36e62fd042",
+      "source_copy_verified_against_commit": true
+    },
+    {
+      "acceptance_id": "WVC-M1-04-A04",
+      "status": "passed",
+      "observer": "repository owner",
+      "owner_statement": "Again path check seemingly pass, but these are very difficult for human testing",
+      "statement_date": "2026-10-05",
+      "powershell": "7.6.5",
+      "edition": "Core",
+      "source_commit": "805e4500bbc8c727e70ba799c9e12218d937736d",
+      "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+      "automated": false,
+      "human_observation": "Passed",
+      "cases": [
+        {
+          "Id": "unicode-local",
+          "PathLength": 97,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-below-260",
+          "PathLength": 208,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "long-above-260",
+          "PathLength": 310,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        },
+        {
+          "Id": "unicode-unc-localhost",
+          "PathLength": 109,
+          "Matched": true,
+          "Found": 1,
+          "ErrorKinds": []
+        }
+      ],
+      "exit_code": null,
+      "local_artifact": ".test-results/m104-45e0145/manual-Core.json",
+      "report_sha256": "477f79e39f8f3c418e5b68f816ef889fc7f669e93fb932dfece1b747cced46f4",
+      "source_copy_verified_against_commit": true
+    }
+  ],
+  "criterion_results": {
+    "WVC-M1-04-A01": "passed",
+    "WVC-M1-04-A02": "passed",
+    "WVC-M1-04-A03": "passed",
+    "WVC-M1-04-A04": "passed"
+  },
+  "application_sha256": "2248e0b4db90b1659f4c7fbe70b3ef5292a26586aaf47053fbfa9c1912f10ab7",
+  "artifact_handling": {
+    "archived_files": 29,
+    "copy_hash_equality": true,
+    "root": ".test-results/m104-45e0145",
+    "private_raw_artifacts_uploaded": false,
+    "manual_fixture_retained": false,
+    "reason": "Both real owner reports archived with hash equality. Original and follow-up synthetic roots removed after no matching process, ownership/temp containment/reparse checks.",
+    "followup_root": ".test-results/m104-completion",
+    "followup_reports_are_scripted": true
+  },
+  "sanitized_artifacts": [
+    "evidence/WVC-M1-04.md",
+    "evidence/WVC-M1-04.json",
+    "evidence/WVC-M1-04-session.md"
+  ],
+  "owner_approval": null,
+  "ci": {
+    "tested_commit": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "check_runs": 0,
+    "combined_status_count": 0,
+    "combined_status_state": "pending",
+    "workflow_runs": 0,
+    "ci_pass_claimed": false
+  },
+  "pull_request": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/7",
+    "state": "OPEN",
+    "draft": true,
+    "head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f"
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-05T16:22:21.436206+00:00",
+    "head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "live_fetch_head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "live_push_head": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after final documentation commit",
+  "limitations": [
+    "UNC coverage is the existing localhost administrative share only; actual remote/offline SMB is untested.",
+    "Directory selections are 97,208,310,109 characters; corresponding complete file paths are 116,227,329,128 characters. No FFmpeg/Explorer long-path support beyond the observed discovery test is claimed.",
+    "FFmpeg/FFprobe are unavailable; four media fixtures per Targeted run are skipped. Structural/media integrity and playback are not established.",
+    "No Full/Manual tier rerun for this bounded task; Quick now executes all three repaired enumeration regressions. Milestone/release/manual gates remain.",
+    "Reparse checking and subsequent listing/open are separate path operations; concurrent filesystem replacement is outside the stable-filesystem policy.",
+    "Full batch freezing/deduplication, hard-link identity and aggregate process exit semantics remain later task scope.",
+    "Manual kit records HEAD as an anchor while copying working-tree bytes. For this clean preparation, application SHA256 was verified against committed805e450 and45e0145; future dirty preparations require separate tree evidence.",
+    "Owner wording remains tentative. Both real reports agree; manual report format has no observed native exit code. Follow-up scripted UNSURE runs are developer helper checks, not human acceptance; the simplified presentation does not require a human repeat."
+  ],
+  "next_task": "WVC-M1-05 - Freeze and deduplicate the full batch before encoding",
+  "owner_observation": {
+    "date": "2026-10-05",
+    "statement": "Again path check seemingly pass, but these are very difficult for human testing",
+    "tentative_wording_preserved": true,
+    "bounded_manual_acceptance": true,
+    "formal_milestone_approval": false
+  },
+  "cleanup": [
+    {
+      "Id": "original-manual-kit",
+      "State": "Removed",
+      "Reason": "No matching process; ownership/temp containment/reparse checks passed",
+      "MatchedProcessCount": 0
+    },
+    {
+      "Id": "helper-smoke-kit",
+      "State": "Removed",
+      "Reason": "No matching process; ownership/temp containment/reparse checks passed",
+      "MatchedProcessCount": 0
+    }
+  ],
+  "helper_followup": {
+    "tested_commit": "5c786f9fbf75fd12dde32519f04129e6dd1a877f",
+    "application_unchanged": true,
+    "human_repeat_requested": false,
+    "interactive_presentation_human_retest": "not_run",
+    "automated_source": "fresh owned synthetic fixture copied from clean5c786f9",
+    "preparation_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/New-DiscoveryManualFixture.ps1",
+    "checks": [
+      {
+        "host": "5.1.26100.9444",
+        "quick": {
+          "Passed": 3,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "quick_command": "powershell -NoProfile -ExecutionPolicy Bypass -File .test-results/m104-completion/check-helper.ps1 -ReportPath (Join-Path (Get-Location) '.test-results/m104-completion/static-powershell.json')",
+        "quick_exit_code": 0,
+        "quick_artifact": ".test-results/m104-completion/static-powershell.json",
+        "targeted": {
+          "Passed": 4,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "targeted_command": "& powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata -Automated",
+        "targeted_exit_code": 0,
+        "targeted_artifact": ".test-results/m104-completion/automated-Desktop.json",
+        "fixture_variable": "$taskMetadata = Join-Path (Get-Content -Raw -Encoding UTF8 .test-results/m104-completion/fixture.json | ConvertFrom-Json).Owner.Path 'discovery-fixture.json'",
+        "scripted_uncertainty_command": "@('UNSURE','') | & powershell -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata",
+        "scripted_uncertainty_exit_code": 2,
+        "scripted_uncertainty_expected_exit_code": 2,
+        "scripted_uncertainty_case_passed": true,
+        "scripted_human_observation": "NotRun",
+        "scripted_report_is_manual_acceptance": false,
+        "scripted_uncertainty_artifact": ".test-results/m104-completion/manual-Desktop.json"
+      },
+      {
+        "host": "7.6.5",
+        "quick": {
+          "Passed": 3,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "quick_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .test-results/m104-completion/check-helper.ps1 -ReportPath (Join-Path (Get-Location) '.test-results/m104-completion/static-pwsh.json')",
+        "quick_exit_code": 0,
+        "quick_artifact": ".test-results/m104-completion/static-pwsh.json",
+        "targeted": {
+          "Passed": 4,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "targeted_command": "& pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata -Automated",
+        "targeted_exit_code": 0,
+        "targeted_artifact": ".test-results/m104-completion/automated-Core.json",
+        "fixture_variable": "$taskMetadata = Join-Path (Get-Content -Raw -Encoding UTF8 .test-results/m104-completion/fixture.json | ConvertFrom-Json).Owner.Path 'discovery-fixture.json'",
+        "scripted_uncertainty_command": "@('UNSURE','') | & pwsh -NoProfile -ExecutionPolicy Bypass -File tests/unit/Invoke-DiscoveryPathCheck.ps1 -Fixture $taskMetadata",
+        "scripted_uncertainty_exit_code": 2,
+        "scripted_uncertainty_expected_exit_code": 2,
+        "scripted_uncertainty_case_passed": true,
+        "scripted_human_observation": "NotRun",
+        "scripted_report_is_manual_acceptance": false,
+        "scripted_uncertainty_artifact": ".test-results/m104-completion/manual-Core.json"
+      }
+    ]
+  }
+}

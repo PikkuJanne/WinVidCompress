@@ -463,18 +463,106 @@ function Next-CompressedPath([string]$targetPath) {
     }
 }
 
-function Collect-InputFiles([string]$p) {
-    if (-not (Test-Path -LiteralPath $p)) { return @() }
+function Get-InputReparsePoint([string]$p) {
+    # Inspect ancestors too: a normal child beneath a junction still crosses it.
+    $item = Get-Item -LiteralPath $p -Force -ErrorAction Stop
+    while ($null -ne $item) {
+        if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { return $item.FullName }
+        $parent = if ($item -is [IO.FileInfo]) { $item.Directory } else { $item.Parent }
+        if ($null -eq $parent) { break }
+        $item = Get-Item -LiteralPath $parent.FullName -Force -ErrorAction Stop
+    }
+    return $null
+}
 
-    if (Test-Path -LiteralPath $p -PathType Leaf) {
-        return ,(Resolve-Path -LiteralPath $p).Path
+function Get-InputScan([string]$p) {
+    $files = New-Object 'Collections.Generic.List[string]'
+    $errors = New-Object 'Collections.Generic.List[object]'
+    $normalized = $null
+    $pending = New-Object 'Collections.Generic.Stack[string]'
+    $visited = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    try {
+        if ([string]::IsNullOrWhiteSpace($p)) { throw 'Input path is blank.' }
+        $resolved = Resolve-Path -LiteralPath $p -ErrorAction Stop
+        if ($resolved.Provider.Name -ne 'FileSystem') { throw 'Only filesystem inputs are supported.' }
+        $root = Get-Item -LiteralPath $resolved.ProviderPath -Force -ErrorAction Stop
+        if ($root -isnot [IO.FileInfo] -and $root -isnot [IO.DirectoryInfo]) {
+            throw 'Input is not a filesystem file or directory.'
+        }
+        $normalized = $root.FullName
+        $pending.Push($normalized)
+    } catch {
+        $errors.Add([pscustomobject]@{ Path = $p; Kind = 'InvalidInput'; Message = $_.Exception.Message })
     }
 
-    # Folder: recursive
-    $files = Get-ChildItem -LiteralPath $p -Recurse -File -ErrorAction SilentlyContinue |
-        Where-Object { $VideoExts -contains $_.Extension.ToLower() }
+    while ($pending.Count) {
+        $current = $pending.Pop()
+        try {
+            $reparse = Get-InputReparsePoint $current
+            if ($reparse) {
+                $errors.Add([pscustomobject]@{ Path = $current; Kind = 'ReparsePointSkipped';
+                    Message = "Reparse points are not scanned: $reparse" })
+                continue
+            }
+            $item = Get-Item -LiteralPath $current -Force -ErrorAction Stop
+        } catch {
+            $errors.Add([pscustomobject]@{ Path = $current; Kind = 'InputReadFailed'; Message = $_.Exception.Message })
+            continue
+        }
+        if ($item -is [IO.DirectoryInfo]) {
+            if (-not $visited.Add($item.FullName)) {
+                $errors.Add([pscustomobject]@{ Path = $current; Kind = 'RepeatedDirectory';
+                    Message = 'Directory was already scanned; repeated traversal refused.' })
+                continue
+            }
+            $enumerationErrors = @()
+            try {
+                # Capture nonterminating provider errors while retaining readable siblings.
+                # No -Recurse: every child is checked before any descent or read-open.
+                $children = @(Get-ChildItem -LiteralPath $current -ErrorAction SilentlyContinue -ErrorVariable enumerationErrors)
+            } catch {
+                $errors.Add([pscustomobject]@{ Path = $current; Kind = 'DirectoryReadFailed'; Message = $_.Exception.Message })
+                continue
+            }
+            foreach ($failure in $enumerationErrors) {
+                $failedPath = if ($failure.TargetObject -is [string] -and $failure.TargetObject) {
+                    $failure.TargetObject
+                } else { $current }
+                $errors.Add([pscustomobject]@{ Path = $failedPath; Kind = 'DirectoryReadFailed'; Message = $failure.Exception.Message })
+            }
+            foreach ($child in $children) {
+                if ($child.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                    $errors.Add([pscustomobject]@{ Path = $child.FullName; Kind = 'ReparsePointSkipped';
+                        Message = 'Reparse points are not scanned.' })
+                } elseif ($child -is [IO.DirectoryInfo] -or
+                    ($child -is [IO.FileInfo] -and $VideoExts -contains $child.Extension)) {
+                    $pending.Push($child.FullName)
+                }
+            }
+        } elseif ($item -is [IO.FileInfo]) {
+            if ($VideoExts -notcontains $item.Extension) {
+                $errors.Add([pscustomobject]@{ Path = $current; Kind = 'UnsupportedExtension';
+                    Message = "Unsupported input extension: $($item.Extension)" })
+                continue
+            }
+            try {
+                # Access preflight only, not media validation. Never read or modify bytes.
+                $stream = [IO.File]::Open($item.FullName, [IO.FileMode]::Open, [IO.FileAccess]::Read,
+                    ([IO.FileShare]::ReadWrite -bor [IO.FileShare]::Delete))
+                $stream.Dispose()
+                $files.Add($item.FullName)
+            } catch {
+                $errors.Add([pscustomobject]@{ Path = $current; Kind = 'FileReadFailed'; Message = $_.Exception.Message })
+            }
+        }
+    }
+    return [pscustomobject]@{ InputPath = $p; NormalizedPath = $normalized;
+        Files = $files.ToArray(); Errors = $errors.ToArray(); Succeeded = ($errors.Count -eq 0) }
+}
 
-    return $files.FullName
+function Collect-InputFiles([string]$p) {
+    # Compatibility file stream. Callers needing diagnostics use Get-InputScan.
+    return (Get-InputScan $p).Files
 }
 
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
@@ -556,12 +644,18 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 }
 
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
-    $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0 }
+    $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0; Scanned = 0; ScanErrors = 0 }
 
     foreach ($p in $paths) {
-        $targets = Collect-InputFiles $p
-        if (-not $targets -or $targets.Count -eq 0) {
-            Write-Host "No videos found: $p" -ForegroundColor Yellow
+        $scan = Get-InputScan $p
+        $targets = @($scan.Files)
+        if ($scan.Succeeded) { $counters.Scanned++ }
+        $counters.ScanErrors += $scan.Errors.Count
+        foreach ($failure in $scan.Errors) {
+            Write-Host ("Scan error [{0}]: {1}`n    {2}" -f $failure.Kind,$failure.Path,$failure.Message) -ForegroundColor Yellow
+        }
+        if ($targets.Count -eq 0) {
+            if ($scan.Succeeded) { Write-Host "No videos found: $p" -ForegroundColor Yellow }
             continue
         }
 
@@ -577,6 +671,8 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     Write-Host ("Done:    {0}" -f $counters.Done)
     Write-Host ("Skipped: {0}" -f $counters.Skipped)
     Write-Host ("Failed:  {0}" -f $counters.Failed)
+    Write-Host ("Scanned: {0}" -f $counters.Scanned)
+    Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
 }
 
 # --- TUI ---
