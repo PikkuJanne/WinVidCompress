@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-06",
+  "acceptance_ids": [
+    "WVC-M3-06-A01",
+    "WVC-M3-06-A02",
+    "WVC-M3-06-A03",
+    "WVC-M3-06-A04"
+  ],
+  "recorded_at": "2026-10-06T16:26:13.971728+00:00",
+  "tested_commits": [
+    "cc1e2a2f9e74d82d48142635783f18cdd38ca7d4",
+    "015f9872906448692f4e75c6a0d5a0719e130c99"
+  ],
+  "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2; 64-bit",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_tools": [
+      {
+        "Name": "ffmpeg",
+        "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "SHA256": "B6CC0D3390AE4969166895EE94657134A1DE0C7790FA24AC0B4E315B8A667F83"
+      },
+      {
+        "Name": "ffprobe",
+        "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+        "SHA256": "AA14BEA18D5B7E3834ADADE04C818BDF321E15A1FAD1B99D29AD13181C975D1D"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "name": "focused51-initial",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused51-initial.json *> .test-results/m306/focused51-initial.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 7,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m306/focused51-initial.json",
+      "report_sha256": "c5de3323ee5225fb2bbebe32f2dc9cc5dcfa59dd637c312ab744cae6d112f632"
+    },
+    {
+      "name": "focused7-initial",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused7-initial.json *> .test-results/m306/focused7-initial.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 12,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m306/focused7-initial.json",
+      "report_sha256": "8e598856528a7674b123f44dccec3845026c7ef07da757a5381a70993568e026",
+      "notes": "12/1: test-scope CollisionMode assignment failed to select skip and native fixtures waited; stopped only those verified fixture-owned process identities, corrected test scope and added fixture watchdog. No application cancellation assertion was weakened."
+    },
+    {
+      "name": "focused51-revised",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused51-revised.json *> .test-results/m306/focused51-revised.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 13,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m306/focused51-revised.json",
+      "report_sha256": "a590d7b4518276ebc30522022d676488397a65dc7da5bb5d307915d9839d7cdb",
+      "notes": "13/1: real FFmpeg acknowledged q and exited0, but a task-state-based graceful-success flag was too strong. Replaced it with honest ExitedDuringGrace inference; installed-FFmpeg test separately requires actual q acknowledgement."
+    },
+    {
+      "name": "focused51-final",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused51-final.json *> .test-results/m306/focused51-final.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 13,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m306/focused51-final.json",
+      "report_sha256": "a590d7b4518276ebc30522022d676488397a65dc7da5bb5d307915d9839d7cdb",
+      "notes": "13/1: real FFmpeg acknowledged q and exited0, but a task-state-based graceful-success flag was too strong. Replaced it with honest ExitedDuringGrace inference; installed-FFmpeg test separately requires actual q acknowledgement."
+    },
+    {
+      "name": "focused51-debug",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused51-debug.json *> .test-results/m306/focused51-debug.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 13,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m306/focused51-debug.json",
+      "report_sha256": "a590d7b4518276ebc30522022d676488397a65dc7da5bb5d307915d9839d7cdb",
+      "notes": "13/1: real FFmpeg acknowledged q and exited0, but a task-state-based graceful-success flag was too strong. Replaced it with honest ExitedDuringGrace inference; installed-FFmpeg test separately requires actual q acknowledgement."
+    },
+    {
+      "name": "focused51-pass",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused51-pass.json *> .test-results/m306/focused51-pass.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 14,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m306/focused51-pass.json",
+      "report_sha256": "48f2e09164b6cbc779a855e43a476d70a0f11450646c3a4e9efc2062e887e7c6"
+    },
+    {
+      "name": "focused7-final",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -TestPath tests/integration/Cancel.Tests.ps1 -ReportPath .test-results/m306/focused7-final.json *> .test-results/m306/focused7-final.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 16,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m306/focused7-final.json",
+      "report_sha256": "354309dd94ecbbbc84cd5c27a0c9a1e7c89d413d01fd618114d6f551b98c2b4b"
+    },
+    {
+      "name": "quick51-tree",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -ReportPath .test-results/m306/quick51-tree.json *> .test-results/m306/quick51-tree.log",
+      "tested_commit": "5c9bcf96490fde3e542135c691360b9de1766906",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 720,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m306/quick51-tree.json",
+      "report_sha256": "a9026959fd80c929955ef0af61087b85dd8c0c7ae44bfec2ed98f45e381c05e6",
+      "notes": "Intermediate working tree; final setup-boundary change and sixteenth case followed. Final clean Full covers all Quick and Targeted components; this intermediate report is not the final exact-source gate."
+    },
+    {
+      "name": "full-both",
+      "tier": "Full",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot \"$env:TEMP/wvc-m0-02-dev-modules\" -ReportPath .test-results/m306/full-both.json *> .test-results/m306/full-both.log",
+      "tested_commit": "cc1e2a2f9e74d82d48142635783f18cdd38ca7d4",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 1458,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "exit_code": 2,
+      "status": "Incomplete",
+      "report": ".test-results/m306/full-both.json",
+      "report_sha256": "f6dd22ce99e0a3f27bd607f1de62e454179c7b91fa096b53a951e7d2f3e49828",
+      "notes": "Exact clean implementation; 717 Pester passed per actual host, 24 shared static/entry/fixture checks passed. Full includes Quick and Targeted components. Exit2/Incomplete solely reflects eight historical manual/future NotRun rows; zero failed/skipped."
+    },
+    {
+      "name": "helper-static",
+      "tier": "Targeted/static",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m306/helper-static.ps1 *> .test-results/m306/helper-static.log",
+      "tested_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 6,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m306/helper-static.json",
+      "report_sha256": "b94c52a89e9be38b74c6f5d3ae1de2f64a296226c6fe89b8fa776a0ed7fb8500",
+      "command_script": "$ErrorActionPreference='Stop'\n. ./tests/TestSupport.ps1\nImport-Module \"$env:TEMP/wvc-m0-02-dev-modules/PSScriptAnalyzer/1.24.0/PSScriptAnalyzer.psd1\"\n$cases=@()\nforeach ($file in @('tests/integration/New-CancelManualFixture.ps1','tests/integration/Test-CancelManualResult.ps1')) {\n    $tokens=$null; $errors=$null\n    [void][Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD $file),[ref]$tokens,[ref]$errors)\n    $cases+=New-WvcTestCase ($file+'/parse') $(if ($errors.Count) {'Failed'} else {'Passed'})\n    $diagnostics=@(Invoke-ScriptAnalyzer -Path $file -Settings ./PSScriptAnalyzerSettings.psd1)\n    $cases+=New-WvcTestCase ($file+'/analyzer') $(if ($diagnostics.Count) {'Failed'} else {'Passed'})\n    $bytes=[IO.File]::ReadAllBytes((Join-Path $PWD $file))\n    $cases+=New-WvcTestCase ($file+'/ASCII') $(if (@($bytes | Where-Object {$_ -gt 127}).Count) {'Failed'} else {'Passed'})\n}\n$summary=Get-WvcTierSummary Quick $cases\n$report=[pscustomobject]@{SchemaVersion=1;SourceCommit=(& git rev-parse HEAD | Out-String).Trim();\n    Dirty=[bool]@(& git status --porcelain=v1 --untracked-files=all).Count;\n    PowerShell=$PSVersionTable.PSVersion.ToString();Status=$summary.Status;ExitCode=$summary.ExitCode;\n    Counts=$summary.Counts;Cases=$cases;ApplicationSHA256=(Get-FileHash -LiteralPath ./WinVidCompress.ps1).Hash}\nWrite-WvcTestJson .test-results/m306/helper-static.json $report\nexit $summary.ExitCode\n"
+    }
+  ],
+  "focused_cancellation_cases_at_clean_implementation": {
+    "WindowsPowerShell": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "not_run": 0
+    },
+    "PowerShell7": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "not_run": 0
+    }
+  },
+  "manual_checks": [
+    {
+      "route": "PS51",
+      "status": "not_run",
+      "observation": null,
+      "prepared_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+      "notes": "Clean exact application copies; synthetic responder/encoder, isolated source/output/APPDATA roots. Preparation/static/scripted cancellation is not physical Ctrl+C evidence."
+    },
+    {
+      "route": "PS7",
+      "status": "not_run",
+      "observation": null,
+      "prepared_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+      "notes": "Clean exact application copies; synthetic responder/encoder, isolated source/output/APPDATA roots. Preparation/static/scripted cancellation is not physical Ctrl+C evidence."
+    },
+    {
+      "route": "BAT-unattended",
+      "status": "not_run",
+      "observation": null,
+      "prepared_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+      "notes": "Clean exact application copies; synthetic responder/encoder, isolated source/output/APPDATA roots. Preparation/static/scripted cancellation is not physical Ctrl+C evidence."
+    },
+    {
+      "route": "BAT-menu",
+      "status": "not_run",
+      "observation": null,
+      "prepared_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+      "notes": "Clean exact application copies; synthetic responder/encoder, isolated source/output/APPDATA roots. Preparation/static/scripted cancellation is not physical Ctrl+C evidence."
+    },
+    {
+      "route": "BAT-drop",
+      "status": "not_run",
+      "observation": null,
+      "prepared_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+      "application_sha256": "1629646f11c4f7d5c10b3b4bafed43fc80ebdf4d0214ab84ff1ad305c3d7c1cb",
+      "notes": "Clean exact application copies; synthetic responder/encoder, isolated source/output/APPDATA roots. Preparation/static/scripted cancellation is not physical Ctrl+C evidence."
+    }
+  ],
+  "manual_preparation_command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/New-CancelManualFixture.ps1 -ReportPath .test-results/m306/manual-final.json *> .test-results/m306/manual-final.log",
+  "manual_preparation_exit_code": 0,
+  "manual_preparation_tree_dirty": false,
+  "full_not_run_rows": [
+    {
+      "id": "coverage/future-media-cli-safety-packaging",
+      "reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+    },
+    {
+      "id": "manual/explorer-file-folder-multi-drop",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/explorer-menu-quit",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/explorer-special-character-argv",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/playback-sdr-hdr-audio",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/real-ctrl-c-and-console-close",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/representative-benchmarks",
+      "reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "id": "manual/unc-long-paths",
+      "reason": "Actual manual acceptance outstanding."
+    }
+  ],
+  "sanitized_artifacts": [
+    "tests/integration/Cancel.Tests.ps1",
+    "tests/integration/New-CancelManualFixture.ps1",
+    "tests/integration/Test-CancelManualResult.ps1"
+  ],
+  "local_only_artifacts": [
+    ".test-results/m306/*.json",
+    ".test-results/m306/*.log",
+    "Owned synthetic media/native recorders/physical check roots outside Git; no user media used."
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T16:23:27.858415+00:00",
+    "head": "015f9872906448692f4e75c6a0d5a0719e130c99",
+    "branch": "codex/wvc-m3-06-cancellation",
+    "upstream": "origin/codex/wvc-m3-06-cancellation",
+    "dirty": false,
+    "live_fetch_head": "015f9872906448692f4e75c6a0d5a0719e130c99",
+    "live_push_head": "015f9872906448692f4e75c6a0d5a0719e130c99",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "pr": {
+    "headRefOid": "015f9872906448692f4e75c6a0d5a0719e130c99",
+    "isDraft": true,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/22"
+  },
+  "ci": {
+    "checked_commit": "015f9872906448692f4e75c6a0d5a0719e130c99",
+    "check_runs": {
+      "checks": [],
+      "total_count": 0
+    },
+    "workflow_runs": {
+      "runs": [],
+      "total_count": 0
+    },
+    "pass_claimed": false
+  },
+  "scope_expansion": "Minimal Process-Paths lifetime wrapper, two existing argv expectations changed from nostdin to stdin, private log projections, README/specs and owned native/manual helper files. No entry-point/BAT/quality change/new application runtime.",
+  "limitations": [
+    "A01 physical Ctrl+C in five Windows routes remains not_run; observer request has no result and no observation artifacts.",
+    "Full exits2 with eight manual/future NotRun rows; no milestone/release acceptance.",
+    "Ctrl+Break, console close, hard crash, power loss and forced host/pipeline interruption can leave partial reports/unverified leftovers.",
+    "Only directly owned process is terminated; detached descendants of arbitrary replacement executables are not tracked.",
+    "Grace up to1500ms, owned termination wait2000ms, post-exit pipe drain10000ms; probe/filesystem work can delay key observation.",
+    "ExitedDuringGrace means exit after quit attempt without forced stop, not a q acknowledgement; native tests separately check installed FFmpeg acknowledgement.",
+    "Log quota/size/write warnings retain prior warning-only policy; logs can be incomplete.",
+    "Structural/native fixtures do not prove full visual/audio integrity; M3-04 playback A04 and M2-06 Explorer A04 remain pending.",
+    "No CI checks/runs/pass on inspected helper commit; final handoff refs/CI checked externally after push."
+  ],
+  "next_task": "WVC-M3-07 - Add validated batch retry/resume with a versioned manifest"
+}
