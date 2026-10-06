@@ -35,7 +35,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
 
-The tier runner bounds the complete Pester subprocess at 120 seconds; individual native fixture deadlines remain separate. M2-02's additional owned native compilers exposed the former 60-second whole-suite deadline in one PS7 Targeted run. A timeout still fails the gate and retains owned diagnostics; the allowance does not turn an incomplete suite into a pass.
+The tier runner bounds the complete Pester subprocess at 180 seconds; individual native fixture deadlines remain separate. M2-02 increased the former 60-second whole-suite deadline to 120 seconds after one PS7 Targeted timeout. M2-06 increased it to 180 seconds after the expanded native exit suite timed out at 120 seconds on PS7. A timeout still fails the gate and retains owned diagnostics; the allowance does not turn an incomplete suite into a pass.
 
 M1-01 replaces the old AST-only Quit defect probe with normal nested menu/path regressions that execute the real menu function with bounded mocked input. Quit returns to its caller; the unchanged BAT's `-NoExit` leaves its PowerShell prompt open. Actual Explorer double-click acceptance must still be recorded separately.
 
@@ -95,3 +95,11 @@ JSON reports are UTF-8 without BOM, and fixture JSON is ASCII-compatible UTF-8. 
 ### Native encoder argv inspection (M2-03)
 
 Run `tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath <existing-local-report-directory>/argv.json` explicitly under both `powershell.exe` and `pwsh.exe`, with the usual `-NoProfile -NonInteractive -ExecutionPolicy Bypass -File` development invocation. Inspect the three PASS/FAIL rows, host version and saved exact token/source-hash comparisons. This agent-executable manual-tier check compiles a local recorder with PS5.1 and uses an owned temporary root; it does not need FFmpeg or an owner visual judgement. It covers supported Unicode/punctuation filenames, D005 literal PowerShell variable-shaped percent routes, quotes/backslashes and shell-looking metadata. Retain earlier Explorer evidence separately; this is no new Explorer or produced-media acceptance claim.
+
+### Result and executable exit checks (M2-06)
+
+`unit/Results.Tests.ps1` checks exact outcome/exit precedence, reconciled record counters with separate scans, menu-session retention, invalid returned records, preserved publication/skip outcomes and controlled cancellation. `integration/Exit.Tests.ps1` runs actual Windows current-host PS1 and PS5.1 BAT child processes with owned APPDATA/source/output roots and compiled startup/FTYP/JSON sentinels. It checks unattended 0/1/2 exits without stdin/pause, all-skip and controlled cancellation3 through the real helpers, caller survival and default BAT Quit/prompt continuation. Sentinels are not playable media; this is no real codec/physical Ctrl+C/Explorer claim.
+
+The default BAT now adds explicit -KeepOpen while retaining -NoExit; first -Unattended bypasses persistence/pause. Existing characterization/environment tests call the real startup helper instead of evaluating executable exit statements. Queue mocks return matching job records; launcher recorder/argv and historical/current manual-report grading recognize -KeepOpen. These minimal shared-fixture changes preserve their prior responsibilities and D005 evidence. New-MenuManualFixture.ps1 still prepares exact copied bytes for a human Explorer menu/Quit/prompt check; scripted input proves control flow only. Record the prepared hashes/tree and actual PASS/FAIL/UNSURE response separately.
+
+The complete Pester child now has a three-minute deadline after the expanded native exit suite exceeded the earlier two-minute deadline on PS7. Individual synthetic process/doctor/encoder fixture deadlines stay unchanged; this developer harness adjustment does not alter application timeouts.

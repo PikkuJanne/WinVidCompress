@@ -64,6 +64,22 @@ Describe 'Manual argv evidence integrity [WVC-M1-02]' {
         ($result.StdOut | ConvertFrom-Json).Counts.Failed | Should -Be 1
     }
 
+    It 'accepts the current keep-open flag without counting it as a source path [WVC-M2-06]' {
+        Write-RecorderReport @('one.mov') @('-KeepOpen','one.mov')
+        $result=Invoke-ReportCheck 'single'
+        $result.ExitCode | Should -Be 0
+        ($result.StdOut | ConvertFrom-Json).Counts.Passed | Should -Be 1
+    }
+
+    It 'grades a truncated raw File argument as failed evidence [WVC-M2-06]' {
+        Write-WvcTestJson (Join-Path $ReportApp 'argv-truncated.json') ([pscustomobject]@{
+            Paths=@(); RawArguments=@('powershell.exe','-File'); Edition='Desktop'; PowerShell='5.1.26100.9444'
+        })
+        $result=Invoke-ReportCheck 'zero'
+        $result.ExitCode | Should -Be 1
+        ($result.StdOut | ConvertFrom-Json).Counts.Failed | Should -Be 1
+    }
+
     It 'grades only a requested shape while accepting other valid report shapes' {
         Write-RecorderReport @('one.mov')
         Write-RecorderReport @('folder')

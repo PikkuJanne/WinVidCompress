@@ -43,10 +43,12 @@ BeforeAll {
         $fileIndex = [Array]::IndexOf([object[]]$Record.RawArguments, '-File')
         $fileIndex | Should -BeGreaterThan -1
         $Record.RawArguments[$fileIndex + 1] | Should -BeExactly $Recorder
-        @($Record.RawArguments).Count | Should -Be ($fileIndex + 2 + $Expected.Count)
+        $pathOffset=$fileIndex+2
+        if ($Record.RawArguments.Count -gt $pathOffset -and $Record.RawArguments[$pathOffset] -eq '-KeepOpen') { $pathOffset++ }
+        @($Record.RawArguments).Count | Should -Be ($pathOffset + $Expected.Count)
         for ($i = 0; $i -lt $Expected.Count; $i++) {
             $actual[$i] | Should -BeExactly $Expected[$i]
-            $Record.RawArguments[$fileIndex + 2 + $i] | Should -BeExactly $Expected[$i]
+            $Record.RawArguments[$pathOffset + $i] | Should -BeExactly $Expected[$i]
         }
     }
 }

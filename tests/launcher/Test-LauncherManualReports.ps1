@@ -34,10 +34,14 @@ function Test-RawArguments($Record) {
     $raw = @($Record.RawArguments)
     $paths = @($Record.Paths)
     $index = [Array]::IndexOf([object[]]$raw, '-File')
-    if ($index -lt 0 -or $raw.Count -ne ($index + 2 + $paths.Count) -or
+    if ($index -lt 0 -or $index+1 -ge $raw.Count -or
         $raw[$index + 1] -cne (Join-Path $metadata.ArgumentApp 'WinVidCompress.ps1')) { return $false }
+    $pathOffset=$index+2
+    # Accept retained historical records and the explicit current keep-open flag.
+    if ($raw.Count -gt $pathOffset -and $raw[$pathOffset] -ceq '-KeepOpen') { $pathOffset++ }
+    if ($raw.Count -ne ($pathOffset+$paths.Count)) { return $false }
     for ($i = 0; $i -lt $paths.Count; $i++) {
-        if (-not [string]::Equals($raw[$index + 2 + $i], $paths[$i], [StringComparison]::Ordinal)) { return $false }
+        if (-not [string]::Equals($raw[$pathOffset + $i], $paths[$i], [StringComparison]::Ordinal)) { return $false }
     }
     return $Record.Edition -eq 'Desktop' -and $Record.PowerShell -like '5.1.*'
 }

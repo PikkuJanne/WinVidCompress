@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
     [switch]$CheckEnvironment,
+    [switch]$Unattended,
+    [switch]$KeepOpen,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )

@@ -1150,7 +1150,7 @@
       "title": "Define job results, counters and script exit codes",
       "milestone": "M2",
       "priority": "P1",
-      "status": "todo",
+      "status": "implemented",
       "improvements": [
         14
       ],
@@ -1177,35 +1177,55 @@
           "id": "WVC-M2-06-A01",
           "description": "Success, all-skip, mixed failure, startup failure, no-input batch and cancellation have exact tests.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-06.json",
+            "evidence/WVC-M2-06.md"
+          ]
         },
         {
           "id": "WVC-M2-06-A02",
           "description": "Summary counters reconcile with job records plus separate scan errors.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-06.json",
+            "evidence/WVC-M2-06.md"
+          ]
         },
         {
           "id": "WVC-M2-06-A03",
           "description": "PowerShell helper loading does not exit the caller session.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-06.json",
+            "evidence/WVC-M2-06.md"
+          ]
         },
         {
           "id": "WVC-M2-06-A04",
           "description": "Unattended .ps1/launcher path returns a real process exit code; interactive mode remains usable.",
           "tier": "manual",
           "status": "not_run",
-          "evidence": []
+          "evidence": [
+            "evidence/WVC-M2-06.json",
+            "evidence/WVC-M2-06.md"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "c0498affa86cf0d585b0ef09197f1c0070012a3f",
+        "65213bda102ff3910f83177fc4eada2ff15e1c73",
+        "14f719e9b9fa5920ee6d710cf0563bfa107c0444"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-06.json",
+        "evidence/WVC-M2-06.md",
+        "evidence/WVC-M2-06-session.md"
+      ],
+      "notes": "Implemented on clean 14f719e: application c0498af plus bounded whole-suite allowance and reporting fixture alias correction. A01-A03 passed on both actual Windows PS5.1.26100.9444/PS7.6.5. A04 manual Explorer observation pending, with actual unattended native exits and scripted default menu/prompt continuation passed. Each host Quick 460/0/4/0 and Targeted 476/0/8/0, exit0; Full both-host counts in evidence, exit2/Incomplete with no failures and eight manual/future rows NotRun. Job records drive counters plus separate scans; completion follows validation/no-clobber publication. Explicit exception type checks preserve ordinary failures vs cancellation and durable completed/skip records. Controlled cancellation is not physical Ctrl+C acceptance. Real tools absent; prior media skips retained. Next WVC-M3-01; no default quality/geometry change."
     },
     {
       "id": "WVC-M3-01",

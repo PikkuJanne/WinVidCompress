@@ -76,6 +76,13 @@ USAGE
           Reports exact PATH-before-adjacent binaries, versions and capabilities.
           Checks writing with an owned temporary file removed on close; no config,
           backups or output folders are created. Capacity is advisory.
+        - Unattended: .\WinVidCompress.ps1 -Unattended 'D:\Interviews\Folder'
+          Or: WinVidCompress.bat -Unattended "D:\Interviews\Folder"
+          Put -Unattended first in the BAT command; no menu or closing pause.
+          Exit: 0 success/valid skips; 1 job/scan failure; 2 startup/invalid/empty
+          requested batch; 3 observed application cancellation (takes precedence).
+          Default BAT uses -KeepOpen for its retained prompt. Do not combine it
+          with -Unattended. Physical Ctrl+C/console-close handling is unverified.
 
 NOTES
     - BAT drag/drop does not support %NAME% segments such as %PATH% anywhere in
@@ -113,6 +120,8 @@ LICENSE / WARRANTY
 [CmdletBinding()]
 param(
     [switch]$CheckEnvironment,
+    [switch]$Unattended,
+    [switch]$KeepOpen,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )
@@ -1547,7 +1556,59 @@ function Invoke-OutputDecodeCheck([string]$FFmpeg, $Job, $Validation) {
         TemporaryPath=$Job.TempPath;Native=$native;Reason=$(if ($native.Succeeded) {$null} else {"Job $($Job.JobId); source $($Job.SourcePath): decode check failed [$($native.FailureKind)]: $($native.Error)"})}
 }
 
+function New-JobResult([string]$SourcePath, [int]$CRF) {
+    return [pscustomobject]@{ SchemaVersion=1; JobId=([guid]::NewGuid().ToString('N'));
+        SourcePath=$SourcePath; OutputPath=$null; CandidatePath=$null; TemporaryPath=$null;
+        RetainedPath=$null; Outcome='Unstarted'; Stage='Queued'; Reason='Not started.';
+        SelectedStreams=$null; Settings=[pscustomobject]@{VideoCodec='libx264';Preset='veryfast';CRF=$CRF;
+            AudioCodec='aac';AudioBitrate='160k';Container='mp4';FastStart=$true;HeightCap=1080;Applied=$false};
+        ElapsedSeconds=0.0; InputBytes=$null; OutputBytes=$null; SizeChangeBytes=$null;
+        SizeChangePercent=$null; AbortBatch=$false; CancellationRequested=$false; LogPath=$null;
+        Diagnostics=[pscustomobject]@{Probe=$null;Encode=$null;Validation=$null;Warnings=@()} }
+}
+
+function Get-JobFileLength([string]$FilePath) {
+    # Accounting is advisory; failure to read size cannot undo a published final.
+    try { return (Get-Item -LiteralPath $FilePath -Force -ErrorAction Stop).Length }
+    catch {
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException] -or
+            $_.Exception -is [System.OperationCanceledException]) { throw }
+        return $null
+    }
+}
+
+function Get-BatchResult([object[]]$Jobs, [object[]]$Scans, [switch]$Requested,
+    [switch]$StartupFailed, [switch]$Cancelled, [string]$Reason) {
+    $records=@($Jobs | Where-Object { $null -ne $_ })
+    $scanRecords=@($Scans | Where-Object { $null -ne $_ })
+    $scanErrors=@($scanRecords | ForEach-Object { $_.Errors })
+    $counts=[pscustomobject]@{Found=$records.Count;Done=0;Skipped=0;Failed=0;Cancelled=0;Unstarted=0;
+        Scanned=@($scanRecords | Where-Object Succeeded).Count;ScanErrors=$scanErrors.Count}
+    foreach ($job in $records) {
+        switch ($job.Outcome) {
+            'Completed' { $counts.Done++ }
+            'Skipped' { $counts.Skipped++ }
+            'Failed' { $counts.Failed++ }
+            'Cancelled' { $counts.Cancelled++ }
+            'Unstarted' { $counts.Unstarted++ }
+            default { throw 'Unknown job outcome; counters cannot reconcile.' }
+        }
+    }
+    $code=0
+    if ($Cancelled -or $counts.Cancelled -or @($records | Where-Object CancellationRequested).Count) { $code=3 }
+    elseif ($StartupFailed -or ($Requested -and -not $records.Count)) { $code=2 }
+    elseif ($counts.Failed -or $counts.ScanErrors -or $counts.Unstarted) { $code=1 }
+    return [pscustomobject]@{SchemaVersion=1;ExitCode=$code;Requested=[bool]$Requested;Cancelled=($code -eq 3);
+        StartupFailed=[bool]$StartupFailed;Reason=$Reason;Warnings=@();Jobs=$records;Scans=$scanRecords;
+        ScanErrors=$scanErrors;Counters=$counts}
+}
+
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
+    # The optional legacy reference is updated from this record only. Batch dispatch
+    # consumes returned records and never uses it as an outcome authority.
+    $result=New-JobResult $inPath $crf
+    $clock=[Diagnostics.Stopwatch]::StartNew()
+    $result.Outcome='Failed'
     $outputJob = $null
     $published = $false
     $skipped = $false
@@ -1556,31 +1617,35 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     $reason = 'Interrupted or unfinished job.'
     try {
         if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
+            $reason='Source file is missing.'
             Write-Host "Missing: $inPath" -ForegroundColor Red
-            $counters.Value.Failed++
-            return
+            return $result
         }
 
         if (-not (Test-Path -LiteralPath $outDir -PathType Container)) {
+            $reason='Output folder is missing.'
             Write-Host "Output folder missing: $outDir" -ForegroundColor Red
-            $counters.Value.Failed++
-            return
+            return $result
         }
+
+        $result.InputBytes=Get-JobFileLength $inPath
 
         $meta = Parse-MetadataFromName ([IO.Path]::GetFileName($inPath))
         $base = [IO.Path]::GetFileNameWithoutExtension($inPath)
 
         $nominal = Join-Path $outDir ($base + '.mp4')
         $out = $nominal
+        $result.CandidatePath=$out
 
         $sourceKey = Get-QueuePathKey $inPath
         if ([StringComparer]::OrdinalIgnoreCase.Equals($sourceKey, (Get-QueuePathKey $out)) -or
             (Test-Path -LiteralPath $out)) {
             if ($CollisionMode -eq 'skip') {
                 $skipped = $true
-                $counters.Value.Skipped++
+                $result.Outcome='Skipped'
+                $reason='Existing output or source/output collision; skip policy.'
                 Write-Host "Skipping (exists): $out" -ForegroundColor DarkYellow
-                return
+                return $result
             } else {
                 $out = Next-CompressedPath $out
             }
@@ -1590,7 +1655,10 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             throw 'Output path must differ from the input path.'
         }
 
+        $result.CandidatePath=$out
+        $stage='Probe'
         $inspection = Get-MediaInspection $ffprobe $inPath
+        $result.Diagnostics.Probe=$inspection
         if ($null -ne $inspection.Native -and $inspection.Native.StdErr) {
             Write-Host ("Probe diagnostics: " + $inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
         }
@@ -1599,9 +1667,14 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         }
         foreach ($warning in $inspection.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $streamPlan = Get-StreamPlan $inspection
+        $result.SelectedStreams=[pscustomobject]@{Video=$streamPlan.Video.Index;
+            Audio=$(if ($null -ne $streamPlan.Audio) { $streamPlan.Audio.Index } else { $null })}
+        if ($null -eq $streamPlan.Audio) { $result.Settings.AudioCodec=$null; $result.Settings.AudioBitrate=$null }
         Write-StreamPlan $streamPlan
         $stage = 'Allocate'
         $outputJob = New-OutputJob $inPath $outDir $nominal $out
+        $result.JobId=$outputJob.JobId
+        $result.TemporaryPath=$outputJob.TempPath
         [void](Assert-OutputJob $outputJob -BeforeEncode)
         $encodeArguments = @(Get-EncodeArguments $inPath $outputJob.TempPath $streamPlan $crf $meta)
 
@@ -1611,12 +1684,15 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 
         $stage = 'Encode'
         $native = Invoke-EncodeProcess $ffmpeg $encodeArguments
+        $result.Settings.Applied=if ($null -ne $native.PSObject.Properties['Started']) { [bool]$native.Started } else { [bool]$native.Succeeded }
+        $result.Diagnostics.Encode=$native
         if ($native.StdOutTruncated -or $native.StdErrTruncated) {
             Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; console output was streamed.' -ForegroundColor Yellow
         }
         if (-not $native.Succeeded) { throw "Encoder failed [$($native.FailureKind)]: $($native.Error)" }
         $stage = 'Validation'
         $validation = Get-OutputValidation $ffprobe $outputJob $inspection $streamPlan
+        $result.Diagnostics.Validation=$validation
         if ($null -ne $validation.Inspection -and $null -ne $validation.Inspection.Native -and $validation.Inspection.Native.StdErr) {
             Write-Host ("Output probe diagnostics: " + $validation.Inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
         }
@@ -1626,58 +1702,109 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $publication = Publish-OutputJob $outputJob $CollisionMode
         $published = $publication.Published
         if ($published) {
-            $counters.Value.Done++
+            $result.Outcome='Completed'
+            $result.OutputPath=$publication.FinalPath
+            $stage='Complete'
             $reason = 'Published.'
             if ($publication.FinalPath -ne $out) { Write-Host ("Published as: " + $publication.FinalPath) -ForegroundColor Cyan }
             Write-Host "Done." -ForegroundColor Green
         } else {
             $reason = $publication.Reason
             $skipped = $true
-            $counters.Value.Skipped++
+            $result.Outcome='Skipped'
+            $result.CandidatePath=$publication.FinalPath
             Write-Host ("Skipping final collision: " + $publication.FinalPath) -ForegroundColor DarkYellow
         }
-    } catch [Management.Automation.PipelineStoppedException] {
-        $stage = 'Interrupted'
-        $reason = 'Pipeline interrupted; partial retained if present.'
-        throw
     } catch {
         $reason = $_.Exception.Message
-        if ($_.Exception.Data.Contains('WvcAbortBatch')) { $encoderMayStillRun = $true; throw }
-        if ($published -or $skipped) {
+        # Classify the actual exception explicitly on both supported hosts. A
+        # reporting interruption cannot undo a durable publication or valid skip.
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) {
+            $stage='Interrupted'; $reason='Pipeline interrupted; partial retained if present.'
+            $result.CancellationRequested=$true
+            if (-not $published -and -not $skipped) { $result.Outcome='Cancelled' }
+            $_.Exception.Data['WvcJobResult']=$result
+            throw
+        }
+        if ($_.Exception.Data.Contains('WvcAbortBatch')) {
+            $encoderMayStillRun = $true
+            $result.AbortBatch=$true
+            $_.Exception.Data['WvcJobResult']=$result
+            throw
+        }
+        if ($_.Exception -is [System.OperationCanceledException]) {
+            $stage='Interrupted'; $result.CancellationRequested=$true
+            if (-not $published -and -not $skipped) { $result.Outcome='Cancelled' }
+        } elseif ($published -or $skipped) {
             try { Write-Host ("Recorded job outcome; console reporting failed: " + $reason) -ForegroundColor Yellow } catch { }
         } else {
             Write-Host "Failed [$stage]: $inPath" -ForegroundColor Red
             Write-Host $_.Exception.Message -ForegroundColor DarkRed
-            $counters.Value.Failed++
         }
     } finally {
         if ($null -ne $outputJob) {
             $cleanup = Close-OutputJob $outputJob $published $stage $reason -EncoderMayStillRun:$encoderMayStillRun
             if ($cleanup.Warning) {
+                $result.RetainedPath=$outputJob.JobDirectory
+                $result.Diagnostics.Warnings+=@($cleanup.Warning)
                 try { Write-Host $cleanup.Warning -ForegroundColor Yellow } catch {
                     # Console diagnostics cannot replace interruption/fatal cleanup.
                     try { [Console]::Error.WriteLine($cleanup.Warning) } catch { }
                 }
             }
         }
+        $clock.Stop()
+        $result.ElapsedSeconds=$clock.Elapsed.TotalSeconds
+        $result.Stage=$stage
+        $result.Reason=$reason
+        if ($published) {
+            try { $result.OutputBytes=Get-JobFileLength $result.OutputPath }
+            catch {
+                if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) {
+                    $result.CancellationRequested=$true; $_.Exception.Data['WvcJobResult']=$result; throw
+                }
+                if ($_.Exception -is [System.OperationCanceledException]) {
+                    $result.CancellationRequested=$true; $result.Diagnostics.Warnings+=@('Output size accounting cancelled after publication.')
+                } else { $result.Diagnostics.Warnings+=@('Output size accounting failed: '+$_.Exception.Message) }
+            }
+            if ($null -ne $result.InputBytes -and $null -ne $result.OutputBytes) {
+                $result.SizeChangeBytes=$result.OutputBytes-$result.InputBytes
+                if ($result.InputBytes -gt 0) { $result.SizeChangePercent=100.0*$result.SizeChangeBytes/$result.InputBytes }
+            }
+        }
+        if ($null -ne $counters -and $null -ne $counters.Value) {
+            switch ($result.Outcome) {
+                'Completed' { $counters.Value.Done++ }
+                'Skipped' { $counters.Value.Skipped++ }
+                'Failed' { $counters.Value.Failed++ }
+            }
+        }
     }
+    return $result
 }
 
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     # Recheck at every requested batch, including after a menu preference change.
-    [void](Get-OutputEnvironment $cfg.OutputDir)
-    foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
-    $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0; Scanned = 0; ScanErrors = 0 }
-
-    # Complete every selection before an encoder can create any new input candidates.
-    $queue = Get-InputQueue $paths
+    try {
+        [void](Get-OutputEnvironment $cfg.OutputDir)
+        foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
+        # Freeze all selections before any encoder can create new candidates.
+        $queue=Get-InputQueue $paths
+    }
+    catch {
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
+        if ($_.Exception -is [System.OperationCanceledException]) {
+            return (Get-BatchResult @() @() -Requested -Cancelled -Reason $_.Exception.Message)
+        }
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        return (Get-BatchResult @() @() -Requested -StartupFailed -Reason $_.Exception.Message)
+    }
+    $jobs=New-Object 'Collections.Generic.List[object]'
     foreach ($scan in $queue.Scans) {
         if ($null -ne $scan.PSObject.Properties['Warnings']) {
             foreach ($warning in $scan.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         }
         $targets = @($scan.Files)
-        if ($scan.Succeeded) { $counters.Scanned++ }
-        $counters.ScanErrors += $scan.Errors.Count
         foreach ($failure in $scan.Errors) {
             Write-Host ("Scan error [{0}]: {1}`n    {2}" -f $failure.Kind,$failure.Path,$failure.Message) -ForegroundColor Yellow
         }
@@ -1685,22 +1812,75 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
             if ($scan.Succeeded) { Write-Host "No videos found: $($scan.InputPath)" -ForegroundColor Yellow }
         }
     }
-    $counters.Found = $queue.Files.Count
+    $stopScheduling=$false
     foreach ($f in $queue.Files) {
-        Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF ([ref]$counters)
+        if ($stopScheduling) {
+            $job=New-JobResult $f $DefaultCRF
+            $job.Reason='Batch ended before this job started.'
+        } else {
+            try {
+                $job=Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF
+            } catch {
+                if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
+                $job=$_.Exception.Data['WvcJobResult']
+                if ($null -eq $job) {
+                    $job=New-JobResult $f $DefaultCRF
+                    $job.Outcome='Failed'; $job.Stage='Dispatch'; $job.Reason=$_.Exception.Message; $job.AbortBatch=$true
+                }
+                $stopScheduling=$true
+            }
+            if ($null -eq $job -or $job -is [array] -or
+                (Get-ProbeProperty $job 'SchemaVersion') -ne 1 -or
+                (Get-ProbeProperty $job 'SourcePath') -cne $f -or
+                (Get-ProbeProperty $job 'Outcome') -notin @('Completed','Skipped','Failed','Cancelled','Unstarted')) {
+                $job=New-JobResult $f $DefaultCRF
+                $job.Outcome='Failed'; $job.Stage='Dispatch'; $job.Reason='Compressor did not return one matching job record.'; $job.AbortBatch=$true
+            }
+            if ($job.Outcome -eq 'Cancelled' -or $job.CancellationRequested -or $job.AbortBatch) { $stopScheduling=$true }
+        }
+        $jobs.Add($job)
     }
 
-    Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
-    Write-Host ("Found:   {0}" -f $counters.Found)
-    Write-Host ("Done:    {0}" -f $counters.Done)
-    Write-Host ("Skipped: {0}" -f $counters.Skipped)
-    Write-Host ("Failed:  {0}" -f $counters.Failed)
-    Write-Host ("Scanned: {0}" -f $counters.Scanned)
-    Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+    $batch=Get-BatchResult $jobs.ToArray() $queue.Scans -Requested
+    $counters=$batch.Counters
+
+    try {
+        Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
+        Write-Host ("Found:   {0}" -f $counters.Found)
+        Write-Host ("Done:    {0}" -f $counters.Done)
+        Write-Host ("Skipped: {0}" -f $counters.Skipped)
+        Write-Host ("Failed:  {0}" -f $counters.Failed)
+        Write-Host ("Cancelled: {0}" -f $counters.Cancelled)
+        Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
+        Write-Host ("Scanned: {0}" -f $counters.Scanned)
+        Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+    } catch {
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
+        if ($_.Exception -is [System.OperationCanceledException]) {
+            $batch.Cancelled=$true; $batch.ExitCode=3; $batch.Warnings+=@('Summary reporting cancelled.')
+        } else { $batch.Warnings+=@('Summary reporting failed: '+$_.Exception.Message) }
+    }
+    return $batch
+}
+
+function Get-SessionResult([object[]]$Batches) {
+    $runs=@($Batches | Where-Object { $null -ne $_ })
+    $jobs=@($runs | ForEach-Object { $_.Jobs })
+    $scans=@($runs | ForEach-Object { $_.Scans })
+    $result=Get-BatchResult $jobs $scans -Requested:($runs.Count -gt 0) -Reason 'Menu closed.'
+    # Preserve an earlier empty/invalid requested batch even after a successful one.
+    foreach ($batch in $runs) { if ($batch.ExitCode -gt $result.ExitCode) { $result.ExitCode=$batch.ExitCode } }
+    $result.Cancelled=($result.ExitCode -eq 3)
+    $result.StartupFailed=@($runs | Where-Object StartupFailed).Count -gt 0
+    $result.Warnings=@($runs | ForEach-Object { $_.Warnings })
+    $result | Add-Member -NotePropertyName Batches -NotePropertyValue $runs
+    return $result
 }
 
 # --- TUI ---
 function Run-TUI($ffmpeg, $ffprobe, $cfg) {
+    $batches=New-Object 'Collections.Generic.List[object]'
+    try {
     while ($true) {
         Write-Host ""
         Write-Host "========== WinVidCompress =========="
@@ -1723,6 +1903,8 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
                         Save-Config $candidate
                         $cfg.OutputDir = $p
                     } catch {
+                        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException] -or
+                            $_.Exception -is [System.OperationCanceledException]) { throw }
                         Write-Host "Output preference was not changed: $($_.Exception.Message)" -ForegroundColor Yellow
                     }
                 }
@@ -1730,41 +1912,73 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
             '2' {
                 $f = Prompt-Path "Paste a source FILE path"
                 if ($f) {
-                    Process-Paths @($f) $ffmpeg $ffprobe $cfg
+                    $batch=Process-Paths @($f) $ffmpeg $ffprobe $cfg
+                    if ($null -ne $batch) { $batches.Add($batch) }
+                    if ($null -ne $batch -and ($batch.ExitCode -eq 3 -or @($batch.Jobs | Where-Object AbortBatch).Count)) { return (Get-SessionResult $batches.ToArray()) }
                 }
             }
             '3' {
                 $d = Prompt-Path "Paste a source FOLDER path" -Folder
                 if ($d) {
-                    Process-Paths @($d) $ffmpeg $ffprobe $cfg
+                    $batch=Process-Paths @($d) $ffmpeg $ffprobe $cfg
+                    if ($null -ne $batch) { $batches.Add($batch) }
+                    if ($null -ne $batch -and ($batch.ExitCode -eq 3 -or @($batch.Jobs | Where-Object AbortBatch).Count)) { return (Get-SessionResult $batches.ToArray()) }
                 }
             }
-            '4' { return }
+            '4' { return (Get-SessionResult $batches.ToArray()) }
             Default { }
         }
     }
+    } catch {
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
+        $cancelled=$_.Exception -is [System.OperationCanceledException]
+        $batches.Add((Get-BatchResult @() @() -Cancelled:$cancelled -StartupFailed:(-not $cancelled) -Reason $_.Exception.Message))
+        return (Get-SessionResult $batches.ToArray())
+    }
 }
 
-# Dot-sourcing loads helpers/defaults without application startup.
+function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
+    [switch]$Unattended, [switch]$ExplicitRequest) {
+    $stage='Startup'
+    $inputPaths=@($Paths | Where-Object { $null -ne $_ })
+    try {
+        if (-not $CheckEnvironment -and ($Unattended -or $ExplicitRequest) -and -not $inputPaths.Count) {
+            throw 'No input paths supplied for the requested batch.'
+        }
+        $ffmpeg=Ensure-Tool 'ffmpeg.exe'
+        $ffprobe=Ensure-Tool 'ffprobe.exe'
+        $tools=Get-ToolEnvironment $ffmpeg $ffprobe
+        if ($CheckEnvironment) {
+            $cfg=Get-EnvironmentConfig
+            $output=Get-OutputEnvironment $cfg.OutputDir
+            Write-EnvironmentReport $tools $output
+            return (Get-BatchResult @() @() -Reason 'Environment check completed.')
+        }
+        $cfg=Load-Config
+        $output=Get-OutputEnvironment $cfg.OutputDir
+        Write-EnvironmentReport $tools $output
+        if ($inputPaths.Count -gt 0) { return (Process-Paths $inputPaths $ffmpeg $ffprobe $cfg) }
+        $stage='Menu'
+        return (Run-TUI $ffmpeg $ffprobe $cfg)
+    } catch {
+        if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
+        if ($_.Exception -is [System.OperationCanceledException]) {
+            return (Get-BatchResult @() @() -Cancelled -Reason $_.Exception.Message)
+        }
+        $reason=$_.Exception.Message
+        try { [Console]::Error.WriteLine("WinVidCompress [$stage]: $reason") } catch { }
+        return (Get-BatchResult @() @() -StartupFailed -Reason $reason)
+    }
+}
+
+# Dot-sourcing loads helpers/defaults without application startup or caller exit.
 if ($MyInvocation.InvocationName -eq '.') { return }
 
 # --- Main ---
-$ffmpeg  = Ensure-Tool 'ffmpeg.exe'
-$ffprobe = Ensure-Tool 'ffprobe.exe'
-$tools   = Get-ToolEnvironment $ffmpeg $ffprobe
-if ($CheckEnvironment) {
-    $cfg = Get-EnvironmentConfig
-    $output = Get-OutputEnvironment $cfg.OutputDir
-    Write-EnvironmentReport $tools $output
-    return
+if ($KeepOpen -and $Unattended) {
+    [Console]::Error.WriteLine('WinVidCompress: -KeepOpen and -Unattended cannot be combined. Put -Unattended first when using the BAT launcher.')
+    exit 2
 }
-$cfg     = Load-Config
-$output  = Get-OutputEnvironment $cfg.OutputDir
-Write-EnvironmentReport $tools $output
-
-# If args were provided, queue and process immediately.
-if ($Path -and $Path.Count -gt 0) {
-    Process-Paths $Path $ffmpeg $ffprobe $cfg
-} else {
-    Run-TUI $ffmpeg $ffprobe $cfg
-}
+$run=Invoke-WinVidCompress -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path'))
+$global:LASTEXITCODE=$run.ExitCode
+if (-not $KeepOpen) { exit $run.ExitCode }

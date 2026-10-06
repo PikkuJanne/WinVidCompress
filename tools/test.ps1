@@ -66,8 +66,9 @@ try {
                     (Join-Path $testsRoot 'Invoke-PesterRun.ps1'),'-ModuleRoot',$ModuleRoot,
                     '-TestPath',($selected -join '|'),'-ReportPath',$childPath)
                 if ($includeBaseline) { $arguments += '-IncludeKnownDefects' }
-                # Bound the complete suite separately from its short per-process fixture deadlines.
-                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 120000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
+                # The expanded native exit suite needs more than two minutes on
+                # PS7; retain a bounded suite deadline and the short fixture limits.
+                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 180000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stdout.log')), $child.StdOut)
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stderr.log')), $child.StdErr)
                 $childReport = Read-WvcChildReport $childPath $child.ExitCode

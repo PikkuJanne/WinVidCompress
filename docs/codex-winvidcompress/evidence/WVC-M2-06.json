@@ -1,0 +1,743 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M2-06",
+  "task_status": "implemented",
+  "acceptance_ids": [
+    "WVC-M2-06-A01",
+    "WVC-M2-06-A02",
+    "WVC-M2-06-A03",
+    "WVC-M2-06-A04"
+  ],
+  "recorded_at": "2026-10-06T05:37:07.475055+00:00",
+  "tested_commits": [
+    "c0498affa86cf0d585b0ef09197f1c0070012a3f",
+    "65213bda102ff3910f83177fc4eada2ff15e1c73",
+    "14f719e9b9fa5920ee6d710cf0563bfa107c0444"
+  ],
+  "base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+  "branch": "codex/wvc-m2-06-results",
+  "tested_application_sha256": "8ac10a0c0eb491438b4b7416e8b5a415cf1c813b575a559b715c2b0e1b0a5abc",
+  "tested_launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "Job/batch/session schema and reconciled counters, preserving no-clobber publication and owned retention.",
+    "Explicit 0/1/2/3 application exits, pure helper entry, default BAT keep-open and first-switch unattended mode.",
+    "Result/actual-native exit regressions and minimal shared characterization/environment/queue/launcher fixture migrations.",
+    "Bounded complete-suite Pester deadline 120 to 180 seconds after observed PS7 timeout; individual process deadlines unchanged.",
+    "Behavior docs and task/acceptance/status/next/session handoff."
+  ],
+  "runs": [
+    {
+      "name": "quick51-final-fixed",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/quick51-final-fixed.json",
+      "tested_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 460,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m206/quick51-final-fixed.json",
+      "artifact_sha256": "64b4f8ee28e780469b00ed52045b1e96d5139589680aa043ae1aa84fface78e3",
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ],
+      "not_run_cases": []
+    },
+    {
+      "name": "quick7-final-fixed",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/quick7-final-fixed.json",
+      "tested_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 460,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m206/quick7-final-fixed.json",
+      "artifact_sha256": "c77413d07557f59353d862661cc9e1919b8b480207654d9abdda44201ed174cd",
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted51-final",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/targeted51-final.json",
+      "tested_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 476,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m206/targeted51-final.json",
+      "artifact_sha256": "f9feef795c24e4c86793c4589628e85abf9ad7091e8b347315620fa51a350910",
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted7-final",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/targeted7-final.json",
+      "tested_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 476,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m206/targeted7-final.json",
+      "artifact_sha256": "d9e06c8275c63bf0a1ba47883a83d290e53162292636779292adda019c86a1d9",
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ],
+      "not_run_cases": []
+    },
+    {
+      "name": "full-both-final",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/full-both-final.json",
+      "tested_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "exit_code": 2,
+      "status": "Incomplete",
+      "counts": {
+        "Passed": 932,
+        "Failed": 0,
+        "Skipped": 12,
+        "NotRun": 8
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m206/full-both-final.json",
+      "artifact_sha256": "27c1af3484ec5c539c6ed4654b3df0f9bcd75eeaa83424ba899f7c108c205920",
+      "failed_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "PowerShell7/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "PowerShell7/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "PowerShell7/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "PowerShell7/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "WindowsPowerShell/071:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "WindowsPowerShell/072:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "WindowsPowerShell/073:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "WindowsPowerShell/074:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ],
+      "not_run_cases": [
+        {
+          "Id": "coverage/future-media-cli-safety-packaging",
+          "Status": "NotRun",
+          "Reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+        },
+        {
+          "Id": "manual/explorer-file-folder-multi-drop",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-menu-quit",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-special-character-argv",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/playback-sdr-hdr-audio",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/real-ctrl-c-and-console-close",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/representative-benchmarks",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/unc-long-paths",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        }
+      ]
+    }
+  ],
+  "manual_checks": [
+    {
+      "acceptance_id": "WVC-M2-06-A04",
+      "status": "not_run",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/unit/New-MenuManualFixture.ps1 > .test-results/m206/manual-fixture.json",
+      "prepared_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "prepared_tree_dirty": true,
+      "application_sha256": "B26A19BD2FEAFF125F4B1C6E6DCBC233958906077469AACF794FC17D57EEA442",
+      "launcher_sha256": "0D97C046847D7002E78B23D91C4CACA3498C88B9C932AE84158DA9E4DB51BA3F",
+      "observation": "Prepared isolated Check-Menu.bat; asked owner to double-click in Explorer, choose 4 once and confirm a usable PowerShell prompt. No PASS/FAIL/UNSURE reply received at handoff. Scripted native menu/prompt continuation and unattended exit checks passed on the clean implementation; these do not establish the required human observation.",
+      "limitation": "Preparation preceded later result/error-handler changes; exact hashes describe only those copied dirty bytes. Kit retained locally while the question is pending; no private temporary path committed."
+    }
+  ],
+  "development_observations": [
+    {
+      "artifact": ".test-results/m206/red-results.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 0,
+        "Failed": 23,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Regression-first missing contract; failed before implementation.",
+      "artifact_sha256": "c62d077e69718ec6d79421b397e373d151e9ae396da6f37be80deef128de4fac"
+    },
+    {
+      "artifact": ".test-results/m206/first-results.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 22,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "One valid-skip fixture assigned collision mode in the wrong test scope; fixed.",
+      "artifact_sha256": "c994e22f97bfa8b0903f9043ebea209ad95f8334b3f1e304d4519a45704f756f"
+    },
+    {
+      "artifact": ".test-results/m206/draft-focused.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 131,
+        "Failed": 9,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Draft exposed blank/null menu-path binding and broad PS5.1 exception classification failures.",
+      "artifact_sha256": "1dfd5f758915f537c350cb34004ca61db7db3bcaba5b65312be484113efc6363"
+    },
+    {
+      "artifact": ".test-results/m206/ownership-isolated.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 23,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Isolated ownership checks passed; broad-session failure remained under investigation.",
+      "artifact_sha256": "9876ebd36234e5c011856cf8374d2a8459f93fa7066b1fb90fe7c17708fd6091"
+    },
+    {
+      "artifact": ".test-results/m206/ownership-paired.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 49,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Characterization plus ownership passed; not proof of the complete suite.",
+      "artifact_sha256": "e523e1722e47bff06de9b3484ef34a7e2998ff47acd5d84d84695a38f4d3e5db"
+    },
+    {
+      "artifact": ".test-results/m206/review-focused51.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 168,
+        "Failed": 3,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Broad run retained three exception classification failures.",
+      "artifact_sha256": "e1dc2f1a5fd1c5d6fab9d63d251025db3be29a0c483e98a58d05c6963094c8a6"
+    },
+    {
+      "artifact": ".test-results/m206/results-paired.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 49,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Ownership plus result checks passed in isolation.",
+      "artifact_sha256": "9afc96f4848b6ae12ac831b502e0ddd0611c3262735f1b987ba069e7ab6fcb56"
+    },
+    {
+      "artifact": ".test-results/m206/draft-quick51.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 446,
+        "Failed": 7,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Seven failures: malformed manual case plus six ordinary failures classified as cancellation.",
+      "artifact_sha256": "cf810444b78453be5ca1a6b34b47291bee7f212a7a04e679d1807bb99ab1c3be"
+    },
+    {
+      "artifact": ".test-results/m206/catch-diagnostic.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 62,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Temporary exception-type diagnostics in the dirty tree; small scope passed.",
+      "artifact_sha256": "3962b50a2cd5e2f55e0473ab241dcab6d1e704432e3d8a5b22d107b02907a3cf"
+    },
+    {
+      "artifact": ".test-results/m206/catch-wide.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 156,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Wider targeted scope passed but did not reproduce the complete unit-suite issue.",
+      "artifact_sha256": "3c1d76a507415e1e292b4058f4775d14b6c697456395e730f03398fa8d11db1b"
+    },
+    {
+      "artifact": ".test-results/m206/precommit-quick51.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 451,
+        "Failed": 6,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Six ordinary failure regressions remained misclassified in the complete Quick run.",
+      "artifact_sha256": "8a86e77c97019e837a59766a62c7eaa27639afb84110a259e75b963f74604ce0"
+    },
+    {
+      "artifact": ".test-results/m206/unit-cause.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 325,
+        "Failed": 4,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "Four unit failures; temporary markers proved actual RuntimeException/no inner cause and InvalidOperationException entering a typed cancellation catch. Underlying engine/session cause unproven.",
+      "artifact_sha256": "fb810a34ceb4e1fc36d1fbf2e75b076322db1a812bb860322724f2ae0cd153db"
+    },
+    {
+      "artifact": ".test-results/m206/unit-fixed51.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 331,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Explicit actual-type classification corrected the ordered complete unit suite: 331 passed.",
+      "artifact_sha256": "30f0bb878442b05833999373485165566bb19801eaf3cd396d38ceef375b2589"
+    },
+    {
+      "artifact": ".test-results/m206/fixed-quick51.json",
+      "tested_base_commit": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 460,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Final dirty implementation Quick passed before checkpoint creation; clean final runs supersede it.",
+      "artifact_sha256": "2e5653213fa910d73db5488a7c9be02987724648e2c7eeb8ffe8ae34114ceed9"
+    },
+    {
+      "artifact": ".test-results/m206/results-cause7.json",
+      "tested_base_commit": "65213bda102ff3910f83177fc4eada2ff15e1c73",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 36,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "observation": "37 isolated PS7 result cases: 36 passed/one failed. Reporting mock pattern Message collided with actual Write-Host Object alias Message and cancelled before publication.",
+      "artifact_sha256": "5e6ea558d46f46fcfceb1fca563521a2a5659e8db451e9978d756eb0d8364394"
+    },
+    {
+      "artifact": ".test-results/m206/results-fixed7.json",
+      "tested_base_commit": "65213bda102ff3910f83177fc4eada2ff15e1c73",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 37,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "Renamed test pattern ReportPattern: 37 isolated PS7 result cases passed.",
+      "artifact_sha256": "d0971de9fcf2691c441af85dcc2ac73097ca3dc5442a8429498414ce6facb802"
+    },
+    {
+      "artifact": ".test-results/m206/results-fixed51.json",
+      "tested_base_commit": "65213bda102ff3910f83177fc4eada2ff15e1c73",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 37,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "observation": "The corrected reporting fixture also passed all 37 isolated PS5.1 result cases.",
+      "artifact_sha256": "531a6466bc0fd51a173d4dec4706949aeda814a3e5a01afa84e4cc8fb913dfc9"
+    }
+  ],
+  "command_correction": {
+    "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts WindowsPowerShell,PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/quick-both-c0498af.json",
+    "exit_code": 1,
+    "tests_executed": 0,
+    "reason": "PowerShell -File bound comma-separated Hosts as one unsupported token. Replaced with separate Current-host Quick/Targeted invocations; Full selects both hosts by default. No app/test failure or pass inferred."
+  },
+  "suite_timeout": {
+    "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/quick7-c0498af.json",
+    "tested_commit": "c0498affa86cf0d585b0ef09197f1c0070012a3f",
+    "tested_tree_dirty": false,
+    "exit_code": 1,
+    "counts": {
+      "Passed": 4,
+      "Failed": 1,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "artifact_sha256": "3a5180d5f549ed9209a811abe1aa670edcfdfce8ee9c295c8139fb9dbf6cb25e",
+    "reason": "Owned complete-suite Pester child exceeded the 120-second deadline before a child report. No completed Pester counts inferred. Changed only complete-suite deadline to 180 seconds plus documentation at65213bd; final clean gates supersede this failed harness run."
+  },
+  "fixture_alias_failure": {
+    "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m206/quick7-final.json",
+    "tested_commit": "65213bda102ff3910f83177fc4eada2ff15e1c73",
+    "tested_tree_dirty": false,
+    "exit_code": 1,
+    "counts": {
+      "Passed": 459,
+      "Failed": 1,
+      "Skipped": 4,
+      "NotRun": 0
+    },
+    "artifact_sha256": "795c065dd8084d10470c0498c343f0de53839927c2cce36d4cdec2cf602a6c56",
+    "reason": "Longer bounded run completed139.22s and revealed one reporting-cancellation fixture failure. Actual PS7 Write-Host Object aliases include Message, shadowing the test pattern inside Pester ParameterFilter. Renaming fixture key/parameter to ReportPattern corrected37 isolated cases on both hosts. No production change; final clean gates supersede the failed run."
+  },
+  "implementation_checkpoint_sync": {
+    "checked_at": "2026-10-06T05:21:41.585660+00:00",
+    "head": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+    "branch": "codex/wvc-m2-06-results",
+    "upstream": "origin/codex/wvc-m2-06-results",
+    "dirty": false,
+    "live_fetch_head": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+    "live_push_head": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+    "status": "SYNCHRONIZED"
+  },
+  "previous_verified_sync": {
+    "head": "159d0ab5c36dcb72ba547d3fdf97e28656f41195",
+    "branch": "codex/wvc-m2-05-validation",
+    "checked_at": "2026-10-06T04:44:25.059991+00:00",
+    "status": "SYNCHRONIZED"
+  },
+  "live_main_reconciliation": {
+    "main": "216e797948ba234238e1ba4d4bb6397fffe80a67",
+    "owner_merged_pr": 15,
+    "prior_feature_to_main_content_diff": "empty",
+    "reconciliation": "Fetched --no-tags and started the new feature from reviewed current main; prior feature/historical baseline retained, no reset or rewrite."
+  },
+  "pull_request": {
+    "state": "not_created",
+    "url": null,
+    "note": "Draft creation planned after final handoff push; actual state reported externally."
+  },
+  "implementation_ci": {
+    "source_commit": "14f719e9b9fa5920ee6d710cf0563bfa107c0444",
+    "checked_at": "2026-10-06 05:27:08 UTC",
+    "check_runs": 0,
+    "statuses": 0,
+    "status_state": "pending",
+    "workflow_runs": 0,
+    "claim": "No CI pass inferred."
+  },
+  "read_only_review": "A read-only subagent reviewed without edits, Git mutations or application tests. Findings on accounting/report/session record retention and malformed argv bounds fixed with regressions; final review found no remaining material blocker. Explicit exception classification fixed observed PS5.1 broad-run misclassification; root cause not asserted.",
+  "limitations": [
+    "A04 manual acceptance is not_run: actual Explorer menu/Quit/prompt observation is pending. Task implemented, not verified; no milestone/release acceptance.",
+    "Real FFmpeg/FFprobe absent from PATH/script-adjacent locations. Four Quick and eight Targeted media cases per host skipped; Full includes eight host Pester media skips plus four fixture-generation skips (12 total). Synthetic FTYP/JSON/native sentinel fixtures are not playable media and do not establish codec, visual/audio or timing integrity.",
+    "Full remains exit2/Incomplete with eight NotRun rows (seven Windows manual plus one future coverage). No Full/CI/release pass inferred.",
+    "Code3 is observed application cancellation at the controlled OperationCanceledException seam. Pipeline stop is rethrown to the host; physical Ctrl+C/console-close/crash/graceful/tree behavior remains M3-06. Host parsing/binding before entry can produce its own exit code.",
+    "Logs/manifests/redaction/progress remain later work; records/diagnostics are in memory, LogPath null. Retained.json keeps existing identity/stage/reason. Output size only describes published finals; unknown size null, skipped outputs not claimed produced.",
+    "Configured default quality, coded-height cap, mapping, filename metadata and source/final safety remain unchanged. UNC/durability/source-change/hostile substitution acceptance stays open. No downloads/private media/telemetry/elevation/settings changes."
+  ],
+  "pending_action": "Record actual owner Explorer observation for A04; retain M2-02 media skips and Full manual/future rows.",
+  "final_handoff_sync": "Pending within this record; final documentation commit/push/live refs reported externally to avoid a self-SHA loop.",
+  "next_task": "WVC-M3-01 - Harden resizing and rotation without a new resolution preset"
+}
