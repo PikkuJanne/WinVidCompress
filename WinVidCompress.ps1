@@ -1455,6 +1455,9 @@ function Test-OutputStructure($Output, $Source, $Plan) {
     $tolerance = Get-OutputDurationTolerance $Plan
     $checks = New-Object 'Collections.Generic.List[object]'
     $videoDuration = $video.DurationSeconds
+    if ($null -eq $videoDuration -and $null -ne $video.DurationRaw -and $video.DurationRaw -notin @('N/A','unknown','unspecified')) {
+        throw 'Output video supplied an invalid duration; it cannot use the container fallback.'
+    }
     if ($null -eq $videoDuration -and $Output.Streams.Count -eq 1) {
         $videoDuration = $Output.DurationSeconds
         $warnings.Add('Output video duration uses the sole-video container fallback.')
