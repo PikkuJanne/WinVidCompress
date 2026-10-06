@@ -70,9 +70,12 @@ try {
     Write-WvcTestJson $ReportPath $record
     $prepared=$true
     Write-Output $sheet
+} catch {
+    if ($_.Exception.Data.Contains('WvcAbortBatch')) { $script:WvcProcessCleanupFailed=$true }
+    throw
 } finally {
     $env:APPDATA=$savedAppData
     $env:FFREPORT=$savedFfreport
     # Retain the successful owned kit until the owner has viewed it.
-    if (-not $prepared) { Remove-WvcTestRoot $owner }
+    if (-not $prepared -and -not (Get-Variable WvcProcessCleanupFailed -Scope Script -ErrorAction SilentlyContinue)) { Remove-WvcTestRoot $owner }
 }

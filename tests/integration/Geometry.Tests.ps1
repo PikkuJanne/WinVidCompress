@@ -18,6 +18,13 @@ BeforeAll {
         $native = Invoke-WvcTestProcess $GeometryEncoder $Arguments
         if ($native.ExitCode -ne 0) { throw ('Geometry fixture failed: ' + $native.StdErr) }
     }
+    function Invoke-GeometryCompression($SourcePath) {
+        try { Compress-One $GeometryEncoder $GeometryProbe $SourcePath $Output 22 }
+        catch {
+            if ($_.Exception.Data.Contains('WvcAbortBatch')) { $script:WvcProcessCleanupFailed=$true }
+            throw
+        }
+    }
     function Get-GeometryCorners([string]$InputPath,[string]$RgbPath,[int]$Width,[int]$Height) {
         # Decode raw physical pixels, disabling any residual output autorotation.
         Invoke-GeometryFixture @('-hide_banner','-nostdin','-v','error','-n','-noautorotate','-i',$InputPath,
@@ -45,18 +52,21 @@ BeforeAll {
 }
 AfterAll {
     foreach ($key in $SavedEnvironment.Keys) { [Environment]::SetEnvironmentVariable($key,$SavedEnvironment[$key],'Process') }
-    Remove-WvcTestRoot $BootstrapOwner
+    if (-not (Get-Variable WvcProcessCleanupFailed -Scope Script -ErrorAction SilentlyContinue)) { Remove-WvcTestRoot $BootstrapOwner }
 }
 
 Describe 'Actual generated filter, SAR and physical orientation [WVC-M3-01-A01/A02; FFmpeg/FFprobe required]' {
     BeforeEach {
+        if (Get-Variable WvcProcessCleanupFailed -Scope Script -ErrorAction SilentlyContinue) { throw 'Previous owned process cleanup failed; retain roots and stop geometry fixtures.' }
         $script:Owner = New-WvcTestRoot
         $env:APPDATA = Join-Path $Owner.Path 'appdata'
         $script:Output = Join-Path $Owner.Path 'output'
         [void][IO.Directory]::CreateDirectory($Output)
         $script:CollisionMode = 'rename'
     }
-    AfterEach { if ($null -ne $Owner) { Remove-WvcTestRoot $Owner } }
+    AfterEach {
+        if ($null -ne $Owner -and -not (Get-Variable WvcProcessCleanupFailed -Scope Script -ErrorAction SilentlyContinue)) { Remove-WvcTestRoot $Owner }
+    }
     It 'confirms <Name> pixels and probe geometry without touching source or existing output' -Skip:(-not $GeometryToolsAvailable) -TestCases @(
         @{Name='SD';W=640;H=480;R=0;Sar='1/1';TW=640;TH=480;Corners='RGBY'},
         @{Name='1080';W=1920;H=1080;R=0;Sar='1/1';TW=1920;TH=1080;Corners='RGBY'},
@@ -94,7 +104,7 @@ Describe 'Actual generated filter, SAR and physical orientation [WVC-M3-01-A01/A
         [IO.File]::WriteAllText($sentinel,'existing final sentinel')
         $sourceHash = (Get-FileHash -LiteralPath $source).Hash
         $sentinelHash = (Get-FileHash -LiteralPath $sentinel).Hash
-        $job = Compress-One $GeometryEncoder $GeometryProbe $source $Output 22
+        $job = Invoke-GeometryCompression $source
         $job.Outcome | Should -BeExactly 'Completed' -Because $job.Reason
         $job.Diagnostics.Validation.Succeeded | Should -BeTrue
         $result = $job.Diagnostics.Validation.Inspection.PrimaryVideo
@@ -115,9 +125,13 @@ Describe 'Actual generated filter, SAR and physical orientation [WVC-M3-01-A01/A
         Invoke-GeometryFixture @('-hide_banner','-nostdin','-v','error','-n','-f','lavfi','-i',$pattern,
             '-fps_mode','passthrough','-c:v','libx264','-preset','ultrafast','-crf','0',$source)
         $before=@(Get-GeometryFrameTimes $source)
-        $job=Compress-One $GeometryEncoder $GeometryProbe $source $Output 22
+        $before.Count | Should -BeGreaterThan 1
+        @($before | Where-Object {$null -eq $_}).Count | Should -Be 0
+        if ($Kind -eq 'HFR') { [Math]::Abs(($before[1]-$before[0])-1.0/120) | Should -BeLessThan 0.0001 }
+        $job=Invoke-GeometryCompression $source
         $job.Outcome | Should -BeExactly 'Completed' -Because $job.Reason
         $after=@(Get-GeometryFrameTimes $job.OutputPath)
+        @($after | Where-Object {$null -eq $_}).Count | Should -Be 0
         $after.Count | Should -Be $before.Count
         for ($index=0;$index -lt $before.Count;$index++) {
             [Math]::Abs(($after[$index]-$after[0])-($before[$index]-$before[0])) | Should -BeLessThan 0.0001
