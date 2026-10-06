@@ -15,6 +15,35 @@ AfterAll {
 Describe 'Owned native encoding [WVC-M2-03-A03/A04]' {
     BeforeEach { Mock Write-Host {}; $env:WVC_ENCODE_PID=$null; $env:WVC_ENCODE_CHILD_PID=$null }
 
+    It 'parses actual chunked machine stdout while separately draining stderr without flooding the console [WVC-M3-05-A01/A03]' {
+        Mock Write-Progress {}
+        $progress=New-EncodeProgress 2 1 2
+        $result=Invoke-EncodeProcess $Encoder @('progress') -ProgressContext $progress -CaptureLimitCharacters 32768
+        $result.Succeeded | Should -BeTrue
+        $progress.Records | Should -Be 2
+        $progress.State | Should -BeExactly 'Finalizing'
+        $progress.Percent | Should -Be 99
+        $result.StdErr | Should -Match 'useful native warning$'
+        $result.StdErrTruncated | Should -BeTrue
+        Should -Invoke Write-Host -Times 0 -Exactly
+        Should -Invoke Write-Progress -Times 1 -ParameterFilter { $Activity -eq 'File 1/2' -and $PercentComplete -lt 100 }
+    }
+
+    It 'parses the installed FFmpeg machine stream including its microsecond fields [WVC-M3-05-A01]' {
+        $ffmpeg=Get-Command ffmpeg.exe -CommandType Application -ErrorAction SilentlyContinue
+        if (-not $ffmpeg) { Set-ItResult -Skipped -Because 'Installed FFmpeg unavailable.'; return }
+        Mock Write-Progress {}
+        $progress=New-EncodeProgress 1
+        $result=Invoke-EncodeProcess $ffmpeg.Source @('-hide_banner','-nostdin','-nostats','-progress','pipe:1',
+            '-f','lavfi','-i','testsrc2=size=64x64:rate=10:duration=1','-f','null','-') -ProgressContext $progress
+        $result.Succeeded | Should -BeTrue
+        $progress.Records | Should -BeGreaterThan 0
+        $progress.EndReceived | Should -BeTrue
+        $progress.MediaSeconds | Should -BeGreaterThan 0
+        $progress.Percent | Should -BeLessThan 100
+        Should -Invoke Write-Host -Times 0 -Exactly
+    }
+
     It 'round-trips exact Windows argv including Unicode, empty, quotes and trailing slashes' {
         $unicode = ([char]0x00E4).ToString() + [char]0x00F6 + [char]0x4E2D
         $tokens = @('argv','','D:\space & (A) [x] !NAME! %PATH%\clip.mov',

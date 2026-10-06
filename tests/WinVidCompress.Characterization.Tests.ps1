@@ -117,7 +117,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
 
     It 'preserves the complete default argument sequence and flat MP4 naming' {
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
-        $expected = @('-hide_banner','-nostdin','-stats','-n','-i',$script:Source,
+        $expected = @('-hide_banner','-nostdin','-nostats','-progress','pipe:1','-n','-i',$script:Source,
             '-map','0:0','-map','0:1',
             '-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt:v:0','yuv420p','-c:a','aac','-b:a','160k',
             '-movflags','+faststart','-metadata','title=Band Name 29092025 - CamA',

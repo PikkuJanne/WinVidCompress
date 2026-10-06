@@ -1575,7 +1575,7 @@
       "title": "Add machine progress and privacy-aware persistent logs",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         13,
         14

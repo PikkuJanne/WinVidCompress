@@ -240,7 +240,7 @@ Describe 'Normalized bounded media inspection [WVC-M2-01]' {
         $Encoded.Count | Should -Be 1
         $Counters.Done | Should -Be 1
         Should -Invoke Write-Host -Times 1 -Exactly -ParameterFilter { $Object -like '*progress is indeterminate*duration comparison*unavailable*' }
-        @($Encoded[0] | Where-Object { $_ -in @('-r','-progress') }).Count | Should -Be 0
+        @($Encoded[0] | Where-Object { $_ -in @('-r') }).Count | Should -Be 0
         $Encoded[0][[array]::IndexOf($Encoded[0],'-map')+1] | Should -BeExactly '0:0'
     }
 

@@ -134,6 +134,8 @@ $AppName    = 'WinVidCompress'
 $ConfigDir  = Join-Path $env:APPDATA $AppName
 $ConfigPath = Join-Path $ConfigDir 'config.json'
 $script:ConfigSnapshot = $null
+$script:ApplicationPath = $PSCommandPath
+$script:SessionLog = $null
 
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
@@ -1271,7 +1273,7 @@ function Get-InputQueue([string[]]$paths) {
 
 function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPlan, [int]$CRF, $Metadata) {
     # Pure token construction: paths and metadata never become shell expressions.
-    $tokens = @('-hide_banner','-nostdin','-stats','-n','-i',$InputPath)
+    $tokens = @('-hide_banner','-nostdin','-nostats','-progress','pipe:1','-n','-i',$InputPath)
     $tokens += $StreamPlan.MapArguments
     $geometry = Get-VideoGeometryPlan $StreamPlan.Video
     $colour = Get-VideoColourPlan $StreamPlan.Video
@@ -1300,9 +1302,308 @@ function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPla
     return $tokens
 }
 
+function New-EncodeProgress($DurationSeconds, [int]$FileIndex = 1, [int]$FileTotal = 1) {
+    $duration=ConvertTo-ProbeNumber $DurationSeconds
+    if ($null -ne $duration -and $duration -le 0) { $duration=$null }
+    return [pscustomobject]@{ Buffer=''; DiscardLine=$false; Fields=@{}; State='Encoding';
+        EndReceived=$false; Records=0; MalformedLines=0; MediaSeconds=$null; Speed=$null;
+        DurationSeconds=$duration; Percent=-1; RemainingSeconds=$null; ElapsedSeconds=0.0;
+        FileIndex=$FileIndex; FileTotal=$FileTotal; Clock=[Diagnostics.Stopwatch]::StartNew();
+        LastDisplaySeconds=-1.0; LastDisplayState=''; States=@() }
+}
+
+function Get-ProgressTime($Fields) {
+    # Both FFmpeg integer fields use microseconds, including historical out_time_ms.
+    foreach ($key in @('out_time_us','out_time_ms')) {
+        if ($Fields.ContainsKey($key)) {
+            $number=ConvertTo-ProbeNumber $Fields[$key]
+            if ($null -ne $number -and $number -ge 0) { return ($number/1000000.0) }
+        }
+    }
+    if ($Fields.ContainsKey('out_time') -and $Fields.out_time -match '^(\d+):(\d{2}):(\d{2}(?:\.\d+)?)$') {
+        $hours=ConvertTo-ProbeNumber $Matches[1]; $minutes=ConvertTo-ProbeNumber $Matches[2]
+        $seconds=ConvertTo-ProbeNumber $Matches[3]
+        if ($null -ne $hours -and $null -ne $minutes -and $null -ne $seconds -and $minutes -lt 60 -and $seconds -lt 60) {
+            $total=$hours*3600+$minutes*60+$seconds
+            if (-not [double]::IsInfinity($total)) { return $total }
+        }
+    }
+    return $null
+}
+
+function Update-EncodeProgress($Progress, [string]$Chunk, [switch]$Flush) {
+    # Bound unfinished lines; only recognized fields are retained across chunks.
+    $parts=($Progress.Buffer+$Chunk) -split "`n"
+    $Progress.Buffer=''
+    for ($i=0; $i -lt $parts.Count; $i++) {
+        $last=($i -eq $parts.Count-1)
+        $line=$parts[$i]
+        if ($last -and -not $Flush) {
+            if ($line.Length -gt 4096) { $Progress.DiscardLine=$true; $Progress.MalformedLines++ }
+            elseif (-not $Progress.DiscardLine) { $Progress.Buffer=$line }
+            break
+        }
+        if ($Progress.DiscardLine) { $Progress.DiscardLine=$false; continue }
+        if ($line.Length -gt 4096) { $Progress.MalformedLines++; continue }
+        $line=$line.TrimEnd("`r")
+        if (-not $line) { continue }
+        if ($line -notmatch '^([a-zA-Z0-9_]+)=(.*)$') { $Progress.MalformedLines++; continue }
+        $key=$Matches[1]; $value=$Matches[2]
+        if ($key -eq 'progress') {
+            if ($value -in @('continue','end')) {
+                $Progress.Records++
+                $time=Get-ProgressTime $Progress.Fields
+                if ($null -ne $time -and ($null -eq $Progress.MediaSeconds -or $time -gt $Progress.MediaSeconds)) { $Progress.MediaSeconds=$time }
+                $Progress.Speed=$null
+                if ($Progress.Fields.ContainsKey('speed')) {
+                    $speed=ConvertTo-ProbeNumber ($Progress.Fields.speed -replace 'x$','')
+                    if ($null -ne $speed -and $speed -gt 0) { $Progress.Speed=$speed }
+                }
+                if ($value -eq 'end') { $Progress.EndReceived=$true; $Progress.State='Finalizing' }
+            } else { $Progress.MalformedLines++ }
+            $Progress.Fields=@{}
+        } elseif ($key -in @('out_time_us','out_time_ms','out_time','speed')) { $Progress.Fields[$key]=$value }
+    }
+    $Progress.ElapsedSeconds=$Progress.Clock.Elapsed.TotalSeconds
+    $Progress.RemainingSeconds=$null
+    if ($null -ne $Progress.DurationSeconds -and $null -ne $Progress.MediaSeconds) {
+        # 100 is reserved for validated, durably published output.
+        $Progress.Percent=[int][math]::Min(99,[math]::Floor(100*[math]::Min(1.0,$Progress.MediaSeconds/$Progress.DurationSeconds)))
+        if ($Progress.State -eq 'Encoding' -and $null -ne $Progress.Speed) {
+            $eta=[math]::Max(0.0,$Progress.DurationSeconds-$Progress.MediaSeconds)/$Progress.Speed
+            if (-not [double]::IsInfinity($eta)) { $Progress.RemainingSeconds=$eta }
+        }
+    }
+}
+
+function Write-JobProgress($Progress, [switch]$Finish) {
+    $elapsed=$Progress.Clock.Elapsed.TotalSeconds
+    if (-not $Finish -and $Progress.State -eq $Progress.LastDisplayState -and $elapsed-$Progress.LastDisplaySeconds -lt 0.5) { return }
+    $Progress.LastDisplaySeconds=$elapsed; $Progress.LastDisplayState=$Progress.State
+    $remaining=if ($null -ne $Progress.RemainingSeconds) { 'approx. {0:F0}s remaining in encode' -f $Progress.RemainingSeconds } else { 'remaining unknown' }
+    Write-Progress -Id 1 -Activity ('File {0}/{1}' -f $Progress.FileIndex,$Progress.FileTotal) -Status (
+        '{0}; elapsed {1:F0}s; {2}' -f $Progress.State,$elapsed,$remaining) -PercentComplete $Progress.Percent -Completed:$Finish
+}
+
+function Set-JobProgressState($Progress, $Result, [string]$State) {
+    $Progress.State=$State
+    if (-not $Progress.States.Count -or $Progress.States[-1] -ne $State) { $Progress.States+=@($State) }
+    $Result.ProgressStates=$Progress.States
+    if ($State -ne 'Encoding') { $Progress.RemainingSeconds=$null }
+    if ($State -eq 'Completed') { $Progress.Percent=100 }
+    Write-JobProgress $Progress
+}
+
+function Limit-LogText([string]$Text, [int]$Limit = 8192) {
+    if ($Text.Length -le $Limit) { return $Text }
+    return ('[truncated]'+$Text.Substring($Text.Length-$Limit))
+}
+
+function Get-LogNative($Native) {
+    if ($null -eq $Native) { return $null }
+    return [pscustomobject]@{ ExitCode=(Get-ProbeProperty $Native 'ExitCode');
+        FailureKind=(Get-ProbeProperty $Native 'FailureKind'); Error=(Limit-LogText (Get-ProbeProperty $Native 'Error'));
+        StdOut=(Limit-LogText (Get-ProbeProperty $Native 'StdOut')); StdErr=(Limit-LogText (Get-ProbeProperty $Native 'StdErr'));
+        StdOutCharacters=(Get-ProbeProperty $Native 'StdOutCharacters'); StdErrCharacters=(Get-ProbeProperty $Native 'StdErrCharacters');
+        StdOutTruncated=(Get-ProbeProperty $Native 'StdOutTruncated'); StdErrTruncated=(Get-ProbeProperty $Native 'StdErrTruncated');
+        LogTailLimitCharacters=8192 }
+}
+
+function Add-SessionLogWarning($Session, [string]$Message) {
+    if ($null -eq $Session -or $Session.Warnings.Count) { return }
+    $Session.Warnings+=@($Message)
+    try { Write-Host $Message -ForegroundColor Yellow } catch { try { [Console]::Error.WriteLine($Message) } catch { } }
+}
+
+function Write-SessionLogRecord($Session, $Record, [string]$Text) {
+    if ($null -eq $Session -or -not $Session.Enabled) { return }
+    try {
+        $json=$Record | ConvertTo-Json -Depth 16 -Compress
+        $utf8=New-Object Text.UTF8Encoding($false)
+        $entries=@(@{Path=$Session.JsonPath;Text=$json+"`r`n"},@{Path=$Session.TextPath;Text=$Text+"`r`n"})
+        $full=$false
+        foreach ($entry in $entries) {
+            if ((Get-Item -LiteralPath $entry.Path).Length+$utf8.GetByteCount($entry.Text) -gt $Session.LimitBytes-512) { $full=$true }
+        }
+        foreach ($entry in $entries) {
+            if ($full) {
+                $marker=if ($entry.Path -eq $Session.JsonPath) { '{"SchemaVersion":1,"Kind":"Truncated","Reason":"Session byte limit reached; later records omitted."}' } else { 'Session byte limit reached; later records omitted.' }
+                $entry.Text=$marker+"`r`n"
+            }
+            $bytes=$utf8.GetBytes($entry.Text)
+            $file=New-Object IO.FileStream($entry.Path,[IO.FileMode]::Open,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+            try {
+                if ($file.Length+$bytes.Length -gt $Session.LimitBytes) { throw 'Session log byte limit exceeded.' }
+                [void]$file.Seek(0,[IO.SeekOrigin]::End); $file.Write($bytes,0,$bytes.Length)
+            } finally { $file.Dispose() }
+        }
+        if ($full) {
+            $Session.Enabled=$false
+            Add-SessionLogWarning $Session 'Local session log reached its byte limit; later records are omitted. Compression results remain authoritative.'
+        }
+    } catch {
+        $Session.Enabled=$false
+        Add-SessionLogWarning $Session ('Local session logging failed: '+(Limit-LogText $_.Exception.Message 512)+'. Compression outcomes and exit status are unchanged.')
+    }
+}
+
+function New-SessionLog($Tools, [string]$Root = (Join-Path $ConfigDir 'logs'),
+    [ValidateRange(4096,1048576)][int]$LimitBytes = 1048576) {
+    $session=[pscustomobject]@{SchemaVersion=1;SessionId=[guid]::NewGuid().ToString('N');Enabled=$false;
+        JsonPath=$null;TextPath=$null;LimitBytes=$LimitBytes;Warnings=@()}
+    try {
+        [void][IO.Directory]::CreateDirectory($Root)
+        $directory=Get-Item -LiteralPath $Root -Force
+        if (($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'Log root is a reparse point.' }
+        # A hard local retention quota avoids deleting older diagnostics automatically.
+        # At most 128 owned sessions, each with two <=1 MiB files; manual removal is explicit.
+        if (@(Get-ChildItem -LiteralPath $Root -Directory -Force).Count -ge 128) { throw '128-session log quota reached; remove reviewed old logs manually to resume logging.' }
+        $path=Join-Path $Root $session.SessionId
+        if (Test-Path -LiteralPath $path) { throw 'Session log directory already exists.' }
+        [void][IO.Directory]::CreateDirectory($path)
+        $session.JsonPath=Join-Path $path 'results.jsonl'; $session.TextPath=Join-Path $path 'session.txt'
+        foreach ($filePath in @($session.JsonPath,$session.TextPath)) {
+            $file=New-Object IO.FileStream($filePath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+            $file.Dispose()
+        }
+        $session.Enabled=$true
+        $header=[pscustomobject]@{SchemaVersion=1;Kind='Session';SessionId=$session.SessionId;
+            StartedUtc=[datetime]::UtcNow.ToString('o');Application='WinVidCompress';
+            ApplicationSHA256=(Get-FileHash -LiteralPath $script:ApplicationPath -Algorithm SHA256).Hash;
+            PowerShell=$PSVersionTable.PSVersion.ToString();Edition=$PSVersionTable.PSEdition;
+            FFmpeg=(Get-ProbeProperty $Tools 'FFmpeg');FFprobe=(Get-ProbeProperty $Tools 'FFprobe');
+            FFmpegVersion=(Limit-LogText (Get-ProbeProperty $Tools 'FFmpegBuild'));
+            FFprobeVersion=(Limit-LogText (Get-ProbeProperty $Tools 'FFprobeBuild'));LimitBytes=$LimitBytes}
+        Write-SessionLogRecord $session $header ('WinVidCompress session '+$session.SessionId+'; PowerShell '+$header.PowerShell+'; application SHA256 '+$header.ApplicationSHA256)
+    } catch {
+        $session.Enabled=$false
+        Add-SessionLogWarning $session ('Local session logging unavailable: '+(Limit-LogText $_.Exception.Message 512)+'. Compression outcomes and exit status are unchanged.')
+    }
+    return $session
+}
+
+function Write-SessionJob($Session, $Job) {
+    if ($null -eq $Session) { return }
+    $Job.LogPath=$Session.JsonPath
+    # Explicit projection avoids copying input tags, raw probe JSON or full media trees.
+    $record=[pscustomobject]@{SchemaVersion=1;Kind='Job';SessionId=$Session.SessionId;JobId=$Job.JobId;
+        SourcePath=$Job.SourcePath;OutputPath=$Job.OutputPath;CandidatePath=$Job.CandidatePath;
+        TemporaryPath=$Job.TemporaryPath;RetainedPath=$Job.RetainedPath;Outcome=$Job.Outcome;Stage=$Job.Stage;
+        Reason=(Limit-LogText $Job.Reason);Settings=$Job.Settings;SelectedStreams=$Job.SelectedStreams;
+        DurationSeconds=$Job.DurationSeconds;ElapsedSeconds=$Job.ElapsedSeconds;Timings=$Job.Timings;
+        InputBytes=$Job.InputBytes;OutputBytes=$Job.OutputBytes;SavingsPercent=$Job.SavingsPercent;
+        ProgressStates=$Job.ProgressStates;EncodeArguments=@($Job.Diagnostics.EncodeArguments | ForEach-Object { Limit-LogText $_ });
+        Probe=(Get-LogNative (Get-ProbeProperty $Job.Diagnostics.Probe 'Native'));
+        Encode=(Get-LogNative $Job.Diagnostics.Encode);
+        Validation=(Get-LogNative (Get-ProbeProperty (Get-ProbeProperty $Job.Diagnostics.Validation 'Inspection') 'Native'));
+        Warnings=@($Job.Diagnostics.Warnings | Select-Object -First 20 | ForEach-Object { Limit-LogText $_ })}
+    Write-SessionLogRecord $Session $record ('{0} {1} [{2}]: {3}; source={4}; elapsed={5:F2}s' -f $Job.JobId,$Job.Outcome,$Job.Stage,$record.Reason,$Job.SourcePath,$Job.ElapsedSeconds)
+}
+
+function Complete-SessionLog($Session, $Result) {
+    if ($null -eq $Session -or $null -eq $Result) { return }
+    $record=[pscustomobject]@{SchemaVersion=1;Kind='Result';SessionId=$Session.SessionId;
+        FinishedUtc=[datetime]::UtcNow.ToString('o');ExitCode=$Result.ExitCode;Counters=$Result.Counters;
+        Reason=(Limit-LogText $Result.Reason);ScanErrors=@($Result.ScanErrors | Select-Object -First 20);
+        ScanErrorsOmitted=[math]::Max(0,$Result.ScanErrors.Count-20)}
+    Write-SessionLogRecord $Session $record ('Session exit {0}; found {1}; completed {2}; failed {3}; cancelled {4}' -f $Result.ExitCode,$Result.Counters.Found,$Result.Counters.Done,$Result.Counters.Failed,$Result.Counters.Cancelled)
+    $Result | Add-Member -NotePropertyName LogPath -NotePropertyValue $Session.JsonPath -Force
+    $Result.Warnings+=@($Session.Warnings)
+    if ($Session.JsonPath) { try { Write-Host ('Local session results: '+$Session.JsonPath) } catch { } }
+}
+
+function ConvertTo-RedactedLogValue($Value, [object[]]$Replacements, [bool]$RedactMetadata, [string]$FieldName = '') {
+    if ($null -eq $Value) { return $null }
+    if ($Value -is [string]) {
+        if ($FieldName -in @('SourcePath','OutputPath','CandidatePath','TemporaryPath','RetainedPath','FFmpeg','FFprobe')) { return '[path]' }
+        if ($RedactMetadata -and $FieldName -in @('FFmpegVersion','FFprobeVersion')) {
+            # Keep the version token, never build configuration or compiler paths.
+            if ($Value -match '^(ffmpeg|ffprobe) version ([a-zA-Z0-9_.+\-]+)(?:\s|$)') { return ($Matches[1]+' version '+$Matches[2]) }
+            return '[version detail omitted]'
+        }
+        if ($FieldName -notin @('PrivateText','FFmpegVersion','FFprobeVersion','StdOut','StdErr','Error','Reason','Warnings','ScanErrors','Path','Message')) { return $Value }
+        $text=$Value
+        foreach ($replacement in $Replacements) {
+            $text=[regex]::Replace($text,[regex]::Escape($replacement.Value),$replacement.Label,[Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        }
+        # Unknown absolute paths can contain spaces; omit through a quote/newline.
+        $text=[regex]::Replace($text,'(?i)(?:[a-z]:[\\/]|\\\\)[^"''<>|\r\n]*','[path]')
+        return $text
+    }
+    if ($Value -is [array]) { return ,@($Value | ForEach-Object { ConvertTo-RedactedLogValue $_ $Replacements $RedactMetadata $FieldName }) }
+    if ($Value -is [pscustomobject]) {
+        $copy=[ordered]@{}
+        foreach ($property in $Value.PSObject.Properties) {
+            # Free-form diagnostics may contain inherited tags not known to WVC.
+            if ($RedactMetadata -and $property.Name -in @('StdOut','StdErr','Error','Reason','Warnings','ScanErrors')) {
+                $copy[$property.Name]='[private diagnostic text omitted]'
+            } elseif ($property.Name -eq 'EncodeArguments') {
+                $tokens=@($property.Value); $safe=New-Object 'Collections.Generic.List[string]'
+                for ($i=0; $i -lt $tokens.Count; $i++) {
+                    if ($i -gt 0 -and $tokens[$i-1] -eq '-metadata') {
+                        $parts=$tokens[$i] -split '=',2
+                        if ($RedactMetadata -and $parts.Count -eq 2) { $safe.Add($parts[0]+'=[metadata]') }
+                        else { $safe.Add((ConvertTo-RedactedLogValue $tokens[$i] $Replacements $RedactMetadata 'PrivateText')) }
+                    } elseif (($i -gt 0 -and $tokens[$i-1] -eq '-i') -or $i -eq $tokens.Count-1) { $safe.Add('[path]') }
+                    else { $safe.Add($tokens[$i]) }
+                }
+                $copy[$property.Name]=$safe.ToArray()
+            } else { $copy[$property.Name]=ConvertTo-RedactedLogValue $property.Value $Replacements $RedactMetadata $property.Name }
+        }
+        return [pscustomobject]$copy
+    }
+    return $Value
+}
+
+function Export-WvcDiagnostic([string]$SessionPath, [string]$DestinationPath,
+    [string[]]$Roots = @(), [bool]$RedactFilenames = $true, [bool]$RedactMetadata = $true) {
+    # Explicit local export only. No network API, upload, or automatic export.
+    $file=Get-Item -LiteralPath $SessionPath -Force
+    if ($file.PSIsContainer -or $file.Length -gt 1048576) { throw 'Expected a bounded session results.jsonl file.' }
+    $records=@(Get-Content -LiteralPath $SessionPath -Encoding UTF8 | Where-Object { $_ } | ForEach-Object { $_ | ConvertFrom-Json })
+    if (-not $records.Count -or $records[0].Kind -ne 'Session' -or @($records | Where-Object { $_.SchemaVersion -ne 1 }).Count) { throw 'Unsupported session log schema.' }
+    $replacements=New-Object 'Collections.Generic.List[object]'
+    $privateRoots=@($Roots)+@($env:USERPROFILE,$env:APPDATA)
+    foreach ($record in $records) {
+        foreach ($key in @('SourcePath','OutputPath','CandidatePath','TemporaryPath','RetainedPath','FFmpeg','FFprobe')) {
+            $path=Get-ProbeProperty $record $key
+            if ($path) {
+                $privateRoots+=@([IO.Path]::GetDirectoryName($path))
+                foreach ($variant in @($path,($path -replace '\\','/'))) { $replacements.Add([pscustomobject]@{Value=$variant;Label='[path]'}) }
+                if ($RedactFilenames -and $key -notin @('FFmpeg','FFprobe')) {
+                    foreach ($name in @([IO.Path]::GetFileName($path),[IO.Path]::GetFileNameWithoutExtension($path))) {
+                        if ($name) { $replacements.Add([pscustomobject]@{Value=$name;Label='[filename]'}) }
+                    }
+                }
+            }
+        }
+        $tokens=Get-ProbeProperty $record 'EncodeArguments'
+        if ($null -eq $tokens) { $tokens=@() }
+        if ($RedactMetadata) {
+            for ($i=0; $i -lt $tokens.Count-1; $i++) {
+                if ($tokens[$i] -eq '-metadata') {
+                    $parts=$tokens[$i+1] -split '=',2
+                    if ($parts.Count -eq 2 -and $parts[1]) { $replacements.Add([pscustomobject]@{Value=$parts[1];Label='[metadata]'}) }
+                }
+            }
+        }
+    }
+    foreach ($root in $privateRoots) {
+        if ($root) { foreach ($variant in @($root,($root -replace '\\','/'))) { $replacements.Add([pscustomobject]@{Value=$variant;Label='[root]'}) } }
+    }
+    $ordered=@($replacements | Sort-Object @{Expression={$_.Value.Length};Descending=$true})
+    $export=[pscustomobject]@{SchemaVersion=1;Kind='RedactedDiagnostic';RootsRedacted=$true;
+        FilenamesRedacted=$RedactFilenames;MetadataRedacted=$RedactMetadata;
+        Records=@($records | ForEach-Object { ConvertTo-RedactedLogValue $_ $ordered $RedactMetadata })}
+    $bytes=(New-Object Text.UTF8Encoding($false)).GetBytes(($export | ConvertTo-Json -Depth 20))
+    $target=New-Object IO.FileStream($DestinationPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+    try { $target.Write($bytes,0,$bytes.Length) } finally { $target.Dispose() }
+    return $DestinationPath
+}
+
 function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
     [ValidateRange(100,30000)][int]$DrainTimeoutMilliseconds = 10000,
-    [ValidateRange(4096,1048576)][int]$CaptureLimitCharacters = 1048576) {
+    [ValidateRange(4096,1048576)][int]$CaptureLimitCharacters = 1048576, $ProgressContext = $null) {
     $start = New-Object Diagnostics.ProcessStartInfo
     $start.FileName = $Executable
     # ArgumentList is unavailable on .NET Framework. Use the tested Windows CRT quoting.
@@ -1339,7 +1640,8 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
         $inputWriter.Close()
         # Tasks do IO only. Console output and all PowerShell run on this runspace.
         while ($true) {
-            foreach ($stream in $streams) {
+            for ($streamIndex=0; $streamIndex -lt $streams.Count; $streamIndex++) {
+                $stream=$streams[$streamIndex]
                 if (-not $stream.Closed -and $stream.Task.IsCompleted) {
                     $count = $stream.Task.GetAwaiter().GetResult()
                     if ($count -eq 0) { $stream.Closed = $true; continue }
@@ -1350,9 +1652,14 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
                         [void]$stream.Text.Remove(0,$stream.Text.Length-$CaptureLimitCharacters)
                         $stream.Truncated = $true
                     }
-                    Write-Host $chunk -NoNewline
+                    if ($null -eq $ProgressContext) { Write-Host $chunk -NoNewline }
+                    elseif ($streamIndex -eq 0) { Update-EncodeProgress $ProgressContext $chunk }
                     $stream.Task = $stream.Reader.ReadAsync($stream.Buffer,0,$stream.Buffer.Length)
                 }
+            }
+            if ($null -ne $ProgressContext) {
+                Update-EncodeProgress $ProgressContext ''
+                Write-JobProgress $ProgressContext
             }
             if ($process.HasExited) {
                 if ($null -eq $exitClock) {
@@ -1371,6 +1678,7 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
                 [void]$process.WaitForExit(10)
             }
         }
+        if ($null -ne $ProgressContext) { Update-EncodeProgress $ProgressContext '' -Flush }
         if ($null -eq $failureKind -and $exitCode -ne 0) {
             $failureKind = 'NonZeroExit'
             $errorText = "FFmpeg exit code: $exitCode"
@@ -1736,7 +2044,7 @@ function New-JobResult([string]$SourcePath, [int]$CRF) {
         Timings=[pscustomobject]@{ProbeSeconds=$null;EncodeAndMuxSeconds=$null;ValidationSeconds=$null;PromotionSeconds=$null};
         InputBytes=$null; OutputBytes=$null; SizeChangeBytes=$null;
         SizeChangePercent=$null; SavingsPercent=$null; SizeState='NotProduced';
-        AbortBatch=$false; CancellationRequested=$false; LogPath=$null;
+        AbortBatch=$false; CancellationRequested=$false; LogPath=$null; ProgressStates=@();
         Diagnostics=[pscustomobject]@{Probe=$null;EncodeArguments=@();Encode=$null;Validation=$null;Warnings=@()} }
 }
 
@@ -1839,11 +2147,13 @@ function Get-BatchResult([object[]]$Jobs, [object[]]$Scans, [switch]$Requested,
         DurationUnknownJobs=$measurements.DurationUnknownJobs;ElapsedSeconds=$measurements.ElapsedSeconds}
 }
 
-function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
+function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters,
+    [int]$FileIndex=1, [int]$FileTotal=1) {
     # The optional legacy reference is updated from this record only. Batch dispatch
     # consumes returned records and never uses it as an outcome authority.
     $result=New-JobResult $inPath $crf
     $clock=[Diagnostics.Stopwatch]::StartNew()
+    $progress=New-EncodeProgress $null $FileIndex $FileTotal
     $stageClock=New-Object Diagnostics.Stopwatch
     $result.Outcome='Failed'
     $outputJob = $null
@@ -1902,7 +2212,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $result.Diagnostics.Probe=$inspection
         $result.DurationSeconds=$inspection.DurationSeconds; $result.DurationState=$inspection.DurationState
         if ($null -ne $inspection.Native -and $inspection.Native.StdErr) {
-            Write-Host ("Probe diagnostics: " + $inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
+            Write-Host ("Probe diagnostics: " + (Limit-LogText $inspection.Native.StdErr.Trim() 512)) -ForegroundColor Yellow
         }
         if (-not $inspection.Succeeded) {
             throw "Probe failed [$($inspection.FailureKind)] at $($inspection.Stage): $($inspection.Reason)"
@@ -1927,26 +2237,36 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         Write-Host "    -> $out"
 
         $stage = 'Encode'
+        $progress.DurationSeconds=$result.DurationSeconds
+        if ($null -ne $progress.DurationSeconds -and $progress.DurationSeconds -le 0) { $progress.DurationSeconds=$null }
+        Set-JobProgressState $progress $result 'Encoding'
         $stageClock.Restart()
-        $native = Invoke-EncodeProcess $ffmpeg $encodeArguments
+        $native = Invoke-EncodeProcess $ffmpeg $encodeArguments -ProgressContext $progress
         $result.Timings.EncodeAndMuxSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Settings.Applied=if ($null -ne $native.PSObject.Properties['Started']) { [bool]$native.Started } else { [bool]$native.Succeeded }
         $result.Diagnostics.Encode=$native
         if ($native.StdOutTruncated -or $native.StdErrTruncated) {
-            Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; console output was streamed.' -ForegroundColor Yellow
+            Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; normal console output is concise.' -ForegroundColor Yellow
         }
-        if (-not $native.Succeeded) { throw "Encoder failed [$($native.FailureKind)]: $($native.Error)" }
+        if (-not $native.Succeeded) {
+            $stderr=Get-ProbeProperty $native 'StdErr'
+            if ($stderr) { Write-Host ('Encoder diagnostics: '+(Limit-LogText $stderr 1024)) -ForegroundColor DarkRed }
+            throw "Encoder failed [$($native.FailureKind)]: $($native.Error)"
+        }
+        Set-JobProgressState $progress $result 'Finalizing'
         $stage = 'Validation'
+        Set-JobProgressState $progress $result 'Validating'
         $stageClock.Restart()
         $validation = Get-OutputValidation $ffprobe $outputJob $inspection $streamPlan
         $result.Timings.ValidationSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Diagnostics.Validation=$validation
         if ($null -ne $validation.Inspection -and $null -ne $validation.Inspection.Native -and $validation.Inspection.Native.StdErr) {
-            Write-Host ("Output probe diagnostics: " + $validation.Inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
+            Write-Host ("Output probe diagnostics: " + (Limit-LogText $validation.Inspection.Native.StdErr.Trim() 512)) -ForegroundColor Yellow
         }
         if (-not $validation.Succeeded) { throw "Output validation failed [$($validation.FailureKind)]: $($validation.Reason)" }
         foreach ($warning in $validation.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $stage = 'Promote'
+        Set-JobProgressState $progress $result 'Publishing'
         $stageClock.Restart()
         $publication = Publish-OutputJob $outputJob $CollisionMode
         $result.Timings.PromotionSeconds=$stageClock.Elapsed.TotalSeconds
@@ -1956,6 +2276,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             $result.OutputPath=$publication.FinalPath
             $stage='Complete'
             $reason = 'Published.'
+            Set-JobProgressState $progress $result 'Completed'
             if ($publication.FinalPath -ne $out) { Write-Host ("Published as: " + $publication.FinalPath) -ForegroundColor Cyan }
             Write-Host "Done." -ForegroundColor Green
         } else {
@@ -2004,6 +2325,20 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
                 }
             }
         }
+        $result.Stage=$stage; $result.Reason=$reason; $result.ElapsedSeconds=$clock.Elapsed.TotalSeconds
+        try {
+            if ($result.Outcome -ne 'Completed') { Set-JobProgressState $progress $result $result.Outcome }
+            Write-JobProgress $progress -Finish
+        } catch {
+            # Preserve existing cancellation semantics even at the display boundary.
+            if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) {
+                $progress.Clock.Stop(); $clock.Stop()
+                $result.CancellationRequested=$true; $_.Exception.Data['WvcJobResult']=$result; throw
+            }
+            if ($_.Exception -is [System.OperationCanceledException]) { $result.CancellationRequested=$true }
+            $result.Diagnostics.Warnings+=@('Progress display cleanup failed.')
+        }
+        $progress.Clock.Stop()
         $clock.Stop()
         $result.ElapsedSeconds=$clock.Elapsed.TotalSeconds
         $result.Stage=$stage
@@ -2063,13 +2398,15 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
         }
     }
     $stopScheduling=$false
+    $fileIndex=0
     foreach ($f in $queue.Files) {
+        $fileIndex++
         if ($stopScheduling) {
             $job=New-JobResult $f $DefaultCRF
             $job.Reason='Batch ended before this job started.'
         } else {
             try {
-                $job=Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF
+                $job=Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF -FileIndex $fileIndex -FileTotal $queue.Files.Count
             } catch {
                 if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
                 $job=$_.Exception.Data['WvcJobResult']
@@ -2089,6 +2426,9 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
             if ($job.Outcome -eq 'Cancelled' -or $job.CancellationRequested -or $job.AbortBatch) { $stopScheduling=$true }
         }
         $jobs.Add($job)
+        try { Write-SessionJob $script:SessionLog $job } catch {
+            Add-SessionLogWarning $script:SessionLog ('Local job logging failed: '+(Limit-LogText $_.Exception.Message 512))
+        }
     }
 
     $batch=Get-BatchResult $jobs.ToArray() $queue.Scans -Requested
@@ -2200,6 +2540,8 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
 function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     [switch]$Unattended, [switch]$ExplicitRequest) {
     $stage='Startup'
+    $session=$null; $run=$null
+    $previousSession=$script:SessionLog
     $inputPaths=@($Paths | Where-Object { $null -ne $_ })
     try {
         if (-not $CheckEnvironment -and ($Unattended -or $ExplicitRequest) -and -not $inputPaths.Count) {
@@ -2217,17 +2559,27 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         $cfg=Load-Config
         $output=Get-OutputEnvironment $cfg.OutputDir
         Write-EnvironmentReport $tools $output
-        if ($inputPaths.Count -gt 0) { return (Process-Paths $inputPaths $ffmpeg $ffprobe $cfg) }
-        $stage='Menu'
-        return (Run-TUI $ffmpeg $ffprobe $cfg)
+        $session=New-SessionLog $tools
+        $script:SessionLog=$session
+        if ($inputPaths.Count -gt 0) { $run=Process-Paths $inputPaths $ffmpeg $ffprobe $cfg }
+        else { $stage='Menu'; $run=Run-TUI $ffmpeg $ffprobe $cfg }
+        return $run
     } catch {
         if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
         if ($_.Exception -is [System.OperationCanceledException]) {
-            return (Get-BatchResult @() @() -Cancelled -Reason $_.Exception.Message)
+            $run=Get-BatchResult @() @() -Cancelled -Reason $_.Exception.Message
+            return $run
         }
         $reason=$_.Exception.Message
         try { [Console]::Error.WriteLine("WinVidCompress [$stage]: $reason") } catch { }
-        return (Get-BatchResult @() @() -StartupFailed -Reason $reason)
+        $run=Get-BatchResult @() @() -StartupFailed -Reason $reason
+        return $run
+    } finally {
+        try { Complete-SessionLog $session $run } catch {
+            Add-SessionLogWarning $session 'Local session reporting failed; compression outcome and exit status are unchanged.'
+            if ($null -ne $run -and $null -ne $session) { $run.Warnings+=@($session.Warnings) }
+        }
+        $script:SessionLog=$previousSession
     }
 }
 
