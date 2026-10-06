@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-05",
+  "acceptance_ids": [
+    "WVC-M3-05-A01",
+    "WVC-M3-05-A02",
+    "WVC-M3-05-A03",
+    "WVC-M3-05-A04"
+  ],
+  "recorded_at": "2026-10-06T15:58:14.912963+00:00",
+  "tested_commits": [
+    "0c53f73c374d68eb275c48370c5aae659038f67e",
+    "371ff2f8a17a97dca2053228f8075d33b24a4897"
+  ],
+  "application_sha256": "ee17172f2071b764b2565fe301f27e55695f420fb0a33d737272bb9c4f9bc064",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2; 64-bit",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_tools": [
+      {
+        "Name": "FFmpeg",
+        "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "SHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83"
+      },
+      {
+        "Name": "FFprobe",
+        "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+        "SHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath '.test-results/m305/quick51.json' *> '.test-results/m305/quick51.log'",
+      "tested_commit": "0c53f73c374d68eb275c48370c5aae659038f67e",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 704,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m305/quick51.json",
+      "artifact_sha256": "697534d1292c54220b510691b1e60760e13b4311657a0ceda94dbf0027657807",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted51-final",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath '.test-results/m305/targeted51-final.json' *> '.test-results/m305/targeted51-final.log'",
+      "tested_commit": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 725,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m305/targeted51-final.json",
+      "artifact_sha256": "13f39f6eb23de24343a628953678d12ad6c6a4fe9daa0e0c10bbde5bfe8b5fae",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted7-final",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath '.test-results/m305/targeted7-final.json' *> '.test-results/m305/targeted7-final.log'",
+      "tested_commit": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 725,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m305/targeted7-final.json",
+      "artifact_sha256": "16dfe44004f13fc2b13784f7a08bc61d32d79ce39d5cc8fa6d1d382e45a08af1",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    }
+  ],
+  "failed_gate_runs": [
+    {
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath '.test-results/m305/targeted51.json' *> '.test-results/m305/targeted51.log'",
+      "tested_commit": "0c53f73c374d68eb275c48370c5aae659038f67e",
+      "tested_tree_dirty": false,
+      "exit_code": 1,
+      "counts": {
+        "Passed": 721,
+        "Failed": 3,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failed_cases": [
+        {
+          "Id": "entry/direct-ps51",
+          "Status": "Failed",
+          "Reason": "Entry smoke failed; see local diagnostics."
+        },
+        {
+          "Id": "entry/direct-ps7",
+          "Status": "Failed",
+          "Reason": "Entry smoke failed; see local diagnostics."
+        },
+        {
+          "Id": "entry/original-bat",
+          "Status": "Failed",
+          "Reason": "Entry smoke failed; see local diagnostics."
+        }
+      ],
+      "local_artifact": ".test-results/m305/targeted51.json",
+      "artifact_sha256": "7e4f4bf9ca5aef0f4c993e47ec468daf828671db00b1f8717dba9c255fa97d68",
+      "description": "Both jobs actually completed/published on each route. Entry fixture expected raw recorder stdout, suppressed by managed progress. Owned Base64 argv files preserve source/temp/final/sentinel/hash checks; added persistent-record agreement and doctor-no-log checks. Final gates supersede this retained failure."
+    }
+  ],
+  "development_runs": [
+    {
+      "name": "focused51-1",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1' -ReportPath '.test-results/m305/focused51-1.json' *> '.test-results/m305/focused51-1.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 1,
+      "counts": {
+        "Passed": 23,
+        "Failed": 9,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused51-1.json",
+      "artifact_sha256": "7ce09548229ce95869a6a30ba58f04082389a018b00848cb0cff8197b86e172b"
+    },
+    {
+      "name": "focused51-2",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1' -ReportPath '.test-results/m305/focused51-2.json' *> '.test-results/m305/focused51-2.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 1,
+      "counts": {
+        "Passed": 28,
+        "Failed": 4,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused51-2.json",
+      "artifact_sha256": "c9fedf5b63f0a5d1fecf3aed176418fc53460ccacf2a4f0ed730f333ab0d6d61"
+    },
+    {
+      "name": "focused51-3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1' -ReportPath '.test-results/m305/focused51-3.json' *> '.test-results/m305/focused51-3.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 32,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused51-3.json",
+      "artifact_sha256": "321dea50c390099266cd1866e81a14148d7cfbf38bf58f48f49eb2dec54e61b1"
+    },
+    {
+      "name": "focused-native51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1|tests/unit/Probe.Tests.ps1' -ReportPath '.test-results/m305/focused-native51.json' *> '.test-results/m305/focused-native51.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 120,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused-native51.json",
+      "artifact_sha256": "7eb77802e13f7d82667e1ffb6978f762961b6a4c836249e7d5ca47195878c2a5"
+    },
+    {
+      "name": "focused-native7",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1' -ReportPath '.test-results/m305/focused-native7.json' *> '.test-results/m305/focused-native7.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 44,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused-native7.json",
+      "artifact_sha256": "036740258017ae4fcdf6b38b6d2406e19e48e6679215bb9a896cbc587aad3a1c"
+    },
+    {
+      "name": "focused-final51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1' -ReportPath '.test-results/m305/focused-final51.json' *> '.test-results/m305/focused-final51.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 46,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused-final51.json",
+      "artifact_sha256": "6af9918c8718aea18c387c6ba4e9e27a51f3f70535be275fed959e8492e132f1"
+    },
+    {
+      "name": "focused-ready51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Progress.Tests.ps1|tests/unit/Log.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1' -ReportPath '.test-results/m305/focused-ready51.json' *> '.test-results/m305/focused-ready51.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 49,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused-ready51.json",
+      "artifact_sha256": "60fb23e86113330d4caa5080ca0d0f9548c3eef22c356f2a93b9449c7731faf4"
+    },
+    {
+      "name": "focused-quota51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Log.Tests.ps1|tests/unit/Progress.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1' -ReportPath '.test-results/m305/focused-quota51.json' *> '.test-results/m305/focused-quota51.log'",
+      "tested_tree": "Uncommitted development tree before corresponding checkpoint; no exact tree hash captured. Superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 50,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/focused-quota51.json",
+      "artifact_sha256": "0622c4014d8d45da5b06c84220820befe4defc0143f7347bc01d0cd1bbe4f27a"
+    },
+    {
+      "name": "entry-fixed",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-EntrySmoke.ps1 -PowerShell7 (Get-Command pwsh).Source -ReportPath '.test-results/m305/entry-fixed.json' *> '.test-results/m305/entry-fixed.log'",
+      "tested_tree": "Corrected uncommitted entry fixture with first implementation application; superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 8,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/entry-fixed.json",
+      "artifact_sha256": "53c76d97719635b55312ba5fa569d7f7bba51ce97bb1b6584ba85098c6af8c9d"
+    },
+    {
+      "name": "entry-logs-fixed",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-EntrySmoke.ps1 -PowerShell7 (Get-Command pwsh).Source -ReportPath '.test-results/m305/entry-logs-fixed.json' *> '.test-results/m305/entry-logs-fixed.log'",
+      "tested_tree": "Corrected uncommitted entry fixture with first implementation application; superseded by clean final gates.",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 8,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "local_artifact": ".test-results/m305/entry-logs-fixed.json",
+      "artifact_sha256": "53c76d97719635b55312ba5fa569d7f7bba51ce97bb1b6584ba85098c6af8c9d"
+    }
+  ],
+  "manual_checks": [],
+  "owner_approval": null,
+  "scope_expansion": "Existing encoder integration/fixture, exact token/probe/characterization expectations and minimal entry argv-file/session assertions plus tests README/PROCESS_AND_CLI. No BAT, publication transaction, native timeout or default quality change.",
+  "ci": {
+    "commit": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+    "checks": 0,
+    "statuses": 0,
+    "workflow_runs": 0,
+    "combined_state": "pending",
+    "passed": false
+  },
+  "pull_request": {
+    "number": 21,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/21",
+    "draft": true
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T15:48:48.631578+00:00",
+    "branch": "codex/wvc-m3-05-progress-logs",
+    "head": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+    "live_fetch_head": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+    "live_push_head": "371ff2f8a17a97dca2053228f8075d33b24a4897",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "No new Full/Explorer/physical Ctrl+C/console-close/playback observation. Historical Full eight NotRun rows, M2-06 A04 and M3-04 A04 remain.",
+    "Targeted includes final Quick scope. Separate initial PS5.1 Quick is at first implementation; no separate PS7 Quick.",
+    "Synthetic recorders/media and structural probes do not establish full visual/audio integrity.",
+    "ETA approximates encode only; Finalizing identifies native end/exit boundary, not exact faststart start.",
+    "Bounded private logs start after successful normal startup and can be partial after interruption/crash. Standalone Compress-One has no session. Write/quota/lock failures warn without changing compression outcomes/exits.",
+    "Default export omits arbitrary diagnostic/tag text; explicitly retained metadata requires review for unknown personal text.",
+    "No private media/config/raw logs/private paths committed/uploaded; no telemetry, downloads, system changes, default-branch push, PR merge, CI/milestone/release pass."
+  ],
+  "next_task": "WVC-M3-06 - Cancel safely and terminate only this job’s child process",
+  "handoff_checks": [
+    {
+      "command": "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "exit_code": 0,
+      "valid": true,
+      "tasks": 32,
+      "acceptance_criteria": 128,
+      "errors": []
+    },
+    {
+      "command": "git -c core.whitespace=cr-at-eol diff --check",
+      "exit_code": 0
+    }
+  ]
+}
