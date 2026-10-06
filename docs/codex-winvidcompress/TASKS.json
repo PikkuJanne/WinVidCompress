@@ -1327,7 +1327,7 @@
       "title": "Define SDR compatibility and reject untested HDR conversions",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         10
       ],

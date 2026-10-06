@@ -20,7 +20,7 @@ BeforeAll {
         $compiled = Invoke-WvcTestProcess $PS51 @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',$definition.Script,'-Destination',$definition.Output)
         if ($compiled.ExitCode -ne 0) { throw ('Validation native fixture compile failed: '+$compiled.StdErr) }
     }
-    $script:ValidJson = '{"streams":[{"index":3,"codec_type":"video","codec_name":"h264","width":320,"height":240,"duration":"1","avg_frame_rate":"24/1","nb_frames":"24"}],"format":{"format_name":"mov,mp4,m4a,3gp,3g2,mj2","duration":"1"}}'
+    $script:ValidJson = '{"streams":[{"index":3,"codec_type":"video","codec_name":"h264","pix_fmt":"yuv420p","width":320,"height":240,"duration":"1","avg_frame_rate":"24/1","nb_frames":"24"}],"format":{"format_name":"mov,mp4,m4a,3gp,3g2,mj2","duration":"1"}}'
     if ($ValidationMediaToolsAvailable) {
         $script:MediaEncoder = (Get-Command ffmpeg.exe -CommandType Application | Select-Object -First 1).Source
         $script:MediaProbe = (Get-Command ffprobe.exe -CommandType Application | Select-Object -First 1).Source

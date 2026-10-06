@@ -3,7 +3,7 @@ BeforeAll {
     $env:APPDATA = Join-Path $TestDrive 'appdata'
     . (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'WinVidCompress.ps1')
     function New-GeometryInspection($Width,$Height,$Rotation=0,$Sar='1:1') {
-        $video = [ordered]@{index=2;codec_type='video';codec_name='h264';width=$Width;height=$Height;
+        $video = [ordered]@{index=2;codec_type='video';codec_name='h264';pix_fmt='yuv420p';width=$Width;height=$Height;
             sample_aspect_ratio=$Sar;duration='1';nb_frames='24';avg_frame_rate='24/1';tags=@{rotate=$Rotation}}
         ConvertFrom-ProbeJson (@{streams=@($video);format=@{format_name='mp4';duration='1'}} | ConvertTo-Json -Depth 12)
     }

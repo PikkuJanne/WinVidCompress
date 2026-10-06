@@ -119,7 +119,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
         $expected = @('-hide_banner','-nostdin','-stats','-n','-i',$script:Source,
             '-map','0:0','-map','0:1',
-            '-c:v','libx264','-preset','veryfast','-crf','22','-c:a','aac','-b:a','160k',
+            '-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt:v:0','yuv420p','-c:a','aac','-b:a','160k',
             '-movflags','+faststart','-metadata','title=Band Name 29092025 - CamA',
             '-metadata','artist=Band Name','-metadata','date=2025-09-29',
             '-metadata','comment=Interview date 29.09.2025; Band: Band Name',

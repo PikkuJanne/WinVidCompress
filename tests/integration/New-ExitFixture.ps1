@@ -9,7 +9,7 @@ public static class WvcExitFixture {
     public static int Main(string[] args) {
         if (WvcEnvironmentResponder.Respond(args)) return 0;
         if (Array.IndexOf(args,"-show_streams") >= 0) {
-            Console.WriteLine("{\"streams\":[{\"index\":3,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":320,\"height\":240,\"duration\":\"1\",\"nb_frames\":\"24\"}],\"format\":{\"duration\":\"1\",\"format_name\":\"mov,mp4,m4a,3gp,3g2,mj2\"}}");
+            Console.WriteLine("{\"streams\":[{\"index\":3,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"pix_fmt\":\"yuv420p\",\"width\":320,\"height\":240,\"duration\":\"1\",\"nb_frames\":\"24\"}],\"format\":{\"duration\":\"1\",\"format_name\":\"mov,mp4,m4a,3gp,3g2,mj2\"}}");
             return 0;
         }
         int inputIndex=Array.IndexOf(args,"-i");
