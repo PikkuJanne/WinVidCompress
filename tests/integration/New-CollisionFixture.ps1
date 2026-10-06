@@ -8,7 +8,7 @@ using System.Threading;
 public static class WvcCollisionFixture {
     public static int Main(string[] args) {
         if (Path.GetFileName(Environment.GetCommandLineArgs()[0]) == "probe.exe") {
-            Console.WriteLine("{\"streams\":[{\"index\":3,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":320,\"height\":240}]}");
+            Console.WriteLine("{\"streams\":[{\"index\":3,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":320,\"height\":240,\"duration\":\"1\",\"nb_frames\":\"24\"}],\"format\":{\"duration\":\"1\",\"format_name\":\"mov,mp4,m4a,3gp,3g2,mj2\"}}");
             return 0;
         }
         string id = Environment.GetEnvironmentVariable("WVC_COLLISION_ID");
@@ -17,6 +17,8 @@ public static class WvcCollisionFixture {
         try {
             if (Array.IndexOf(args,"-n") < 0 || Array.IndexOf(args,"-y") >= 0) return 19;
             using (var stream = new FileStream(output,FileMode.CreateNew,FileAccess.Write,FileShare.None)) {
+                byte[] header = new byte[] {0,0,0,16,102,116,121,112,105,115,111,109,0,0,0,0};
+                stream.Write(header,0,header.Length);
                 byte[] data = Encoding.UTF8.GetBytes("synthetic payload " + id);
                 stream.Write(data,0,data.Length);
             }

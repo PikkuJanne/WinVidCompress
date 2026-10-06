@@ -1069,7 +1069,7 @@
       "title": "Validate output before marking it complete",
       "milestone": "M2",
       "priority": "P0",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         6
       ],

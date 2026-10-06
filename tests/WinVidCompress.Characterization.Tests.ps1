@@ -96,6 +96,8 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
     BeforeEach {
         $script:RecordedArguments = $null
         $script:Height = 1080
+        # This suite tests its existing boundary; validation has separate real-helper tests.
+        Mock Get-OutputValidation { [pscustomobject]@{Succeeded=$true;Inspection=$null;Warnings=@()} }
         $script:EncoderExit = 0
         $script:Counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0 }
         Mock Get-MediaInspection {

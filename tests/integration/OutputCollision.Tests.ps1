@@ -3,6 +3,11 @@ BeforeAll {
     . (Join-Path (Split-Path -Parent $PSScriptRoot) 'TestSupport.ps1')
     $script:HostExe = (Get-Process -Id $PID).Path
     $script:PS51 = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
+    function Read-CollisionPayload([string]$Path) {
+        $bytes = [IO.File]::ReadAllBytes($Path)
+        $offset = if ($bytes.Length -ge 16 -and [Text.Encoding]::ASCII.GetString($bytes,4,4) -eq 'ftyp') { 16 } else { 0 }
+        [Text.Encoding]::UTF8.GetString($bytes,$offset,$bytes.Length-$offset)
+    }
 }
 Describe 'Actual concurrent publication [WVC-M2-04-A01/A02]' {
     It 'preserves both payloads with <Policy> and <Existing> while two native encoders target the same basename' -TestCases @(
@@ -55,7 +60,7 @@ Describe 'Actual concurrent publication [WVC-M2-04-A01/A02]' {
             @($targets | Select-Object -Unique).Count | Should -Be 2
             foreach ($target in $targets) { [IO.Path]::GetFileName($target) | Should -BeExactly 'encode.partial.mp4' }
             $finals = @(Get-ChildItem -LiteralPath $output -File -Filter '*.mp4')
-            $payloads = @($finals | ForEach-Object { [IO.File]::ReadAllText($_.FullName) })
+            $payloads = @($finals | ForEach-Object { Read-CollisionPayload $_.FullName })
             if ($Policy -eq 'rename') {
                 ($reports.Done | Measure-Object -Sum).Sum | Should -Be 2
                 $payloads | Should -Contain 'synthetic payload one'
@@ -68,7 +73,7 @@ Describe 'Actual concurrent publication [WVC-M2-04-A01/A02]' {
                 $finals.Count | Should -Be 1
                 $partials = @(Get-ChildItem -LiteralPath $output -Recurse -File -Filter 'encode.partial.mp4')
                 $partials.Count | Should -Be 1
-                @($payloads + [IO.File]::ReadAllText($partials[0].FullName) | Select-Object -Unique).Count | Should -Be 2
+                @($payloads + (Read-CollisionPayload $partials[0].FullName) | Select-Object -Unique).Count | Should -Be 2
             }
             if ($Existing) { (Get-FileHash -LiteralPath $final).Hash | Should -BeExactly $finalHash }
             (Get-FileHash -LiteralPath $source).Hash | Should -BeExactly $sourceHash

@@ -35,6 +35,8 @@ Describe 'One explicit video/audio stream plan [WVC-M2-02]' {
         $env:WVC_STREAM_ARGV = Join-Path $Root 'encode-argv.txt'
         $env:WVC_PROBE_MODE = ''
         Set-StreamJson $MultiJson
+        # This suite tests its existing boundary; validation has separate real-helper tests.
+        Mock Get-OutputValidation { [pscustomobject]@{Succeeded=$true;Inspection=$null;Warnings=@()} }
         $script:Counters = [pscustomobject]@{ Done=0; Skipped=0; Failed=0 }
         Mock Write-Host {}
     }

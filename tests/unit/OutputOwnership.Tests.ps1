@@ -16,6 +16,8 @@ Describe 'Owned output publication [WVC-M2-04]' {
         $script:SourceHash = (Get-FileHash -LiteralPath $Source).Hash
         $script:Final = Join-Path $Output 'Band & [x] !NAME! %PATH% 29092025.mp4'
         $script:Job = $null
+        # This suite tests its existing boundary; validation has separate real-helper tests.
+        Mock Get-OutputValidation { [pscustomobject]@{Succeeded=$true;Inspection=$null;Warnings=@()} }
         $script:Counters = [pscustomobject]@{Done=0;Skipped=0;Failed=0}
         $script:CollisionMode = 'rename'
         Mock Write-Host {}
