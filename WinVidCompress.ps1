@@ -761,19 +761,23 @@ function ConvertFrom-ProbeJson([string]$Json) {
                 throw "Real video stream $index needs a codec and positive coded width/height."
             }
             $tags = Get-ProbeProperty $raw 'tags'
-            $rotation = $null; $rotationSource = $null; $matrix = $null
+            $rotation = $null; $rotationSource = $null; $matrix = $null; $matrixCount = 0; $rotationInvalid = $false
             $sideData = Get-ProbeProperty $raw 'side_data_list'
             if ($null -ne $sideData -and $sideData -isnot [array]) { throw "Stream $index side_data_list must be an array." }
             foreach ($side in @($sideData)) {
                 if ((Get-ProbeProperty $side 'side_data_type') -eq 'Display Matrix') {
+                    $matrixCount++
+                    if ($matrixCount -gt 1) { continue }
                     $rotation = ConvertTo-ProbeNumber (Get-ProbeProperty $side 'rotation')
                     $matrix = ConvertTo-ProbeString (Get-ProbeProperty $side 'displaymatrix')
+                    $rotationInvalid = $null -eq $rotation
                     if ($null -ne $rotation) { $rotationSource = 'DisplayMatrix' }
-                    break
                 }
             }
-            if ($null -eq $rotation) {
-                $rotation = ConvertTo-ProbeNumber (Get-ProbeProperty $tags 'rotate')
+            if ($matrixCount -eq 0) {
+                $rawRotation = Get-ProbeProperty $tags 'rotate'
+                $rotation = ConvertTo-ProbeNumber $rawRotation
+                if ($matrixCount -eq 0 -and $null -ne $rawRotation -and $null -eq $rotation) { $rotationInvalid = $true }
                 if ($null -ne $rotation) { $rotationSource = 'Tag' }
             }
             $sar = ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'sample_aspect_ratio') ':'
@@ -792,6 +796,7 @@ function ConvertFrom-ProbeJson([string]$Json) {
                 Width = $width; Height = $height; SampleAspectRatio = $(if ($null -ne $sar) { $sar.Raw } else { $null });
                 DisplayAspectRatio = $(if ($null -ne $dar) { $dar.Raw } else { $null });
                 RotationDegrees = $rotation; RotationSource = $rotationSource; DisplayMatrix = $matrix;
+                DisplayMatrixCount = $matrixCount; RotationMetadataInvalid = $rotationInvalid;
                 PixelFormat = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'pix_fmt'));
                 ColourPrimaries = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_primaries'));
                 ColourTransfer = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_transfer'));
@@ -830,7 +835,7 @@ function ConvertFrom-ProbeJson([string]$Json) {
             $result.Warnings += 'Source duration is unknown; progress is indeterminate; duration comparison is unavailable for validation.'
             $result.Limitations += 'Source/output duration comparison is unavailable without a known source duration.'
         }
-        $result.Limitations += 'Display geometry transforms remain a later task.'
+        $result.Limitations += 'Probe geometry is raw metadata; the selected stream geometry plan is derived separately.'
         $result.Succeeded = $true; $result.Stage = 'Ready'
     } catch {
         $result.FailureKind = $kind; $result.Reason = $_.Exception.Message
@@ -865,6 +870,71 @@ function Get-MediaInspection([string]$FFprobe, [string]$InputPath,
     return $result
 }
 
+function Get-DisplayMatrixGeometry($Video) {
+    # FFprobe row order: a,b,u / c,d,v / x,y,w. Affine values are 16.16; u,v,w are 2.30.
+    $row = '[ \t]+(?<v>[+-]?\d+)[ \t]+(?<v>[+-]?\d+)[ \t]+(?<v>[+-]?\d+)[ \t]*'
+    $pattern = '\A\s*00000000:' + $row + '\r?\n[ \t]*00000001:' + $row + '\r?\n[ \t]*00000002:' + $row + '\s*\z'
+    $match = [regex]::Match([string]$Video.DisplayMatrix,$pattern)
+    if (-not $match.Success) { throw 'Unsupported display matrix: expected three complete FFprobe integer rows.' }
+    $values = @($match.Groups['v'].Captures | ForEach-Object {
+        $value = 0
+        if (-not [int]::TryParse($_.Value,[Globalization.NumberStyles]::Integer,
+            [Globalization.CultureInfo]::InvariantCulture,[ref]$value)) { throw 'Unsupported display matrix: integer overflow.' }
+        $value
+    })
+    $a,$b,$u,$c,$d,$v,$x,$y,$w = $values
+    $diagonal = $b -eq 0 -and $c -eq 0 -and [Math]::Abs([long]$a) -eq 65536 -and [Math]::Abs([long]$d) -eq 65536
+    $swapped = $a -eq 0 -and $d -eq 0 -and [Math]::Abs([long]$b) -eq 65536 -and [Math]::Abs([long]$c) -eq 65536
+    if ($u -ne 0 -or $v -ne 0 -or $w -ne 1073741824 -or (-not $diagonal -and -not $swapped)) {
+        throw 'Unsupported display matrix: only canonical quarter turns and axis reflections without scale, skew or perspective are supported.'
+    }
+    $rebaseX = -[Math]::Min(0.0,[long]$a*$Video.Width) - [Math]::Min(0.0,[long]$c*$Video.Height)
+    $rebaseY = -[Math]::Min(0.0,[long]$b*$Video.Width) - [Math]::Min(0.0,[long]$d*$Video.Height)
+    if (($x -ne 0 -or $y -ne 0) -and ($x -ne $rebaseX -or $y -ne $rebaseY)) {
+        throw 'Unsupported display matrix: arbitrary canvas translation is outside the no-crop policy.'
+    }
+    $angle = $(if ($a -gt 0) { 0 } elseif ($a -lt 0) { 180 } elseif ($b -gt 0) { 270 } else { 90 })
+    [pscustomobject]@{ RotationDegrees=$angle; IsIdentity=($a -eq 65536 -and $d -eq 65536 -and $b -eq 0 -and $c -eq 0 -and $x -eq 0 -and $y -eq 0) }
+}
+
+function Get-VideoGeometryPlan($Video) {
+    if ((Get-ProbeProperty $Video 'RotationMetadataInvalid') -eq $true) { throw 'Unsupported geometry: supplied rotation metadata is invalid.' }
+    $rotation = $(if ($null -eq $Video.RotationDegrees) { 0.0 } else { $Video.RotationDegrees })
+    # Accept only exact quarter turns. Arbitrary rotation can clip the frame in FFmpeg's default canvas.
+    if (($rotation % 90) -ne 0) { throw 'Unsupported geometry: rotation must be a multiple of 90 degrees for the no-crop policy.' }
+    $rotation = (($rotation % 360) + 360) % 360
+    $swap = ($rotation % 180) -eq 90
+    $matrixIdentity = $true
+    $matrixCount = Get-ProbeProperty $Video 'DisplayMatrixCount'
+    if ($matrixCount -gt 0 -or $null -ne $Video.DisplayMatrix) {
+        if ($matrixCount -gt 1) { throw 'Unsupported geometry: multiple display matrices are ambiguous.' }
+        $matrix = Get-DisplayMatrixGeometry $Video
+        if ($matrix.RotationDegrees -ne $rotation) { throw 'Unsupported geometry: display matrix and reported rotation disagree.' }
+        $matrixIdentity = $matrix.IsIdentity
+    }
+    $width = $(if ($swap) { $Video.Height } else { $Video.Width })
+    $height = $(if ($swap) { $Video.Width } else { $Video.Height })
+    $targetHeight = [int](2*[Math]::Floor([Math]::Min($height,1080)/2.0))
+    $targetWidth = [int][Math]::Min(2*[Math]::Floor($width/2.0),
+        2*[Math]::Round($width*$targetHeight/[double]$height/2.0,[MidpointRounding]::AwayFromZero))
+    if ($targetWidth -lt 2 -or $targetHeight -lt 2) { throw 'Unsupported geometry: even dimensions of at least 2x2 require enlargement.' }
+    $warnings = @(); $expectedDar = $null; $expectedSar = $null
+    $sar = ConvertTo-ProbeRatio $Video.SampleAspectRatio ':'
+    $dar = ConvertTo-ProbeRatio $Video.DisplayAspectRatio ':'
+    if ($null -ne $sar) {
+        $codedDar = $Video.Width/[double]$Video.Height*$sar.Value
+        if ($null -ne $dar -and [Math]::Abs($dar.Value/$codedDar-1) -gt 0.001) { throw 'Unsupported geometry: coded DAR and SAR disagree by more than 0.1 percent.' }
+        $orientedSar = $(if ($swap) { 1.0/$sar.Value } else { $sar.Value })
+        $expectedDar = $width/[double]$height*$orientedSar
+        $expectedSar = $expectedDar*$targetHeight/$targetWidth
+    } else { $warnings += 'Source pixel aspect is unknown; display aspect preservation cannot be established from metadata.' }
+    $filter = $(if ($targetWidth -ne $width -or $targetHeight -ne $height) { "scale=${targetWidth}:${targetHeight}" } else { $null })
+    # Default autorotation precedes this scale. Scale adjusts SAR to preserve DAR; do not force square pixels.
+    [pscustomobject]@{ RotationDegrees=$rotation; MatrixIsIdentity=$matrixIdentity; OrientedWidth=$width; OrientedHeight=$height;
+        TargetWidth=$targetWidth; TargetHeight=$targetHeight; Filter=$filter; ExpectedDisplayAspectRatio=$expectedDar;
+        ExpectedSampleAspectRatio=$expectedSar; AspectRelativeTolerance=0.001; Warnings=$warnings }
+}
+
 function Get-StreamPlan($Inspection) {
     if (-not $Inspection.Succeeded -or $null -eq $Inspection.PrimaryVideo -or
         $null -eq $Inspection.PrimaryVideoIndex) { throw 'A stream plan requires a successful real-video inspection.' }
@@ -888,7 +958,8 @@ function Get-StreamPlan($Inspection) {
     })
     $reasons = @{ AttachedPicture = 'attached artwork'; AlternateVideo = 'alternate video';
         AlternateAudio = 'alternate audio'; UnsupportedType = 'not included in this output' }
-    return [pscustomobject]@{ SchemaVersion = 1; Video = $video; VideoIndex = $Inspection.PrimaryVideoIndex;
+    $geometry = Get-VideoGeometryPlan $video
+    return [pscustomobject]@{ SchemaVersion = 1; Video = $video; VideoIndex = $Inspection.PrimaryVideoIndex; Geometry = $geometry;
         VideoSelection = 'FirstRealByIndex'; Audio = $audio; AudioIndex = $audioIndex;
         AudioSelection = $audioSelection; MapArguments = $maps; OmittedStreams = $omitted;
         Warnings = @($omitted | ForEach-Object { "Omitting stream $($_.Index) ($($_.CodecType)): $($reasons[$_.Reason])." }) }
@@ -897,6 +968,9 @@ function Get-StreamPlan($Inspection) {
 function Write-StreamPlan($Plan) {
     Write-Host ("Video stream: {0} ({1}, {2}x{3}; first real video by index)." -f
         $Plan.VideoIndex,$Plan.Video.CodecName,$Plan.Video.Width,$Plan.Video.Height)
+    $geometry = Get-VideoGeometryPlan $Plan.Video
+    Write-Host ("Output geometry: {0}x{1}; height cap 1080, no crop/upscale, default autorotation." -f $geometry.TargetWidth,$geometry.TargetHeight)
+    foreach ($warning in $geometry.Warnings) { Write-Host $warning -ForegroundColor Yellow }
     if ($null -eq $Plan.Audio) {
         Write-Host 'Audio stream: none (silent input).'
     } else {
@@ -1104,7 +1178,8 @@ function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPla
     # Pure token construction: paths and metadata never become shell expressions.
     $tokens = @('-hide_banner','-nostdin','-stats','-n','-i',$InputPath)
     $tokens += $StreamPlan.MapArguments
-    if ($StreamPlan.Video.Height -gt 1080) { $tokens += @('-vf','scale=-2:1080') }
+    $geometry = Get-VideoGeometryPlan $StreamPlan.Video
+    if ($null -ne $geometry.Filter) { $tokens += @('-vf',$geometry.Filter) }
     $tokens += @('-c:v','libx264','-preset','veryfast','-crf',"$CRF")
     if ($null -ne $StreamPlan.Audio) { $tokens += @('-c:a','aac','-b:a','160k') }
     $tokens += @('-movflags','+faststart')
@@ -1433,27 +1508,15 @@ function Test-OutputStructure($Output, $Source, $Plan) {
     }
     if ($video.FrameCount -eq 0) { throw 'Output video explicitly reports zero frames.' }
     if ($null -eq $video.FrameCount) { $warnings.Add('Output frame count is unavailable; structural validation does not establish decoded frame integrity.') }
-    if ($Plan.Video.Height -gt 1080) {
-        if ($video.Height -ne 1080) { throw 'Output does not match the applied 1080 height cap.' }
-        $widths = @($Plan.Video.Width * 1080.0 / $Plan.Video.Height)
-        if ($null -ne $Plan.Video.RotationDegrees -and [Math]::Abs($Plan.Video.RotationDegrees % 180) -eq 90) {
-            $widths += $Plan.Video.Height * 1080.0 / $Plan.Video.Width
-            $warnings.Add('Quarter-turn scale orientation remains a deferred M3-01 geometry boundary.')
-        }
-        if ($null -eq $Plan.Video.RotationDegrees -or ($Plan.Video.RotationDegrees % 90) -eq 0) {
-            if (-not @($widths | Where-Object { [Math]::Abs($_ - $video.Width) -le 2 }).Count) { throw 'Scaled output width does not match the existing aspect-ratio scale within two-pixel rounding.' }
-        } else { $warnings.Add('Arbitrary-angle geometry remains metadata-only until M3-01; exact dimensions are not validated.') }
-    } elseif ($null -eq $Plan.Video.RotationDegrees -or $Plan.Video.RotationDegrees -eq 0) {
-        if ($video.Width -ne $Plan.Video.Width -or $video.Height -ne $Plan.Video.Height) { throw 'Unscaled output coded dimensions changed.' }
-    } else {
-        if ([Math]::Abs($Plan.Video.RotationDegrees % 180) -eq 90) {
-            $same = $video.Width -eq $Plan.Video.Width -and $video.Height -eq $Plan.Video.Height
-            $swapped = $video.Width -eq $Plan.Video.Height -and $video.Height -eq $Plan.Video.Width
-            if (-not ($same -or $swapped)) { throw 'Quarter-turn output dimensions match neither current geometry candidate.' }
-        } elseif (($Plan.Video.RotationDegrees % 180) -eq 0 -and
-            ($video.Width -ne $Plan.Video.Width -or $video.Height -ne $Plan.Video.Height)) { throw 'Unscaled half-turn coded dimensions changed.' }
-        $warnings.Add('Rotation/display geometry is metadata-only until M3-01; exact orientation is not validated.')
-    }
+    $geometry = Get-VideoGeometryPlan $Plan.Video
+    if ($video.Width -ne $geometry.TargetWidth -or $video.Height -ne $geometry.TargetHeight) { throw 'Output dimensions do not match the exact even, oriented height-cap plan.' }
+    $outputGeometry = Get-VideoGeometryPlan $video
+    if ($outputGeometry.RotationDegrees -ne 0 -or -not $outputGeometry.MatrixIsIdentity) { throw 'Output retains a display transform after autorotation.' }
+    $outputSar = ConvertTo-ProbeRatio $video.SampleAspectRatio ':'
+    if ($null -ne $geometry.ExpectedDisplayAspectRatio -and $null -ne $outputSar) {
+        $outputDar = $video.Width/[double]$video.Height*$outputSar.Value
+        if ([Math]::Abs($outputDar/$geometry.ExpectedDisplayAspectRatio-1) -gt $geometry.AspectRelativeTolerance) { throw 'Output display aspect differs from the oriented source by more than 0.1 percent.' }
+    } else { $warnings.Add('Display aspect comparison is unavailable because source or output SAR is unknown; structural dimensions do not establish visual orientation or integrity.') }
     if ($audioCount) {
         $audio = $audios[0]
         if ($audio.CodecName -ne 'aac' -or $null -eq $audio.Channels -or $null -eq $audio.SampleRate) {

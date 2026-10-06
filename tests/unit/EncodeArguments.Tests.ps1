@@ -44,7 +44,7 @@ Describe 'Pure encoder tokens [WVC-M2-03-A01]' {
         $Plan.Video.Height = $Height
         $tokens = @(Get-EncodeArguments 'source' 'target' $Plan 22 $Metadata)
         ($tokens -contains '-vf') | Should -Be $Filter
-        if ($Filter) { $tokens[[array]::IndexOf($tokens,'-vf')+1] | Should -BeExactly 'scale=-2:1080' }
+        if ($Filter) { $tokens[[array]::IndexOf($tokens,'-vf')+1] | Should -BeExactly 'scale=960:1080' }
         @($tokens | Where-Object { $_ -in @('-r','-ac','-ar','-filter_complex') }).Count | Should -Be 0
     }
 

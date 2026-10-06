@@ -137,7 +137,7 @@ Describe 'Default encode arguments with a recorder, never FFmpeg' {
         Compress-One $script:Recorder 'unused-probe' $script:Source $script:OutputRoot $DefaultCRF ([ref]$script:Counters)
         $filterIndex = [array]::IndexOf($script:RecordedArguments, '-vf')
         $filterIndex | Should -BeGreaterThan 0
-        $script:RecordedArguments[$filterIndex + 1] | Should -Be 'scale=-2:1080'
+        $script:RecordedArguments[$filterIndex + 1] | Should -Be 'scale=960:1080'
         $script:RecordedArguments | Should -Not -Contain '-r'
     }
 
