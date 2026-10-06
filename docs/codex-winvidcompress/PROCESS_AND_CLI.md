@@ -14,7 +14,7 @@ M2-03 uses pure `Get-EncodeArguments` tokens and `Invoke-EncodeProcess` for norm
 
 There is no total encoding deadline. After observed native exit, pipe draining has a 10-second bound, including inherited handles. Exceptions stop only the directly owned encoder, with a 2-second termination wait and resource disposal. Pipeline interruption propagates; an owned-process cleanup failure aborts the batch rather than scheduling another job. M3-06 adds controlled batch cancellation and a private graceful quit before the same direct-child fallback; detached descendants and console close remain outside that cleanup guarantee. M2-04 now encodes into an independently reserved, initially absent temporary MP4 and publishes using a same-volume no-clobber move. Failed/ambiguous partials are retained and reported; even an empty job is retained if encoder termination failed. Done requires native success and publication, while structural media validation remains M2-05. See OUTPUT_SAFETY.md for the exact implemented ownership and reporting boundary.
 
-Exact applications resolve PATH first, then script-adjacent copies; shell shadows are rejected. Version identity/build output, exact libx264/AAC encoders, MP4/faststart and scale help are checked. FFprobe program-version output exercises CSV/JSON writers plus show_entries/select_streams without a media file. `-CheckEnvironment` is now implemented as a non-converting, non-persisting diagnostic route, including the disclosed temporary destination write check described in CONFIG_AND_DISCOVERY.md. Other proposed CLI controls below remain future tasks.
+Exact applications resolve PATH first, then script-adjacent copies; shell shadows are rejected. Version identity/build output, exact libx264/AAC encoders, MP4/faststart and scale help are checked. FFprobe program-version output exercises CSV/JSON writers plus show_entries/select_streams without a media file. `-CheckEnvironment` is a non-converting, non-persisting diagnostic route, including the disclosed temporary destination write check described in CONFIG_AND_DISCOVERY.md.
 
 ## Supported filename boundary
 
@@ -22,11 +22,20 @@ Owner-approved D005 (2026-10-05): BAT drag/drop excludes environment-variable-sh
 
 ## Optional CLI
 
-Preserve positional file/folder paths. Proposed small controls: -OutputDir, -CollisionMode rename|skip, -WhatIf, -CheckEnvironment; M3-07 implements opt-in -Resume / -ManifestPath / -StrongSourceHash for explicit batches; -PreserveSubfolders remains a future task. Only expose options actually implemented and tested; no speculative full preset menu. A per-run override does not implicitly rewrite config.
+M4-01 adds named-only -OutputDir, -CollisionMode rename|skip and -WhatIf alongside -CheckEnvironment, preserving positional file/folder paths before or after controls. M3-07 provides -Resume / -ManifestPath / -StrongSourceHash for explicit batches; -PreserveSubfolders remains future work. CRF has no public switch and remains 22. Unknown options captured by the remaining-path binder are rejected before startup; filenames beginning with a parameter dash need an absolute path or .\ prefix.
+
+Precedence is built-in defaults < saved config < explicit per-run controls. Config retains its OutputDir-only default shape; optional CollisionMode must be rename or skip. Missing CollisionMode uses rename and unknown fields remain preserved. Resolve-RunConfiguration copies the preference object. Explicit controls and preview read config without lock/recovery/save: absent config stays absent, malformed config fails unchanged, and OutputDir can override a syntactically valid offline saved destination before availability checks. Normal no-option startup retains Load-Config recovery/persistence and the four-item TUI. Per-run conversion/preview requires explicit input; doctor permits OutputDir without input and rejects CollisionMode.
 
 For a new resumable batch, use `./WinVidCompress.ps1 -ManifestPath 'D:\Jobs\batch.json' 'D:\Sources'`. Retry with `./WinVidCompress.ps1 -Resume -ManifestPath 'D:\Jobs\batch.json' 'D:\Sources'`. The manifest parent must exist and the first manifest file must not exist. Add `-StrongSourceHash` on creation and every resume to compare source SHA256 instead of only size/mtime. BAT unattended supports the same flags with `-Unattended` first. Manifest controls require explicit input paths and refuse menu/no-input or -CheckEnvironment combinations; they do not alter the four-item menu/config/default profile. Resume needs the exact original frozen eligible source set and current output root, and uses safe rename for retries. See [identity, scope and atomicity policy](OUTPUT_SAFETY.md#manifest-and-resume).
 
--WhatIf is a genuinely non-writing plan: no config/backup creation, output folders, encode, persistent log or manifest writes. Read-only filesystem inspection and optional native probes are allowed and disclosed. -CheckEnvironment reports dependencies/versions/capabilities and path availability without starting conversion or installing anything. Unattended calls never prompt.
+-WhatIf returns a separate Preview/Plans result from read-only config, directory and frozen queue inspection. It starts no native tools, calls no output-write test, and creates no config/locks/backups/directories/jobs/logs/manifests. Names account for existing paths and prior planned flat destinations using case-insensitive in-memory reservations. WouldEncode/WouldSkip are estimates, not completed jobs or savings. Media validity, destination writability, encode success and concurrent collisions remain unchecked. The output directory must already exist. Empty/unusable plans return2, partly failed scans with planned files return1, otherwise0. Preview rejects doctor or manifest controls before any read/write/native startup; preview explicit inputs without those controls. -CheckEnvironment retains its documented temporary write test and no-conversion/no-config-save behavior. Unattended calls never prompt.
+
+```powershell
+.\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Sources'
+.\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' -CollisionMode skip 'D:\Sources'
+.\WinVidCompress.ps1 -CheckEnvironment -OutputDir 'D:\Output'
+Get-Help .\WinVidCompress.ps1 -Full
+```
 
 ## Result and exit contract
 

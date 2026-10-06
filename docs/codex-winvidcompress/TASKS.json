@@ -1823,7 +1823,7 @@
       "title": "Expose optional CLI controls and a truly non-writing preview",
       "milestone": "M4",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         16
       ],
@@ -1851,35 +1851,54 @@
           "id": "WVC-M4-01-A01",
           "description": "No-option drag/drop/TUI behaviour retains the accepted defaults.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-01.json",
+            "evidence/WVC-M4-01.md"
+          ]
         },
         {
           "id": "WVC-M4-01-A02",
           "description": "WhatIf filesystem snapshots before/after show no application writes; process probes, when used, are read-only and documented.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-01.json",
+            "evidence/WVC-M4-01.md"
+          ]
         },
         {
           "id": "WVC-M4-01-A03",
           "description": "Invalid CRF/enum/path combinations fail before conversion; public options remain intentionally small.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-01.json",
+            "evidence/WVC-M4-01.md"
+          ]
         },
         {
           "id": "WVC-M4-01-A04",
           "description": "Get-Help examples execute correctly and automation never blocks on Read-Host.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-01.json",
+            "evidence/WVC-M4-01.md"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "fad511840e3e09d0fef0186f921fd3cd74e612e7",
+        "2932907cf417ca179f25a149618e7e45760c637e"
+      ],
+      "evidence": [
+        "evidence/WVC-M4-01.json",
+        "evidence/WVC-M4-01.md",
+        "evidence/WVC-M4-01-session.md"
+      ],
+      "notes": "A01-A04 verified on both supported PowerShell hosts at the clean implementation. Preview filesystem snapshots and forbidden-boundary mocks prove no application writes/native probes; per-run controls preserve preference bytes and positional inputs. Explicit output works with a blank absent-config default; existing malformed config still fails unchanged. Unknown ASCII/Unicode parameter dashes are rejected before startup. Real help examples executed on both hosts. No-option menu/default profile and manifest retry behavior retained. Full manual/future rows and prior physical Ctrl+C/Explorer/playback checks remain pending. Shared scope includes matching launcher recorder, seven-minute whole-suite deadline and usage/spec/test documentation."
     },
     {
       "id": "WVC-M4-02",

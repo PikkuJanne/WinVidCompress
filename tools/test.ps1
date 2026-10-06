@@ -66,10 +66,10 @@ try {
                     (Join-Path $testsRoot 'Invoke-PesterRun.ps1'),'-ModuleRoot',$ModuleRoot,
                     '-TestPath',($selected -join '|'),'-ReportPath',$childPath)
                 if ($includeBaseline) { $arguments += '-IncludeKnownDefects' }
-                # M3-07 adds about 55 seconds of native resume/validation cases
-                # on PS7 to the existing multi-minute suite. Keep a five-minute
-                # whole-suite bound; individual native fixture limits are unchanged.
-                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 300000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
+                # M4-01 adds about 75 seconds of PS7 CLI/preview cases. The full
+                # PS7 suite exceeded the previous five-minute bound. Keep a
+                # seven-minute suite bound; individual fixture limits are unchanged.
+                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 420000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stdout.log')), $child.StdOut)
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stderr.log')), $child.StdErr)
                 $childReport = Read-WvcChildReport $childPath $child.ExitCode
