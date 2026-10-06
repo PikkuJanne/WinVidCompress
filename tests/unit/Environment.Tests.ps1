@@ -22,9 +22,8 @@ BeforeAll {
     Copy-Item -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.ps1') -Destination (Join-Path $Adjacent 'WinVidCompress.ps1')
     $script:Tokens = $null; $script:ParseErrors = $null
     $ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $RepoRoot 'WinVidCompress.ps1'), [ref]$Tokens, [ref]$ParseErrors)
-    $offset = [IO.File]::ReadAllText((Join-Path $RepoRoot 'WinVidCompress.ps1')).IndexOf('# --- Main ---')
-    $script:Main = [scriptblock]::Create((@($ast.EndBlock.Statements | Where-Object { $_.Extent.StartOffset -gt $offset } |
-        ForEach-Object { $_.Extent.Text }) -join "`n"))
+    # Exercise the entry helper; executable exits belong in child-process tests.
+    $script:Main = { Invoke-WinVidCompress -Paths $Path -CheckEnvironment:$CheckEnvironment }
 }
 
 AfterAll {
@@ -84,7 +83,9 @@ Describe 'Environment diagnostics [WVC-M1-06]' {
         Mock Ensure-Tool { if ($exe -eq 'ffmpeg.exe') { $invalid } else { $Probe } }
         Mock Load-Config { throw 'Must not load config' }
         Mock Process-Paths { throw 'Must not process media' }
-        { & $Main } | Should -Throw '*Environment check failed*'
+        $run=& $Main
+        $run.ExitCode | Should -Be 2
+        $run.Reason | Should -BeLike '*Environment check failed*'
         Should -Invoke Process-Paths -Times 0 -Exactly
         Should -Invoke Load-Config -Times 0 -Exactly
     }
@@ -103,7 +104,9 @@ Describe 'Environment diagnostics [WVC-M1-06]' {
         $env:WVC_ENV_FIXTURE_MODE = $Mode
         Mock Load-Config { throw 'Must not load config' }
         Mock Process-Paths { throw 'Must not process media' }
-        { & $Main } | Should -Throw $Error
+        $run=& $Main
+        $run.ExitCode | Should -Be 2
+        $run.Reason | Should -BeLike $Error
         Should -Invoke Process-Paths -Times 0 -Exactly
         Should -Invoke Load-Config -Times 0 -Exactly
     }
@@ -231,7 +234,9 @@ Describe 'Environment diagnostics [WVC-M1-06]' {
         $before = [Convert]::ToBase64String([IO.File]::ReadAllBytes($ConfigPath))
         Mock Get-Item { throw 'Offline test destination' } -ParameterFilter { $LiteralPath -like '*wvc-offline*' }
         $CheckEnvironment = $true
-        { & $Main } | Should -Throw $Error
+        $run=& $Main
+        $run.ExitCode | Should -Be 2
+        $run.Reason | Should -BeLike $Error
         [Convert]::ToBase64String([IO.File]::ReadAllBytes($ConfigPath)) | Should -BeExactly $before
         @(Get-ChildItem -LiteralPath $ConfigDir -Force).Count | Should -Be 1
     }
@@ -250,7 +255,9 @@ Describe 'Environment diagnostics [WVC-M1-06]' {
             Assert-OutputDirectory $Output # Enumeration succeeds; real write must fail.
             Mock Process-Paths { throw 'Must not process' }
             $CheckEnvironment = $true
-            { & $Main } | Should -Throw '*cannot safely create/write/remove*'
+            $run=& $Main
+            $run.ExitCode | Should -Be 2
+            $run.Reason | Should -BeLike '*cannot safely create/write/remove*'
             [Convert]::ToBase64String([IO.File]::ReadAllBytes($ConfigPath)) | Should -BeExactly $before
             @(Get-ChildItem -LiteralPath $ConfigDir -Force).Count | Should -Be 1
             @(Get-ChildItem -LiteralPath $Output -Force).Count | Should -Be 0
@@ -274,7 +281,9 @@ Describe 'Environment diagnostics [WVC-M1-06]' {
         $missing = Join-Path $Output 'missing'
         Mock Get-InputQueue { throw 'Must not scan' }
         Mock Compress-One { throw 'Must not encode' }
-        { Process-Paths @('source.mov') $Encoder $Probe ([pscustomobject]@{ OutputDir = $missing }) } | Should -Throw '*unavailable*'
+        $run=Process-Paths @('source.mov') $Encoder $Probe ([pscustomobject]@{ OutputDir = $missing })
+        $run.ExitCode | Should -Be 2
+        $run.Reason | Should -BeLike '*unavailable*'
         Should -Invoke Get-InputQueue -Times 0 -Exactly
         Should -Invoke Compress-One -Times 0 -Exactly
     }

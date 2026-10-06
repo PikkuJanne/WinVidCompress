@@ -17,15 +17,13 @@ BeforeAll {
     $script:Source = Join-Path $script:SourceRoot 'Band Name 29092025 - CamA.mov'
     Set-Content -LiteralPath $script:Source -Value 'synthetic source sentinel'
 
-    # Extract only the real entry statements for mocked dispatch checks. Never run the menu.
+    # Load the real entry helper for mocked dispatch checks; executable exit stays
+    # at the top-level boundary and must never end the Pester process.
     $script:Tokens = $null
     $script:ParseErrors = $null
     $script:ApplicationAst = [Management.Automation.Language.Parser]::ParseFile(
         $script:Application, [ref]$script:Tokens, [ref]$script:ParseErrors)
-    $mainOffset = (Get-Content -LiteralPath $script:Application -Raw).IndexOf('# --- Main ---')
-    $script:Main = [scriptblock]::Create((@($script:ApplicationAst.EndBlock.Statements |
-        Where-Object { $_.Extent.StartOffset -gt $mainOffset } |
-        ForEach-Object { $_.Extent.Text }) -join "`n"))
+    $script:Main = { Invoke-WinVidCompress -Paths $Path }
 }
 
 AfterAll {

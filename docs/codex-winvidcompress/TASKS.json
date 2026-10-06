@@ -1150,7 +1150,7 @@
       "title": "Define job results, counters and script exit codes",
       "milestone": "M2",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         14
       ],

@@ -21,7 +21,10 @@ Describe 'Frozen sequential batch [WVC-M1-05]' {
         [IO.File]::WriteAllText($script:Second, 'second source sentinel')
         $script:Encoded = New-Object 'Collections.Generic.List[string]'
         Mock Write-Host {}
-        Mock Compress-One { $script:Encoded.Add($inPath) }
+        Mock Compress-One {
+            $script:Encoded.Add($inPath)
+            $job=New-JobResult $inPath $crf; $job.Outcome='Completed'; $job
+        }
     }
 
     It 'encodes each source once for <Selection> [A01]' -TestCases @(
@@ -81,6 +84,7 @@ Describe 'Frozen sequential batch [WVC-M1-05]' {
                 [IO.File]::WriteAllText($script:LateTemporary, 'new owned temporary')
             }
             $script:Encoded.Add($inPath)
+            $job=New-JobResult $inPath $crf; $job.Outcome='Completed'; $job
         }
         Mock Get-InputScan { & $script:RealScan $p }
         Process-Paths @($script:First,$script:Root,$script:Output) 'unused' 'unused' ([pscustomobject]@{ OutputDir = $script:Output })
@@ -130,6 +134,7 @@ Describe 'Frozen sequential batch [WVC-M1-05]' {
         Mock Compress-One {
             Should -Invoke Write-Host -Times 1 -Exactly -ParameterFilter { ($Object -join ' ').StartsWith('Scan error [FileReadFailed]') }
             $script:Encoded.Add($inPath)
+            $job=New-JobResult $inPath $crf; $job.Outcome='Completed'; $job
         }
         try {
             Process-Paths @($script:Root,$script:First) 'unused' 'unused' ([pscustomobject]@{ OutputDir = $script:Output })
@@ -218,7 +223,10 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
             $abort.Data['WvcAbortBatch'] = $true
             throw $abort
         }
-        { Process-Paths @($source,$second) 'unused' 'unused' ([pscustomobject]@{OutputDir=$output}) } | Should -Throw '*cleanup failure*'
+        $batch=Process-Paths @($source,$second) 'unused' 'unused' ([pscustomobject]@{OutputDir=$output})
+        $batch.ExitCode | Should -Be 1
+        ($batch.Jobs.Outcome -join '|') | Should -BeExactly 'Failed|Unstarted'
+        $batch.Jobs[0].Reason | Should -Match 'cleanup failure'
         Should -Invoke Invoke-EncodeProcess -Times 1 -Exactly
         $script:RecordedJobs.Count | Should -Be 0
         [IO.File]::ReadAllText($second) | Should -BeExactly 'source sentinel'

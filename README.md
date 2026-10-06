@@ -48,6 +48,18 @@ Compress ALL videos in a folder (recursive)
 #Whole folder (recursive)
 .\WinVidCompress.ps1 "D:\Interviews\ToArchive"
 
+For unattended use, run the PS1 with `-Unattended`, or put that switch first in the BAT command. These routes never open the menu or pause after completion:
+
+```powershell
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -Unattended 'D:\Interviews\ToArchive'
+```
+
+```bat
+WinVidCompress.bat -Unattended "D:\Interviews\ToArchive"
+```
+
+Direct PS1 batches also return the application exit code. Codes are **0** completed with no failures (including valid collision skips), **1** job/scan failure, **2** startup/configuration/invalid or empty requested batch, and **3** observed application cancellation, which takes precedence. Cancelling a menu selection or choosing Quit before a batch returns 0. The default BAT adds `-KeepOpen` and retains its PowerShell prompt; its eventual shell exit is separate from the batch result. `-KeepOpen` and `-Unattended` cannot be combined. Physical Ctrl+C/console-close handling remains unverified; PowerShell engine parse/binding errors can have their own exit code.
+
 **Filename → Metadata**
 The script tries to parse band and date from the filename (base name). Supported patterns (with or without trailing “ - …”):
 Band Name ddmmyyyy
@@ -71,7 +83,7 @@ Video: -c:v libx264 -preset veryfast -crf 22
 Audio: -c:a aac -b:a 160k
 Container: -movflags +faststart
 Scaling: -vf scale=-2:1080 only if source height > 1080
-Invokes FFmpeg via PowerShell call operator (&) to keep quoting correct.
+Invokes FFmpeg through the owned native process adapter with literal argument tokens and Windows quoting.
 
 Stream selection: first real video by index, excluding cover artwork; unique default audio when present, otherwise first audio by index. Silent video stays silent. The console lists selected streams, audio channels and omitted alternatives/subtitles/data/attachments. Explicit maps keep scaling tied to the inspected video; no channel-count or frame-rate override is added.
 
