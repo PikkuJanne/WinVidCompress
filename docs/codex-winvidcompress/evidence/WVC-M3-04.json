@@ -1,0 +1,316 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-04",
+  "acceptance_ids": [
+    "WVC-M3-04-A01",
+    "WVC-M3-04-A02",
+    "WVC-M3-04-A03",
+    "WVC-M3-04-A04"
+  ],
+  "recorded_at": "2026-10-06T15:17:43.950096+00:00",
+  "tested_commits": [
+    "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+    "60e12b3b80307833cc7dee24c62eaa2c8f094ed4"
+  ],
+  "application_sha256": "faa2e4eb3f9180c9c4ffb866d9729b3014e1a939913cd5ec9b7a24a584a13da2",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "benchmark_host": {
+      "OS": "Microsoft Windows 11 Pro",
+      "Version": "10.0.26300",
+      "Build": "26300",
+      "Architecture": "64-bit",
+      "PowerShell": "5.1.26100.9444",
+      "Edition": "Desktop",
+      "CPU": "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
+      "LogicalProcessors": 12,
+      "MemoryBytes": 16913207296
+    },
+    "native_tools": [
+      {
+        "Name": "FFmpeg",
+        "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "SHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83"
+      },
+      {
+        "Name": "FFprobe",
+        "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+        "SHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m304/quick51.json *> .test-results/m304/quick51.log",
+      "tested_commit": "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 665,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m304/quick51.json",
+      "artifact_sha256": "de37432f0f5e7b3206b6d75cb9c8e7bdd3fa1e0b49689513dbdaf3ef6fb1f764",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted51",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m304/targeted51.json *> .test-results/m304/targeted51.log",
+      "tested_commit": "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 685,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m304/targeted51.json",
+      "artifact_sha256": "2b4aee60dfe43a8b63fe3fec0c6540f3fce8f4afb1a4dede038f262cb6dc38b8",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted7-v2",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m304/targeted7-v2.json *> .test-results/m304/targeted7-v2.log",
+      "tested_commit": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 685,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m304/targeted7-v2.json",
+      "artifact_sha256": "ab0b4049f8fec7c78e56096783dd18ef90a7dce284e616a47b6c0c94dbdda328",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    }
+  ],
+  "development_runs": [
+    {
+      "name": "regression51",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Summary.Tests.ps1' -ReportPath .test-results/m304/regression51.json *> .test-results/m304/regression51.log",
+      "counts": {
+        "Passed": 0,
+        "Failed": 16,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "Regression first: all 16 summary checks failed before missing helpers/properties and results-vary copy were implemented.",
+      "local_artifact": ".test-results/m304/regression51.json",
+      "artifact_sha256": "b538dc09165212cc01de6a6dcf9f06d9f1853b57dc8f63f6a5a2b792b6794afa"
+    },
+    {
+      "name": "summary51",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Summary.Tests.ps1' -ReportPath .test-results/m304/summary51.json *> .test-results/m304/summary51.log",
+      "counts": {
+        "Passed": 16,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "16 summary units passed during development.",
+      "local_artifact": ".test-results/m304/summary51.json",
+      "artifact_sha256": "6048685dc9b4ba4c725d084d58f1d615b958ab2c206ddf3558b42798bf9074ab"
+    },
+    {
+      "name": "focused51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Summary.Tests.ps1|tests/unit/BenchmarkSummary.Tests.ps1|tests/integration/BenchmarkSummary.Tests.ps1' -ReportPath .test-results/m304/focused51.json *> .test-results/m304/focused51.log",
+      "counts": {
+        "Passed": 25,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "25 passed/1 failed: over-broad PRIVATE regex matched the generic word private in a report limitation, not a leaked marker. Narrowed to exact synthetic filename/tag markers.",
+      "local_artifact": ".test-results/m304/focused51.json",
+      "artifact_sha256": "dbf42b93763556dd106fef02f644f7ef115b5bf0284cbdf0ae070acc90910d96"
+    },
+    {
+      "name": "focused51-v2",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Summary.Tests.ps1|tests/unit/BenchmarkSummary.Tests.ps1|tests/integration/BenchmarkSummary.Tests.ps1' -ReportPath .test-results/m304/focused51-v2.json *> .test-results/m304/focused51-v2.log",
+      "counts": {
+        "Passed": 26,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "26 focused checks passed; superseded by final clean gates, which also cover the final local candidate-accounting assertions.",
+      "local_artifact": ".test-results/m304/focused51-v2.json",
+      "artifact_sha256": "3e76479d87ab87953acb1d6d557bfe8c2b1f3fb57cdd8799c3ac50923a9ca185"
+    },
+    {
+      "name": "targeted7-deadline180",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m304/targeted7.json *> .test-results/m304/targeted7.log",
+      "tested_commit": "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+      "tested_tree_dirty": false,
+      "status": "Failed",
+      "exit_code": 1,
+      "counts": {
+        "Passed": 24,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Pester child exceeded bounded 180-second whole-suite deadline; no Pester result returned. 24 other harness/entry/fixture checks passed, one host/harness failed. Diagnostics retained. Superseded by final 240-second gate; per-fixture limits unchanged.",
+      "local_artifact": ".test-results/m304/targeted7.json",
+      "artifact_sha256": "157918b3a6deadcd7ae4d08fcf2902115f31edd0afa042ef2532850fb1f084bb"
+    },
+    {
+      "name": "focused7",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Summary.Tests.ps1|tests/unit/BenchmarkSummary.Tests.ps1|tests/integration/BenchmarkSummary.Tests.ps1' -ReportPath .test-results/m304/focused7.json *> .test-results/m304/focused7.log",
+      "tested_commit": "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "counts": {
+        "Passed": 26,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Affected scope passed separately on PS7 before harness deadline change.",
+      "local_artifact": ".test-results/m304/focused7.json",
+      "artifact_sha256": "0761bd1081283248c1fb09a2b08690b2a22961b52f5dbd3d30fd456ff0f21593"
+    }
+  ],
+  "development_benchmark_failures": [
+    {
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe -Repeats 2 -SyntheticSeconds 0.5 -CandidatePresets medium -RunId d7acc89cd71c49d78266dd8ddb70ab1c *> .test-results/m304/benchmark-dev51.log",
+      "exit_code": 1,
+      "local_log": ".test-results/m304/benchmark-dev51.log",
+      "artifact_sha256": "94fc5f38da9c3e25cd4ed4e1b5023a1b42a6a3305f4cb880a8d37869adeb6661",
+      "description": "Initial parser error in failure diagnostic expression; fixed parentheses."
+    },
+    {
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe -Repeats 2 -SyntheticSeconds 0.5 -CandidatePresets medium -RunId 1f8a2640bd0046f4b57608e0f012fa18 *> .test-results/m304/benchmark-dev51-v2.log",
+      "exit_code": 1,
+      "local_log": ".test-results/m304/benchmark-dev51-v2.log",
+      "artifact_sha256": "2c952dadd558de6a4681bf0e83a3837a4395f846a79c5de88d38ea14481f4cec",
+      "description": "Initial nonexistent capture helper; changed to existing bounded developer native helper."
+    },
+    {
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe -Repeats 2 -SyntheticSeconds 0.5 -CandidatePresets medium -RunId 62bfc7e35e0e47fba408da29140b42d9 *> .test-results/m304/benchmark-dev51-v3.log",
+      "exit_code": 1,
+      "local_log": ".test-results/m304/benchmark-dev51-v3.log",
+      "artifact_sha256": "4f342b00cc33da5fec48c4aa4b8207c713890d89f505ec5a0c8950cb356981ed",
+      "description": "Existing empty selected-stream-duration Maximum property failure under strict mode; fixed Count guard without inventing stream durations."
+    },
+    {
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe -Repeats 2 -SyntheticSeconds 0.5 -CandidatePresets medium -RunId 69a6eadf66654070a6102991d46e2de5 *> .test-results/m304/benchmark-dev51-v4.log",
+      "exit_code": 0,
+      "local_log": ".test-results/m304/benchmark-dev51-v4.log",
+      "artifact_sha256": "0eea3921b52e71269a19acb830326a67820f683c4badb1008ad8ba43f0a1547f",
+      "description": "Two-repeat default/medium native development benchmark passed; pre-checkpoint dirty tree, superseded by clean measured example."
+    }
+  ],
+  "benchmark": {
+    "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe -Repeats 3 -SyntheticSeconds 2 -CandidatePresets medium -RunId 719594e0eea74dde8cf3bfd8af5fcb4e *> .test-results/m304/benchmark51.log",
+    "tested_commit": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+    "tested_tree_dirty": false,
+    "exit_code": 0,
+    "repeats": 3,
+    "completed_runs": 6,
+    "provenance": "Generated testsrc2 + 440 Hz sine; FFV1/PCM; no private media",
+    "committed_report": "docs/benchmarks/2026-10-06-synthetic-windows.json",
+    "artifact_sha256": "392927c17ae834f8602602c2f7dc6246f44e95482c252d2b2b8b7ca0a1784843",
+    "playback": "NotRun"
+  },
+  "manual_checks": [],
+  "owner_approval": null,
+  "scope_expansion": "New tests/integration/BenchmarkSummary.Tests.ps1 native coverage outside the unit-only brief glob; minimal tools/test.ps1 static inclusion of benchmark scripts; README user accounting copy; exact local argument/stage measurements on existing result records; empty selected-source-duration aggregation guard found by real FFV1/PCM benchmark, with focused regression. Whole-suite Pester deadline raised from 180 to bounded 240 seconds after real PS7 timeout; individual fixture deadlines unchanged, tests/README updated. No process/output publication refactor or default quality change.",
+  "ci": {
+    "commit": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+    "checks": 0,
+    "statuses": 0,
+    "workflow_runs": 0,
+    "combined_state": "pending",
+    "passed": false
+  },
+  "pull_request": {
+    "number": 20,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/20",
+    "draft": true
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T15:17:13.247272+00:00",
+    "branch": "codex/wvc-m3-04-benchmarks",
+    "head": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+    "live_fetch_head": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+    "live_push_head": "60e12b3b80307833cc7dee24c62eaa2c8f094ed4",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "A04 owner playback observation is pending. All benchmark playback fields remain NotRun; no visual/audio quality judgment is fabricated.",
+    "Measured example is one short synthetic pattern/tone, one host and installed FFmpeg build; it is not representative interview evidence or a preset recommendation.",
+    "Faststart relocation is included in encoder/mux timing and is not separately measured. Local warm-cache run order and repeated spreads are disclosed.",
+    "Matroska fixture has known container duration but unavailable selected-stream durations; production validation preserves its existing unavailable-comparison warnings. Structural validation does not establish full visual/audio integrity.",
+    "Private copies were not used. Native approved-copy tests use generated synthetic media with synthetic private markers; all raw diagnostics, paths and generated media stay ignored/local.",
+    "No separate PS7 Quick or new Full/Explorer run. Targeted includes Quick; historical Full remains incomplete with eight NotRun rows. M2-06 A04 and physical cancellation remain pending.",
+    "M3-01/M3-02/M2-02 already verified and SDR approval D006 recorded; stale STATUS/NEXT_SESSION pending wording corrected from authoritative task/evidence state.",
+    "No CI, milestone or release pass; no downloads, system changes, main push, default quality change or automatic uploads."
+  ],
+  "next_task": "WVC-M3-05 - Add machine progress and privacy-aware persistent logs",
+  "handoff_checks": [
+    {
+      "command": "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "exit_code": 0,
+      "valid": true,
+      "tasks": 32,
+      "acceptance_criteria": 128,
+      "errors": []
+    },
+    {
+      "command": "git -c core.whitespace=cr-at-eol diff --check",
+      "exit_code": 0
+    }
+  ]
+}
