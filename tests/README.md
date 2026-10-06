@@ -2,6 +2,10 @@
 
 Application entry points remain WinVidCompress.ps1 and WinVidCompress.bat. Tests run in separate processes, use isolated APPDATA/output/source roots, and never launch the real interactive menu.
 
+M3-02 colour regressions are `tests/unit/Colour.Tests.ps1` and `tests/integration/Colour.Tests.ps1`, with shared synthetic recipes in `ColourTestSupport.ps1`. Native cases use the installed libx264/FFprobe build, verify 8/10-bit and 4:2:2/4:4:4 SDR, full-range sample rescaling, BT709/601/2020 tag read-back, decoded ramps/chroma patches, untagged warnings and PQ/HLG refusal with source/final hashes. Fixtures explicitly attach their constructed frame colour tags after generation filters; they are not authentic HDR footage. Existing output/exit/collision/entry-smoke probe recorders now declare their intended yuv420p format so stricter colour validation does not bypass prior safety tests.
+
+Prepare one retained colour sheet with `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/New-ColourManualFixture.ps1 -ReportPath .test-results/colour-review.json -FFmpeg <existing-ffmpeg> -FFprobe <existing-ffprobe>`. The helper prints a comparison PNG with four SOURCE/OUTPUT pairs: 8-bit and 10-bit BT709 bars, plus limited/full-range 10-bit ramps. View it once and record PASS (colours/brightness match), FAIL or UNSURE. The local report records commit/dirty state/application and sample hashes; preparation failures retain owned diagnostics. No private media is used. This synthetic still review is separate from general playback/calibration and remains incomplete until an actual owner observation.
+
 ## Pinned developer dependencies
 
 `tests/Dependencies.psd1` pins Pester **5.7.1** and PSScriptAnalyzer **1.24.0**, verified against their official [Pester release](https://github.com/pester/Pester/releases/tag/5.7.1) and [analyzer release](https://github.com/PowerShell/PSScriptAnalyzer/releases/tag/1.24.0). Actual compatibility is tested on Windows PowerShell 5.1 and supported PowerShell 7 (minimum 7.4). Retain these tested versions until a separate reviewed update.

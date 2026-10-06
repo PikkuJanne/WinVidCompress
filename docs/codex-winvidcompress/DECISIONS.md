@@ -12,6 +12,8 @@ D004: Local and GitHub work must remain synchronized at meaningful checkpoints a
 
 D005 / 2026-10-05 / WVC-M1-02: owner accepted the proposed filename restriction (“the proposed filename restriction accepted”). BAT drops do not support environment-variable-shaped percent segments such as %PATH% in any path component. Use literal-path menu entry or direct PS1 invocation from PowerShell with literal string arguments for those paths; ordinary percent names and BAT !NAME! preservation remain supported requirements. A01/A02 are revised explicitly, retaining the observed direct BAT %PATH% substitution as historical evidence. Applicable supported-route tests and human observations must pass before verified. No launcher reconstruction, system association change or automatic rename is authorized by this decision.
 
+D006 / 2026-10-06 / WVC-M3-02: owner reviewed the four SOURCE/OUTPUT pairs prepared from clean `03f6bbb98efbf028191a3ec08934fd700e8447f2` (8/10-bit BT709 bars, limited/full-range 10-bit ramps) and answered **PASS — acceptable match; approve SDR default**. Approval covers the tested 8-bit yuv420p YUV SDR compatibility default, including higher-depth/chroma reduction and actual full-range-to-limited sample scaling. Known HDR remains actionable unsupported with no tone mapper; codec/CRF/preset/audio and geometry settings retain their existing contract. This is synthetic colour-sensitive sample review, not general playback/display calibration, HDR conversion or milestone/release approval. [Evidence](evidence/WVC-M3-02.md).
+
 ## Conservative implementation choices for this roadmap
 
 P001: Use a feature branch and draft PR; main is not automatically updated. Feature pushes are part of this work; merge/publication is gated.

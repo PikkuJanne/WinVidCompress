@@ -764,7 +764,13 @@ function ConvertFrom-ProbeJson([string]$Json) {
             $rotation = $null; $rotationSource = $null; $matrix = $null; $matrixCount = 0; $rotationInvalid = $false
             $sideData = Get-ProbeProperty $raw 'side_data_list'
             if ($null -ne $sideData -and $sideData -isnot [array]) { throw "Stream $index side_data_list must be an array." }
+            $hdrTypes = @()
             foreach ($side in @($sideData)) {
+                $sideType = ConvertTo-ProbeString (Get-ProbeProperty $side 'side_data_type')
+                if ($sideType -in @('Mastering display metadata','Content light level metadata','DOVI configuration record',
+                    'Dolby Vision RPU Data','Dolby Vision Metadata') -or $sideType -match '^HDR Dynamic Metadata ') {
+                    $hdrTypes += $sideType
+                }
                 if ((Get-ProbeProperty $side 'side_data_type') -eq 'Display Matrix') {
                     $matrixCount++
                     if ($matrixCount -gt 1) { continue }
@@ -797,6 +803,7 @@ function ConvertFrom-ProbeJson([string]$Json) {
                 DisplayAspectRatio = $(if ($null -ne $dar) { $dar.Raw } else { $null });
                 RotationDegrees = $rotation; RotationSource = $rotationSource; DisplayMatrix = $matrix;
                 DisplayMatrixCount = $matrixCount; RotationMetadataInvalid = $rotationInvalid;
+                HdrMetadataTypes = @($hdrTypes | Select-Object -Unique);
                 PixelFormat = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'pix_fmt'));
                 ColourPrimaries = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_primaries'));
                 ColourTransfer = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'color_transfer'));
@@ -935,6 +942,95 @@ function Get-VideoGeometryPlan($Video) {
         ExpectedSampleAspectRatio=$expectedSar; AspectRelativeTolerance=0.001; Warnings=$warnings }
 }
 
+function Get-VideoColourPlan($Video) {
+    # Bit depth and BT2020 gamut alone are not evidence of HDR.
+    $transfer = ConvertTo-ProbeString (Get-ProbeProperty $Video 'ColourTransfer')
+    $primaries = ConvertTo-ProbeString (Get-ProbeProperty $Video 'ColourPrimaries')
+    $matrix = ConvertTo-ProbeString (Get-ProbeProperty $Video 'ColourMatrix')
+    $range = ConvertTo-ProbeString (Get-ProbeProperty $Video 'ColourRange')
+    $pixels = ConvertTo-ProbeString (Get-ProbeProperty $Video 'PixelFormat')
+    $rawHdrTypes = Get-ProbeProperty $Video 'HdrMetadataTypes'
+    $hdrTypes = @($rawHdrTypes | Where-Object { $_ })
+    $plan = [pscustomobject]@{ Supported=$true; State='SDR'; Reason=$null; OutputPixelFormat='yuv420p';
+        Primaries=$null; Transfer=$null; Matrix=$null; Range=$null; ConvertFullRange=$false; Arguments=@(); Warnings=@() }
+    if ($transfer -in @('smpte2084','arib-std-b67') -or $hdrTypes.Count) {
+        $evidence = @($transfer) + $hdrTypes
+        $plan.Supported=$false; $plan.State='UnsupportedHDR'
+        $plan.Reason='Unsupported HDR (' + (($evidence | Where-Object { $_ }) -join ', ') +
+            '): no validated HDR conversion is available. Convert a copy separately to SDR with a reviewed tone-mapping workflow, then retry; the source is unchanged.'
+        return $plan
+    }
+    if ($pixels -and $pixels -match '^yuvj' -and $range -eq 'tv') {
+        $plan.Supported=$false; $plan.State='UnsupportedColour'
+        $plan.Reason='Unsupported colour: full-range pixel format contradicts limited-range metadata. Export a copy with corrected colour metadata separately, then retry.'
+        return $plan
+    }
+    if ($transfer -in @('linear','log100','log316','log','log_sqrt','vlog','smpte428') -or
+        $matrix -in @('gbr','rgb','bt2020c','ictcp','chroma-derived-c','chroma-derived-nc','smpte2085') -or
+        ($pixels -and $pixels -match '^(gbr|rgb|bgr|rgba|bgra|argb|abgr|xyz)')) {
+        $plan.Supported=$false; $plan.State='UnsupportedColour'
+        $plan.Reason='Unsupported colour transform: RGB, linear/log or specialized matrix conversion is untested. Export a conventional YUV SDR copy with known colour metadata separately, then retry; the source is unchanged.'
+        return $plan
+    }
+    $knownPrimaries=@('bt709','bt470m','bt470bg','smpte170m','smpte240m','film','bt2020','smpte431','smpte432','jedec-p22')
+    $knownTransfers=@('bt709','bt470m','bt470bg','gamma22','gamma28','smpte170m','smpte240m',
+        'iec61966-2-4','bt1361e','iec61966-2-1','bt2020-10','bt2020-12')
+    $knownMatrices=@('bt709','fcc','bt470bg','smpte170m','smpte240m','bt2020nc')
+    if ($primaries -in $knownPrimaries) { $plan.Primaries=$primaries }
+    if ($transfer -in $knownTransfers) {
+        $plan.Transfer=$transfer
+        if ($transfer -eq 'gamma22') { $plan.Transfer='bt470m' }
+        elseif ($transfer -eq 'gamma28') { $plan.Transfer='bt470bg' }
+    }
+    if ($matrix -in $knownMatrices) { $plan.Matrix=$matrix }
+    if ($range -in @('tv','pc')) { $plan.Range='tv'; $plan.ConvertFullRange=$range -eq 'pc' }
+    elseif ($pixels -and $pixels -match '^yuvj') { $plan.Range='tv'; $plan.ConvertFullRange=$true }
+    if ($null -eq $plan.Primaries -or $null -eq $plan.Transfer -or $null -eq $plan.Matrix -or $null -eq $plan.Range) {
+        $plan.State='Ambiguous'
+        $plan.Warnings += 'Colour metadata is ambiguous or incomplete; HDR absence cannot be established. Encoding uses the SDR compatibility path without assigning missing Rec709 tags; colour fidelity is unverified.'
+    }
+    if ($primaries -eq 'bt2020' -or $matrix -eq 'bt2020nc') {
+        $plan.Warnings += 'Source uses wide gamut colour; retained tags do not convert it to Rec709 or establish universal player compatibility.'
+    }
+    if ($plan.ConvertFullRange) { $plan.Warnings += 'Full-range SDR samples are rescaled to limited range for 8-bit yuv420p compatibility; this is not HDR tone mapping.' }
+    if ($pixels -and $pixels -ne 'yuv420p') { $plan.Warnings += 'SDR compatibility output is 8-bit 4:2:0; source bit depth/chroma are not preserved.' }
+    $plan.Arguments=@('-pix_fmt:v:0','yuv420p')
+    foreach ($pair in @(@('-color_primaries:v:0',$plan.Primaries),@('-color_trc:v:0',$plan.Transfer),
+        @('-colorspace:v:0',$plan.Matrix),@('-color_range:v:0',$plan.Range))) {
+        if ($null -ne $pair[1]) { $plan.Arguments += $pair }
+    }
+    return $plan
+}
+
+function Assert-VideoColourSupported($Colour) {
+    if (-not $Colour.Supported) {
+        $failure=New-Object InvalidOperationException($Colour.Reason)
+        $failure.Data['WvcStage']='Colour'
+        throw $failure
+    }
+}
+
+function Test-OutputColour($Video, $SourceVideo) {
+    $sourceColour=Get-VideoColourPlan $SourceVideo
+    Assert-VideoColourSupported $sourceColour
+    $outputColour=Get-VideoColourPlan $Video
+    Assert-VideoColourSupported $outputColour
+    if ($Video.PixelFormat -ne 'yuv420p') { throw 'Output pixel format must be the intended 8-bit yuv420p SDR compatibility format.' }
+    foreach ($pair in @(@('ColourPrimaries',$sourceColour.Primaries),@('ColourTransfer',$sourceColour.Transfer),
+        @('ColourMatrix',$sourceColour.Matrix),@('ColourRange',$sourceColour.Range))) {
+        # H.264 may omit a limited-range VUI when all other colour fields are unknown.
+        if ($pair[0] -eq 'ColourRange' -and $null -eq $Video.ColourRange -and $sourceColour.Range -eq 'tv' -and
+            $null -eq $sourceColour.Primaries -and $null -eq $sourceColour.Transfer -and $null -eq $sourceColour.Matrix -and
+            $null -eq $outputColour.Primaries -and $null -eq $outputColour.Transfer -and $null -eq $outputColour.Matrix) {
+            $sourceColour.Warnings += 'Output range signalling is unavailable; conventional yuv420p decoding uses limited range, but this tag could not be confirmed.'
+            continue
+        }
+        if ($null -ne $pair[1] -and (Get-ProbeProperty $Video $pair[0]) -ne $pair[1]) { throw ('Output did not retain the planned SDR ' + $pair[0] + '.') }
+    }
+    if ($outputColour.ConvertFullRange) { throw 'Output colour range must not be full range for this compatibility path.' }
+    return $sourceColour.Warnings
+}
+
 function Get-StreamPlan($Inspection) {
     if (-not $Inspection.Succeeded -or $null -eq $Inspection.PrimaryVideo -or
         $null -eq $Inspection.PrimaryVideoIndex) { throw 'A stream plan requires a successful real-video inspection.' }
@@ -958,8 +1054,10 @@ function Get-StreamPlan($Inspection) {
     })
     $reasons = @{ AttachedPicture = 'attached artwork'; AlternateVideo = 'alternate video';
         AlternateAudio = 'alternate audio'; UnsupportedType = 'not included in this output' }
+    $colour = Get-VideoColourPlan $video
+    Assert-VideoColourSupported $colour
     $geometry = Get-VideoGeometryPlan $video
-    return [pscustomobject]@{ SchemaVersion = 1; Video = $video; VideoIndex = $Inspection.PrimaryVideoIndex; Geometry = $geometry;
+    return [pscustomobject]@{ SchemaVersion = 1; Colour = $colour; Video = $video; VideoIndex = $Inspection.PrimaryVideoIndex; Geometry = $geometry;
         VideoSelection = 'FirstRealByIndex'; Audio = $audio; AudioIndex = $audioIndex;
         AudioSelection = $audioSelection; MapArguments = $maps; OmittedStreams = $omitted;
         Warnings = @($omitted | ForEach-Object { "Omitting stream $($_.Index) ($($_.CodecType)): $($reasons[$_.Reason])." }) }
@@ -971,6 +1069,10 @@ function Write-StreamPlan($Plan) {
     $geometry = Get-VideoGeometryPlan $Plan.Video
     Write-Host ("Output geometry: {0}x{1}; height cap 1080, no crop/upscale, default autorotation." -f $geometry.TargetWidth,$geometry.TargetHeight)
     foreach ($warning in $geometry.Warnings) { Write-Host $warning -ForegroundColor Yellow }
+    $colour = Get-VideoColourPlan $Plan.Video
+    Assert-VideoColourSupported $colour
+    Write-Host ('Colour output: 8-bit yuv420p SDR compatibility; no HDR tone mapping/preservation.')
+    foreach ($warning in $colour.Warnings) { Write-Host $warning -ForegroundColor Yellow }
     if ($null -eq $Plan.Audio) {
         Write-Host 'Audio stream: none (silent input).'
     } else {
@@ -1179,8 +1281,16 @@ function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPla
     $tokens = @('-hide_banner','-nostdin','-stats','-n','-i',$InputPath)
     $tokens += $StreamPlan.MapArguments
     $geometry = Get-VideoGeometryPlan $StreamPlan.Video
-    if ($null -ne $geometry.Filter) { $tokens += @('-vf',$geometry.Filter) }
+    $colour = Get-VideoColourPlan $StreamPlan.Video
+    Assert-VideoColourSupported $colour
+    $filter = $geometry.Filter
+    if ($colour.ConvertFullRange) {
+        if ($null -eq $filter) { $filter='scale=iw:ih' }
+        $filter += ':in_range=pc:out_range=tv'
+    }
+    if ($null -ne $filter) { $tokens += @('-vf',$filter) }
     $tokens += @('-c:v','libx264','-preset','veryfast','-crf',"$CRF")
+    $tokens += $colour.Arguments
     if ($null -ne $StreamPlan.Audio) { $tokens += @('-c:a','aac','-b:a','160k') }
     $tokens += @('-movflags','+faststart')
     if ($null -ne $Metadata) {
@@ -1497,6 +1607,7 @@ function Test-OutputStructure($Output, $Source, $Plan) {
     }
     $video = $videos[0]
     $warnings = New-Object 'Collections.Generic.List[string]'
+    foreach ($warning in @(Test-OutputColour $video $Plan.Video)) { $warnings.Add($warning) }
     $extra = @($Output.Streams | Where-Object { $_.CodecType -notin @('video','audio') })
     if ($extra.Count) {
         $timecode = if ($null -ne $Source.FormatTimecode) { $Source.FormatTimecode } else { $Plan.Video.Timecode }
@@ -1624,7 +1735,7 @@ function New-JobResult([string]$SourcePath, [int]$CRF) {
         SourcePath=$SourcePath; OutputPath=$null; CandidatePath=$null; TemporaryPath=$null;
         RetainedPath=$null; Outcome='Unstarted'; Stage='Queued'; Reason='Not started.';
         SelectedStreams=$null; Settings=[pscustomobject]@{VideoCodec='libx264';Preset='veryfast';CRF=$CRF;
-            AudioCodec='aac';AudioBitrate='160k';Container='mp4';FastStart=$true;HeightCap=1080;Applied=$false};
+            PixelFormat='yuv420p';ColourPolicy='SDRCompatibility';AudioCodec='aac';AudioBitrate='160k';Container='mp4';FastStart=$true;HeightCap=1080;Applied=$false};
         ElapsedSeconds=0.0; InputBytes=$null; OutputBytes=$null; SizeChangeBytes=$null;
         SizeChangePercent=$null; AbortBatch=$false; CancellationRequested=$false; LogPath=$null;
         Diagnostics=[pscustomobject]@{Probe=$null;Encode=$null;Validation=$null;Warnings=@()} }
@@ -1733,6 +1844,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $result.SelectedStreams=[pscustomobject]@{Video=$streamPlan.Video.Index;
             Audio=$(if ($null -ne $streamPlan.Audio) { $streamPlan.Audio.Index } else { $null })}
         if ($null -eq $streamPlan.Audio) { $result.Settings.AudioCodec=$null; $result.Settings.AudioBitrate=$null }
+        $result.Diagnostics.Warnings += $streamPlan.Colour.Warnings
         Write-StreamPlan $streamPlan
         $stage = 'Allocate'
         $outputJob = New-OutputJob $inPath $outDir $nominal $out
@@ -1795,6 +1907,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             $_.Exception.Data['WvcJobResult']=$result
             throw
         }
+        if ($_.Exception.Data.Contains('WvcStage')) { $stage=[string]$_.Exception.Data['WvcStage'] }
         if ($_.Exception -is [System.OperationCanceledException]) {
             $stage='Interrupted'; $result.CancellationRequested=$true
             if (-not $published -and -not $skipped) { $result.Outcome='Cancelled' }

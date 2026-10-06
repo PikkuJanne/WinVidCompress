@@ -14,7 +14,7 @@ Describe 'Pure encoder tokens [WVC-M2-03-A01]' {
     It 'preserves the complete default profile, absolute maps and metadata order' {
         $tokens = @(Get-EncodeArguments 'D:\source.mov' 'D:\output.mp4' $Plan 22 $Metadata)
         $expected = @('-hide_banner','-nostdin','-stats','-n','-i','D:\source.mov',
-            '-map','0:3','-map','0:7','-c:v','libx264','-preset','veryfast','-crf','22',
+            '-map','0:3','-map','0:7','-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt:v:0','yuv420p',
             '-c:a','aac','-b:a','160k','-movflags','+faststart',
             '-metadata','title=Band Name 29092025 - CamA','-metadata','artist=Band Name',
             '-metadata','date=2025-09-29','-metadata','comment=Interview date 29.09.2025; Band: Band Name','D:\output.mp4')

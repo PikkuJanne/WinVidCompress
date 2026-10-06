@@ -3,7 +3,7 @@ BeforeAll {
     $env:APPDATA=Join-Path $TestDrive 'appdata'
     . (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'WinVidCompress.ps1')
     function New-ValidationDocument([switch]$Audio,[string]$VideoDuration='10',[string]$AudioDuration='10',[string]$Duration='10') {
-        $streams=@([pscustomobject]@{index=3;codec_type='video';codec_name='h264';width=320;height=240;duration=$VideoDuration;avg_frame_rate='24/1';nb_frames='240'})
+        $streams=@([pscustomobject]@{index=3;codec_type='video';codec_name='h264';pix_fmt='yuv420p';width=320;height=240;duration=$VideoDuration;avg_frame_rate='24/1';nb_frames='240'})
         if ($Audio) { $streams += [pscustomobject]@{index=8;codec_type='audio';codec_name='aac';channels=2;sample_rate='48000';duration=$AudioDuration} }
         [pscustomobject]@{streams=$streams;format=[pscustomobject]@{format_name='mov,mp4,m4a,3gp,3g2,mj2';duration=$Duration}}
     }
