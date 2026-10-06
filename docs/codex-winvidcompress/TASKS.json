@@ -1741,7 +1741,7 @@
       "title": "Add validated batch retry/resume with a versioned manifest",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         15
       ],
@@ -1769,35 +1769,54 @@
           "id": "WVC-M3-07-A01",
           "description": "Changed source, changed CRF/settings, missing output, corrupt output and mismatched manifest all prevent a false completed skip.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-07.json",
+            "evidence/WVC-M3-07.md"
+          ]
         },
         {
           "id": "WVC-M3-07-A02",
           "description": "Interrupted batches can retry failed/unstarted jobs while keeping validated successful outputs.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-07.json",
+            "evidence/WVC-M3-07.md"
+          ]
         },
         {
           "id": "WVC-M3-07-A03",
           "description": "Default fast identity limitations are documented; opt-in hashing detects same-size/same-mtime content changes.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-07.json",
+            "evidence/WVC-M3-07.md"
+          ]
         },
         {
           "id": "WVC-M3-07-A04",
           "description": "Malformed/foreign manifests cannot cause deletion of files or execution outside the current local job scope.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-07.json",
+            "evidence/WVC-M3-07.md"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "6bf2f9a735175b81b9b795060967fe8d4715e24b",
+        "4b00eee586e9fa131715964897f02a8a373be4b6"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-07.json",
+        "evidence/WVC-M3-07.md",
+        "evidence/WVC-M3-07-session.md"
+      ],
+      "notes": "A01-A04 passed at final clean 4b00eee (PS51 Quick782 and PS7 focused71); prior clean 6bf2f9a Full1576/0/0/8 retained. Final grouped size-type predicate rejects malformed identity paths with Int32 sizes, reproduced by37/2 regression before fix. Opt-in manifests use current explicit queue authority, validated completion and fresh retry reservations; fast/hash/atomicity limits documented. Minimal shared scope: read-only MP4 inspection, production-matching launcher recorder, 300s suite deadline and usage/spec docs. Prior physical Ctrl+C/Explorer/playback and generic Full manual/future rows remain pending."
     },
     {
       "id": "WVC-M4-01",
