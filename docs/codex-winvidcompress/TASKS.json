@@ -1575,7 +1575,7 @@
       "title": "Add machine progress and privacy-aware persistent logs",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         13,
         14
@@ -1603,35 +1603,54 @@
           "id": "WVC-M3-05-A01",
           "description": "Partial progress records, N/A values, locale differences and end markers are tested.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-05.md",
+            "evidence/WVC-M3-05.json"
+          ]
         },
         {
           "id": "WVC-M3-05-A02",
           "description": "No job is reported fully complete before validation and final promotion.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-05.md",
+            "evidence/WVC-M3-05.json"
+          ]
         },
         {
           "id": "WVC-M3-05-A03",
           "description": "Logs capture version/parameters/errors and useful job identity; normal console operation does not become a wall of raw logs.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-05.md",
+            "evidence/WVC-M3-05.json"
+          ]
         },
         {
           "id": "WVC-M3-05-A04",
           "description": "Sharing/export redacts personal roots/filenames as configured; no automatic telemetry or upload is added.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-05.md",
+            "evidence/WVC-M3-05.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "0c53f73c374d68eb275c48370c5aae659038f67e",
+        "371ff2f8a17a97dca2053228f8075d33b24a4897"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-05.md",
+        "evidence/WVC-M3-05.json",
+        "evidence/WVC-M3-05-session.md"
+      ],
+      "notes": "A01-A04 passed in clean final Targeted PS5.1/PS7 at 371ff2f, each 725/0/0/0 including Quick; 40 new unit/native regressions. Progress below 100 until validation/publication; bounded private local logs and conservative explicit export. Initial entry stdout expectation failures retained/repaired without weakening argv/sentinel checks. Existing manual/Full/physical-cancellation gates remain."
     },
     {
       "id": "WVC-M3-06",

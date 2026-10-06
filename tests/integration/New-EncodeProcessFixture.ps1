@@ -22,6 +22,17 @@ public static class WvcEncodeProcessFixture {
             File.WriteAllText(Environment.GetEnvironmentVariable("WVC_ENCODE_CHILD_PID"), child.Id.ToString());
             child.Dispose(); return 0;
         }
+        if (mode == "progress") {
+            Thread output = new Thread(delegate() {
+                Console.Write("out_time_"); Console.Out.Flush(); Thread.Sleep(50);
+                Console.Write("us=1000000\r\nspeed=N/A\r\nprogress=continue\r\n"); Console.Out.Flush(); Thread.Sleep(50);
+                Console.Write("out_time_us=2000000\nspeed=2.0x\nprogress=end");
+            });
+            output.Start();
+            for (int i=0; i<32; i++) Console.Error.Write(new string('E',4096));
+            Console.Error.Write("useful native warning");
+            output.Join(); return 0;
+        }
         if (mode == "fail") return 17;
         if (mode == "stdin") { Console.Write(Console.In.Read() == -1 ? "EOF" : "INPUT CONSUMED"); return 0; }
         if (mode == "report") { Console.Write(Environment.GetEnvironmentVariable("FFREPORT") ?? "ABSENT"); return 0; }
