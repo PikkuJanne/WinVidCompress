@@ -100,6 +100,15 @@ NOTES
     - Final files land directly in OutputDir. Reserved GUID job directories hold
       active or retained partials and are excluded from input discovery.
 
+BATCH RETRY / RESUME (OPT-IN)
+    - Use -ManifestPath with an absolute local .json path in an existing folder.
+    - Repeat the original input selection with -Resume and the same manifest.
+    - Completed skips require current source/settings/output structural checks.
+    - Fast source identity uses size/mtime; add -StrongSourceHash for strict hashing
+      on creation and every resume. Same-size/same-mtime edits evade fast identity.
+    - Retries create fresh temporary jobs and safely rename around old outputs.
+      Retained partials are never appended, adopted or deleted.
+
 LIMITATIONS
     - No batch parameterization of quality/presets (by design).
     - Only tags the first video stream and encodes to H.264/AAC MP4.
@@ -117,12 +126,15 @@ LICENSE / WARRANTY
 
 #>
 
-[CmdletBinding()]
+[CmdletBinding(PositionalBinding=$false)]
 param(
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,
-    [Parameter(ValueFromRemainingArguments = $true)]
+    [string]$ManifestPath,
+    [switch]$Resume,
+    [switch]$StrongSourceHash,
+    [Parameter(Position=0,ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )
 
@@ -1645,17 +1657,26 @@ function Assert-WvcNotCancelled {
     if (Test-WvcCancellation) { throw (New-Object OperationCanceledException 'Batch cancelled; unfinished output remains unverified.') }
 }
 
-function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools) {
     $previous=$script:CancellationContext
     $context=if ($null -ne $previous) { $previous } else { New-WvcCancellationContext }
     $script:CancellationContext=$context
     $batch=$null
+    $manifestHolder=[pscustomobject]@{Context=$null}
     try {
-        $batch=Invoke-PathBatch $paths $ffmpeg $ffprobe $cfg
+        $batch=Invoke-PathBatch $paths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $ManifestTools -ManifestHolder $manifestHolder
         if (Test-WvcCancellation) { $batch.Cancelled=$true; $batch.ExitCode=3 }
         return $batch
     }
     finally {
+        if ($null -ne $manifestHolder.Context) {
+            try { $manifestHolder.Context.Lock.Dispose() }
+            catch {
+                if ($null -ne $batch) { $batch.Warnings+=@('Could not close batch manifest lock.') }
+                try { [Console]::Error.WriteLine('Could not close batch manifest lock.') } catch { }
+            }
+        }
         $script:CancellationContext=$previous
         if ($null -eq $previous -and (Get-ProbeProperty $context 'RestoreConsole')) {
             try { [Console]::TreatControlCAsInput=$context.PreviousControlC }
@@ -2080,16 +2101,14 @@ function Test-OutputStructure($Output, $Source, $Plan) {
     return [pscustomobject]@{DurationChecks=$checks.ToArray();Warnings=$warnings.ToArray()}
 }
 
-function Get-OutputValidation([string]$FFprobe, $Job, $Source, $Plan,
+function Get-Mp4FileValidation([string]$FFprobe, [string]$FilePath, $Source, $Plan,
     [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
-    $result = [pscustomobject]@{SchemaVersion=1;Succeeded=$false;JobId=$Job.JobId;SourcePath=$Job.SourcePath;
-        TemporaryPath=$Job.TempPath;Stage='Validation';FailureKind='File';Reason=$null;Inspection=$null;DurationChecks=@();Warnings=@()}
+    $result = [pscustomobject]@{SchemaVersion=1;Succeeded=$false;FilePath=$FilePath;Stage='Validation';FailureKind='File';Reason=$null;Inspection=$null;DurationChecks=@();Warnings=@()}
     $file = $null
     try {
-        [void](Assert-OutputJob $Job -ForPublication)
         # Hold read sharing during structural inspection; no writer/deleter can
         # modify this open file. Close it before the no-clobber publication move.
-        $file = [IO.File]::Open($Job.TempPath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+        $file = [IO.File]::Open($FilePath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
         if ($file.Length -lt 16) { throw 'Temporary output is empty or too short for an MP4 ftyp header.' }
         $header = New-Object byte[] 16
         if ($file.Read($header,0,16) -ne 16) { throw 'Temporary output header is unreadable.' }
@@ -2100,17 +2119,32 @@ function Get-OutputValidation([string]$FFprobe, $Job, $Source, $Plan,
             throw 'Temporary output lacks an expected MP4 ftyp/brand (QuickTime/3GP are not MP4 output).'
         }
         $result.FailureKind = 'Probe'
-        $result.Inspection = Get-MediaInspection $FFprobe $Job.TempPath $TimeoutMilliseconds
+        $result.Inspection = Get-MediaInspection $FFprobe $FilePath $TimeoutMilliseconds
         if (-not $result.Inspection.Succeeded) { throw "Output probe failed [$($result.Inspection.FailureKind)]: $($result.Inspection.Reason)" }
         $result.FailureKind = 'Structure'
         $structure = Test-OutputStructure $result.Inspection $Source $Plan
-        [void](Assert-OutputJob $Job -ForPublication)
         $result.DurationChecks = $structure.DurationChecks; $result.Warnings = $structure.Warnings
         $result.Succeeded = $true; $result.FailureKind = $null
     } catch [Management.Automation.PipelineStoppedException] { throw }
     catch {
-        $result.Reason = "Job $($Job.JobId); source $($Job.SourcePath); temporary $($Job.TempPath): $($_.Exception.Message)"
+        $result.Reason = "File $FilePath`: $($_.Exception.Message)"
     } finally { if ($null -ne $file) { $file.Dispose() } }
+    return $result
+}
+
+
+function Get-OutputValidation([string]$FFprobe, $Job, $Source, $Plan,
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    $result=[pscustomobject]@{SchemaVersion=1;Succeeded=$false;JobId=$Job.JobId;SourcePath=$Job.SourcePath;
+        TemporaryPath=$Job.TempPath;Stage='Validation';FailureKind='File';Reason=$null;Inspection=$null;DurationChecks=@();Warnings=@()}
+    try {
+        [void](Assert-OutputJob $Job -ForPublication)
+        $checked=Get-Mp4FileValidation $FFprobe $Job.TempPath $Source $Plan $TimeoutMilliseconds
+        foreach ($name in @('Succeeded','FailureKind','Reason','Inspection','DurationChecks','Warnings')) { $result.$name=$checked.$name }
+        [void](Assert-OutputJob $Job -ForPublication)
+    } catch [Management.Automation.PipelineStoppedException] { throw }
+    catch { $result.Succeeded=$false; $result.FailureKind='File'; $result.Reason=$_.Exception.Message }
+    if (-not $result.Succeeded) { $result.Reason="Job $($Job.JobId); source $($Job.SourcePath); temporary $($Job.TempPath): $($result.Reason)" }
     return $result
 }
 
@@ -2234,7 +2268,7 @@ function Get-BatchResult([object[]]$Jobs, [object[]]$Scans, [switch]$Requested,
     $code=0
     if ($Cancelled -or $counts.Cancelled -or @($records | Where-Object CancellationRequested).Count) { $code=3 }
     elseif ($StartupFailed -or ($Requested -and -not $records.Count)) { $code=2 }
-    elseif ($counts.Failed -or $counts.ScanErrors -or $counts.Unstarted) { $code=1 }
+    elseif ($counts.Failed -or $counts.ScanErrors -or $counts.Unstarted -or @($records | Where-Object AbortBatch).Count) { $code=1 }
     $measurements=Get-BatchMeasurements $records
     return [pscustomobject]@{SchemaVersion=1;ExitCode=$code;Requested=[bool]$Requested;Cancelled=($code -eq 3);
         StartupFailed=[bool]$StartupFailed;Reason=$Reason;Warnings=@();Jobs=$records;Scans=$scanRecords;
@@ -2474,7 +2508,260 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     return $result
 }
 
-function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+function Assert-ManifestShape($Value, [string[]]$Keys) {
+    if ($Value -isnot [Management.Automation.PSCustomObject]) { throw 'Manifest object type is invalid.' }
+    $actual=@($Value.PSObject.Properties.Name)
+    if ($actual.Count -ne $Keys.Count -or @($actual | Where-Object { $_ -cnotin $Keys }).Count) {
+        throw 'Manifest fields do not match schema 1.'
+    }
+}
+
+function Get-ManifestPath([string]$Value) {
+    # Resume is supported only on ordinary local drive paths. Reject alternate
+    # providers, ADS, device paths and traversal before normalization or I/O.
+    if ($Value -notmatch '^[A-Za-z]:[\\/]' -or $Value.Substring(2).Contains(':') -or
+        $Value -match '(^|[\\/])\.\.?([\\/]|$)' -or ($Value.Length -gt 3 -and $Value -match '[\\/]$') -or
+        $Value -match '[. ]([\\/]|$)') { throw 'Manifest requires an ordinary absolute local path without traversal or ADS.' }
+    $full=[IO.Path]::GetFullPath($Value)
+    $existing=$full
+    while (-not (Test-Path -LiteralPath $existing)) {
+        $existing=[IO.Path]::GetDirectoryName($existing)
+        if (-not $existing) { throw 'Manifest path has no existing local ancestor.' }
+    }
+    if ($full -cne $Value -or (Get-InputReparsePoint $existing)) { throw 'Manifest path must be canonical and cannot cross reparse points.' }
+    if ($full -match '[\\/]\.wvc-job-[0-9a-f]{32}([\\/]|$)') { throw 'Manifest cannot use a reserved job directory.' }
+    return $full
+}
+
+function Get-ManifestIdentity([string]$FilePath, [switch]$Hash, [switch]$Checkpoint) {
+    $path=Get-ManifestPath $FilePath
+    $item=Get-Item -LiteralPath $path -Force -ErrorAction Stop
+    if ($item -isnot [IO.FileInfo]) { throw 'Manifest identity requires a regular file.' }
+    $file=[IO.File]::Open($path,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+    $algorithm=$null
+    try {
+        if ($Checkpoint -and $file.Length -gt 4194304) { throw 'Manifest checkpoint exceeds the 4 MiB limit.' }
+        $digest=$null
+        if ($Hash) {
+            if (-not $Checkpoint) { Assert-WvcNotCancelled }
+            $algorithm=[Security.Cryptography.SHA256]::Create()
+            $digest=([BitConverter]::ToString($algorithm.ComputeHash($file))).Replace('-','').ToLowerInvariant()
+            if (-not $Checkpoint) { Assert-WvcNotCancelled }
+        }
+        return [pscustomobject]@{Path=$path;Length=$file.Length;LastWriteUtcTicks=([IO.File]::GetLastWriteTimeUtc($path).Ticks.ToString());SHA256=$digest}
+    } finally { if ($null -ne $algorithm) { $algorithm.Dispose() }; $file.Dispose() }
+}
+
+function Assert-ManifestIdentity($Identity, [string]$Path, [bool]$Hash) {
+    Assert-ManifestShape $Identity @('Path','Length','LastWriteUtcTicks','SHA256')
+    if ($Identity.Path -isnot [string] -or (Get-ManifestPath $Identity.Path) -cne $Path -or
+        $Identity.Length -isnot [long] -and $Identity.Length -isnot [int] -or $Identity.Length -lt 0 -or
+        $Identity.LastWriteUtcTicks -isnot [string] -or $Identity.LastWriteUtcTicks -cnotmatch '^\d{18}$' -or
+        ($Hash -and ($Identity.SHA256 -isnot [string] -or $Identity.SHA256 -cnotmatch '^[0-9a-f]{64}$')) -or
+        (-not $Hash -and $null -ne $Identity.SHA256)) { throw 'Manifest file identity is invalid.' }
+}
+
+function Test-ManifestIdentity($Expected, $Actual) {
+    return $null -ne $Expected -and $null -ne $Actual -and
+        [StringComparer]::OrdinalIgnoreCase.Equals($Expected.Path,$Actual.Path) -and
+        $Expected.Length -eq $Actual.Length -and $Expected.LastWriteUtcTicks -ceq $Actual.LastWriteUtcTicks -and
+        $Expected.SHA256 -ceq $Actual.SHA256
+}
+
+function Get-ManifestSettingsFingerprint([int]$CRF) {
+    # Include CRF/profile and exact UTF-8 application bytes. This conservative
+    # fingerprint invalidates completion after any application/policy edit.
+    $profile="wvc-profile-1;libx264;veryfast;crf=$CRF;yuv420p;SDRCompatibility-1;aac;160k;mp4;+faststart;height1080;geometry-1;streams-1;filename-metadata-1"
+    $hash=[Security.Cryptography.SHA256]::Create()
+    try {
+        $profile+=';application='+([BitConverter]::ToString($hash.ComputeHash([IO.File]::ReadAllBytes($script:ApplicationPath))))
+        return ([BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes($profile)))).Replace('-','').ToLowerInvariant()
+    }
+    finally { $hash.Dispose() }
+}
+
+function Assert-BatchManifest($Manifest, [string]$ManifestPath, [string]$OutputDirectory, [string[]]$Sources) {
+    Assert-ManifestShape $Manifest @('SchemaVersion','Owner','BatchId','ManifestPath','OutputDirectory','StrongSourceHash','SettingsFingerprint','Tools','Jobs')
+    if (($Manifest.SchemaVersion -isnot [int] -and $Manifest.SchemaVersion -isnot [long]) -or $Manifest.SchemaVersion -ne 1 -or
+        $Manifest.Owner -isnot [string] -or $Manifest.Owner -cne 'WinVidCompress.Batch' -or $Manifest.BatchId -isnot [string] -or $Manifest.BatchId -cnotmatch '^[0-9a-f]{32}$' -or
+        $Manifest.ManifestPath -isnot [string] -or (Get-ManifestPath $Manifest.ManifestPath) -cne $ManifestPath -or
+        $Manifest.OutputDirectory -isnot [string] -or (Get-ManifestPath $Manifest.OutputDirectory) -cne $OutputDirectory -or
+        $Manifest.StrongSourceHash -isnot [bool] -or $Manifest.SettingsFingerprint -isnot [string] -or
+        $Manifest.SettingsFingerprint -cnotmatch '^[0-9a-f]{64}$' -or $Manifest.Jobs -isnot [array] -or
+        $Manifest.Jobs.Count -ne $Sources.Count -or $Sources.Count -lt 1 -or $Sources.Count -gt 10000) { throw 'Manifest ownership, schema or current batch scope mismatch.' }
+    Assert-ManifestShape $Manifest.Tools @('FFmpeg','FFprobe')
+    foreach ($version in @($Manifest.Tools.FFmpeg,$Manifest.Tools.FFprobe)) {
+        if ($version -isnot [string] -or $version.Length -gt 1024) { throw 'Manifest tool version is invalid.' }
+    }
+    $ids=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $outputs=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    for ($i=0; $i -lt $Sources.Count; $i++) {
+        $entry=$Manifest.Jobs[$i]
+        Assert-ManifestShape $entry @('JobId','SourcePath','SourceIdentity','SettingsFingerprint','State','OutputIdentity')
+        if ($entry.JobId -isnot [string] -or $entry.JobId -cnotmatch '^[0-9a-f]{32}$' -or -not $ids.Add($entry.JobId) -or
+            $entry.SourcePath -isnot [string] -or (Get-ManifestPath $entry.SourcePath) -cne $Sources[$i] -or
+            $entry.SettingsFingerprint -isnot [string] -or $entry.SettingsFingerprint -cnotmatch '^[0-9a-f]{64}$' -or
+            $entry.State -isnot [string] -or $entry.State -cnotin @('Unstarted','Running','Completed','Skipped','Failed','Cancelled')) { throw 'Manifest job identity/state does not match the current queue.' }
+        Assert-ManifestIdentity $entry.SourceIdentity $Sources[$i] $Manifest.StrongSourceHash
+        if ($entry.State -ceq 'Completed') {
+            $outputPath=Get-ProbeProperty $entry.OutputIdentity 'Path'
+            if ($outputPath -isnot [string]) { throw 'Completed manifest job needs output identity.' }
+            [void](Get-ManifestPath $outputPath)
+            $base=[IO.Path]::GetFileNameWithoutExtension($Sources[$i])
+            $name=[IO.Path]::GetFileName($outputPath)
+            if ([IO.Path]::GetDirectoryName($outputPath) -cne $OutputDirectory -or
+                $name -cnotmatch ('^'+[regex]::Escape($base)+'( \(compressed( (?:[2-9]|[1-9][0-9]+))?\))?\.mp4$') -or
+                @($Sources | Where-Object { [StringComparer]::OrdinalIgnoreCase.Equals($_,$outputPath) }).Count -or
+                -not $outputs.Add($outputPath)) { throw 'Manifest output escaped its job scope.' }
+            Assert-ManifestIdentity $entry.OutputIdentity $outputPath $true
+        } elseif ($null -ne $entry.OutputIdentity) { throw 'Unfinished manifest job cannot claim output ownership.' }
+    }
+}
+
+function Publish-BatchManifestFile([string]$TemporaryPath, [string]$DestinationPath, [bool]$Replacing) {
+    if ($Replacing) { [IO.File]::Replace($TemporaryPath,$DestinationPath,[Management.Automation.Language.NullString]::Value) }
+    else { [IO.File]::Move($TemporaryPath,$DestinationPath) }
+}
+
+function Save-BatchManifest($Context) {
+    Assert-BatchManifest $Context.Manifest $Context.Path $Context.OutputDirectory $Context.Sources
+    [void](Get-ManifestPath $Context.Path)
+    if ($null -ne $Context.Snapshot) {
+        $current=Get-ManifestIdentity $Context.Path -Hash -Checkpoint
+        if (-not (Test-ManifestIdentity $Context.Snapshot $current)) { throw 'Manifest changed outside the held batch lock.' }
+    } elseif (Test-Path -LiteralPath $Context.Path) { throw 'Manifest already exists; use -Resume for an owned matching batch.' }
+    $bytes=(New-Object Text.UTF8Encoding($false)).GetBytes(($Context.Manifest | ConvertTo-Json -Depth 8 -Compress))
+    if ($bytes.Length -gt 4194304) { throw 'Manifest exceeds the 4 MiB limit.' }
+    $temporary=$Context.Path+'.'+[guid]::NewGuid().ToString('N')+'.tmp'
+    $file=New-Object IO.FileStream $temporary,([IO.FileMode]::CreateNew),([IO.FileAccess]::Write),([IO.FileShare]::None)
+    try { $file.Write($bytes,0,$bytes.Length); $file.Flush($true) } finally { $file.Dispose() }
+    # No delete/move fallback: a failed replace leaves the old snapshot intact
+    # and reports the uniquely created JSON temp for local investigation.
+    Publish-BatchManifestFile $temporary $Context.Path ($null -ne $Context.Snapshot)
+    $Context.Snapshot=Get-ManifestIdentity $Context.Path -Hash -Checkpoint
+}
+
+function Open-BatchManifest([string]$ManifestPath, [string]$OutputDirectory, [string[]]$Sources,
+    [switch]$Resume, [switch]$StrongSourceHash, $Tools) {
+    $path=Get-ManifestPath $ManifestPath
+    $root=Get-ManifestPath $OutputDirectory
+    if ([IO.Path]::GetExtension($path) -cne '.json' -or -not [IO.Directory]::Exists([IO.Path]::GetDirectoryName($path))) { throw 'Manifest needs a .json path in an existing local directory.' }
+    $normalized=@($Sources | ForEach-Object { Get-ManifestPath (Get-QueuePathKey $_) })
+    if (@($normalized | Where-Object { [StringComparer]::OrdinalIgnoreCase.Equals($_,$path) -or [StringComparer]::OrdinalIgnoreCase.Equals($_,$path+'.lock') }).Count) { throw 'Manifest cannot replace an input.' }
+    [void](Get-ManifestPath ($path+'.lock'))
+    $lock=[IO.File]::Open($path+'.lock',[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
+    try {
+        $context=[pscustomobject]@{Path=$path;OutputDirectory=$root;Sources=$normalized;Lock=$lock;Snapshot=$null;Manifest=$null;Fingerprint=(Get-ManifestSettingsFingerprint $DefaultCRF);StrongSourceHash=[bool]$StrongSourceHash;Resume=[bool]$Resume}
+        if ($Resume) {
+            $item=Get-Item -LiteralPath $path -Force -ErrorAction Stop
+            if ($item -isnot [IO.FileInfo] -or $item.Length -gt 4194304) { throw 'Manifest must be a regular file at most 4 MiB.' }
+            $context.Snapshot=Get-ManifestIdentity $path -Hash
+            $json=[IO.File]::ReadAllText($path,(New-Object Text.UTF8Encoding($false,$true)))
+            if (-not $json.TrimStart().StartsWith('{')) { throw 'Manifest JSON root must be an object.' }
+            $context.Manifest=$json | ConvertFrom-Json -ErrorAction Stop
+            Assert-BatchManifest $context.Manifest $path $root $normalized
+            if ($context.Manifest.StrongSourceHash -and -not $StrongSourceHash) { throw 'This manifest requires -StrongSourceHash; identity cannot be downgraded.' }
+        } else {
+            $entries=@($normalized | ForEach-Object {
+                [pscustomobject]@{JobId=[guid]::NewGuid().ToString('N');SourcePath=$_;SourceIdentity=(Get-ManifestIdentity $_ -Hash:$StrongSourceHash);
+                    SettingsFingerprint=$context.Fingerprint;State='Unstarted';OutputIdentity=$null}
+            })
+            $context.Manifest=[pscustomobject]@{SchemaVersion=1;Owner='WinVidCompress.Batch';BatchId=[guid]::NewGuid().ToString('N');ManifestPath=$path;OutputDirectory=$root;
+                StrongSourceHash=[bool]$StrongSourceHash;SettingsFingerprint=$context.Fingerprint;
+                Tools=[pscustomobject]@{FFmpeg=[string](Get-ProbeProperty $Tools 'FFmpeg');FFprobe=[string](Get-ProbeProperty $Tools 'FFprobe')};Jobs=$entries}
+            Save-BatchManifest $context
+        }
+        return $context
+    } catch { $lock.Dispose(); throw }
+}
+
+function Test-ManifestCompleted($Context, $Entry, [string]$FFprobe) {
+    if ($Entry.State -cne 'Completed' -or $Entry.SettingsFingerprint -cne $Context.Fingerprint -or
+        $Context.Manifest.SettingsFingerprint -cne $Context.Fingerprint -or
+        $Context.Manifest.StrongSourceHash -ne $Context.StrongSourceHash) { return $false }
+    try {
+        $source=Get-ManifestIdentity $Entry.SourcePath -Hash:$Context.StrongSourceHash
+        if (-not (Test-ManifestIdentity $Entry.SourceIdentity $source)) { return $false }
+        $output=Get-ManifestIdentity $Entry.OutputIdentity.Path -Hash
+        if (-not (Test-ManifestIdentity $Entry.OutputIdentity $output)) { return $false }
+        $inspection=Get-MediaInspection $FFprobe $Entry.SourcePath
+        if (-not $inspection.Succeeded) { return $false }
+        $plan=Get-StreamPlan $inspection
+        $structure=Get-Mp4FileValidation $FFprobe $Entry.OutputIdentity.Path $inspection $plan
+        if (-not $structure.Succeeded) { return $false }
+        # Recheck after probing so concurrent ordinary source/output edits cannot
+        # validate an earlier identity and then silently receive a completed skip.
+        return (Test-ManifestIdentity $source (Get-ManifestIdentity $Entry.SourcePath -Hash:$Context.StrongSourceHash)) -and
+            (Test-ManifestIdentity $output (Get-ManifestIdentity $Entry.OutputIdentity.Path -Hash))
+    } catch [Management.Automation.PipelineStoppedException] { throw }
+    catch [OperationCanceledException] { throw }
+    catch { return $false }
+}
+
+function Invoke-ManifestJob($Context, [int]$Index, $FFmpeg, $FFprobe, [string]$SourcePath, [int]$FileTotal) {
+    $entry=$Context.Manifest.Jobs[$Index]
+    if (Test-ManifestCompleted $Context $entry $FFprobe) {
+        $result=New-JobResult $SourcePath $DefaultCRF
+        $result.JobId=$entry.JobId; $result.Outcome='Skipped'; $result.Stage='Resume'; $result.OutputPath=$entry.OutputIdentity.Path
+        $result.Reason='Resume retained a completed output after source/settings/hash/structural validation.'
+        try { Write-Host ('Resume validated: '+$SourcePath) -ForegroundColor Green }
+        catch [Management.Automation.PipelineStoppedException] { $_.Exception.Data['WvcJobResult']=$result; throw }
+        catch {
+            $result.Diagnostics.Warnings+=@('Resume reporting failed: '+$_.Exception.Message)
+            if ($_.Exception -is [OperationCanceledException]) { $result.CancellationRequested=$true }
+        }
+        if (Test-WvcCancellation) { $result.CancellationRequested=$true }
+        return $result
+    }
+    # Old partials and finals are never adopted or removed. Every retry gets a
+    # fresh owned encode reservation. An invalid completed output needs a retry
+    # even under the ordinary collision skip policy, with safe rename instead.
+    if ($Context.Resume -or $entry.State -ceq 'Completed') { $CollisionMode='rename' }
+    $source=Get-ManifestIdentity $entry.SourcePath -Hash:$Context.StrongSourceHash
+    if ($Context.Manifest.StrongSourceHash -ne $Context.StrongSourceHash) {
+        # Upgrade every stored baseline before writing the stricter schema. Old
+        # completions lose their claim and are retried, never retroactively hashed.
+        foreach ($old in $Context.Manifest.Jobs) {
+            $old.SourceIdentity=Get-ManifestIdentity $old.SourcePath -Hash
+            $old.State='Unstarted'; $old.OutputIdentity=$null
+        }
+        $Context.Manifest.StrongSourceHash=$true
+    }
+    $entry.SourceIdentity=$source; $entry.SettingsFingerprint=$Context.Fingerprint; $entry.State='Running'; $entry.OutputIdentity=$null
+    $Context.Manifest.SettingsFingerprint=$Context.Fingerprint
+    Save-BatchManifest $Context
+    $result=Compress-One $FFmpeg $FFprobe $SourcePath $Context.OutputDirectory $DefaultCRF -FileIndex ($Index+1) -FileTotal $FileTotal
+    try {
+    $entry.JobId=$result.JobId
+    $entry.State=$result.Outcome
+    if ($result.Outcome -ceq 'Completed') {
+        if (Test-ManifestIdentity $source (Get-ManifestIdentity $entry.SourcePath -Hash:$Context.StrongSourceHash)) {
+            $entry.OutputIdentity=Get-ManifestIdentity $result.OutputPath -Hash
+        } else {
+            $entry.State='Failed'; $result.AbortBatch=$true
+            $result.Diagnostics.Warnings+=@('Source identity changed during encoding; manifest will retry this job.')
+            try { Write-Host $result.Diagnostics.Warnings[-1] -ForegroundColor Yellow } catch { }
+        }
+    }
+    Save-BatchManifest $Context
+    } catch {
+        # Publication is already durable: preserve that outcome and stop the
+        # batch rather than losing it behind a checkpoint failure.
+        $result.AbortBatch=$true
+        if ($_.Exception -is [OperationCanceledException]) { $result.CancellationRequested=$true }
+        $result.Diagnostics.Warnings+=@('Manifest checkpoint failed: '+$_.Exception.Message)
+        try { Write-Host $result.Diagnostics.Warnings[-1] -ForegroundColor Red } catch { }
+        $_.Exception.Data['WvcJobResult']=$result
+        throw
+    }
+    if (Test-WvcCancellation) { $result.CancellationRequested=$true }
+    return $result
+}
+
+
+function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools, $ManifestHolder) {
+    $manifest=$null
     # Recheck at every requested batch, including after a menu preference change.
     try {
         Assert-WvcNotCancelled
@@ -2482,6 +2769,12 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
         foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
         # Freeze all selections before any encoder can create new candidates.
         $queue=Get-InputQueue $paths
+        if ($ManifestPath) {
+            if ($null -eq $ManifestHolder) { throw 'Manifest batch requires an owned lifetime holder.' }
+            $manifest=Open-BatchManifest $ManifestPath $cfg.OutputDir $queue.Files -Resume:$Resume -StrongSourceHash:$StrongSourceHash -Tools $ManifestTools
+            $ManifestHolder.Context=$manifest
+            Write-Host ('Batch manifest: '+$manifest.Path)
+        } elseif ($Resume -or $StrongSourceHash) { throw '-Resume and -StrongSourceHash require -ManifestPath.' }
     }
     catch {
         if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
@@ -2514,13 +2807,18 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
             $job.Reason='Batch ended before this job started.'
         } else {
             try {
+                if ($null -ne $manifest) {
+                    $job=Invoke-ManifestJob $manifest ($fileIndex-1) $ffmpeg $ffprobe $f $queue.Files.Count
+                } else {
                 $job=Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF -FileIndex $fileIndex -FileTotal $queue.Files.Count
+                }
             } catch {
                 if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
                 $job=$_.Exception.Data['WvcJobResult']
                 if ($null -eq $job) {
                     $job=New-JobResult $f $DefaultCRF
-                    $job.Outcome='Failed'; $job.Stage='Dispatch'; $job.Reason=$_.Exception.Message; $job.AbortBatch=$true
+                    $job.Outcome=if ($_.Exception -is [OperationCanceledException]) {'Cancelled'} else {'Failed'}
+                    $job.CancellationRequested=$job.Outcome -eq 'Cancelled'; $job.Stage='Dispatch'; $job.Reason=$_.Exception.Message; $job.AbortBatch=$true
                 }
                 $stopScheduling=$true
             }
@@ -2648,12 +2946,17 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
 }
 
 function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
-    [switch]$Unattended, [switch]$ExplicitRequest) {
+    [switch]$Unattended, [switch]$ExplicitRequest,
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash) {
     $stage='Startup'
     $session=$null; $run=$null
     $previousSession=$script:SessionLog
     $inputPaths=@($Paths | Where-Object { $null -ne $_ })
     try {
+        if (($ManifestPath -or $Resume -or $StrongSourceHash) -and ($CheckEnvironment -or -not $inputPaths.Count)) {
+            throw 'Manifest options require an explicit batch input selection and cannot be used with -CheckEnvironment.'
+        }
+        if (($Resume -or $StrongSourceHash) -and -not $ManifestPath) { throw '-Resume and -StrongSourceHash require -ManifestPath.' }
         if (-not $CheckEnvironment -and ($Unattended -or $ExplicitRequest) -and -not $inputPaths.Count) {
             throw 'No input paths supplied for the requested batch.'
         }
@@ -2671,7 +2974,11 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         Write-EnvironmentReport $tools $output
         $session=New-SessionLog $tools
         $script:SessionLog=$session
-        if ($inputPaths.Count -gt 0) { $run=Process-Paths $inputPaths $ffmpeg $ffprobe $cfg }
+        if ($inputPaths.Count -gt 0) {
+            $versions=$null
+            if ($ManifestPath) { $versions=[pscustomobject]@{FFmpeg=(Limit-LogText (($tools.FFmpegBuild -split "`n")[0]) 1024);FFprobe=(Limit-LogText (($tools.FFprobeBuild -split "`n")[0]) 1024)} }
+            $run=Process-Paths $inputPaths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $versions
+        }
         else { $stage='Menu'; $run=Run-TUI $ffmpeg $ffprobe $cfg }
         return $run
     } catch {
@@ -2701,6 +3008,6 @@ if ($KeepOpen -and $Unattended) {
     [Console]::Error.WriteLine('WinVidCompress: -KeepOpen and -Unattended cannot be combined. Put -Unattended first when using the BAT launcher.')
     exit 2
 }
-$run=Invoke-WinVidCompress -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path'))
+$run=Invoke-WinVidCompress -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path')) -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash
 $global:LASTEXITCODE=$run.ExitCode
 if (-not $KeepOpen) { exit $run.ExitCode }

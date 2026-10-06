@@ -1,9 +1,12 @@
-[CmdletBinding()]
+[CmdletBinding(PositionalBinding=$false)]
 param(
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,
-    [Parameter(ValueFromRemainingArguments = $true)]
+    [string]$ManifestPath,
+    [switch]$Resume,
+    [switch]$StrongSourceHash,
+    [Parameter(Position=0,ValueFromRemainingArguments = $true)]
     [string[]]$Path
 )
 

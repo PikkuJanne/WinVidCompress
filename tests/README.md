@@ -137,3 +137,17 @@ powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/in
 The helper copies exact application bytes and compiles synthetic startup/probe/encoder recorders under a new owned temp root. Each route has its own source/final/config/log root and two files. Double-click its PS51, PS7, BAT-unattended and BAT-menu checks once; for BAT-drop, actually drag both `a.mov` and `b.mov` from its sources folder onto Check-BAT-drop.bat in Explorer. In menu choose 3 and paste the displayed sources folder. Press Ctrl+C once after Encoding progress appears. Default BAT menu/drop returns to its retained PowerShell prompt; type `exit $LASTEXITCODE` so the verifier receives the application code. This later shell exit is only a harness transport for that already recorded code; the unchanged BAT then displays error 3 and pauses, which is expected for this check. Press a key to reach the verifier. Direct and unattended routes use the actual process exit.
 
 The verifier prints seven automatic PASS/FAIL rows for process exit/start count/stopped child/source+final hashes/no publication/log outcomes/counters, then asks only whether Ctrl+C stopped the batch and returned normally (PASS/FAIL/UNSURE). It saves the observation, original source commit/dirty flag/application hash, route/host and fixture limitation locally. A failed/unfilled/UNSURE route remains incomplete. A native recorder launch/control-flow observation is separate from the installed FFmpeg graceful-pipe tests. Child CMD uses the existing tested quoting boundary without CALL; two plain synthetic filenames cover cancellation routes, not special-character argv acceptance. No UI/system policy/dependency change or private media is needed. Review results before cleaning only the returned Owner with Remove-WvcTestRoot; do not remove a root while a native child is alive.
+
+## Manifest/resume checks (WVC-M3-07)
+
+`tests/unit/Manifest.Tests.ps1` exercises strict schema/identity/path scope, lock contention, atomic replacement failure, foreign edits, file-size limits, reparse refusal and fast versus strong identity. `tests/integration/Resume.Tests.ps1` uses a short compiled native recorder plus installed FFmpeg/FFprobe to check completed skips, source/settings/output invalidation, graceful interruption with Completed/Cancelled/Unstarted checkpoints, failed retries, fresh temp paths, old final/partial hashes, strict-hash upgrades, post-publication save failure and actual PS1/BAT unattended CLI/results/logs. Fixtures stay inside Pester TestDrive with isolated APPDATA and never adopt/delete retained media.
+
+Focused command on either supported Windows host:
+
+```powershell
+./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1' -ReportPath $report
+```
+
+The creation/resume CLI is documented in `PROCESS_AND_CLI.md`; these automated cases do not replace the earlier actual Explorer, physical Ctrl+C or playback gates.
+
+M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. The per-host whole-Pester deadline is now 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
