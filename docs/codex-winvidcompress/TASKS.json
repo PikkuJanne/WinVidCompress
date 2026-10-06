@@ -1657,7 +1657,7 @@
       "title": "Cancel safely and terminate only this job’s child process",
       "milestone": "M3",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "implemented",
       "improvements": [
         15
       ],
@@ -1684,34 +1684,57 @@
           "description": "Ctrl+C in each supported Windows launch mode stops the current batch and does not start the next file.",
           "tier": "manual",
           "status": "not_run",
-          "evidence": []
+          "evidence": [
+            "evidence/WVC-M3-06.md",
+            "evidence/WVC-M3-06.json"
+          ],
+          "notes": "Five-route clean synthetic Ctrl+C kit prepared; owner observation requested but not recorded. Physical Ctrl+C cannot be passed from context/native seams. Default BAT explicit exit3 transport has expected error3/pause."
         },
         {
           "id": "WVC-M3-06-A02",
           "description": "Another unrelated FFmpeg process is not terminated.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-06.md",
+            "evidence/WVC-M3-06.json"
+          ],
+          "notes": "Clean Full cc1e2a2 on actual PS5.1/PS7: unrelated actual FFmpeg survived forced owned-child stop with PID/start identity intact."
         },
         {
           "id": "WVC-M3-06-A03",
           "description": "Source/existing final files are unchanged; no cancelled partial is promoted.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-06.md",
+            "evidence/WVC-M3-06.json"
+          ],
+          "notes": "Both-host native/hash/late-boundary/fatal-stop regressions preserve source/final, retain unverified partial/provenance, and refuse cancelled publication."
         },
         {
           "id": "WVC-M3-06-A04",
           "description": "Cancellation exit status, logs and queue summary agree.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-06.md",
+            "evidence/WVC-M3-06.json"
+          ],
+          "notes": "Both-host real workers return3 and match console/JSONL Job/Result queue counters and native stop fields; completed/skipped/late/setup/fatal signals preserve truthful outcomes."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "cc1e2a2f9e74d82d48142635783f18cdd38ca7d4",
+        "015f9872906448692f4e75c6a0d5a0719e130c99"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-06.md",
+        "evidence/WVC-M3-06.json",
+        "evidence/WVC-M3-06-session.md"
+      ],
+      "notes": "Implemented with both-host clean automated evidence; physical A01 remains pending and blocks applicable acceptance. Full 1458 passed/0 failed/0 skipped/8 historical NotRun, exit2. Current app bytes match tested cc1e2a2; 015f987 changes only manual kit/README and has clean preparation/static evidence. No quality/runtime/entry-point change."
     },
     {
       "id": "WVC-M3-07",
