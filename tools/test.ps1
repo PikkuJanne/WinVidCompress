@@ -66,9 +66,9 @@ try {
                     (Join-Path $testsRoot 'Invoke-PesterRun.ps1'),'-ModuleRoot',$ModuleRoot,
                     '-TestPath',($selected -join '|'),'-ReportPath',$childPath)
                 if ($includeBaseline) { $arguments += '-IncludeKnownDefects' }
-                # The expanded native exit suite needs more than two minutes on
+                # The expanded native benchmark suite exceeded three minutes on
                 # PS7; retain a bounded suite deadline and the short fixture limits.
-                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 180000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
+                $child = Invoke-WvcTestProcess $executable $arguments -TimeoutMilliseconds 240000 -Environment @{ APPDATA = (Join-Path $owner.Path 'appdata') }
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stdout.log')), $child.StdOut)
                 [IO.File]::WriteAllText((Join-Path $owner.Path ($hostName + '.stderr.log')), $child.StdErr)
                 $childReport = Read-WvcChildReport $childPath $child.ExitCode
@@ -81,7 +81,8 @@ try {
         }
 
         $psFiles = @((Join-Path $repoRoot 'WinVidCompress.ps1')) + @(Get-ChildItem -LiteralPath $testsRoot -Filter '*.ps1' -Recurse |
-            Select-Object -ExpandProperty FullName) + @(Get-ChildItem -LiteralPath $PSScriptRoot -Filter 'test*.ps1' |
+            Select-Object -ExpandProperty FullName) + @(Get-ChildItem -LiteralPath $PSScriptRoot -File |
+            Where-Object { $_.Name -like 'test*.ps1' -or $_.Name -like 'benchmark*.ps1' } |
             Select-Object -ExpandProperty FullName)
         $parseFailures = 0
         foreach ($path in $psFiles) {

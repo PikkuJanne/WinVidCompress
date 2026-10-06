@@ -1492,7 +1492,7 @@
       "title": "Report savings and benchmark rather than guess",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "implemented",
       "improvements": [
         12
       ],
@@ -1520,35 +1520,55 @@
           "id": "WVC-M3-04-A01",
           "description": "Reduction, growth, zero/unavailable size and cancelled jobs have correct arithmetic and labels.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-04.md",
+            "evidence/WVC-M3-04.json"
+          ]
         },
         {
           "id": "WVC-M3-04-A02",
           "description": "No fixed size-reduction percentage is promised in user-facing copy.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-04.md",
+            "evidence/WVC-M3-04.json"
+          ]
         },
         {
           "id": "WVC-M3-04-A03",
           "description": "Benchmark fixtures and reports record provenance; private clips and unredacted paths stay outside Git.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-04.md",
+            "evidence/WVC-M3-04.json"
+          ]
         },
         {
           "id": "WVC-M3-04-A04",
           "description": "Timing and visual/audio judgments are measured/owner-recorded, not fabricated.",
           "tier": "manual",
           "status": "not_run",
-          "evidence": []
+          "evidence": [
+            "evidence/WVC-M3-04.md",
+            "evidence/WVC-M3-04.json"
+          ],
+          "notes": "Actual timings measured in three-repeat synthetic benchmark; owner visual/audio observation requested but not recorded. Playback remains NotRun; no representative interview/default approval claimed."
         }
       ],
       "approval_gate": "Changing CRF, preset, codec, audio bitrate or other default quality/performance policy requires owner approval.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "46d6070c2bd2ac60e200dcd2f1c34faf0c565b9a",
+        "60e12b3b80307833cc7dee24c62eaa2c8f094ed4"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-04.md",
+        "evidence/WVC-M3-04.json",
+        "evidence/WVC-M3-04-session.md"
+      ],
+      "notes": "Implemented; A01-A03 passed: clean 46d6070 application and 60e12b3 harness-only checkpoints (identical app bytes), Quick PS5.1 665/0/0/0 and Targeted PS5.1/PS7 each 685/0/0/0, exit0. Three-repeat default/medium synthetic benchmark records actual settings/tokens/tools/provenance/timing spread; larger native synthetic outputs retained and private markers/paths excluded. A04 owner playback observation pending. Existing unknown selected-duration strict-mode aggregation guarded; comparison warning policy retained. Default quality unchanged; no Full/Explorer/CI/milestone/release pass. Exact next WVC-M3-05."
     },
     {
       "id": "WVC-M3-05",

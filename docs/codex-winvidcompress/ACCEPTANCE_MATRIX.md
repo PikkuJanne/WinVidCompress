@@ -25,7 +25,7 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | RESUME | Changed source/settings, missing/corrupt output, foreign manifest, stronger hash | Manifest integration | NOT RUN |
 | PREVIEW | No config, folder, log, output or manifest writes | Before/after filesystem snapshots | NOT RUN |
 | LAYOUT | Flat default, relative roots, repeated names, traversal/reparse containment | Path plan + filesystem tests | NOT RUN |
-| SAVINGS | Smaller/larger output, unknown size, genuine timings | Arithmetic unit + measured benchmark | NOT RUN |
+| SAVINGS | Smaller/larger output, unknown size, genuine timings | Arithmetic unit + measured benchmark | PASSED A01-A03 [M3-04](evidence/WVC-M3-04.md), both actual Windows hosts/installed build; weighted exclusions, growth retention/privacy/provenance/repeated synthetic timings. A04 owner playback observation NOT RUN; no representative quality/default-change claim |
 | LOGS | Persistent reports, error stage, redacted sharing, write failure | Unit + diagnostic fixture | NOT RUN |
 | CI | PS5.1 + supported PS7, least privilege, exact pushed commit results | Actual GitHub workflow inspection | NOT RUN |
 | PACKAGE | Allowlist, source version, SHA-256, reproducibility, fresh ZIP extraction | Build + clean-workstation smoke | NOT RUN |
