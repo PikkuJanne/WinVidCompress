@@ -134,4 +134,34 @@ Describe 'Per-run CLI and read-only preview [WVC-M4-01]' {
         Should -Invoke Run-TUI -Times 1 -Exactly
         $DefaultCRF | Should -Be 22; $CollisionMode | Should -BeExactly 'rename'
     }
+    It 'uses explicit output over a blank Windows default for <Route> [A03]' -TestCases @(
+        @{Route='preview';Options=@{WhatIf=$true}},
+        @{Route='doctor';Options=@{CheckEnvironment=$true}},
+        @{Route='conversion';Options=@{Unattended=$true}}
+    ) {
+        param($Route,$Options)
+        Mock Get-DefaultOutputDir { '' }; Mock Ensure-Tool { 'fixture.exe' }
+        Mock Get-ToolEnvironment { [pscustomobject]@{} }; Mock Get-OutputEnvironment { [pscustomobject]@{} }
+        Mock Write-EnvironmentReport {}; Mock New-SessionLog { $null }
+        Mock Process-Paths { Get-BatchResult @() @() }
+        $run=Invoke-WinVidCompress -Paths @($Source) -OutputDir $Output @Options
+        $run.ExitCode | Should -Be 0
+        Should -Invoke Get-DefaultOutputDir -Times 0 -Exactly
+        Test-Path -LiteralPath $ConfigPath | Should -BeFalse
+        if ($Route -eq 'preview') { $run.Plans[0].OutputPath | Should -BeExactly (Join-Path $Output 'a.mp4') }
+        if ($Route -eq 'conversion') { Should -Invoke Process-Paths -Times 1 -Exactly -ParameterFilter { $cfg.OutputDir -eq $Output } }
+    }
+    It 'keeps a blank unoverridden default invalid without recovery [A02 A03]' {
+        Mock Get-DefaultOutputDir { '' }
+        (Invoke-WinVidCompress -Paths @($Source) -WhatIf).ExitCode | Should -Be 2
+        Test-Path -LiteralPath $ConfigPath | Should -BeFalse
+    }
+    It 'keeps malformed existing config invalid despite a valid default override [A02 A03]' {
+        [void][IO.Directory]::CreateDirectory($ConfigDir); [IO.File]::WriteAllText($ConfigPath,'{malformed sentinel')
+        Mock Get-DefaultOutputDir { '' }
+        (Invoke-WinVidCompress -Paths @($Source) -OutputDir $Output -WhatIf).ExitCode | Should -Be 2
+        [IO.File]::ReadAllText($ConfigPath) | Should -BeExactly '{malformed sentinel'
+        @(Get-ChildItem -LiteralPath $ConfigDir).Count | Should -Be 1
+        Should -Invoke Get-DefaultOutputDir -Times 0 -Exactly
+    }
 }

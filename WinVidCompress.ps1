@@ -412,10 +412,11 @@ function Get-OutputEnvironment([string]$Destination) {
     return [pscustomobject]@{ Destination = $Destination; AvailableBytes = $available }
 }
 
-function Get-EnvironmentConfig {
+function Get-EnvironmentConfig([string]$DefaultDestination) {
     # Doctor must not create config, locks, backups or recover malformed preferences.
     if (Test-Path -LiteralPath $ConfigPath) { return (ConvertFrom-ConfigText (Read-ConfigFile).Text) }
-    $cfg = [pscustomobject]@{ OutputDir = (Get-DefaultOutputDir) }
+    $destination=if ($PSBoundParameters.ContainsKey('DefaultDestination')) { $DefaultDestination } else { Get-DefaultOutputDir }
+    $cfg = [pscustomobject]@{ OutputDir = $destination }
     Assert-ConfigShape $cfg
     return $cfg
 }
@@ -3070,6 +3071,8 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     $overrides=@{}
     if ($PSBoundParameters.ContainsKey('OutputDir')) { $overrides.OutputDir=$OutputDir }
     if ($PSBoundParameters.ContainsKey('RunCollisionMode')) { $overrides.CollisionMode=$RunCollisionMode }
+    $readOptions=@{}
+    if ($overrides.ContainsKey('OutputDir')) { $readOptions.DefaultDestination=$OutputDir }
     try {
         foreach ($inputPath in $inputPaths) {
             if ($inputPath -match '^[\-\u2013\u2014\u2015]') { throw "Unrecognized option '$inputPath'. Use an absolute path or .\ prefix for a filename beginning with '-'." }
@@ -3091,20 +3094,20 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             throw 'No input paths supplied for the requested batch.'
         }
         if ($WhatIf) {
-            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig) $overrides
+            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
             return (Get-PreviewPlan $inputPaths $effective.Config $effective.CollisionMode)
         }
         $ffmpeg=Ensure-Tool 'ffmpeg.exe'
         $ffprobe=Ensure-Tool 'ffprobe.exe'
         $tools=Get-ToolEnvironment $ffmpeg $ffprobe
         if ($CheckEnvironment) {
-            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig) $overrides
+            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
             $cfg=$effective.Config
             $output=Get-OutputEnvironment $cfg.OutputDir
             Write-EnvironmentReport $tools $output
             return (Get-BatchResult @() @() -Reason 'Environment check completed.')
         }
-        $cfg=if ($overrides.Count) { Get-EnvironmentConfig } else { Load-Config }
+        $cfg=if ($overrides.Count) { Get-EnvironmentConfig @readOptions } else { Load-Config }
         $effective=Resolve-RunConfiguration $cfg $overrides
         $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir

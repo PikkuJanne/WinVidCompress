@@ -154,6 +154,8 @@ The creation/resume CLI is documented in `PROCESS_AND_CLI.md`; these automated c
 
 `unit/Cli.Tests.ps1` checks precedence, copied preferences, early option validation, unchanged default/menu routing, collision estimates and forbidden native/writing/prompt boundaries. `integration/WhatIf.Tests.ps1` snapshots protected synthetic roots (paths, directory/file attributes, byte lengths/hashes and modification times) before/after actual preview and failure routes. It also checks actual PS1/BAT multi-input binding, run overrides/config preservation and safely parsed real Get-Help examples. Diagnostics and native recorder markers stay outside protected roots. APPDATA/output are isolated; preview runs with FFREPORT set to detect accidental native report writes. Preview rejects doctor/manifest combinations; doctor still performs its temporary write test. No private media or Explorer/manual acceptance is inferred.
 
+Explicit output also replaces a blank Windows default when config is absent; existing malformed config still fails unchanged. Both-host units cover preview/doctor/conversion lookup. The whole Pester suite has a seven-minute bound after the expanded PS7 suite exceeded five minutes; individual native fixture/process bounds are unchanged.
+
 ```powershell
 ./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Cli.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Config.Tests.ps1|tests/unit/Environment.Tests.ps1|tests/integration/Exit.Tests.ps1|tests/launcher/Launcher.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath $report
 ```
