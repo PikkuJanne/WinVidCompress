@@ -2555,7 +2555,7 @@ function Get-ManifestIdentity([string]$FilePath, [switch]$Hash, [switch]$Checkpo
 function Assert-ManifestIdentity($Identity, [string]$Path, [bool]$Hash) {
     Assert-ManifestShape $Identity @('Path','Length','LastWriteUtcTicks','SHA256')
     if ($Identity.Path -isnot [string] -or (Get-ManifestPath $Identity.Path) -cne $Path -or
-        $Identity.Length -isnot [long] -and $Identity.Length -isnot [int] -or $Identity.Length -lt 0 -or
+        ($Identity.Length -isnot [long] -and $Identity.Length -isnot [int]) -or $Identity.Length -lt 0 -or
         $Identity.LastWriteUtcTicks -isnot [string] -or $Identity.LastWriteUtcTicks -cnotmatch '^\d{18}$' -or
         ($Hash -and ($Identity.SHA256 -isnot [string] -or $Identity.SHA256 -cnotmatch '^[0-9a-f]{64}$')) -or
         (-not $Hash -and $null -ne $Identity.SHA256)) { throw 'Manifest file identity is invalid.' }

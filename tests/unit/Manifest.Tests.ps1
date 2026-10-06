@@ -23,7 +23,7 @@ Describe 'Bounded owned manifest schema and persistence [WVC-M3-07]' {
     It 'rejects <Kind> before updating an existing manifest [A01 A04]' -TestCases @(
         @{Kind='schema'},@{Kind='owner'},@{Kind='owner type'},@{Kind='batch ID'},@{Kind='manifest path'},@{Kind='output root'},
         @{Kind='unknown field'},@{Kind='jobs type'},@{Kind='source traversal'},@{Kind='source outside queue'},
-        @{Kind='identity size'},@{Kind='identity ticks'},@{Kind='hash'},@{Kind='state'},@{Kind='job ID'},@{Kind='settings type'},
+        @{Kind='identity source path'},@{Kind='identity path type'},@{Kind='identity size'},@{Kind='identity ticks'},@{Kind='hash'},@{Kind='state'},@{Kind='job ID'},@{Kind='settings type'},
         @{Kind='foreign output'},@{Kind='output traversal'},@{Kind='unfinished output'}
     ) {
         param($Kind)
@@ -39,6 +39,8 @@ Describe 'Bounded owned manifest schema and persistence [WVC-M3-07]' {
             'jobs type' {$m.Jobs=$entry}
             'source traversal' {$entry.SourcePath=Join-Path $Root 'out/../a.mov'}
             'source outside queue' {$entry.SourcePath=Join-Path $Root 'outside.mov'}
+            'identity source path' {$entry.SourceIdentity.Path=Join-Path $Root 'foreign.mov'; $entry.SourceIdentity.Length=[int]15}
+            'identity path type' {$entry.SourceIdentity.Path=1; $entry.SourceIdentity.Length=[int]15}
             'identity size' {$entry.SourceIdentity.Length=1.5}
             'identity ticks' {$entry.SourceIdentity.LastWriteUtcTicks='bad'}
             'hash' {$entry.SourceIdentity.SHA256='0'*64}
