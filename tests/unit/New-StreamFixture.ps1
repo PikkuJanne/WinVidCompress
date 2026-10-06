@@ -11,6 +11,9 @@ public static class WvcStreamFixture {
             writer.WriteLine("CALL");
             foreach (var arg in args) writer.WriteLine(Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));
         }
+        using (var output = new FileStream(args[args.Length-1], FileMode.CreateNew, FileAccess.Write, FileShare.None)) {
+            output.WriteByte(1); // Synthetic publication sentinel, not media.
+        }
         return 0;
     }
 }

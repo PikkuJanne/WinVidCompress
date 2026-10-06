@@ -231,7 +231,8 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         $finalHash = (Get-FileHash -LiteralPath $existing).Hash
         Compress-One $script:Recorder 'unused' $source ($script:Root + '\.\') $DefaultCRF ([ref]$script:Counters)
         $script:RecordedJobs.Count | Should -Be 1
-        $script:RecordedJobs[0].Output | Should -Be (Join-Path ($script:Root + '\.\') 'original (compressed 2).mp4')
+        [IO.Path]::GetFileName($script:RecordedJobs[0].Output) | Should -BeExactly 'encode.partial.mp4'
+        Test-Path -LiteralPath (Join-Path $script:Root 'original (compressed 2).mp4') | Should -BeTrue
         $script:Counters.Done | Should -Be 1
         (Get-FileHash -LiteralPath $source).Hash | Should -Be $sourceHash
         (Get-FileHash -LiteralPath $existing).Hash | Should -Be $finalHash
@@ -248,7 +249,8 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         if ($Extended) { $inputPath = '\\?\' + $source }
         Compress-One $script:Recorder 'unused' $inputPath $script:Root $DefaultCRF ([ref]$script:Counters)
         $script:RecordedJobs.Count | Should -Be 1
-        $script:RecordedJobs[0].Output | Should -Be (Join-Path $script:Root 'original (compressed).mp4')
+        [IO.Path]::GetFileName($script:RecordedJobs[0].Output) | Should -BeExactly 'encode.partial.mp4'
+        Test-Path -LiteralPath (Join-Path $script:Root 'original (compressed).mp4') | Should -BeTrue
         $script:Counters.Done | Should -Be 1
         [IO.File]::ReadAllText($source) | Should -Be 'source sentinel'
     }

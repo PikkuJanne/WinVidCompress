@@ -989,7 +989,7 @@
       "title": "Implement owned temporary output and no-clobber promotion",
       "milestone": "M2",
       "priority": "P0",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         6
       ],
@@ -1016,35 +1016,53 @@
           "id": "WVC-M2-04-A01",
           "description": "Existing source/final sentinel bytes are unchanged after success, failure and collision races.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-04.md",
+            "evidence/WVC-M2-04.json"
+          ]
         },
         {
           "id": "WVC-M2-04-A02",
           "description": "Two jobs targeting the same final base never clobber one another.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-04.md",
+            "evidence/WVC-M2-04.json"
+          ]
         },
         {
           "id": "WVC-M2-04-A03",
           "description": "Failed jobs leave no finished-looking final; cleanup never uses broad filename patterns.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-04.md",
+            "evidence/WVC-M2-04.json"
+          ]
         },
         {
           "id": "WVC-M2-04-A04",
           "description": "Promotion failure reports failure and retains/reports or safely removes only the owned partial according to policy.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-04.md",
+            "evidence/WVC-M2-04.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "6bed80c5a8b1a60e8b3818f49f340141193ff7fe",
+        "731fa2fce26ad2fbc8b42b2ea2c54fbf8804015e"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-04.md",
+        "evidence/WVC-M2-04.json"
+      ],
+      "notes": "Verified A01-A04: Focused/Quick clean6bed80c; Targeted/Full clean731fa2f, both actual Windows PS5.1.26100.9444/PS7.6.5: Focused 169/0/2/0, Quick 331/0/2/0, Targeted 347/0/6/0, Full 347/0/6/8. Focused/Quick/Targeted exit0; Full risk gate executed with zero failures but exit2/Incomplete, seven manual and one future coverage row NotRun. 23 unit and three real concurrent barrier cases per host preserve source/final hashes and both payloads. Independent reservation keeps temp absent for -n; same-volume File.Move refuses replacement; rename/skip races and locked promotion covered. Media never deleted by path; provenance/retention is conservative, including empty jobs on owned termination failure. Reserved jobs excluded/reported. Minimal shared fixture migrations. M2-02 A01/A03 remain skipped without real tools; validation M2-05, full cancellation/manifests/UNC durability later. No Full/Explorer/media/CI/release pass. Exact next WVC-M2-05."
     },
     {
       "id": "WVC-M2-05",

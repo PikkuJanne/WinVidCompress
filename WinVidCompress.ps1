@@ -90,7 +90,8 @@ NOTES
     - Invalid config is preserved in a diagnostic backup before recovery to Videos.
     - An unavailable saved output folder stops startup without changing the preference.
     - Saves retain previous config backups and coordinate instances through config.json.lock.
-    - No new output subfolders are created by default; files land directly in OutputDir.
+    - Final files land directly in OutputDir. Reserved GUID job directories hold
+      active or retained partials and are excluded from input discovery.
 
 LIMITATIONS
     - No batch parameterization of quality/presets (by design).
@@ -929,9 +930,30 @@ function Get-InputReparsePoint([string]$p) {
     return $null
 }
 
+function Get-ReservedOutputJobDirectory($Item) {
+    $directory = if ($Item -is [IO.FileInfo]) { $Item.Directory } else { $Item }
+    while ($null -ne $directory) {
+        if ($directory.Name -match '^\.wvc-job-[0-9a-f]{32}$') { return $directory.FullName }
+        $directory = $directory.Parent
+    }
+    return $null
+}
+
+function Get-OutputJobWarnings([string]$OutputDirectory) {
+    try {
+        foreach ($directory in @(Get-ChildItem -LiteralPath $OutputDirectory -Directory -Force -ErrorAction Stop)) {
+            if ($directory.Name -match '^\.wvc-job-[0-9a-f]{32}$') {
+                "Reserved WinVidCompress job directory present (active or unverified leftovers; not recovered or deleted): $($directory.FullName)"
+            }
+        }
+    } catch [Management.Automation.PipelineStoppedException] { throw }
+    catch { "Could not inspect reserved output-job directories: $($_.Exception.Message)" }
+}
+
 function Get-InputScan([string]$p) {
     $files = New-Object 'Collections.Generic.List[string]'
     $errors = New-Object 'Collections.Generic.List[object]'
+    $warnings = New-Object 'Collections.Generic.List[string]'
     $normalized = $null
     $pending = New-Object 'Collections.Generic.Stack[string]'
     $visited = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
@@ -959,6 +981,11 @@ function Get-InputScan([string]$p) {
                 continue
             }
             $item = Get-Item -LiteralPath $current -Force -ErrorAction Stop
+            $reservedJob = Get-ReservedOutputJobDirectory $item
+            if ($reservedJob) {
+                $warnings.Add("Reserved WinVidCompress job directory excluded (active or unverified leftovers): $reservedJob")
+                continue
+            }
         } catch {
             $errors.Add([pscustomobject]@{ Path = $current; Kind = 'InputReadFailed'; Message = $_.Exception.Message })
             continue
@@ -1011,7 +1038,7 @@ function Get-InputScan([string]$p) {
         }
     }
     return [pscustomobject]@{ InputPath = $p; NormalizedPath = $normalized;
-        Files = $files.ToArray(); Errors = $errors.ToArray(); Succeeded = ($errors.Count -eq 0) }
+        Files = $files.ToArray(); Errors = $errors.ToArray(); Warnings = $warnings.ToArray(); Succeeded = ($errors.Count -eq 0) }
 }
 
 function Collect-InputFiles([string]$p) {
@@ -1055,7 +1082,7 @@ function Get-InputQueue([string[]]$paths) {
     $keys = [string[]]@($sources.Keys)
     [array]::Sort($keys, [StringComparer]::OrdinalIgnoreCase)
     $files = @($keys | ForEach-Object { $sources[$_] })
-    # No ownership manifest/temp protocol exists yet. Never infer ownership from
+    # Reserved GUID job directories are excluded by the scanner. Never infer ownership from
     # OutputDir, extension or a compressed/partial suffix; keep ambiguous files.
     return [pscustomobject]@{ Files = $files; Scans = $scans.ToArray() }
 }
@@ -1219,7 +1246,157 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
         ElapsedSeconds=$clock.Elapsed.TotalSeconds }
 }
 
+function New-OutputJob([string]$SourcePath, [string]$OutputDirectory, [string]$NominalPath,
+    [string]$CandidatePath, [ValidatePattern('^[0-9a-f]{32}$')][string]$JobId = ([guid]::NewGuid().ToString('N'))) {
+    $root = [IO.Path]::GetFullPath((Get-Item -LiteralPath $OutputDirectory -Force -ErrorAction Stop).FullName)
+    if ($root.Length -gt [IO.Path]::GetPathRoot($root).Length) { $root = $root.TrimEnd('\','/') }
+    $directory = Join-Path $root ('.wvc-job-' + $JobId)
+    if (Test-Path -LiteralPath $directory) { throw 'Reserved job directory already exists; refusing adoption.' }
+    if (Get-InputReparsePoint $root) { throw 'Output job paths cannot cross reparse points.' }
+    [void][IO.Directory]::CreateDirectory($directory)
+    $reservation = $null
+    try {
+        if ((Get-Item -LiteralPath $directory -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw 'Reserved job directory became a reparse point.'
+        }
+        if (@(Get-ChildItem -LiteralPath $directory -Force -ErrorAction Stop).Count) {
+            throw 'Reserved job directory is not empty; refusing adoption.'
+        }
+        $reservationPath = Join-Path $directory 'active.owner'
+        # The independent reservation is exclusive. DeleteOnClose removes that
+        # opened file by handle, not a possibly substituted media pathname.
+        $reservation = New-Object IO.FileStream $reservationPath,([IO.FileMode]::CreateNew),
+            ([IO.FileAccess]::ReadWrite),([IO.FileShare]::None),4096,([IO.FileOptions]::DeleteOnClose)
+        $job = [pscustomobject]@{ SchemaVersion=1; JobId=$JobId; Root=$root; SourcePath=$SourcePath;
+            NominalPath=[IO.Path]::GetFullPath($NominalPath); CandidatePath=[IO.Path]::GetFullPath($CandidatePath);
+            JobDirectory=$directory; TempPath=(Join-Path $directory 'encode.partial.mp4');
+            ReservationPath=$reservationPath; Reservation=$reservation }
+        $record = [pscustomobject]@{SchemaVersion=1;JobId=$JobId;SourcePath=$SourcePath;
+            NominalPath=$job.NominalPath;TemporaryPath=$job.TempPath;State='Reserved'}
+        $bytes = (New-Object Text.UTF8Encoding($false)).GetBytes(($record | ConvertTo-Json -Compress))
+        $reservation.Write($bytes,0,$bytes.Length)
+        $reservation.Flush()
+        [void](Assert-OutputJob $job -BeforeEncode)
+        return $job
+    } catch [Management.Automation.PipelineStoppedException] {
+        if ($null -ne $reservation) { try { $reservation.Dispose() } catch { } }
+        throw
+    } catch {
+        if ($null -ne $reservation) { try { $reservation.Dispose() } catch { } }
+        # Never recursively remove or adopt an uncertain allocation.
+        throw "Output allocation refused; unverified directory retained: $directory. $($_.Exception.Message)"
+    }
+}
+
+function Assert-OutputJob($Job, [switch]$BeforeEncode, [switch]$ForPublication) {
+    if ($Job.SchemaVersion -ne 1 -or $Job.JobId -cnotmatch '^[0-9a-f]{32}$' -or
+        $null -eq $Job.Reservation -or -not $Job.Reservation.CanWrite) { throw 'Invalid or closed output-job ownership.' }
+    $root = [IO.Path]::GetFullPath($Job.Root)
+    $expectedDirectory = Join-Path $root ('.wvc-job-' + $Job.JobId)
+    $expectedTemp = Join-Path $expectedDirectory 'encode.partial.mp4'
+    $expectedReservation = Join-Path $expectedDirectory 'active.owner'
+    foreach ($pair in @(@($Job.JobDirectory,$expectedDirectory),@($Job.TempPath,$expectedTemp),
+        @($Job.ReservationPath,$expectedReservation),@($Job.Reservation.Name,$expectedReservation))) {
+        if (-not [StringComparer]::OrdinalIgnoreCase.Equals([IO.Path]::GetFullPath($pair[0]),$pair[1])) {
+            throw 'Output-job path/provenance mismatch; no path mutation allowed.'
+        }
+    }
+    foreach ($final in @($Job.NominalPath,$Job.CandidatePath)) {
+        if (-not [StringComparer]::OrdinalIgnoreCase.Equals([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($final)),$root)) {
+            throw 'Final output escaped its destination directory.'
+        }
+    }
+    if (Get-InputReparsePoint $expectedDirectory) { throw 'Output job crossed a reparse point.' }
+    if ($BeforeEncode -or $ForPublication) {
+        $unexpected = @(Get-ChildItem -LiteralPath $expectedDirectory -Force -ErrorAction Stop |
+            Where-Object { $_.Name -notin @('active.owner','encode.partial.mp4') })
+        if ($unexpected.Count) { throw 'Unexpected job artifacts; temporary authorship is unverified.' }
+    }
+    if (Test-Path -LiteralPath $expectedTemp) {
+        $item = Get-Item -LiteralPath $expectedTemp -Force -ErrorAction Stop
+        if ($BeforeEncode) { throw 'Temporary path already exists; refusing overwrite or ownership claim.' }
+        if ($item -isnot [IO.FileInfo] -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            throw 'Temporary output is not a regular non-reparse file.'
+        }
+    }
+}
+
+function Move-OutputFileNoClobber([string]$Source, [string]$Destination) {
+    # Two-argument File.Move refuses any existing destination on both runtimes.
+    [IO.File]::Move($Source,$Destination)
+}
+
+function Publish-OutputJob($Job, [ValidateSet('rename','skip')][string]$Policy) {
+    [void](Assert-OutputJob $Job -ForPublication)
+    if (-not (Test-Path -LiteralPath $Job.TempPath -PathType Leaf)) { throw 'Encoder produced no temporary output.' }
+    $candidate = $Job.CandidatePath
+    for ($attempt=0; $attempt -lt 64; $attempt++) {
+        if (-not [StringComparer]::OrdinalIgnoreCase.Equals([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($candidate)),$Job.Root)) {
+            throw 'Promotion candidate escaped the output directory.'
+        }
+        if ([StringComparer]::OrdinalIgnoreCase.Equals((Get-QueuePathKey $candidate),(Get-QueuePathKey $Job.SourcePath))) {
+            throw 'Promotion candidate must differ from the source.'
+        }
+        try {
+            [void](Assert-OutputJob $Job -ForPublication)
+            Move-OutputFileNoClobber $Job.TempPath $candidate
+            return [pscustomobject]@{Published=$true;Skipped=$false;FinalPath=$candidate;Reason=$null}
+        } catch {
+            $nativeError = $_.Exception.GetBaseException()
+            $code = $nativeError.HResult -band 65535
+            # Do not turn permission/sharing/disk/source errors into rename loops.
+            if ($nativeError -isnot [IO.IOException] -or $code -notin @(80,183) -or
+                -not (Test-Path -LiteralPath $candidate)) { throw }
+            if ($Policy -eq 'skip') {
+                return [pscustomobject]@{Published=$false;Skipped=$true;FinalPath=$candidate;Reason='Final appeared during encoding.'}
+            }
+            $candidate = Next-CompressedPath $Job.NominalPath
+        }
+    }
+    throw 'Final-name collision retry limit reached; partial retained.'
+}
+
+function Close-OutputJob($Job, [bool]$Published, [string]$Stage, [string]$Reason, [switch]$EncoderMayStillRun) {
+    $warning = $null
+    try {
+        [void](Assert-OutputJob $Job)
+        if ($EncoderMayStillRun -or @(Get-ChildItem -LiteralPath $Job.JobDirectory -Force -ErrorAction Stop |
+            Where-Object { $_.Name -ne 'active.owner' }).Count) {
+            # Media is never deleted by path. Failed, replaced or still-written
+            # partials are retained; a reservation alone cannot prove authorship.
+            $recordPath = Join-Path $Job.JobDirectory 'retained.json'
+            $record = [pscustomobject]@{SchemaVersion=1;JobId=$Job.JobId;SourcePath=$Job.SourcePath;
+                TemporaryPath=$Job.TempPath;NominalPath=$Job.NominalPath;Stage=$Stage;Reason=$Reason;
+                State='RetainedUnverified';Published=$Published;EncoderMayStillRun=[bool]$EncoderMayStillRun}
+            $file = [IO.File]::Open($recordPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+            try {
+                $bytes = (New-Object Text.UTF8Encoding($false)).GetBytes(($record | ConvertTo-Json -Depth 4))
+                $file.Write($bytes,0,$bytes.Length)
+            } finally { $file.Dispose() }
+            $warning = "Retained unverified partial/job artifacts: $($Job.TempPath) (job $($Job.JobId))."
+        }
+    } catch {
+        $warning = "Retained job artifacts at $($Job.JobDirectory); cleanup/record refused for job $($Job.JobId): $($_.Exception.Message)"
+    } finally {
+        # Release only our open reservation. Preserve existing cancellation/fatal exceptions.
+        try { $Job.Reservation.Dispose() } catch { $warning = 'Output-job reservation cleanup failed: ' + $_.Exception.Message }
+    }
+    if ($null -eq $warning) {
+        try {
+            if (Get-InputReparsePoint $Job.JobDirectory) { throw 'Job directory became a reparse point.' }
+            [IO.Directory]::Delete($Job.JobDirectory,$false) # Empty only; never recursive.
+        } catch { $warning = "Retained job directory: $($Job.JobDirectory). $($_.Exception.Message)" }
+    }
+    return [pscustomobject]@{Warning=$warning}
+}
+
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
+    $outputJob = $null
+    $published = $false
+    $skipped = $false
+    $encoderMayStillRun = $false
+    $stage = 'Prepare'
+    $reason = 'Interrupted or unfinished job.'
     try {
         if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
             Write-Host "Missing: $inPath" -ForegroundColor Red
@@ -1236,14 +1413,16 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $meta = Parse-MetadataFromName ([IO.Path]::GetFileName($inPath))
         $base = [IO.Path]::GetFileNameWithoutExtension($inPath)
 
-        $out = Join-Path $outDir ($base + '.mp4')
+        $nominal = Join-Path $outDir ($base + '.mp4')
+        $out = $nominal
 
         $sourceKey = Get-QueuePathKey $inPath
         if ([StringComparer]::OrdinalIgnoreCase.Equals($sourceKey, (Get-QueuePathKey $out)) -or
             (Test-Path -LiteralPath $out)) {
             if ($CollisionMode -eq 'skip') {
-                Write-Host "Skipping (exists): $out" -ForegroundColor DarkYellow
+                $skipped = $true
                 $counters.Value.Skipped++
+                Write-Host "Skipping (exists): $out" -ForegroundColor DarkYellow
                 return
             } else {
                 $out = Next-CompressedPath $out
@@ -1264,41 +1443,74 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         foreach ($warning in $inspection.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $streamPlan = Get-StreamPlan $inspection
         Write-StreamPlan $streamPlan
-        $encodeArguments = @(Get-EncodeArguments $inPath $out $streamPlan $crf $meta)
+        $stage = 'Allocate'
+        $outputJob = New-OutputJob $inPath $outDir $nominal $out
+        [void](Assert-OutputJob $outputJob -BeforeEncode)
+        $encodeArguments = @(Get-EncodeArguments $inPath $outputJob.TempPath $streamPlan $crf $meta)
 
         Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
         Write-Host $inPath
         Write-Host "    -> $out"
 
+        $stage = 'Encode'
         $native = Invoke-EncodeProcess $ffmpeg $encodeArguments
         if ($native.StdOutTruncated -or $native.StdErrTruncated) {
             Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; console output was streamed.' -ForegroundColor Yellow
         }
-        if ($native.Succeeded) {
-            Write-Host "Done." -ForegroundColor Green
+        if (-not $native.Succeeded) { throw "Encoder failed [$($native.FailureKind)]: $($native.Error)" }
+        $stage = 'Promote'
+        $publication = Publish-OutputJob $outputJob $CollisionMode
+        $published = $publication.Published
+        if ($published) {
             $counters.Value.Done++
+            $reason = 'Published.'
+            if ($publication.FinalPath -ne $out) { Write-Host ("Published as: " + $publication.FinalPath) -ForegroundColor Cyan }
+            Write-Host "Done." -ForegroundColor Green
         } else {
-            Write-Host ("Encoder failed [$($native.FailureKind)]: $($native.Error)") -ForegroundColor Red
-            $counters.Value.Failed++
+            $reason = $publication.Reason
+            $skipped = $true
+            $counters.Value.Skipped++
+            Write-Host ("Skipping final collision: " + $publication.FinalPath) -ForegroundColor DarkYellow
         }
     } catch [Management.Automation.PipelineStoppedException] {
+        $stage = 'Interrupted'
+        $reason = 'Pipeline interrupted; partial retained if present.'
         throw
     } catch {
-        if ($_.Exception.Data.Contains('WvcAbortBatch')) { throw }
-        Write-Host "Failed: $inPath" -ForegroundColor Red
-        Write-Host $_.Exception.Message -ForegroundColor DarkRed
-        $counters.Value.Failed++
+        $reason = $_.Exception.Message
+        if ($_.Exception.Data.Contains('WvcAbortBatch')) { $encoderMayStillRun = $true; throw }
+        if ($published -or $skipped) {
+            try { Write-Host ("Recorded job outcome; console reporting failed: " + $reason) -ForegroundColor Yellow } catch { }
+        } else {
+            Write-Host "Failed [$stage]: $inPath" -ForegroundColor Red
+            Write-Host $_.Exception.Message -ForegroundColor DarkRed
+            $counters.Value.Failed++
+        }
+    } finally {
+        if ($null -ne $outputJob) {
+            $cleanup = Close-OutputJob $outputJob $published $stage $reason -EncoderMayStillRun:$encoderMayStillRun
+            if ($cleanup.Warning) {
+                try { Write-Host $cleanup.Warning -ForegroundColor Yellow } catch {
+                    # Console diagnostics cannot replace interruption/fatal cleanup.
+                    try { [Console]::Error.WriteLine($cleanup.Warning) } catch { }
+                }
+            }
+        }
     }
 }
 
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     # Recheck at every requested batch, including after a menu preference change.
     [void](Get-OutputEnvironment $cfg.OutputDir)
+    foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
     $counters = [pscustomobject]@{ Found = 0; Done = 0; Skipped = 0; Failed = 0; Scanned = 0; ScanErrors = 0 }
 
     # Complete every selection before an encoder can create any new input candidates.
     $queue = Get-InputQueue $paths
     foreach ($scan in $queue.Scans) {
+        if ($null -ne $scan.PSObject.Properties['Warnings']) {
+            foreach ($warning in $scan.Warnings) { Write-Host $warning -ForegroundColor Yellow }
+        }
         $targets = @($scan.Files)
         if ($scan.Succeeded) { $counters.Scanned++ }
         $counters.ScanErrors += $scan.Errors.Count
