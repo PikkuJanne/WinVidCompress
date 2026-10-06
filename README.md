@@ -67,10 +67,13 @@ Per-run `-OutputDir` selects an existing absolute output directory, and `-Collis
 ```powershell
 .\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' -CollisionMode skip 'D:\Interviews'
 .\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Interviews'
+.\WinVidCompress.ps1 -Unattended -PreserveSubfolders -OutputDir 'D:\Output' 'D:\Shoot\camera-a' 'D:\Shoot\camera-b'
 Get-Help .\WinVidCompress.ps1 -Full
 ```
 
 `-WhatIf` reads preferences and the input/output directories to print estimated encode/skip destinations. It creates no config, backups, directories, jobs, logs or manifests and starts no native tools. Media validity, destination writability and concurrent name changes are unchecked. Empty/invalid selection returns 2; a partly failed scan with planned files returns 1. Preview and per-run conversion controls require explicit inputs. Preview cannot combine with `-CheckEnvironment` or manifest controls; preview the same inputs without those flags. The doctor accepts `-OutputDir` and retains its disclosed temporary write check. Resume retries always use safe rename around old outputs. CRF remains 22 and has no public switch. A relative filename beginning with a dash needs a `.\` prefix or an absolute path.
+
+`-PreserveSubfolders` opts into relative output for this run. One selected folder preserves its subfolders below output; multiple roots get stable folder labels, with ` (root 2)` suffixes for repeated names. Explicit files use their parent folders as roots; overlapping input selections use the shallowest root. Add `-WhatIf` to see estimated paths without creating folders. The input and output roots must be disjoint in both directions; preserve mode refuses overlap before startup to avoid re-ingesting outputs. It also refuses doctor/manifest controls; manifests remain flat-only. Omission keeps the original flat behavior. Collisions use rename/skip within each output folder. [Detailed root mapping and containment policy](docs/codex-winvidcompress/CONFIG_AND_DISCOVERY.md#implemented-relative-layout-wvc-m4-02).
 
 **Filename → Metadata**
 The script tries to parse band and date from the filename (base name). Supported patterns (with or without trailing “ - …”):

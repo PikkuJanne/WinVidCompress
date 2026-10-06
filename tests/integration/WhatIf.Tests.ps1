@@ -1,3 +1,7 @@
+BeforeDiscovery {
+    $script:LayoutMediaToolsAvailable=[bool](Get-Command ffmpeg.exe -CommandType Application -ErrorAction SilentlyContinue) -and
+        [bool](Get-Command ffprobe.exe -CommandType Application -ErrorAction SilentlyContinue)
+}
 BeforeAll {
     $script:RepoRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
     . (Join-Path $RepoRoot 'tests/launcher/LauncherTestSupport.ps1')
@@ -10,6 +14,10 @@ BeforeAll {
     if ($compile.ExitCode -ne 0) { throw $compile.StdErr }
     Copy-Item -LiteralPath (Join-Path $Bin 'ffmpeg.exe') -Destination (Join-Path $Bin 'ffprobe.exe')
     $script:HostExe=(Get-Process -Id $PID).Path
+    if($LayoutMediaToolsAvailable) {
+        $script:LayoutMediaEncoder=(Get-Command ffmpeg.exe -CommandType Application | Select-Object -First 1).Source
+        $script:LayoutMediaProbe=(Get-Command ffprobe.exe -CommandType Application | Select-Object -First 1).Source
+    }
     function Get-ProtectedSnapshot([string]$Directory) {
         if (-not [IO.Directory]::Exists($Directory)) { return 'absent' }
         $rows=New-Object 'Collections.Generic.List[object]'
@@ -144,6 +152,94 @@ Describe 'Actual read-only preview, per-run options and help [WVC-M4-01]' {
         [IO.File]::Exists((Join-Path $Output 'a.mp4')) | Should -BeTrue
         (Get-FileHash -LiteralPath $ConfigPath).Hash | Should -BeExactly $before
         @(Get-Content -LiteralPath $Record).Count | Should -Be 1
+    }
+    It 'previews separated relative camera paths through actual <Route> without writes [M4-02 A02 A03]' -TestCases @(@{Route='PS1'},@{Route='BAT'}) {
+        param($Route)
+        $cameraA=Join-Path $SourceRoot 'camera-a'; $cameraB=Join-Path $SourceRoot 'camera-b'
+        foreach($camera in @($cameraA,$cameraB)) { [void][IO.Directory]::CreateDirectory((Join-Path $camera 'scene')); [IO.File]::WriteAllText((Join-Path $camera 'scene/clip.mov'),'synthetic source sentinel') }
+        $before=Get-ProtectedSnapshot $CaseRoot
+        $run=Invoke-CliFixture @('-Unattended',$cameraB,'-PreserveSubfolders',$cameraA,'-OutputDir',$Output,'-WhatIf') $Route
+        $run.ExitCode | Should -Be 0
+        $run.StdOut | Should -Match 'Output layout: PreserveSubfolders'
+        $run.StdOut.Contains((Join-Path $Output 'camera-a/scene/clip.mp4')) | Should -BeTrue
+        $run.StdOut.Contains((Join-Path $Output 'camera-b/scene/clip.mp4')) | Should -BeTrue
+        Get-ProtectedSnapshot $CaseRoot | Should -BeExactly $before
+        Test-Path -LiteralPath $Record | Should -BeFalse
+    }
+    It 'publishes directory-local <Mode> collisions and logs actual <Route> relative output [M4-02 A01 A02 A03]' -TestCases @(
+        @{Route='PS1';Mode='rename';Encoded=2},@{Route='BAT';Mode='rename';Encoded=2},
+        @{Route='PS1';Mode='skip';Encoded=1},@{Route='BAT';Mode='skip';Encoded=1}
+    ) {
+        param($Route,$Mode,$Encoded)
+        $cameraA=Join-Path $SourceRoot 'camera-a'; $cameraB=Join-Path $SourceRoot 'camera-b'
+        foreach($camera in @($cameraA,$cameraB)) { [void][IO.Directory]::CreateDirectory((Join-Path $camera 'scene')); [IO.File]::WriteAllText((Join-Path $camera 'scene/clip.mov'),'synthetic source sentinel') }
+        $final=Join-Path $Output 'camera-a/scene/clip.mp4'; [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($final)); [IO.File]::WriteAllText($final,'existing final sentinel')
+        $sourceSnapshot=Get-ProtectedSnapshot $SourceRoot; $finalHash=(Get-FileHash -LiteralPath $final).Hash; $configHash=(Get-FileHash -LiteralPath $ConfigPath).Hash
+        $run=Invoke-CliFixture @('-Unattended',$cameraB,'-PreserveSubfolders',$cameraA,'-OutputDir',$Output,'-CollisionMode',$Mode) $Route
+        $run.ExitCode | Should -Be 0
+        @(Get-Content -LiteralPath $Record).Count | Should -Be $Encoded
+        Get-ProtectedSnapshot $SourceRoot | Should -BeExactly $sourceSnapshot
+        (Get-FileHash -LiteralPath $final).Hash | Should -BeExactly $finalHash
+        (Get-FileHash -LiteralPath $ConfigPath).Hash | Should -BeExactly $configHash
+        Test-Path -LiteralPath (Join-Path $Output 'camera-b/scene/clip.mp4') | Should -BeTrue
+        if($Mode -eq 'rename') { Test-Path -LiteralPath (Join-Path $Output 'camera-a/scene/clip (compressed).mp4') | Should -BeTrue }
+        $log=@(Get-ChildItem -LiteralPath (Join-Path $ConfigDir 'logs') -Filter results.jsonl -Recurse)
+        $log.Count | Should -Be 1
+        $records=@(Get-Content -LiteralPath $log[0].FullName | ForEach-Object { $_ | ConvertFrom-Json })
+        $records[0].OutputLayout | Should -BeExactly 'PreserveSubfolders'
+        $jobs=@($records | Where-Object Kind -eq 'Job'); $jobs.Count | Should -Be 2
+        $text=[IO.File]::ReadAllText((Join-Path $log[0].Directory.FullName 'session.txt'))
+        $text | Should -Match 'output layout PreserveSubfolders'
+        foreach($job in $jobs) {
+            $job.CandidatePath.StartsWith($Output+'\',[StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+            $text.Contains('candidate='+$job.CandidatePath) | Should -BeTrue
+            if($job.Outcome -eq 'Completed') { $text.Contains('output='+$job.OutputPath) | Should -BeTrue }
+        }
+        @(Get-ChildItem -LiteralPath $Output -Directory -Recurse -Force | Where-Object Name -like '.wvc-job-*').Count | Should -Be 0
+    }
+    It 'encodes and structurally validates installed FFmpeg media in a nested destination [M4-02 A02 A03]' -Skip:(-not $LayoutMediaToolsAvailable) {
+        $savedReport=$env:FFREPORT
+        try {
+            $env:FFREPORT=$null
+            $camera=Join-Path $SourceRoot 'real-camera'; $directory=Join-Path $camera 'scene [literal]'
+            [void][IO.Directory]::CreateDirectory($directory)
+            $source=Join-Path $directory 'clip.mov'
+            $generated=Invoke-WvcTestProcess $LayoutMediaEncoder @('-hide_banner','-loglevel','error','-f','lavfi','-i','testsrc2=size=320x240:rate=24:duration=0.5','-c:v','libx264','-pix_fmt','yuv420p','-an','-n',$source)
+            $generated.ExitCode | Should -Be 0
+            $sourceHash=(Get-FileHash -LiteralPath $source).Hash
+            $Environment.PATH=([IO.Path]::GetDirectoryName($LayoutMediaEncoder)+';'+$env:SystemRoot+'/System32'); $Environment.Remove('FFREPORT')
+            $run=Invoke-CliFixture @('-Unattended',$camera,'-PreserveSubfolders','-OutputDir',$Output)
+            $run.ExitCode | Should -Be 0
+            $outputPath=Join-Path $Output 'scene [literal]/clip.mp4'
+            Test-Path -LiteralPath $outputPath | Should -BeTrue
+            (Get-FileHash -LiteralPath $source).Hash | Should -BeExactly $sourceHash
+            $probe=Invoke-WvcTestProcess $LayoutMediaProbe @('-v','error','-show_streams','-show_format','-of','json',$outputPath)
+            $probe.ExitCode | Should -Be 0
+            $media=$probe.StdOut | ConvertFrom-Json
+            $media.streams[0].codec_name | Should -BeExactly 'h264'; $media.streams[0].height | Should -Be 240
+            $media.format.format_name | Should -Match 'mp4'
+        } finally { $env:FFREPORT=$savedReport }
+    }
+    It 'rejects actual preserve layout <Overlap> without filesystem writes [M4-02 A04]' -TestCases @(
+        @{Overlap='equal'},@{Overlap='output inside source'},@{Overlap='source inside output'}
+    ) {
+        param($Overlap)
+        $destination=switch($Overlap) { 'equal' {$SourceRoot}; 'output inside source' {Join-Path $SourceRoot 'exports'}; 'source inside output' {$CaseRoot} }
+        [void][IO.Directory]::CreateDirectory($destination)
+        $before=Get-ProtectedSnapshot $CaseRoot
+        $run=Invoke-CliFixture @('-Unattended',$SourceRoot,'-PreserveSubfolders','-OutputDir',$destination)
+        $run.ExitCode | Should -Be 2
+        $run.StdErr | Should -Match 'disjoint input and output roots'
+        Get-ProtectedSnapshot $CaseRoot | Should -BeExactly $before
+        Test-Path -LiteralPath $Record | Should -BeFalse
+    }
+    It 'rejects actual preserve with a manifest before writing either [M4-02 A01 A04]' {
+        $before=Get-ProtectedSnapshot $CaseRoot
+        $run=Invoke-CliFixture @('-Unattended',$SourceRoot,'-PreserveSubfolders','-OutputDir',$Output,'-ManifestPath',$Manifest)
+        $run.ExitCode | Should -Be 2
+        $run.StdErr | Should -Match 'manifests require flat output'
+        Get-ProtectedSnapshot $CaseRoot | Should -BeExactly $before
+        Test-Path -LiteralPath $Record | Should -BeFalse
     }
     It 'executes real Get-Help example <Index> with owned placeholders [A04]' -TestCases @(@{Index=0},@{Index=1},@{Index=2}) {
         param($Index)
