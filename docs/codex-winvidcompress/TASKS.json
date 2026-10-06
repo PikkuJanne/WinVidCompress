@@ -1657,7 +1657,7 @@
       "title": "Cancel safely and terminate only this job’s child process",
       "milestone": "M3",
       "priority": "P0",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         15
       ],

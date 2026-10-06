@@ -136,6 +136,7 @@ $ConfigPath = Join-Path $ConfigDir 'config.json'
 $script:ConfigSnapshot = $null
 $script:ApplicationPath = $PSCommandPath
 $script:SessionLog = $null
+$script:CancellationContext = $null
 
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
@@ -1273,7 +1274,7 @@ function Get-InputQueue([string[]]$paths) {
 
 function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPlan, [int]$CRF, $Metadata) {
     # Pure token construction: paths and metadata never become shell expressions.
-    $tokens = @('-hide_banner','-nostdin','-nostats','-progress','pipe:1','-n','-i',$InputPath)
+    $tokens = @('-hide_banner','-stdin','-nostats','-progress','pipe:1','-n','-i',$InputPath)
     $tokens += $StreamPlan.MapArguments
     $geometry = Get-VideoGeometryPlan $StreamPlan.Video
     $colour = Get-VideoColourPlan $StreamPlan.Video
@@ -1406,7 +1407,7 @@ function Get-LogNative($Native) {
         StdOut=(Limit-LogText (Get-ProbeProperty $Native 'StdOut')); StdErr=(Limit-LogText (Get-ProbeProperty $Native 'StdErr'));
         StdOutCharacters=(Get-ProbeProperty $Native 'StdOutCharacters'); StdErrCharacters=(Get-ProbeProperty $Native 'StdErrCharacters');
         StdOutTruncated=(Get-ProbeProperty $Native 'StdOutTruncated'); StdErrTruncated=(Get-ProbeProperty $Native 'StdErrTruncated');
-        LogTailLimitCharacters=8192 }
+        Cancellation=(Get-ProbeProperty $Native 'Cancellation'); LogTailLimitCharacters=8192 }
 }
 
 function Add-SessionLogWarning($Session, [string]$Message) {
@@ -1496,6 +1497,7 @@ function Write-SessionJob($Session, $Job) {
         Reason=(Limit-LogText $Job.Reason);Settings=$Job.Settings;SelectedStreams=$Job.SelectedStreams;
         DurationSeconds=$Job.DurationSeconds;ElapsedSeconds=$Job.ElapsedSeconds;Timings=$Job.Timings;
         InputBytes=$Job.InputBytes;OutputBytes=$Job.OutputBytes;SavingsPercent=$Job.SavingsPercent;
+        CancellationRequested=$Job.CancellationRequested;AbortBatch=$Job.AbortBatch;
         ProgressStates=$Job.ProgressStates;EncodeArguments=@($Job.Diagnostics.EncodeArguments | ForEach-Object { Limit-LogText $_ });
         Probe=(Get-LogNative (Get-ProbeProperty $Job.Diagnostics.Probe 'Native'));
         Encode=(Get-LogNative $Job.Diagnostics.Encode);
@@ -1507,7 +1509,7 @@ function Write-SessionJob($Session, $Job) {
 function Complete-SessionLog($Session, $Result) {
     if ($null -eq $Session -or $null -eq $Result) { return }
     $record=[pscustomobject]@{SchemaVersion=1;Kind='Result';SessionId=$Session.SessionId;
-        FinishedUtc=[datetime]::UtcNow.ToString('o');ExitCode=$Result.ExitCode;Counters=$Result.Counters;
+        FinishedUtc=[datetime]::UtcNow.ToString('o');ExitCode=$Result.ExitCode;Cancelled=$Result.Cancelled;Counters=$Result.Counters;
         Reason=(Limit-LogText $Result.Reason);ScanErrors=@($Result.ScanErrors | Select-Object -First 20);
         ScanErrorsOmitted=[math]::Max(0,$Result.ScanErrors.Count-20)}
     Write-SessionLogRecord $Session $record ('Session exit {0}; found {1}; completed {2}; failed {3}; cancelled {4}' -f $Result.ExitCode,$Result.Counters.Found,$Result.Counters.Done,$Result.Counters.Failed,$Result.Counters.Cancelled)
@@ -1605,9 +1607,72 @@ function Export-WvcDiagnostic([string]$SessionPath, [string]$DestinationPath,
     return $DestinationPath
 }
 
+# Ctrl+C is polled on the caller runspace; no PowerShell event callbacks.
+function New-WvcCancellationContext {
+    $context=[pscustomobject]@{Requested=$false;ConsoleEnabled=$false;RestoreConsole=$false;PreviousControlC=$false;Warning=$null}
+    try {
+        if (-not [Console]::IsInputRedirected) {
+            $context.PreviousControlC=[Console]::TreatControlCAsInput
+            [Console]::TreatControlCAsInput=$true
+            $context.ConsoleEnabled=$true
+            $context.RestoreConsole=$true
+        }
+    } catch { } # Non-console hosts retain their host interruption behavior.
+    return $context
+}
+
+function Test-WvcCancellation {
+    $context=$script:CancellationContext
+    if ($null -eq $context) { return $false }
+    if ($context.ConsoleEnabled) {
+        try {
+            # Bound input work so ordinary queued keys cannot starve pipe draining.
+            for ($i=0; $i -lt 32 -and [Console]::KeyAvailable; $i++) {
+                $key=[Console]::ReadKey($true)
+                if ([int]$key.KeyChar -eq 3 -or ($key.Key -eq [ConsoleKey]::C -and
+                    ($key.Modifiers -band [ConsoleModifiers]::Control))) { $context.Requested=$true }
+            }
+        } catch {
+            # Console loss must not skip owned-output/process cleanup.
+            $context.ConsoleEnabled=$false
+            $context | Add-Member -NotePropertyName Warning -NotePropertyValue 'Console input became unavailable; controlled key polling stopped.' -Force
+        }
+    }
+    return [bool]$context.Requested
+}
+
+function Assert-WvcNotCancelled {
+    if (Test-WvcCancellation) { throw (New-Object OperationCanceledException 'Batch cancelled; unfinished output remains unverified.') }
+}
+
+function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+    $previous=$script:CancellationContext
+    $context=if ($null -ne $previous) { $previous } else { New-WvcCancellationContext }
+    $script:CancellationContext=$context
+    $batch=$null
+    try {
+        $batch=Invoke-PathBatch $paths $ffmpeg $ffprobe $cfg
+        if (Test-WvcCancellation) { $batch.Cancelled=$true; $batch.ExitCode=3 }
+        return $batch
+    }
+    finally {
+        $script:CancellationContext=$previous
+        if ($null -eq $previous -and (Get-ProbeProperty $context 'RestoreConsole')) {
+            try { [Console]::TreatControlCAsInput=$context.PreviousControlC }
+            catch { $context.Warning='Could not restore console input mode after batch.' }
+        }
+        $warning=Get-ProbeProperty $context 'Warning'
+        if ($warning) {
+            if ($null -ne $batch) { $batch.Warnings+=@($warning) }
+            try { [Console]::Error.WriteLine($warning) } catch { }
+        }
+    }
+}
+
 function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
     [ValidateRange(100,30000)][int]$DrainTimeoutMilliseconds = 10000,
-    [ValidateRange(4096,1048576)][int]$CaptureLimitCharacters = 1048576, $ProgressContext = $null) {
+    [ValidateRange(4096,1048576)][int]$CaptureLimitCharacters = 1048576, $ProgressContext = $null, [switch]$GracefulQuit,
+    [ValidateRange(100,10000)][int]$GraceMilliseconds = 1500) {
     $start = New-Object Diagnostics.ProcessStartInfo
     $start.FileName = $Executable
     # ArgumentList is unavailable on .NET Framework. Use the tested Windows CRT quoting.
@@ -1631,7 +1696,11 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
     $inputWriter = $null
     $clock = [Diagnostics.Stopwatch]::StartNew()
     $exitClock = $null
+    $cancelClock = $null
+    $quitTask = $null
+    $cancellation=[pscustomobject]@{Requested=$false;GracefulAttempted=$false;ExitedDuringGrace=$false;Forced=$false}
     try {
+        Assert-WvcNotCancelled
         [void]$process.Start()
         $started = $true
         $inputWriter = $process.StandardInput
@@ -1641,9 +1710,28 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
             $streams += @{ Reader=$reader; Buffer=$buffer; Text=(New-Object Text.StringBuilder);
                 Task=$reader.ReadAsync($buffer,0,$buffer.Length); Closed=$false; Characters=[long]0; Truncated=$false }
         }
-        $inputWriter.Close()
+        if (-not $GracefulQuit) { $inputWriter.Close() }
         # Tasks do IO only. Console output and all PowerShell run on this runspace.
         while ($true) {
+            if (Test-WvcCancellation) {
+                if (-not $cancellation.Requested) {
+                    $cancellation.Requested=$true
+                    $failureKind='Cancelled'; $errorText='Batch cancelled.'
+                    $cancelClock=[Diagnostics.Stopwatch]::StartNew()
+                    if ($GracefulQuit -and -not $process.HasExited) {
+                        $cancellation.GracefulAttempted=$true
+                        try {
+                            $inputWriter.AutoFlush=$true
+                            $quitTask=$inputWriter.WriteAsync("q`n")
+                        } catch { } # A closed pipe races child exit; still stop safely.
+                    }
+                }
+                if (-not $process.HasExited -and ($cancelClock.ElapsedMilliseconds -ge $GraceMilliseconds -or -not $GracefulQuit)) {
+                    $cancellation.Forced=$true
+                    $process.Kill()
+                    if (-not $process.WaitForExit(2000)) { throw 'Owned encoder did not exit after cancellation termination.' }
+                }
+            }
             for ($streamIndex=0; $streamIndex -lt $streams.Count; $streamIndex++) {
                 $stream=$streams[$streamIndex]
                 if (-not $stream.Closed -and $stream.Task.IsCompleted) {
@@ -1668,6 +1756,7 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
             if ($process.HasExited) {
                 if ($null -eq $exitClock) {
                     $exitCode = $process.ExitCode
+                    $cancellation.ExitedDuringGrace=($cancellation.Requested -and $cancellation.GracefulAttempted -and -not $cancellation.Forced)
                     $exitClock = [Diagnostics.Stopwatch]::StartNew()
                 }
                 if ($streams[0].Closed -and $streams[1].Closed) { break }
@@ -1690,7 +1779,8 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
     } catch [Management.Automation.PipelineStoppedException] {
         throw
     } catch {
-        $failureKind = if ($started) { 'ProcessFailed' } else { 'StartFailed' }
+        if ($_.Exception -is [OperationCanceledException]) { $cancellation.Requested=$true; $failureKind='Cancelled' }
+        elseif (-not $cancellation.Requested) { $failureKind = if ($started) { 'ProcessFailed' } else { 'StartFailed' } }
         $errorText = $_.Exception.Message
         if ($started -and $process.HasExited) { $exitCode = $process.ExitCode }
     } finally {
@@ -1704,6 +1794,7 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
                     if (-not $process.HasExited) {
                         $abort = New-Object InvalidOperationException ('Could not stop the owned encoder: ' + $_.Exception.Message)
                         $abort.Data['WvcAbortBatch'] = $true
+                        $abort.Data['WvcCancellationRequested'] = $cancellation.Requested
                         throw $abort
                     }
                 }
@@ -1725,6 +1816,7 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
             } finally {
                 $process.Dispose()
                 $clock.Stop()
+                if ($null -ne $quitTask) { try { if ($quitTask.Wait(100)) { [void]$quitTask.GetAwaiter().GetResult() } } catch { } }
                 foreach ($stream in $streams) {
                     # Closing an inherited pipe can fault its pending read. Observe
                     # that task without an unbounded wait or replacing the failure.
@@ -1748,7 +1840,7 @@ function Invoke-EncodeProcess([string]$Executable, [string[]]$Arguments,
         FailureKind=$failureKind; Error=$errorText; StdOut=$outputText; StdErr=$diagnosticText;
         StdOutCharacters=$outputCount; StdErrCharacters=$diagnosticCount;
         StdOutTruncated=$outputTruncated; StdErrTruncated=$diagnosticTruncated;
-        ElapsedSeconds=$clock.Elapsed.TotalSeconds }
+        ElapsedSeconds=$clock.Elapsed.TotalSeconds; Cancellation=$cancellation }
 }
 
 function New-OutputJob([string]$SourcePath, [string]$OutputDirectory, [string]$NominalPath,
@@ -2167,6 +2259,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     $stage = 'Prepare'
     $reason = 'Interrupted or unfinished job.'
     try {
+        Assert-WvcNotCancelled
         if (-not (Test-Path -LiteralPath $inPath -PathType Leaf)) {
             $reason='Source file is missing.'
             Write-Host "Missing: $inPath" -ForegroundColor Red
@@ -2228,6 +2321,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         if ($null -eq $streamPlan.Audio) { $result.Settings.AudioCodec=$null; $result.Settings.AudioBitrate=$null }
         $result.Diagnostics.Warnings += $streamPlan.Colour.Warnings
         Write-StreamPlan $streamPlan
+        Assert-WvcNotCancelled
         $stage = 'Allocate'
         $outputJob = New-OutputJob $inPath $outDir $nominal $out
         $result.JobId=$outputJob.JobId
@@ -2245,13 +2339,17 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         if ($null -ne $progress.DurationSeconds -and $progress.DurationSeconds -le 0) { $progress.DurationSeconds=$null }
         Set-JobProgressState $progress $result 'Encoding'
         $stageClock.Restart()
-        $native = Invoke-EncodeProcess $ffmpeg $encodeArguments -ProgressContext $progress
+        $native = Invoke-EncodeProcess $ffmpeg $encodeArguments -ProgressContext $progress -GracefulQuit
         $result.Timings.EncodeAndMuxSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Settings.Applied=if ($null -ne $native.PSObject.Properties['Started']) { [bool]$native.Started } else { [bool]$native.Succeeded }
         $result.Diagnostics.Encode=$native
         if ($native.StdOutTruncated -or $native.StdErrTruncated) {
             Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; normal console output is concise.' -ForegroundColor Yellow
         }
+        if ((Get-ProbeProperty (Get-ProbeProperty $native 'Cancellation') 'Requested')) {
+            throw (New-Object OperationCanceledException 'Encoder cancelled; partial remains unverified.')
+        }
+        Assert-WvcNotCancelled
         if (-not $native.Succeeded) {
             $stderr=Get-ProbeProperty $native 'StdErr'
             if ($stderr) { Write-Host ('Encoder diagnostics: '+(Limit-LogText $stderr 1024)) -ForegroundColor DarkRed }
@@ -2269,9 +2367,11 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         }
         if (-not $validation.Succeeded) { throw "Output validation failed [$($validation.FailureKind)]: $($validation.Reason)" }
         foreach ($warning in $validation.Warnings) { Write-Host $warning -ForegroundColor Yellow }
+        Assert-WvcNotCancelled
         $stage = 'Promote'
         Set-JobProgressState $progress $result 'Publishing'
         $stageClock.Restart()
+        Assert-WvcNotCancelled
         $publication = Publish-OutputJob $outputJob $CollisionMode
         $result.Timings.PromotionSeconds=$stageClock.Elapsed.TotalSeconds
         $published = $publication.Published
@@ -2304,6 +2404,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         if ($_.Exception.Data.Contains('WvcAbortBatch')) {
             $encoderMayStillRun = $true
             $result.AbortBatch=$true
+            if ($_.Exception.Data['WvcCancellationRequested']) { $result.CancellationRequested=$true }
             $_.Exception.Data['WvcJobResult']=$result
             throw
         }
@@ -2318,6 +2419,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             Write-Host $_.Exception.Message -ForegroundColor DarkRed
         }
     } finally {
+        if (Test-WvcCancellation) { $result.CancellationRequested=$true }
         if ($null -ne $outputJob) {
             $cleanup = Close-OutputJob $outputJob $published $stage $reason -EncoderMayStillRun:$encoderMayStillRun
             if ($cleanup.Warning) {
@@ -2372,9 +2474,10 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     return $result
 }
 
-function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
+function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     # Recheck at every requested batch, including after a menu preference change.
     try {
+        Assert-WvcNotCancelled
         [void](Get-OutputEnvironment $cfg.OutputDir)
         foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
         # Freeze all selections before any encoder can create new candidates.
@@ -2405,6 +2508,7 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
     $fileIndex=0
     foreach ($f in $queue.Files) {
         $fileIndex++
+        if (Test-WvcCancellation) { $stopScheduling=$true }
         if ($stopScheduling) {
             $job=New-JobResult $f $DefaultCRF
             $job.Reason='Batch ended before this job started.'
@@ -2435,7 +2539,7 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
         }
     }
 
-    $batch=Get-BatchResult $jobs.ToArray() $queue.Scans -Requested
+    $batch=Get-BatchResult $jobs.ToArray() $queue.Scans -Requested -Cancelled:(Test-WvcCancellation)
     $counters=$batch.Counters
 
     try {
@@ -2464,6 +2568,8 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
             $batch.Cancelled=$true; $batch.ExitCode=3; $batch.Warnings+=@('Summary reporting cancelled.')
         } else { $batch.Warnings+=@('Summary reporting failed: '+$_.Exception.Message) }
     }
+    if (Test-WvcCancellation) { $batch.Cancelled=$true; $batch.ExitCode=3 }
+    if ($batch.Cancelled) { try { Write-Host 'Batch cancelled; exit 3.' -ForegroundColor Yellow } catch { } }
     return $batch
 }
 
