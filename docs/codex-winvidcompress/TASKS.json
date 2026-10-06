@@ -1327,7 +1327,7 @@
       "title": "Define SDR compatibility and reject untested HDR conversions",
       "milestone": "M3",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         10
       ],
@@ -1354,35 +1354,55 @@
           "id": "WVC-M3-02-A01",
           "description": "10-bit SDR is not incorrectly classified as HDR solely by depth.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-02.md",
+            "evidence/WVC-M3-02.json"
+          ]
         },
         {
           "id": "WVC-M3-02-A02",
           "description": "PQ/HLG test metadata is recognized and untested HDR does not silently encode as ordinary SDR.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-02.md",
+            "evidence/WVC-M3-02.json"
+          ]
         },
         {
           "id": "WVC-M3-02-A03",
           "description": "SDR outputs have the intended tested pixel format and do not claim HDR preservation.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-02.md",
+            "evidence/WVC-M3-02.json"
+          ]
         },
         {
           "id": "WVC-M3-02-A04",
           "description": "Colour-sensitive sample review is recorded before promoting changed defaults.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-02.md",
+            "evidence/WVC-M3-02.json"
+          ],
+          "notes": "Owner viewed four SOURCE/OUTPUT pairs prepared from clean 03f6bbb with matching application hash and answered PASS — acceptable match; approve SDR default on 2026-10-06. D006 approves this tested SDR default; synthetic still review is not general playback/calibration or HDR conversion."
         }
       ],
       "approval_gate": "New tone-mapping path or change to accepted output-quality defaults requires owner approval.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "2cc40cd50664c4f674c103f5caa4527ff84b880f",
+        "03f6bbb98efbf028191a3ec08934fd700e8447f2"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-02.md",
+        "evidence/WVC-M3-02.json",
+        "evidence/WVC-M3-02-session.md"
+      ],
+      "notes": "Verified A01-A04 on both actual Windows hosts with installed tools and owner four-pair PASS/SDR-default approval (D006). No tone mapping or codec/CRF/preset/audio change; surfaced HDR and untested explicit colour transforms fail before allocation. Other manual/full/release gates remain separate."
     },
     {
       "id": "WVC-M3-03",

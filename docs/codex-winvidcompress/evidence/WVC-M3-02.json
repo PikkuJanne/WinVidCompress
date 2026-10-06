@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-02",
+  "acceptance_ids": [
+    "WVC-M3-02-A01",
+    "WVC-M3-02-A02",
+    "WVC-M3-02-A03",
+    "WVC-M3-02-A04"
+  ],
+  "recorded_at": "2026-10-06T14:26:39.900014+00:00",
+  "tested_commits": [
+    "2cc40cd50664c4f674c103f5caa4527ff84b880f",
+    "03f6bbb98efbf028191a3ec08934fd700e8447f2"
+  ],
+  "application_sha256": "337323d605ec7435fb8e60679b4497dd64ff41b0738ccc70c6212a23be0a9e08",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffmpeg_sha256": "B6CC0D3390AE4969166895EE94657134A1DE0C7790FA24AC0B4E315B8A667F83",
+    "ffprobe_sha256": "AA14BEA18D5B7E3834ADADE04C818BDF321E15A1FAD1B99D29AD13181C975D1D"
+  },
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m302/quick51.json *> .test-results/m302/quick51.log",
+      "tested_commit": "2cc40cd50664c4f674c103f5caa4527ff84b880f",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 588,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m302/quick51.json",
+      "artifact_sha256": "1c73a507acbb84ff264ae0e1bc38915f06ff5e74b37f34340339d49f8801a1fe",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_colour_case_ids": [
+        "Current/034:encodes 8bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "Current/035:encodes 10bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "Current/038:encodes 10bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "Current/039:encodes 8bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "Current/042:keeps tagged bt709 chroma patches close to the decoded source",
+        "Current/043:keeps tagged smpte170m chroma patches close to the decoded source",
+        "Current/044:refuses native smpte2084 metadata without any partial output or changed source/final",
+        "Current/045:refuses native arib-std-b67 metadata without any partial output or changed source/final",
+        "Current/046:warns on actual untagged input and keeps output colour unspecified",
+        "Current/159:converts full range through samples and combines scale without a crop or upscale",
+        "Current/169:accepts the intended 8bit SDR output and missing-source colour remains a limitation"
+      ]
+    },
+    {
+      "name": "targeted51",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m302/targeted51.json *> .test-results/m302/targeted51.log",
+      "tested_commit": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 608,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m302/targeted51.json",
+      "artifact_sha256": "482c3d5af6bc25bbac800053fe79f5654356361a56374808b59119a51252bc83",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_colour_case_ids": [
+        "WindowsPowerShell/034:encodes 8bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "WindowsPowerShell/035:encodes 10bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "WindowsPowerShell/038:encodes 10bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "WindowsPowerShell/039:encodes 8bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "WindowsPowerShell/042:keeps tagged bt709 chroma patches close to the decoded source",
+        "WindowsPowerShell/043:keeps tagged smpte170m chroma patches close to the decoded source",
+        "WindowsPowerShell/044:refuses native smpte2084 metadata without any partial output or changed source/final",
+        "WindowsPowerShell/045:refuses native arib-std-b67 metadata without any partial output or changed source/final",
+        "WindowsPowerShell/046:warns on actual untagged input and keeps output colour unspecified",
+        "WindowsPowerShell/159:converts full range through samples and combines scale without a crop or upscale",
+        "WindowsPowerShell/169:accepts the intended 8bit SDR output and missing-source colour remains a limitation"
+      ]
+    },
+    {
+      "name": "targeted7",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m302/targeted7.json *> .test-results/m302/targeted7.log",
+      "tested_commit": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 608,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m302/targeted7.json",
+      "artifact_sha256": "9a70766b8211647ceea53290bf0c74f84104b372e1b398f9548ba06528901bd9",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_colour_case_ids": [
+        "PowerShell7/034:encodes 8bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "PowerShell7/035:encodes 10bit SDR to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "PowerShell7/038:encodes 10bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "PowerShell7/039:encodes 8bit full range to 8bit yuv420p, retains tags and checks decoded ramp samples",
+        "PowerShell7/042:keeps tagged bt709 chroma patches close to the decoded source",
+        "PowerShell7/043:keeps tagged smpte170m chroma patches close to the decoded source",
+        "PowerShell7/044:refuses native smpte2084 metadata without any partial output or changed source/final",
+        "PowerShell7/045:refuses native arib-std-b67 metadata without any partial output or changed source/final",
+        "PowerShell7/046:warns on actual untagged input and keeps output colour unspecified",
+        "PowerShell7/159:converts full range through samples and combines scale without a crop or upscale",
+        "PowerShell7/169:accepts the intended 8bit SDR output and missing-source colour remains a limitation"
+      ]
+    }
+  ],
+  "development_runs": [
+    {
+      "name": "regression51",
+      "counts": {
+        "Passed": 6,
+        "Failed": 26,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Regression-first, missing helper/metadata gates; six throw assertions were not compatibility evidence.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/regression51.json",
+      "artifact_sha256": "0537758225a1ea47ea010728ef9fe971f8c866cb5f01fb7464448b6bc9b8dcab"
+    },
+    {
+      "name": "colour-unit51",
+      "counts": {
+        "Passed": 6,
+        "Failed": 26,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Edit script assertion stopped before application write; rerun still exercised missing helpers.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-unit51.json",
+      "artifact_sha256": "0537758225a1ea47ea010728ef9fe971f8c866cb5f01fb7464448b6bc9b8dcab"
+    },
+    {
+      "name": "colour-unit51-v2",
+      "counts": {
+        "Passed": 32,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Initial policy implemented.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-unit51-v2.json",
+      "artifact_sha256": "b2a17b05b7f9c1fd4e48cc3129a5dd76ee39cdcb4823d8be0b85700ad6e55f29"
+    },
+    {
+      "name": "colour-native51",
+      "counts": {
+        "Passed": 32,
+        "Failed": 10,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Initial native recipe lacked intended frame transfer/primaries; cases exposed missing fixture tags.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-native51.json",
+      "artifact_sha256": "f328bc98704fbcb28179d36f1ffc9524d478ce73e7eee8df54d8b629d60c8495"
+    },
+    {
+      "name": "colour-native51-v2",
+      "counts": {
+        "Passed": 0,
+        "Failed": 10,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Focused native rerun reproduced missing fixture tags.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-native51-v2.json",
+      "artifact_sha256": "6f88033862f7d4f659d734ab566517b68fd35b164903c5c7baf91ac186686c33"
+    },
+    {
+      "name": "colour-native51-v3",
+      "counts": {
+        "Passed": 1,
+        "Failed": 9,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Lossless x264 alone still lacked frame tags; untagged limited-range signalling omission observed.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-native51-v3.json",
+      "artifact_sha256": "326900510bc72d86db472752f81041a129eaf9cadb735cc4f617ca9422938596"
+    },
+    {
+      "name": "colour-native51-v4",
+      "counts": {
+        "Passed": 46,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Explicitly tagged constructed source frames and narrowed colour policy; prior focused set passed.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-native51-v4.json",
+      "artifact_sha256": "830eb9ce08ea90cb649a8f6664eb7c4086eda42843dbb51ca592b04bda6a1558"
+    },
+    {
+      "name": "colour-final51",
+      "counts": {
+        "Passed": 51,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Final focused Windows PS5.1 set, before commit; same final application bytes, manual preparation retention finalized afterward.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/colour-final51.json",
+      "artifact_sha256": "4925b8f226fe0ce7dfc796d87e99de2c4699e09a3e44d9629c358881c75c2be2"
+    },
+    {
+      "name": "quick51-dev",
+      "counts": {
+        "Passed": 583,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Development Quick passed before final range exception/tests; superseded by clean committed gates.",
+      "tested_tree_dirty": true,
+      "command": null,
+      "local_artifact": ".test-results/m302/quick51-dev.json",
+      "artifact_sha256": "e2c0e0dcc41e68b6526ed8809539328f17a50f5965074356adbca9585dba14da"
+    },
+    {
+      "name": "targeted51-failure",
+      "counts": {
+        "Passed": 605,
+        "Failed": 3,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Clean 2cc40cd Targeted: 605 passed/3 entry smoke failures. Recorder lacked pixel format; application validation correctly refused its synthetic output. Retained local diagnostics; fixed only recorder.",
+      "tested_tree_dirty": false,
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m302/targeted51.json *> .test-results/m302/targeted51.log",
+      "local_artifact": ".test-results/m302/targeted51-failure.json",
+      "artifact_sha256": "17648449a9938de3dd38aec76018e070d01faf7a35c7d779bbf1adc87a9e2e7d"
+    },
+    {
+      "name": "entry-repair",
+      "counts": {
+        "Passed": 8,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "description": "Isolated entry smoke after intended pixel format was declared; eight routes passed on unchanged application.",
+      "tested_tree_dirty": true,
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-EntrySmoke.ps1 -PowerShell7 (Get-Command pwsh.exe).Source -ReportPath .test-results/m302/entry-repair.json",
+      "local_artifact": ".test-results/m302/entry-repair.json",
+      "artifact_sha256": "89ccee8fc39a777694d0141338c9cc1b1da4595d86f09443d91dfaaaa8a38936"
+    }
+  ],
+  "manual_checks": [
+    {
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/New-ColourManualFixture.ps1 -ReportPath .test-results/m302/colour-review.json -FFmpeg C:/ffmpeg/bin/ffmpeg.exe -FFprobe C:/ffmpeg/bin/ffprobe.exe",
+      "prepared_commit": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+      "prepared_tree_dirty": false,
+      "comparison_sha256": "6461B0B1E200BA2F3F91F9731100AF5929DF5C24A0459C1ED08AC6FEFF88A06A",
+      "status": "passed",
+      "owner_observation": "PASS — acceptable match; approve SDR default",
+      "local_report": ".test-results/m302/colour-review.json",
+      "samples": [
+        {
+          "name": "8bit 709 bars",
+          "source_sha256": "879062E5A86A7AC78FDD6B3D77E7AFB732D2447CE57B260A78A97C7F1498BFF3",
+          "output_sha256": "B5E24D3687B788BA2913921E557F61EAD046ED4D89B2E3794516F5741B1E7C47"
+        },
+        {
+          "name": "10bit 709 bars",
+          "source_sha256": "83AD6E625C0466A381D24B36CC9C617D3AE128D9B1D2C8B8590DF6271E4D28D0",
+          "output_sha256": "738D78F46168889D6CC1DC3397D8510E240B10323BEC33FB691486F94F479C30"
+        },
+        {
+          "name": "10bit limited ramp",
+          "source_sha256": "D97C1D43796B727B123945FC625C8AF76EC8FAAE159B5383FA511FE4A9CC43E9",
+          "output_sha256": "DF6D1130FCB0E60F5D194E291BCE74A6C6711B29490DECF5068FBCEC20ED70E1"
+        },
+        {
+          "name": "10bit full ramp",
+          "source_sha256": "528A97E6D5D699FBAB4718EFC2177512692373419849A48B6DBC2490220C7547",
+          "output_sha256": "C868EF1A2E731E447AAA7455D0DFE5A51A42252F5D6F8C27DA5169888E385064"
+        }
+      ]
+    }
+  ],
+  "sanitized_artifacts": [],
+  "owner_approval": {
+    "date": "2026-10-06",
+    "source": "Actual owner response in this chat",
+    "quote": "PASS — acceptable match; approve SDR default",
+    "scope": "Reviewed four SOURCE/OUTPUT pairs; approved the tested 8-bit SDR compatibility default, including full-range sample rescaling.",
+    "decision_id": "D006"
+  },
+  "scope_expansion": "Minimal existing argv assertions and output/exit/collision/geometry/entry-smoke probe fixtures now declare intended yuv420p; shared colour fixture/manual helpers and contract/test docs included.",
+  "ci": {
+    "commit": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+    "checks": 0,
+    "statuses": 0,
+    "workflow_runs": 0,
+    "combined_state": "pending",
+    "passed": false,
+    "also_checked_commit": "2cc40cd50664c4f674c103f5caa4527ff84b880f",
+    "also_checked_counts": {
+      "checks": 0,
+      "statuses": 0,
+      "workflow_runs": 0
+    }
+  },
+  "pull_request": {
+    "number": 18,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/18",
+    "draft": true
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T14:17:53.984133+00:00",
+    "branch": "codex/wvc-m3-02-colour",
+    "head": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+    "live_fetch_head": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+    "live_push_head": "03f6bbb98efbf028191a3ec08934fd700e8447f2",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "Owner A04 review/default approval passed for the four synthetic pairs; general playback/display calibration and all other manual gates remain separate.",
+    "Stream-level probe cannot establish every per-frame colour/HDR change.",
+    "Synthetic stills/structural checks do not prove general playback, display calibration or full visual/audio integrity.",
+    "No tone mapping; explicit RGB/linear/log/V-log/specialized matrix conversions unsupported.",
+    "Ambiguous colour remains warned with no invented missing Rec709 tags; otherwise untagged limited-range VUI may be unavailable and is warned.",
+    "Known wide gamut tags do not establish Rec709 conversion or universal player compatibility.",
+    "Full not rerun for this bounded task; historical Full had eight NotRun rows and remains incomplete. M2-06 Explorer and physical cancellation gates remain pending.",
+    "No CI/milestone/release acceptance, dependency downloads, private media or policy changes."
+  ],
+  "next_task": "WVC-M3-03 - Validate interview metadata dates and preserve text"
+}
