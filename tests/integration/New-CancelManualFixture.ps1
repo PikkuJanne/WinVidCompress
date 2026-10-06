@@ -31,15 +31,18 @@ foreach ($route in @('PS51','PS7','BAT-unattended','BAT-menu','BAT-drop')) {
     $lines=@('@echo off','setlocal DisableDelayedExpansion',
         'set "APPDATA=%~dp0appdata"','set "PATH=%~dp0bin;%SystemRoot%\System32"','set "FFREPORT="',
         'set "WVC_CANCEL_MARKER=%~dp0started.txt"','set "WVC_CANCEL_MODE=Graceful"','set "WVC_CANCEL_WATCHDOG=120"',
-        'echo Press Ctrl+C once after the first file starts. Run each check only once.')
-    if ($route -in @('BAT-menu','BAT-drop')) { $lines+='echo After cancellation, type: exit $LASTEXITCODE' }
+        'echo Press Ctrl+C once after Encoding progress appears. Run each check only once.')
+    if ($route -in @('BAT-menu','BAT-drop')) {
+        $lines+=@('echo After cancellation returns to the prompt, type: exit $LASTEXITCODE',
+            'echo Error 3 and a pause after that explicit shell exit are expected; press a key to reach the verifier.')
+    }
     if ($route -eq 'BAT-menu') {
-        $lines+=@('echo Choose 3, then paste this source folder:','echo %~dp0sources','call "%~dp0app\WinVidCompress.bat"')
+        $lines+=@('echo Choose 3, then paste this source folder:','echo %~dp0sources','"%ComSpec%" /d /v:off /s /c ""%~dp0app\WinVidCompress.bat""')
     } elseif ($route -eq 'BAT-drop') {
         $lines+=@('if "%~1"=="" (echo Drag both a.mov and b.mov from the sources folder onto this check. & pause & exit /b 2)',
-            'call "%~dp0app\WinVidCompress.bat" %*')
+            '"%ComSpec%" /d /v:off /s /c ""%~dp0app\WinVidCompress.bat" %*"')
     } elseif ($route -eq 'BAT-unattended') {
-        $lines+='call "%~dp0app\WinVidCompress.bat" -Unattended "%~dp0sources"'
+        $lines+='"%ComSpec%" /d /v:off /s /c ""%~dp0app\WinVidCompress.bat" -Unattended "%~dp0sources""'
     } else {
         $lines+=('"'+$hostExe+'" -NoProfile -ExecutionPolicy Bypass -File "%~dp0app\WinVidCompress.ps1" -Unattended "%~dp0sources"')
     }

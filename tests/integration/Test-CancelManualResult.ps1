@@ -1,6 +1,7 @@
 param([Parameter(Mandatory=$true)][string]$CaseRoot,[int]$ObservedExit)
 $ErrorActionPreference='Stop'
 . (Join-Path (Split-Path -Parent $PSScriptRoot) 'TestSupport.ps1')
+$CaseRoot=[IO.Path]::GetFullPath($CaseRoot).TrimEnd('\','/')
 $plan=Get-Content -LiteralPath (Join-Path $CaseRoot 'case.json') -Raw | ConvertFrom-Json
 [void](Assert-WvcTestRoot $plan.Owner)
 $rows=New-Object 'Collections.Generic.List[object]'
@@ -32,11 +33,16 @@ if ($logs.Count -eq 1) {
     $records=@(Get-Content -LiteralPath $logs[0].FullName | ForEach-Object { $_ | ConvertFrom-Json })
     $jobs=@($records | Where-Object Kind -eq 'Job'); $results=@($records | Where-Object Kind -eq 'Result')
 }
-Add-Check 'Logs contain Cancelled then Unstarted' ((@($jobs | ForEach-Object { $_.Outcome }) -join ',') -ceq 'Cancelled,Unstarted')
+$matching=$jobs.Count -eq 2
+if ($matching) {
+    $matching=[StringComparer]::OrdinalIgnoreCase.Equals($jobs[0].SourcePath,(Join-Path $CaseRoot 'sources/a.mov')) -and
+        [StringComparer]::OrdinalIgnoreCase.Equals($jobs[1].SourcePath,(Join-Path $CaseRoot 'sources/b.mov'))
+}
+Add-Check 'Logs contain Cancelled then Unstarted for the two sources' ($matching -and ((@($jobs | ForEach-Object { $_.Outcome }) -join ',') -ceq 'Cancelled,Unstarted'))
 $agree=$results.Count -eq 1
-if ($agree) { $agree=$results[0].ExitCode -eq 3 -and $results[0].Counters.Found -eq 2 -and $results[0].Counters.Cancelled -eq 1 -and $results[0].Counters.Unstarted -eq 1 }
+if ($agree) { $agree=$results[0].ExitCode -eq 3 -and $results[0].Cancelled -and $results[0].Counters.Found -eq 2 -and $results[0].Counters.Cancelled -eq 1 -and $results[0].Counters.Unstarted -eq 1 }
 Add-Check 'Session cancellation and counters agree' $agree
-$observation=Read-Host 'Did pressing Ctrl+C stop the batch and return normally (PASS / FAIL / UNSURE)?'
+$observation=Read-Host 'Did Ctrl+C stop the batch and return to the prompt or verifier (PASS / FAIL / UNSURE)?'
 $observation=$observation.Trim().ToUpperInvariant()
 if ($observation -notin @('PASS','FAIL','UNSURE')) { $observation='UNSURE' }
 $report=[pscustomobject]@{SchemaVersion=1;Kind='PhysicalCancellation';Route=$plan.Route;
