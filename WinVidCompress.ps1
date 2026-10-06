@@ -126,8 +126,66 @@ LICENSE / WARRANTY
 
 #>
 
+<#
+.SYNOPSIS
+Compress local videos sequentially or preview a batch without writing files.
+.DESCRIPTION
+Uses libx264 veryfast CRF 22, AAC 160k and MP4 faststart. With no input paths,
+opens the four-item menu. Per-run controls require explicit input paths and
+never save preferences. Precedence is defaults, saved config, explicit options.
+.PARAMETER Path
+Literal file or folder paths. Folders are scanned recursively and deduplicated.
+A filename beginning with a dash needs an absolute path or .\ prefix.
+.PARAMETER OutputDir
+Existing absolute drive or UNC output directory for this invocation only.
+.PARAMETER CollisionMode
+rename or skip. Default rename; a saved CollisionMode is optional. Resume retries
+always use safe rename to preserve existing final and retained partial files.
+.PARAMETER WhatIf
+Read-only filesystem plan. Does not load/recover writable config, test writing,
+start native tools, encode, create logs or manifests. Output names are estimates;
+media validity, destination writability and concurrent collisions are unchecked.
+Requires inputs. Cannot combine with CheckEnvironment or manifest controls.
+.PARAMETER CheckEnvironment
+Report installed dependencies and output availability without conversion or
+config changes. Performs a disclosed temporary create/write/remove check.
+OutputDir may override the saved directory; no CollisionMode or inputs needed.
+.PARAMETER Unattended
+Never open the menu. Put this first when invoking the BAT wrapper to avoid pause.
+.PARAMETER KeepOpen
+Used by the interactive BAT wrapper to retain its PowerShell prompt. Cannot be
+combined with Unattended.
+.PARAMETER ManifestPath
+Opt-in absolute local JSON manifest in an existing parent. Must be absent for a
+new batch. Requires input paths; incompatible with WhatIf and CheckEnvironment.
+.PARAMETER Resume
+Retry the original explicit source queue using ManifestPath after validating it.
+.PARAMETER StrongSourceHash
+Store/check source SHA256 rather than only size/mtime with ManifestPath. Keep it
+enabled on each resume; same-size/restored-time edits evade the fast default.
+.EXAMPLE
+& .\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Sources'
+
+Preview without creating config, output jobs, logs or a manifest. No native probes.
+.EXAMPLE
+& .\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' -CollisionMode skip 'D:\Sources'
+
+Compress using per-run options without changing the saved output preference.
+.EXAMPLE
+& .\WinVidCompress.ps1 -CheckEnvironment -OutputDir 'D:\Output'
+
+Check dependencies and writing with an owned temporary file removed on close.
+.NOTES
+BAT automation uses -Unattended first. Variable-shaped percent paths such as
+%PATH% use the literal-path menu or direct PowerShell route. CRF is not a public
+option. Structural validation does not establish full visual/audio integrity.
+#>
+
 [CmdletBinding(PositionalBinding=$false)]
 param(
+    [string]$OutputDir,
+    [string]$CollisionMode,
+    [switch]$WhatIf,
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,
@@ -391,6 +449,10 @@ function Assert-ConfigShape($cfg) {
     if ($null -eq $property -or $property.Value -isnot [string] -or
         [string]::IsNullOrWhiteSpace($property.Value)) {
         throw 'Config OutputDir must be a nonempty string.'
+    }
+    $collision = $cfg.PSObject.Properties['CollisionMode']
+    if ($null -ne $collision -and ($collision.Value -isnot [string] -or $collision.Value -notin @('rename','skip'))) {
+        throw 'Config CollisionMode must be rename or skip when supplied.'
     }
     $destination = $property.Value
     # Only absolute Windows filesystem paths; never expand shell/provider values.
@@ -2945,14 +3007,82 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
     }
 }
 
+function Resolve-RunConfiguration($Config, [hashtable]$Overrides) {
+    # Copy preferences: no caller/config object is mutated by per-run controls.
+    $copy=[pscustomobject]@{}
+    foreach ($property in $Config.PSObject.Properties) { $copy | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value }
+    if ($Overrides.ContainsKey('OutputDir')) {
+        Assert-ConfigShape ([pscustomobject]@{OutputDir=$Overrides.OutputDir})
+        $copy.OutputDir=$Overrides.OutputDir
+    }
+    $mode=$CollisionMode
+    $saved=$Config.PSObject.Properties['CollisionMode']
+    if ($null -ne $saved) { $mode=$saved.Value }
+    if ($Overrides.ContainsKey('CollisionMode')) { $mode=$Overrides.CollisionMode }
+    if ($mode -isnot [string] -or $mode -notin @('rename','skip')) { throw 'CollisionMode must be rename or skip.' }
+    return [pscustomobject]@{Config=$copy;CollisionMode=$mode.ToLowerInvariant()}
+}
+
+function Get-PreviewPlan([string[]]$Paths, $Config, [string]$Mode) {
+    Assert-OutputDirectory $Config.OutputDir
+    $queue=Get-InputQueue $Paths
+    $reserved=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $plans=New-Object 'Collections.Generic.List[object]'
+    foreach ($source in $queue.Files) {
+        $base=[IO.Path]::GetFileNameWithoutExtension($source)
+        $candidate=Join-Path $Config.OutputDir ($base+'.mp4')
+        $nominal=$candidate
+        $collision=(Test-Path -LiteralPath $candidate) -or $reserved.Contains((Get-QueuePathKey $candidate))
+        $action='WouldEncode'
+        if ($collision -and $Mode -eq 'skip') { $action='WouldSkip' }
+        elseif ($collision) {
+            $number=1
+            do {
+                $suffix=if ($number -eq 1) {' (compressed)'} else {' (compressed '+$number+')'}
+                $candidate=Join-Path $Config.OutputDir ($base+$suffix+'.mp4')
+                $number++
+            } while ((Test-Path -LiteralPath $candidate) -or $reserved.Contains((Get-QueuePathKey $candidate)))
+        }
+        if ($action -eq 'WouldEncode') { [void]$reserved.Add((Get-QueuePathKey $candidate)) }
+        $plans.Add([pscustomobject]@{SourcePath=$source;NominalPath=$nominal;OutputPath=$candidate;Action=$action})
+        Write-Host ($action+': '+$source+' -> '+$candidate)
+    }
+    $errors=@($queue.Scans | ForEach-Object { $_.Errors })
+    foreach ($scan in $queue.Scans) {
+        foreach ($warning in $scan.Warnings) { Write-Host $warning -ForegroundColor Yellow }
+    }
+    foreach ($failure in $errors) { Write-Host ('Scan error: '+$failure.Path+'; '+$failure.Message) -ForegroundColor Yellow }
+    $code=if (-not $plans.Count) {2} elseif ($errors.Count) {1} else {0}
+    Write-Host 'Preview only: no writes or native probes. Names are estimates; media validity and destination writability are unchecked.'
+    return [pscustomobject]@{SchemaVersion=1;ExitCode=$code;Requested=$true;Preview=$true;
+        OutputDir=$Config.OutputDir;CollisionMode=$Mode;CRF=$DefaultCRF;Plans=$plans.ToArray();
+        Scans=$queue.Scans;ScanErrors=$errors;Reason='Read-only filesystem plan; conversion checks are deferred.'}
+}
+
 function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     [switch]$Unattended, [switch]$ExplicitRequest,
-    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash) {
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash,
+    [string]$OutputDir, [Alias('CollisionMode')][string]$RunCollisionMode, [switch]$WhatIf) {
     $stage='Startup'
     $session=$null; $run=$null
     $previousSession=$script:SessionLog
     $inputPaths=@($Paths | Where-Object { $null -ne $_ })
+    $overrides=@{}
+    if ($PSBoundParameters.ContainsKey('OutputDir')) { $overrides.OutputDir=$OutputDir }
+    if ($PSBoundParameters.ContainsKey('RunCollisionMode')) { $overrides.CollisionMode=$RunCollisionMode }
     try {
+        foreach ($inputPath in $inputPaths) {
+            if ($inputPath -match '^[\-\u2013\u2014\u2015]') { throw "Unrecognized option '$inputPath'. Use an absolute path or .\ prefix for a filename beginning with '-'." }
+        }
+        if ($DefaultCRF -lt 0 -or $DefaultCRF -gt 51) { throw 'Configured CRF must be between 0 and 51.' }
+        if ($overrides.ContainsKey('OutputDir')) { Assert-ConfigShape ([pscustomobject]@{OutputDir=$OutputDir}) }
+        if ($overrides.ContainsKey('CollisionMode') -and $RunCollisionMode -notin @('rename','skip')) { throw 'CollisionMode must be rename or skip.' }
+        if ($WhatIf -and ($CheckEnvironment -or $ManifestPath -or $Resume -or $StrongSourceHash)) {
+            throw '-WhatIf cannot be combined with -CheckEnvironment or manifest controls; preview the explicit inputs without those controls.'
+        }
+        if ($CheckEnvironment -and $overrides.ContainsKey('CollisionMode')) { throw '-CollisionMode requires conversion or preview inputs, not -CheckEnvironment.' }
+        if (-not $CheckEnvironment -and ($WhatIf -or $overrides.Count) -and -not $inputPaths.Count) { throw 'Per-run options and -WhatIf require explicit input paths.' }
+
         if (($ManifestPath -or $Resume -or $StrongSourceHash) -and ($CheckEnvironment -or -not $inputPaths.Count)) {
             throw 'Manifest options require an explicit batch input selection and cannot be used with -CheckEnvironment.'
         }
@@ -2960,16 +3090,23 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         if (-not $CheckEnvironment -and ($Unattended -or $ExplicitRequest) -and -not $inputPaths.Count) {
             throw 'No input paths supplied for the requested batch.'
         }
+        if ($WhatIf) {
+            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig) $overrides
+            return (Get-PreviewPlan $inputPaths $effective.Config $effective.CollisionMode)
+        }
         $ffmpeg=Ensure-Tool 'ffmpeg.exe'
         $ffprobe=Ensure-Tool 'ffprobe.exe'
         $tools=Get-ToolEnvironment $ffmpeg $ffprobe
         if ($CheckEnvironment) {
-            $cfg=Get-EnvironmentConfig
+            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig) $overrides
+            $cfg=$effective.Config
             $output=Get-OutputEnvironment $cfg.OutputDir
             Write-EnvironmentReport $tools $output
             return (Get-BatchResult @() @() -Reason 'Environment check completed.')
         }
-        $cfg=Load-Config
+        $cfg=if ($overrides.Count) { Get-EnvironmentConfig } else { Load-Config }
+        $effective=Resolve-RunConfiguration $cfg $overrides
+        $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir
         Write-EnvironmentReport $tools $output
         $session=New-SessionLog $tools
@@ -3008,6 +3145,10 @@ if ($KeepOpen -and $Unattended) {
     [Console]::Error.WriteLine('WinVidCompress: -KeepOpen and -Unattended cannot be combined. Put -Unattended first when using the BAT launcher.')
     exit 2
 }
-$run=Invoke-WinVidCompress -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path')) -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash
+$runOptions=@{}
+foreach ($name in @('OutputDir','CollisionMode','WhatIf')) {
+    if ($PSBoundParameters.ContainsKey($name)) { $runOptions[$name]=$PSBoundParameters[$name] }
+}
+$run=Invoke-WinVidCompress @runOptions -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path')) -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash
 $global:LASTEXITCODE=$run.ExitCode
 if (-not $KeepOpen) { exit $run.ExitCode }

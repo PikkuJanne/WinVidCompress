@@ -26,7 +26,7 @@ Put both exes either in PATH or in the same folder as this repo’s script.
 Place these files together (e.g., in Downloads):
 WinVidCompress.ps1
 WinVidCompress.bat (wrapper for double-click + drag-and-drop)
-On first run the tool creates %APPDATA%\WinVidCompress\config.json and sets the OutputDir to your Videos folder.
+On a normal first run the tool creates %APPDATA%\WinVidCompress\config.json and sets the OutputDir to your Videos folder. Preview and per-run overrides leave an absent preference file absent.
 
 **Usage**
 1. My everyday flow (drag & drop onto .bat)
@@ -61,6 +61,16 @@ WinVidCompress.bat -Unattended "D:\Interviews\ToArchive"
 ```
 
 Direct PS1 batches also return the application exit code. Codes are **0** completed with no failures (including valid collision skips), **1** job/scan failure, **2** startup/configuration/invalid or empty requested batch, and **3** observed application cancellation, which takes precedence. Cancelling a menu selection or choosing Quit before a batch returns 0. The default BAT adds `-KeepOpen` and retains its PowerShell prompt; its eventual shell exit is separate from the batch result. `-KeepOpen` and `-Unattended` cannot be combined. Physical Ctrl+C/console-close handling remains unverified; PowerShell engine parse/binding errors can have their own exit code.
+
+Per-run `-OutputDir` selects an existing absolute output directory, and `-CollisionMode rename|skip` controls ordinary collisions. Defaults apply first, then saved config, then supplied options. Neither option saves preferences. Config may contain an optional `CollisionMode`; omission means `rename`. Unknown config fields are preserved. With per-run controls, invalid config fails without recovery; an unavailable saved output can be replaced by a valid `-OutputDir` for that run. The four-item menu and normal config recovery remain available when no per-run controls are supplied.
+
+```powershell
+.\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' -CollisionMode skip 'D:\Interviews'
+.\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Interviews'
+Get-Help .\WinVidCompress.ps1 -Full
+```
+
+`-WhatIf` reads preferences and the input/output directories to print estimated encode/skip destinations. It creates no config, backups, directories, jobs, logs or manifests and starts no native tools. Media validity, destination writability and concurrent name changes are unchecked. Empty/invalid selection returns 2; a partly failed scan with planned files returns 1. Preview and per-run conversion controls require explicit inputs. Preview cannot combine with `-CheckEnvironment` or manifest controls; preview the same inputs without those flags. The doctor accepts `-OutputDir` and retains its disclosed temporary write check. Resume retries always use safe rename around old outputs. CRF remains 22 and has no public switch. A relative filename beginning with a dash needs a `.\` prefix or an absolute path.
 
 **Filename → Metadata**
 The script tries to parse band and date from the filename (base name). Supported patterns (with or without trailing “ - …”):

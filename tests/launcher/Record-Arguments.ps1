@@ -1,5 +1,8 @@
 [CmdletBinding(PositionalBinding=$false)]
 param(
+    [string]$OutputDir,
+    [string]$CollisionMode,
+    [switch]$WhatIf,
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,

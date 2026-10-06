@@ -150,4 +150,12 @@ Focused command on either supported Windows host:
 
 The creation/resume CLI is documented in `PROCESS_AND_CLI.md`; these automated cases do not replace the earlier actual Explorer, physical Ctrl+C or playback gates.
 
+## Per-run CLI and preview checks (WVC-M4-01)
+
+`unit/Cli.Tests.ps1` checks precedence, copied preferences, early option validation, unchanged default/menu routing, collision estimates and forbidden native/writing/prompt boundaries. `integration/WhatIf.Tests.ps1` snapshots protected synthetic roots (paths, directory/file attributes, byte lengths/hashes and modification times) before/after actual preview and failure routes. It also checks actual PS1/BAT multi-input binding, run overrides/config preservation and safely parsed real Get-Help examples. Diagnostics and native recorder markers stay outside protected roots. APPDATA/output are isolated; preview runs with FFREPORT set to detect accidental native report writes. Preview rejects doctor/manifest combinations; doctor still performs its temporary write test. No private media or Explorer/manual acceptance is inferred.
+
+```powershell
+./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Cli.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Config.Tests.ps1|tests/unit/Environment.Tests.ps1|tests/integration/Exit.Tests.ps1|tests/launcher/Launcher.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath $report
+```
+
 M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. The per-host whole-Pester deadline is now 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
