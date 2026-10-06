@@ -419,8 +419,14 @@
         }
       ],
       "approval_gate": null,
-      "implementation_commits": ["e32fa11067bc8bb5133e8913840561deba79573f", "67bb0e80b347817e3072fa7b23bdbafc892226cd"],
-      "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"],
+      "implementation_commits": [
+        "e32fa11067bc8bb5133e8913840561deba79573f",
+        "67bb0e80b347817e3072fa7b23bdbafc892226cd"
+      ],
+      "evidence": [
+        "evidence/WVC-M1-02.md",
+        "evidence/WVC-M1-02.json"
+      ],
       "notes": "Verified under explicitly owner-approved D005 on 2026-10-05: all A01-A04 passed. Owner completed actual supported Explorer/menu checks; exact data/source/helper hashes/sentinels agree, automatic direct subcheck labelled. Clean 67bb0e8 Quick106/0/0/4 and Targeted120/0/4/4 each host retained, exit0. Documentation-only completion; no broad rerun/full-release acceptance. Historical unsupported BAT percent failure archived locally and recorded. Owned fixtures cleaned/ACL restored; next WVC-M1-03."
     },
     {
@@ -828,7 +834,7 @@
       "title": "Select and map the same real video and intended audio",
       "milestone": "M2",
       "priority": "P0",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         8
       ],
@@ -854,12 +860,14 @@
           "id": "WVC-M2-02-A01",
           "description": "A multi-video fixture proves the inspected and encoded indices are identical.",
           "tier": "targeted",
-          "status": "skipped",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M2-02.md",
-            "evidence/WVC-M2-02.json"
+            "evidence/WVC-M2-02.json",
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
           ],
-          "notes": "Native recorder passes exact inspected VideoIndex-to-map and height coupling with shuffled/noncontiguous multi-video indices. Actual encoded output confirmation is skipped without FFmpeg/FFprobe; recorder argv does not prove produced-media identity."
+          "notes": "Previous absent-tool skip closed by existing actual multi-stream/silent integration tests on both Windows hosts during M3-01; prior recorder/absence history preserved in M2-02 evidence."
         },
         {
           "id": "WVC-M2-02-A02",
@@ -875,12 +883,14 @@
           "id": "WVC-M2-02-A03",
           "description": "Silent video completes without inventing an audio stream; multi-audio omission is visible.",
           "tier": "targeted",
-          "status": "skipped",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M2-02.md",
-            "evidence/WVC-M2-02.json"
+            "evidence/WVC-M2-02.json",
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
           ],
-          "notes": "Silent native recorder dispatch has only the video map and no audio options; unique/no/multiple-default audio policy and omitted alternatives are visible. Actual silent encode/output-no-audio confirmation is skipped without FFmpeg/FFprobe."
+          "notes": "Previous absent-tool skip closed by existing actual multi-stream/silent integration tests on both Windows hosts during M3-01; prior recorder/absence history preserved in M2-02 evidence."
         },
         {
           "id": "WVC-M2-02-A04",
@@ -899,9 +909,11 @@
       ],
       "evidence": [
         "evidence/WVC-M2-02.md",
-        "evidence/WVC-M2-02.json"
+        "evidence/WVC-M2-02.json",
+        "evidence/WVC-M3-01.md",
+        "evidence/WVC-M3-01.json"
       ],
-      "notes": "Implemented; A02/A04 passed, A01/A03 skipped pending actual output confirmation without FFmpeg/FFprobe. Clean ed3a916 on both PS5.1.26100.9444/PS7.6.5: Focused 105/0/2/0, Quick 288/0/2/0, Targeted 304/0/6/0, all exit0. Thirteen Stream regressions prove requested absolute maps/height coupling, artwork exclusion, unique/no/multiple-default audio, silence/no audio options, nullable selected metadata and all omitted indices/types. Two real-output tests skipped in all scopes; four additional Targeted media skips. Recorder argv does not prove produced-media identity or actual silent completion. Pre-repair PS7 Targeted whole-suite timeout recorded; bounded Pester-child budget120 seconds, fixture deadlines unchanged. No new Full/manual/Explorer/milestone/release claim. Normalizer explicit unknown type and existing mocks/assertions updated minimally. No channel/FPS/default-quality drift. Next safe implemented-dependency task WVC-M2-03; retain skipped confirmation until installed-tool runs pass."
+      "notes": "Implemented; A02/A04 passed, A01/A03 skipped pending actual output confirmation without FFmpeg/FFprobe. Clean ed3a916 on both PS5.1.26100.9444/PS7.6.5: Focused 105/0/2/0, Quick 288/0/2/0, Targeted 304/0/6/0, all exit0. Thirteen Stream regressions prove requested absolute maps/height coupling, artwork exclusion, unique/no/multiple-default audio, silence/no audio options, nullable selected metadata and all omitted indices/types. Two real-output tests skipped in all scopes; four additional Targeted media skips. Recorder argv does not prove produced-media identity or actual silent completion. Pre-repair PS7 Targeted whole-suite timeout recorded; bounded Pester-child budget120 seconds, fixture deadlines unchanged. No new Full/manual/Explorer/milestone/release claim. Normalizer explicit unknown type and existing mocks/assertions updated minimally. No channel/FPS/default-quality drift. Next safe implemented-dependency task WVC-M2-03; retain skipped confirmation until installed-tool runs pass. Follow-up 2026-10-06 M3-01: existing actual stream-selection/silent-output cases now passed on both hosts with recorded FFmpeg/FFprobe. A01/A03 passed and task verified; historical absence evidence retained. No new implementation scope."
     },
     {
       "id": "WVC-M2-03",
@@ -1141,9 +1153,11 @@
       "evidence": [
         "evidence/WVC-M2-05.json",
         "evidence/WVC-M2-05.md",
-        "evidence/WVC-M2-05-session.md"
+        "evidence/WVC-M2-05-session.md",
+        "evidence/WVC-M3-01.md",
+        "evidence/WVC-M3-01.json"
       ],
-      "notes": "Verified A01-A04 on clean c8a3ed0, both actual Windows PS5.1.26100.9444/PS7.6.5: Focused 243/0/4/0, Quick 405/0/4/0, Targeted 421/0/8/0. Focused/Quick/Targeted exit0; Earlier Full at clean aba01e3 407/0/8/8, zero failures but exit2/Incomplete with seven manual/one future row NotRun. 66 unit/eight actual native probe/decode-argv cases per host; two new real-media cases skipped. Validation before no-clobber promotion/Done; owned read sharing, FTYP, selected H264/AAC, duration/geometry plausibility, matching generated timecode metadata; unknown/ambiguous timing disclosed. Optional decode explicit only, no normal double pass. Minimal shared fixture migrations; synthetic bytes not media. Real tools absent; M2-02 A01/A03 remain skipped. No Full/Explorer/playback/cancellation/CI/release pass. Exact next WVC-M2-06."
+      "notes": "Verified A01-A04 on clean c8a3ed0, both actual Windows PS5.1.26100.9444/PS7.6.5: Focused 243/0/4/0, Quick 405/0/4/0, Targeted 421/0/8/0. Focused/Quick/Targeted exit0; Earlier Full at clean aba01e3 407/0/8/8, zero failures but exit2/Incomplete with seven manual/one future row NotRun. 66 unit/eight actual native probe/decode-argv cases per host; two new real-media cases skipped. Validation before no-clobber promotion/Done; owned read sharing, FTYP, selected H264/AAC, duration/geometry plausibility, matching generated timecode metadata; unknown/ambiguous timing disclosed. Optional decode explicit only, no normal double pass. Minimal shared fixture migrations; synthetic bytes not media. Real tools absent; M2-02 A01/A03 remain skipped. No Full/Explorer/playback/cancellation/CI/release pass. Exact next WVC-M2-06. Follow-up 2026-10-06 M3-01: existing real synthetic A/V and silent encode/probe/full-decode/publication cases passed on both hosts with the recorded installed build. Prior absent-tool skips are historical; M2-02 native output confirmation also now passed. Structural checks still do not establish full visual/audio integrity."
     },
     {
       "id": "WVC-M2-06",
@@ -1232,7 +1246,7 @@
       "title": "Harden resizing and rotation without a new resolution preset",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         9
       ],
@@ -1259,35 +1273,54 @@
           "id": "WVC-M3-01-A01",
           "description": "Landscape, portrait, rotation 90/180/270, ultrawide, non-square SAR and odd dimensions have regression cases.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
+          ]
         },
         {
           "id": "WVC-M3-01-A02",
           "description": "Sub-1080 inputs are not enlarged; output orientation and aspect ratio match the source intent.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
+          ]
         },
         {
           "id": "WVC-M3-01-A03",
           "description": "High-frame-rate/VFR input does not acquire a forced FPS policy.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
+          ]
         },
         {
           "id": "WVC-M3-01-A04",
           "description": "Owner views representative geometry samples before any materially changed default behaviour is accepted.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-01.md",
+            "evidence/WVC-M3-01.json"
+          ]
         }
       ],
       "approval_gate": "Materially changing the height-cap/default geometry policy requires owner approval; bug fixes within the documented policy do not.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "7e09068d63799dbfe9b2a83b62bb4c003f61a134",
+        "02a07baff854d647c82e5758c21a66a00fa66dd6"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-01.md",
+        "evidence/WVC-M3-01.json",
+        "evidence/WVC-M3-01-session.md"
+      ],
+      "notes": "Verified A01-A04. Quick PS 5.1 537/0/0/0 at 7e09068 and PS 7 537/0/0/0 at 02a07ba; Targeted PS 5.1 557/0/0/0, PS 7 557/0/0/0 at 02a07ba, all exit 0. Full both hosts 1090/0/0/8 at 02a07ba, exit 2/Incomplete for eight NotRun rows. Thirteen native geometry cases plus two HFR/VFR cases passed; owner PASS for six comparison pairs. Existing policy bug fixes only, no width bound/quality/FPS override. Scope adds minimal shared literal-filter expectations and owned visual helper. No Full/CI/milestone/release pass; M2-06 Explorer observation still pending. Exact next WVC-M3-02 - Define SDR compatibility and reject untested HDR conversions."
     },
     {
       "id": "WVC-M3-02",

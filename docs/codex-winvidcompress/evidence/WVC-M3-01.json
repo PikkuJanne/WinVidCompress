@@ -1,0 +1,575 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-01",
+  "task_status": "verified",
+  "acceptance_ids": [
+    "WVC-M3-01-A01",
+    "WVC-M3-01-A02",
+    "WVC-M3-01-A03",
+    "WVC-M3-01-A04"
+  ],
+  "recorded_at": "2026-10-06T13:53:06.298379+00:00",
+  "tested_commits": [
+    "7e09068d63799dbfe9b2a83b62bb4c003f61a134",
+    "02a07baff854d647c82e5758c21a66a00fa66dd6"
+  ],
+  "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+  "branch": "codex/wvc-m3-01-geometry",
+  "tested_application_sha256": "756bb3b69c923e6587a20aceb6bb49387ef7378997897ff42935500a8ec7b535",
+  "tested_launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffmpeg_sha256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+    "ffprobe_sha256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+  },
+  "scope": [
+    "Selected-stream pure geometry plan, canonical matrix validation and one default autorotation.",
+    "Exact even oriented height-cap scale and structural output dimension/SAR/residual-transform validation.",
+    "58 unit and 15 actual native geometry/timing cases, owned retained visual kit, documentation.",
+    "Minimal encoder/stream/characterization literal-filter expectation migrations; no unrelated refactoring.",
+    "Previously skipped existing M2-02 native checks passed now tools are available; earlier evidence retained."
+  ],
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m301/quick51.json",
+      "tested_commit": "7e09068d63799dbfe9b2a83b62bb4c003f61a134",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 537,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m301/quick51.json",
+      "artifact_sha256": "c80fdb4cc7a25cf7ae61eed844a0db7832c5ae85b4676a11ee5ae656922bdd6f",
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_geometry_case_ids": [
+        "Current/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "Current/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "Current/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "Current/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "Current/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "Current/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "Current/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "Current/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "Current/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "Current/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "Current/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "Current/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "Current/072:confirms bothOdd pixels and probe geometry without touching source or existing output"
+      ],
+      "prior_native_confirmation_case_ids": [
+        "Current/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "Current/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "Current/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "Current/089:completes actual silent video without adding an audio stream"
+      ]
+    },
+    {
+      "name": "quick7",
+      "tier": "Quick",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m301/quick7.json",
+      "tested_commit": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 537,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m301/quick7.json",
+      "artifact_sha256": "3eb1bd6487b245ab0b19a20fd3f2f6f5782e55417b7b9bc9118ab6724625e28b",
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_geometry_case_ids": [
+        "Current/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "Current/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "Current/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "Current/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "Current/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "Current/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "Current/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "Current/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "Current/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "Current/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "Current/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "Current/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "Current/072:confirms bothOdd pixels and probe geometry without touching source or existing output"
+      ],
+      "prior_native_confirmation_case_ids": [
+        "Current/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "Current/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "Current/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "Current/089:completes actual silent video without adding an audio stream"
+      ]
+    },
+    {
+      "name": "targeted51",
+      "tier": "Targeted",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m301/targeted51.json",
+      "tested_commit": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 557,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m301/targeted51.json",
+      "artifact_sha256": "c30afdd85ec70d7a34aca638de62bfa317c4d8bfebb91fb821af34c5f045a8a5",
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_geometry_case_ids": [
+        "Current/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "Current/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "Current/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "Current/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "Current/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "Current/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "Current/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "Current/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "Current/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "Current/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "Current/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "Current/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "Current/072:confirms bothOdd pixels and probe geometry without touching source or existing output"
+      ],
+      "prior_native_confirmation_case_ids": [
+        "Current/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "Current/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "Current/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "Current/089:completes actual silent video without adding an audio stream"
+      ]
+    },
+    {
+      "name": "targeted7",
+      "tier": "Targeted",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m301/targeted7.json",
+      "tested_commit": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+      "tested_tree_dirty": false,
+      "exit_code": 0,
+      "status": "Passed",
+      "counts": {
+        "Passed": 557,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m301/targeted7.json",
+      "artifact_sha256": "5d095ff2202eec41c2462f480f1c887cdbbbd2202042e3444b5408240f126d4b",
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_cases": [],
+      "native_geometry_case_ids": [
+        "Current/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "Current/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "Current/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "Current/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "Current/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "Current/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "Current/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "Current/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "Current/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "Current/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "Current/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "Current/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "Current/072:confirms bothOdd pixels and probe geometry without touching source or existing output"
+      ],
+      "prior_native_confirmation_case_ids": [
+        "Current/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "Current/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "Current/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "Current/089:completes actual silent video without adding an audio stream"
+      ]
+    },
+    {
+      "name": "full-both",
+      "tier": "Full",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m301/full-both.json",
+      "tested_commit": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+      "tested_tree_dirty": false,
+      "exit_code": 2,
+      "status": "Incomplete",
+      "counts": {
+        "Passed": 1090,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m301/full-both.json",
+      "artifact_sha256": "12225de437d7a51ebea28b6fd19ecabf97eec97cda4ea784a478b7b56c26c325",
+      "failed_case_ids": [],
+      "skipped_cases": [],
+      "not_run_cases": [
+        {
+          "Id": "coverage/future-media-cli-safety-packaging",
+          "Status": "NotRun",
+          "Reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+        },
+        {
+          "Id": "manual/explorer-file-folder-multi-drop",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-menu-quit",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-special-character-argv",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/playback-sdr-hdr-audio",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/real-ctrl-c-and-console-close",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/representative-benchmarks",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/unc-long-paths",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        }
+      ],
+      "native_geometry_case_ids": [
+        "PowerShell7/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "PowerShell7/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "PowerShell7/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "PowerShell7/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "PowerShell7/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "PowerShell7/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "PowerShell7/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "PowerShell7/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "PowerShell7/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "PowerShell7/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "PowerShell7/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "PowerShell7/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "PowerShell7/072:confirms bothOdd pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/060:confirms SD pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/061:confirms 1080 pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/062:confirms 4K pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/063:confirms portrait pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/064:confirms 90 pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/065:confirms 180 pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/066:confirms 270 pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/067:confirms ultrawide pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/068:confirms anamorphic pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/069:confirms rotatedAnamorphic pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/070:confirms oddWidth pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/071:confirms oddHeight pixels and probe geometry without touching source or existing output",
+        "WindowsPowerShell/072:confirms bothOdd pixels and probe geometry without touching source or existing output"
+      ],
+      "prior_native_confirmation_case_ids": [
+        "PowerShell7/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "PowerShell7/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "PowerShell7/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "PowerShell7/089:completes actual silent video without adding an audio stream",
+        "WindowsPowerShell/086:validates and explicitly decodes real synthetic silent output before publication [WVC-M2-05]",
+        "WindowsPowerShell/087:validates and explicitly decodes real synthetic sdr-av output before publication [WVC-M2-05]",
+        "WindowsPowerShell/088:confirms first inspected video and unique-default audio in actual encoded output",
+        "WindowsPowerShell/089:completes actual silent video without adding an audio stream"
+      ]
+    }
+  ],
+  "historical_development_runs": [
+    {
+      "local_artifact": ".test-results/m301/regression-before.json",
+      "artifact_sha256": "b18e0dfbf2bf7f159cee7c9222caa7db378af3f6aa40d1b87a8d6cab2d344f69",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1' -ReportPath .test-results/m301/regression-before.json",
+      "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 7,
+        "Failed": 26,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "5.1.26100.9444",
+      "note": "Regression-first on main 3ce6f66 with an untracked geometry test: missing helper/contract; 26 failures, 7 passes. Owner requested immediate stop/shutdown; saved local regression resumed after ownership preflight.",
+      "exit_code": 1
+    },
+    {
+      "local_artifact": ".test-results/m301/focused51-dev.json",
+      "artifact_sha256": "3ba004dcafab8c875c0e03a5c8024915703fabf3dc75033de4363fb365e3d2b8",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/unit/OutputValidation.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m301/focused51-dev.json",
+      "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 210,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "5.1.26100.9444",
+      "note": "Dirty affected-tree run: 210 passed/one incorrect anamorphic expected-value failure; corrected independent expected ratio to 7185/10256.",
+      "exit_code": 1
+    },
+    {
+      "local_artifact": ".test-results/m301/geometry7-dev.json",
+      "artifact_sha256": "9bb3189f778da4c806bf0e79a98450994ca3bfdaad964d8e8034b14d0974db4c",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1|tests/integration/Geometry.Tests.ps1' -ReportPath .test-results/m301/geometry7-dev.json",
+      "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 67,
+        "Failed": 4,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "7.6.5",
+      "note": "Dirty geometry run: four rotation fixtures were not actually rotated because this FFmpeg build no longer applies legacy rotate tags during the fixture stream copy. Corrected to -display_rotation and asserted source metadata before conversion.",
+      "exit_code": 1
+    },
+    {
+      "local_artifact": ".test-results/m301/geometry51-dev.json",
+      "artifact_sha256": "e34f92ac876c3787164694c264e06598a59b6a668bc4e700aa9880e4ec4b5468",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1|tests/integration/Geometry.Tests.ps1' -ReportPath .test-results/m301/geometry51-dev.json",
+      "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 73,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "5.1.26100.9444",
+      "note": "Corrected dirty geometry/native run, 73 passed without skips.",
+      "exit_code": 0
+    },
+    {
+      "local_artifact": ".test-results/m301/focused7-dev-final.json",
+      "artifact_sha256": "eeaf47ae7e3839e812f1bbed2e7c356199bfc514cfb03d9910b911fdc1e7fa3a",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1|tests/integration/Geometry.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/unit/OutputValidation.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m301/focused7-dev-final.json",
+      "base_commit": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 228,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "7.6.5",
+      "note": "Dirty affected PS7 run, 228 passed without skips; includes real geometry and prior focused suites.",
+      "exit_code": 0
+    },
+    {
+      "local_artifact": ".test-results/m301/geometry51-guards.json",
+      "artifact_sha256": "e34f92ac876c3787164694c264e06598a59b6a668bc4e700aa9880e4ec4b5468",
+      "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/Geometry.Tests.ps1|tests/integration/Geometry.Tests.ps1' -ReportPath .test-results/m301/geometry51-guards.json",
+      "base_commit": "7e09068d63799dbfe9b2a83b62bb4c003f61a134",
+      "tested_commit": null,
+      "tested_tree_reference": "Dirty development tree; not a clean tested checkpoint. Final clean gates are authoritative.",
+      "counts": {
+        "Passed": 73,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "powershell": "5.1.26100.9444",
+      "note": "Dirty cleanup/timing-guard run, 73 passed without skips; final clean gates cover the final cleanup amendment.",
+      "exit_code": 0
+    }
+  ],
+  "acceptance_results": [
+    {
+      "id": "WVC-M3-01-A01",
+      "status": "passed",
+      "evidence": "Landscape/SD/1080/4K/portrait/90/180/270/ultrawide/SAR/odd unit and actual output cases on both supported hosts."
+    },
+    {
+      "id": "WVC-M3-01-A02",
+      "status": "passed",
+      "evidence": "Exact output dimensions and known SAR; decoded RGB quadrants with output autorotation disabled; unchanged source/final sentinels and no partial publication. Owner comparison also passed."
+    },
+    {
+      "id": "WVC-M3-01-A03",
+      "status": "passed",
+      "evidence": "No application FPS override. Native 120 FPS and uneven-interval VFR fixtures preserve frame counts and relative timestamps within 0.0001 s on this build."
+    },
+    {
+      "id": "WVC-M3-01-A04",
+      "status": "passed",
+      "evidence": "Owner viewed source/output comparison and answered PASS - all six pairs match on 2026-10-06."
+    }
+  ],
+  "owner_observation": {
+    "date": "2026-10-06",
+    "response": "PASS — all six pairs match",
+    "question": "Do the OUTPUT pictures on the right match the SOURCE pictures on the left in orientation, proportions, and full visible extent?",
+    "prepared_commit": "7e09068d63799dbfe9b2a83b62bb4c003f61a134",
+    "prepared_tree_dirty": false,
+    "application_sha256": "756bb3b69c923e6587a20aceb6bb49387ef7378997897ff42935500a8ec7b535",
+    "comparison_sha256": "cd9e1c462264ef4f7c520c3a10c20a1209b9f3d6f3869f3cdf89ade367e0be47",
+    "samples": [
+      {
+        "Name": "SD",
+        "SourceHash": "8ED0AEA90B5F8F879F2FA66A661C34F2749C8CF6EB5F9801CC8C3F0A45C25495",
+        "OutputHash": "C302CC94C07AFCE8F0B5F9E9DAF98B2099A28442E2A7715A92CB37AEA94E82F2",
+        "Width": 640,
+        "Height": 480
+      },
+      {
+        "Name": "Portrait",
+        "SourceHash": "04BCACD64F93EA761CEBF7E39F40A7DB1CC9414DAA949158FAB7424BDEA2E21F",
+        "OutputHash": "FA4232E3E0A40CF01ACB20577C6CD327AD8DB786375A3973D5EE8F9243E13DAB",
+        "Width": 608,
+        "Height": 1080
+      },
+      {
+        "Name": "Rotation90",
+        "SourceHash": "CE14D9287E086B1D088471513C8CC390F98AF0F15C2EC7FDC24276F42C196980",
+        "OutputHash": "A41A01CF5F1B616B11154D2DA18E407CBB853C58857A569C3DD4D06C161A626F",
+        "Width": 608,
+        "Height": 1080
+      },
+      {
+        "Name": "Rotation180",
+        "SourceHash": "C5919E053ECBFAA269A7DC4E2073C5EF88F208EFFA05FE75A278CBE078C85942",
+        "OutputHash": "4224A627D00002D6DFDDC877D43D80B500E2A151C147BE5259825CD015A17F20",
+        "Width": 640,
+        "Height": 480
+      },
+      {
+        "Name": "Rotation270",
+        "SourceHash": "1AA9759E7785322184A43E4174DC81BBD2BC1599DB9C6C185697AAECA2FD4F05",
+        "OutputHash": "211475D5C8E41FBC2D2AA2A65A026E891464562B4C99B969D5D01AD086C7C26E",
+        "Width": 480,
+        "Height": 640
+      },
+      {
+        "Name": "AnamorphicOdd",
+        "SourceHash": "B28F5B44393136B06A7F01D61AFE77E68C0731AF4C6D3DBFE36163184F9A7CD6",
+        "OutputHash": "B284E8C8A9FB5C7F14C5E34599653D8A5F9E48A04F14E29378642EDBE26315C0",
+        "Width": 640,
+        "Height": 478
+      }
+    ],
+    "observation": "Actual owner response in this chat; no broader playback/colour or release approval inferred.",
+    "command": "$env:Path='C:\\ffmpeg\\bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/integration/New-GeometryManualFixture.ps1 -ReportPath .test-results/m301/manual-geometry.json",
+    "local_artifact": ".test-results/m301/manual-geometry.json",
+    "artifact_sha256": "c9c245f81d3bf0a40c929de050340317473c970d15564035b132a279c6f46647"
+  },
+  "implementation_checkpoint_sync": {
+    "checked_at": "2026-10-06T13:38:56.437975+00:00",
+    "head": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+    "branch": "codex/wvc-m3-01-geometry",
+    "upstream": "origin/codex/wvc-m3-01-geometry",
+    "dirty": false,
+    "live_fetch_head": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+    "live_push_head": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+    "status": "SYNCHRONIZED"
+  },
+  "live_main_reconciliation": {
+    "main": "3ce6f66b0e4931cae75caf6fdbd9636e66038d16",
+    "owner_merged_pr": 16,
+    "prior_feature_head": "31bbbd0dace8b9ed0a7e37544a30358f4c75555e",
+    "prior_feature_to_main_content_diff": "empty",
+    "reconciliation": "Fetched --no-tags; prior feature and historical 5bab7fc ancestry retained. New feature from current owner merge; resumed owned local regression after shutdown, no discard/rewrite."
+  },
+  "pull_request": {
+    "state": "not_created",
+    "url": null,
+    "note": "Draft creation planned after final handoff push; actual state reported externally."
+  },
+  "implementation_ci": {
+    "source_commit": "02a07baff854d647c82e5758c21a66a00fa66dd6",
+    "check_runs": 0,
+    "statuses": 0,
+    "status_state": "pending",
+    "workflow_runs": 0,
+    "claim": "Actual API inspection; no CI pass."
+  },
+  "read_only_review": "Separate readonly geometry and test-safety reviewers; matrix angle contradiction, stale reporting, fatal-cleanup retention and timing oracle findings fixed. No reviewer test/Git mutations.",
+  "limitations": [
+    "Full remains exit 2/Incomplete with seven outstanding Windows manual rows and one future-coverage row; no milestone/release pass.",
+    "Native preservation evidence is bounded to short synthetic fixtures and the recorded installed tool build; structural checks do not prove full visual/audio integrity.",
+    "M2-06 actual Explorer menu/prompt remains not_run; physical Ctrl+C/console-close, colour compatibility, UNC/durability/hostile substitution and later packaging remain open.",
+    "Canonical matrix/reflection/rebase guards have unit coverage; native geometry rotation cases are 90/180/270. Unsupported arbitrary transforms fail actionably.",
+    "No quality/preset/FPS/crop/upscale/bounding-box policy change, downloads, private media, persistent PATH alteration or system settings changes."
+  ],
+  "final_handoff_sync": "Pending within this record; final documentation SHA/push/live refs reported externally to avoid self-SHA loop.",
+  "next_task": "WVC-M3-02 - Define SDR compatibility and reject untested HDR conversions"
+}
