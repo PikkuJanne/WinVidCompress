@@ -327,13 +327,13 @@ Describe 'Published job record and diagnostic provenance [WVC-M2-06]' {
     }
 
     It 'preserves <Outcome> when reporting observes explicit cancellation [A01 A02]' -TestCases @(
-        @{Outcome='Completed';Message='Done.'}, @{Outcome='Skipped';Message='Skipping*'}
+        @{Outcome='Completed';ReportPattern='Done.'}, @{Outcome='Skipped';ReportPattern='Skipping*'}
     ) {
-        param($Outcome,$Message)
+        param($Outcome,$ReportPattern)
         if ($Outcome -eq 'Skipped') { [IO.File]::WriteAllText($Final,'existing sentinel'); $CollisionMode='skip' }
-        Mock Write-Host { throw (New-Object OperationCanceledException 'reporting cancellation') } -ParameterFilter { $Object -like $Message }
+        Mock Write-Host { throw (New-Object OperationCanceledException 'reporting cancellation') } -ParameterFilter { $Object -like $ReportPattern }
         $job=Compress-One 'unused' 'unused' $Source $Output 22
-        $job.Outcome | Should -BeExactly $Outcome
+        $job.Outcome | Should -BeExactly $Outcome -Because $job.Reason
         $job.CancellationRequested | Should -BeTrue
         $batch=Get-BatchResult @($job) @() -Requested
         $batch.ExitCode | Should -Be 3
