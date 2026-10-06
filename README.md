@@ -70,7 +70,11 @@ artist = Band Name
 date = YYYY-MM-DD
 title = base filename
 comment = Interview date dd.mm.yyyy; Band: <name>
-If parsing fails, the file still compresses (no prompts).
+Dates must be real Gregorian calendar dates; leap years are checked independently of Windows language settings. Multiple date tokens (even repeated or invalid ones), blank band names and invalid dates omit filename-derived artist/date/comment and print a warning. The base filename still supplies the title, and compression continues without prompts.
+
+The legacy compact-date fallback, such as `Band Name 29092025 CamA`, accepts one whitespace-delimited, calendar-valid eight-digit token and warns that an unlabelled number may be unrelated to an interview. Longer numbers and tokens embedded in letters are ignored. Dotted/dashed dates use matching separators and the patterns above.
+
+Metadata precedence: the filename title overrides the source title; a valid band/date pair also overrides source artist/date/comment. Otherwise those source fields can remain. Other compatible global and selected-stream source tags follow FFmpeg's standard single-input copying and MP4 support, including copyright and audio language where supported. Outputs can contain source metadata beyond the four generated fields; compression does not sanitize private metadata. Arbitrary source tags are not guaranteed to survive.
 
 **Output location**
 Default: Windows Videos folder (e.g., C:\Users\<you>\Videos).

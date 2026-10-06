@@ -1409,7 +1409,7 @@
       "title": "Validate interview metadata dates and preserve text",
       "milestone": "M3",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         11
       ],

@@ -605,55 +605,48 @@ function Prompt-Path([string]$prompt, [switch]$Folder, [switch]$CreateIfMissing)
 
 function Parse-MetadataFromName([string]$fileName) {
     $base = [IO.Path]::GetFileNameWithoutExtension($fileName)
-
-    $patterns = @(
-        '^(?<band>.+?)\s+(?<dd>\d{2})(?<mm>\d{2})(?<yyyy>\d{4})(?:\s*-\s*.*)?$',
-        '^(?<band>.+?)\s+(?<dd>\d{2})[.\-](?<mm>\d{2})[.\-](?<yyyy>\d{4})(?:\s*-\s*.*)?$'
-    )
-
-    foreach ($rx in $patterns) {
-        $m = [regex]::Match($base, $rx)
-        if ($m.Success) {
-            $band = $m.Groups['band'].Value.Trim()
-            $dd   = $m.Groups['dd'].Value
-            $mm   = $m.Groups['mm'].Value
-            $yyyy = $m.Groups['yyyy'].Value
-            $iso  = "{0}-{1}-{2}" -f $yyyy,$mm,$dd
-            $hum  = "{0}.{1}.{2}" -f $dd,$mm,$yyyy
-            return [pscustomobject]@{
-                Band      = $band
-                DateISO   = $iso
-                DateHuman = $hum
-                Title     = $base
+    $result = [pscustomobject]@{Band='';DateISO='';DateHuman='';Title=$base;ParseStatus='NoDate';Warnings=@()}
+    # ASCII date tokens, separated from letters/numbers. Count all candidates,
+    # including invalid/repeated dates, before choosing a format or validating.
+    $datePattern = '[0-9]{8}|[0-9]{2}(?<separator>[.\-])[0-9]{2}\k<separator>[0-9]{4}'
+    $candidates = [regex]::Matches($base, '(?<![\p{L}\p{N}])(?:' + $datePattern + ')(?![\p{L}\p{N}])')
+    $reason = 'no supported date token'
+    if ($candidates.Count -gt 1) {
+        $result.ParseStatus='Ambiguous'; $reason='multiple date tokens, including possible invalid or repeated dates'
+    } elseif ($candidates.Count -eq 1) {
+        $candidate = $candidates[0]
+        $compact = $candidate.Value.Replace('.','').Replace('-','')
+        $date = [datetime]::MinValue
+        if (-not [datetime]::TryParseExact($compact, 'ddMMyyyy', [Globalization.CultureInfo]::InvariantCulture,
+            [Globalization.DateTimeStyles]::None, [ref]$date)) {
+            $result.ParseStatus='InvalidDate'; $reason='date token is not a real Gregorian calendar date'
+        } else {
+            $band = $base.Substring(0,$candidate.Index).Trim()
+            $structured = [regex]::Match($base, '^(?<band>.+?)\s+(?:' + $datePattern + ')(?:\s*-\s*.*)?$')
+            $fallback = $candidate.Value.Length -eq 8 -and
+                ($candidate.Index -eq 0 -or [char]::IsWhiteSpace($base[$candidate.Index-1])) -and
+                ($candidate.Index+$candidate.Length -eq $base.Length -or [char]::IsWhiteSpace($base[$candidate.Index+$candidate.Length]))
+            if ([string]::IsNullOrWhiteSpace($band)) {
+                $result.ParseStatus='MissingBand'; $reason='band name is blank'
+            } elseif (-not $structured.Success -and -not $fallback) {
+                $result.ParseStatus='UnsupportedPattern'; $reason='date does not fit an interview name or the compact fallback'
+            } else {
+                $result.Band=$band
+                $result.DateISO=$date.ToString('yyyy-MM-dd',[Globalization.CultureInfo]::InvariantCulture)
+                $result.DateHuman=$date.ToString('dd.MM.yyyy',[Globalization.CultureInfo]::InvariantCulture)
+                $result.ParseStatus='Parsed'
+                if (-not $structured.Success) {
+                    $result.ParseStatus='Fallback'
+                    $result.Warnings=@('Using legacy compact-date fallback: an unlabelled calendar-valid token may be an unrelated number; confirm the filename.')
+                }
+                return $result
             }
         }
     }
-
-    # Fallback, find any 8-digit date anywhere (ddmmyyyy)
-    $m2 = [regex]::Match($base, '(?<!\d)(?<dd>\d{2})(?<mm>\d{2})(?<yyyy>\d{4})(?!\d)')
-    if ($m2.Success) {
-        $idx  = $m2.Index
-        $band = $base.Substring(0, $idx).Trim()
-        $dd   = $m2.Groups['dd'].Value
-        $mm   = $m2.Groups['mm'].Value
-        $yyyy = $m2.Groups['yyyy'].Value
-        $iso  = "{0}-{1}-{2}" -f $yyyy,$mm,$dd
-        $hum  = "{0}.{1}.{2}" -f $dd,$mm,$yyyy
-        return [pscustomobject]@{
-            Band      = $band
-            DateISO   = $iso
-            DateHuman = $hum
-            Title     = $base
-        }
-    }
-
-    # No prompts, compress anyway, just without tags
-    return [pscustomobject]@{
-        Band      = ''
-        DateISO   = ''
-        DateHuman = ''
-        Title     = $base
-    }
+    # Omit only filename-derived interview fields. Compatible source tags may
+    # still be inherited by FFmpeg; title and compression always remain.
+    $result.Warnings=@("Filename-derived artist/date/comment omitted: $reason. Title retained; compatible source tags may remain.")
+    return $result
 }
 
 function Get-ProbeProperty($Object, [string]$Name) {
@@ -1293,6 +1286,8 @@ function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPla
     $tokens += $colour.Arguments
     if ($null -ne $StreamPlan.Audio) { $tokens += @('-c:a','aac','-b:a','160k') }
     $tokens += @('-movflags','+faststart')
+    # Single-input FFmpeg defaults copy compatible global/mapped-stream tags.
+    # Only generated values override them; absence is not a request to clear.
     if ($null -ne $Metadata) {
         if ($Metadata.Title) { $tokens += @('-metadata',"title=$($Metadata.Title)") }
         if ($Metadata.Band) { $tokens += @('-metadata',"artist=$($Metadata.Band)") }
@@ -1805,6 +1800,8 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $result.InputBytes=Get-JobFileLength $inPath
 
         $meta = Parse-MetadataFromName ([IO.Path]::GetFileName($inPath))
+        $result.Diagnostics.Warnings += $meta.Warnings
+        foreach ($warning in $meta.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $base = [IO.Path]::GetFileNameWithoutExtension($inPath)
 
         $nominal = Join-Path $outDir ($base + '.mp4')
