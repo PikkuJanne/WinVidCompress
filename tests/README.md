@@ -39,7 +39,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual
 
 Quick/Targeted exclude KnownDefect cases with visible NotRun records. Add `-IncludeKnownDefects` to run them explicitly. Fix tasks should move repaired regressions into normal coverage. Original focused `tests/Invoke-Characterization.ps1` remains available with its `-KnownDefects` switch.
 
-The tier runner bounds the complete Pester subprocess at 240 seconds; individual native fixture deadlines remain separate. M2-02 increased the former 60-second whole-suite deadline to 120 seconds after one PS7 Targeted timeout. M2-06 increased it to 180 seconds after the expanded native exit suite timed out at 120 seconds on PS7. M3-04 increased it to 240 seconds after the expanded benchmark suite timed out at 180 seconds on PS7; all 26 affected focused cases passed separately. A timeout still fails the gate and retains owned diagnostics; the allowance does not turn an incomplete suite into a pass.
+The tier runner bounds the complete Pester subprocess at 420 seconds; individual native fixture deadlines remain separate. M2-02 increased the former 60-second whole-suite deadline to 120 seconds after one PS7 Targeted timeout. M2-06 increased it to 180 seconds after the expanded native exit suite timed out at 120 seconds on PS7. M3-04 increased it to 240 seconds after the expanded benchmark suite timed out at 180 seconds on PS7; all 26 affected focused cases passed separately. A timeout still fails the gate and retains owned diagnostics; the allowance does not turn an incomplete suite into a pass.
 
 M1-01 replaces the old AST-only Quit defect probe with normal nested menu/path regressions that execute the real menu function with bounded mocked input. Quit returns to its caller; the unchanged BAT's `-NoExit` leaves its PowerShell prompt open. Actual Explorer double-click acceptance must still be recorded separately.
 
@@ -106,7 +106,7 @@ Run `tests/integration/Test-EncodeArgumentsManual.ps1 -ReportPath <existing-loca
 
 The default BAT now adds explicit -KeepOpen while retaining -NoExit; first -Unattended bypasses persistence/pause. Existing characterization/environment tests call the real startup helper instead of evaluating executable exit statements. Queue mocks return matching job records; launcher recorder/argv and historical/current manual-report grading recognize -KeepOpen. These minimal shared-fixture changes preserve their prior responsibilities and D005 evidence. New-MenuManualFixture.ps1 still prepares exact copied bytes for a human Explorer menu/Quit/prompt check; scripted input proves control flow only. Record the prepared hashes/tree and actual PASS/FAIL/UNSURE response separately.
 
-The complete Pester child now has a three-minute deadline after the expanded native exit suite exceeded the earlier two-minute deadline on PS7. Individual synthetic process/doctor/encoder fixture deadlines stay unchanged; this developer harness adjustment does not alter application timeouts.
+M2-06 raised the complete Pester child deadline to three minutes after the expanded native exit suite exceeded the earlier two-minute deadline on PS7. Individual synthetic process/doctor/encoder fixture deadlines stay unchanged; this developer harness adjustment does not alter application timeouts.
 
 ### Selected display geometry (M3-01)
 
@@ -160,4 +160,4 @@ Explicit output also replaces a blank Windows default when config is absent; exi
 ./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Cli.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Config.Tests.ps1|tests/unit/Environment.Tests.ps1|tests/integration/Exit.Tests.ps1|tests/launcher/Launcher.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath $report
 ```
 
-M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. The per-host whole-Pester deadline is now 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
+M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. M3-07 raised the per-host whole-Pester deadline to 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
