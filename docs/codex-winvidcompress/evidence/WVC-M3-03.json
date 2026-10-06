@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-03",
+  "acceptance_ids": [
+    "WVC-M3-03-A01",
+    "WVC-M3-03-A02",
+    "WVC-M3-03-A03",
+    "WVC-M3-03-A04"
+  ],
+  "recorded_at": "2026-10-06T14:46:10.736587+00:00",
+  "tested_commits": [
+    "b955d11b649410745b8de917392401045d4e033d"
+  ],
+  "application_sha256": "ef60a428642bb93336a685d1fc4db86585e89389a6d2b6b8e7a1a165a2c7a0f4",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffmpeg_sha256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+    "ffprobe_sha256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+  },
+  "runs": [
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m303/quick51.json *> .test-results/m303/quick51.log",
+      "tested_commit": "b955d11b649410745b8de917392401045d4e033d",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 639,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m303/quick51.json",
+      "artifact_sha256": "7eca4904fee4fc7bab68b24e831dd85efda8ca413cb013bdef21d68cd3d7545a",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted51",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts WindowsPowerShell -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m303/targeted51.json *> .test-results/m303/targeted51.log",
+      "tested_commit": "b955d11b649410745b8de917392401045d4e033d",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 659,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "local_artifact": ".test-results/m303/targeted51.json",
+      "artifact_sha256": "18f3ea201b0a11800f0387d9cc38f083a6f62a197e8a086a6f0d1cb7c6259589",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    },
+    {
+      "name": "targeted7",
+      "tier": "Targeted",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -Hosts PowerShell7 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -ReportPath .test-results/m303/targeted7.json *> .test-results/m303/targeted7.log",
+      "tested_commit": "b955d11b649410745b8de917392401045d4e033d",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "exit_code": 0,
+      "counts": {
+        "Passed": 659,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "local_artifact": ".test-results/m303/targeted7.json",
+      "artifact_sha256": "67a801d9f5a399cec82f2623d3ffc356dece6b43f0a0fd2bd9fcc985b815069d",
+      "failed_cases": [],
+      "skipped_cases": [],
+      "not_run_cases": []
+    }
+  ],
+  "development_runs": [
+    {
+      "name": "regression51",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/unit/Metadata.Tests.ps1 -ReportPath .test-results/m303/regression51.json *> .test-results/m303/regression51.log",
+      "counts": {
+        "Passed": 1,
+        "Failed": 42,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "Regression-first before application changes: missing status/warning fields and invalid-date behavior. One literal-token case passed; 42 failed.",
+      "local_artifact": ".test-results/m303/regression51.json",
+      "artifact_sha256": "dc1c4a0c571646bdb097b1ddfbe247806ede3a9a0aa2dc41ccfc6f2ad4e0579e"
+    },
+    {
+      "name": "metadata-unit51",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/unit/Metadata.Tests.ps1 -ReportPath .test-results/m303/metadata-unit51.json *> .test-results/m303/metadata-unit51.log",
+      "counts": {
+        "Passed": 43,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "Implemented parser; 43 focused unit cases passed in the dirty development tree.",
+      "local_artifact": ".test-results/m303/metadata-unit51.json",
+      "artifact_sha256": "4b9f27c818fdbb2279a33b13f5926f539e0e52f279a515414d4b06d842f3ba6a"
+    },
+    {
+      "name": "metadata-native51",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/integration/Metadata.Tests.ps1 -ReportPath .test-results/m303/metadata-native51.json *> .test-results/m303/metadata-native51.log",
+      "counts": {
+        "Passed": 0,
+        "Failed": 8,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "Eight native cases failed only the final language expectation: the MOV source fixture did not store that asserted language. Source inspection reported unknown; no product change was made to mask it.",
+      "local_artifact": ".test-results/m303/metadata-native51.json",
+      "artifact_sha256": "41b6e9fd87de2906dad1b87cfd2e2faf46d0009ccb7386431e8f2b76f994a4d6"
+    },
+    {
+      "name": "metadata-native51-v2",
+      "command": "$env:Path='C:/ffmpeg/bin;' + $env:Path; powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath tests/integration/Metadata.Tests.ps1 -ReportPath .test-results/m303/metadata-native51-v2.json *> .test-results/m303/metadata-native51-v2.log",
+      "counts": {
+        "Passed": 8,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "tested_tree_dirty": true,
+      "description": "MP4 source fixture now asserts its stored deu audio language before compression; all eight cases passed. Superseded by clean committed gates.",
+      "local_artifact": ".test-results/m303/metadata-native51-v2.json",
+      "artifact_sha256": "c4c685116c702830e6e1f1a4b29f39f82d204cccefa55ad2a8a343cc9814a8c0"
+    }
+  ],
+  "manual_checks": [],
+  "owner_approval": null,
+  "scope_expansion": "Minimal native Metadata test file and README/MEDIA_PIPELINE/test-policy documentation, to prove tag read-back and document inheritance/privacy limits. No shared runtime/process/probe-schema changes.",
+  "ci": {
+    "commit": "b955d11b649410745b8de917392401045d4e033d",
+    "checks": 0,
+    "statuses": 0,
+    "workflow_runs": 0,
+    "combined_state": "pending",
+    "passed": false
+  },
+  "pull_request": {
+    "number": 19,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/19",
+    "draft": true
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T14:40:20.495057+00:00",
+    "branch": "codex/wvc-m3-03-metadata",
+    "head": "b955d11b649410745b8de917392401045d4e033d",
+    "live_fetch_head": "b955d11b649410745b8de917392401045d4e033d",
+    "live_push_head": "b955d11b649410745b8de917392401045d4e033d",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "Calendar-valid unlabelled compact fallback numbers can be unrelated serials; the fallback warns and cannot establish interview meaning.",
+    "Parsing failure omits filename-derived interview fields, not compatible inherited source tags. Output is not metadata sanitization; compatible private metadata can remain.",
+    "Native tag/language claims apply to the tested installed FFmpeg/FFprobe build. No packaged dependency baseline exists yet; rerun at packaging.",
+    "Arbitrary synthetic mdta-key omission is one observed MP4 case, not a universal removal/privacy guarantee.",
+    "Tag read-back and structural validation do not establish player display or full visual/audio integrity.",
+    "No separate PS7 Quick or new Full/Explorer/manual run. Targeted includes Quick. Historical Full remains incomplete with eight NotRun rows; M2-06 A04 Explorer and physical cancellation remain pending.",
+    "No CI, milestone or release pass implied; no dependency downloads, private media, system policy changes, default quality change or main push."
+  ],
+  "next_task": "WVC-M3-04 - Report savings and benchmark rather than guess",
+  "handoff_checks": [
+    {
+      "command": "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "exit_code": 0,
+      "valid": true,
+      "tasks": 32,
+      "acceptance_criteria": 128,
+      "errors": []
+    },
+    {
+      "command": "git -c core.whitespace=cr-at-eol diff --check",
+      "exit_code": 0
+    }
+  ]
+}

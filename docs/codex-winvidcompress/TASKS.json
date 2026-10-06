@@ -1409,7 +1409,7 @@
       "title": "Validate interview metadata dates and preserve text",
       "milestone": "M3",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         11
       ],
@@ -1435,35 +1435,57 @@
           "id": "WVC-M3-03-A01",
           "description": "Leap day, invalid month/day, 31 February, empty band and unrelated 8-digit numbers are tested.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-03.md",
+            "evidence/WVC-M3-03.json"
+          ],
+          "notes": "43 focused unit cases cover leap/century years, invalid month/day/year, 31 February, blank band, unrelated/embedded/long/multiple tokens, separators and four cultures. Both clean Windows Targeted gates passed."
         },
         {
           "id": "WVC-M3-03-A02",
           "description": "Finnish/German and non-Latin names round-trip as supported UTF-8 metadata.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-03.md",
+            "evidence/WVC-M3-03.json"
+          ],
+          "notes": "Eight native Compress-One cases on each host verify exact UTF-8 Finnish/German/CJK/Cyrillic and literal-punctuation title/artist/comment through MP4 FFprobe read-back."
         },
         {
           "id": "WVC-M3-03-A03",
           "description": "Failed date parsing never prevents an otherwise valid video from compressing.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-03.md",
+            "evidence/WVC-M3-03.json"
+          ],
+          "notes": "Native invalid date, ambiguous dates, blank band, no date and invalid leap/no-source-tags cases complete compression, validate/publish without partials and retain source/final sentinel hashes; omission warnings are retained."
         },
         {
           "id": "WVC-M3-03-A04",
           "description": "Source metadata and filename-derived overrides follow a documented deterministic policy.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M3-03.md",
+            "evidence/WVC-M3-03.json"
+          ],
+          "notes": "Documented title override/valid interview tuple override and failure inheritance; native source-tag preconditions, copyright/audio-language preservation and arbitrary-key compatibility example passed on the installed build."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "b955d11b649410745b8de917392401045d4e033d"
+      ],
+      "evidence": [
+        "evidence/WVC-M3-03.md",
+        "evidence/WVC-M3-03.json",
+        "evidence/WVC-M3-03-session.md"
+      ],
+      "notes": "Verified A01-A04 on both actual Windows hosts at b955d11b649410745b8de917392401045d4e033d. Compact fallback ambiguity and compatible inherited/private tags disclosed; no manual approval gate. Default profile/entry points/safety retained. Packaging/Full/Explorer/physical cancellation limits remain explicit."
     },
     {
       "id": "WVC-M3-04",
