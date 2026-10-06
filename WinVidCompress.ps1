@@ -693,7 +693,7 @@ function ConvertTo-ProbeRatio($Value, [string]$Separator = '/') {
 function New-ProbeResult {
     [pscustomobject]@{ SchemaVersion = 1; Succeeded = $false; Stage = 'Json'; FailureKind = $null; Reason = $null;
         InputPath = $null; ResolvedInputPath = $null; Native = $null; Streams = @(); RealVideoIndices = @();
-        PrimaryVideoIndex = $null; PrimaryVideo = $null; FormatName = $null;
+        PrimaryVideoIndex = $null; PrimaryVideo = $null; FormatName = $null; FormatTimecode = $null;
         DurationSeconds = $null; DurationState = 'Unknown'; DurationSource = $null; ProgressMode = 'Indeterminate';
         GeometryState = 'MetadataOnly'; DisplayGeometry = $null; Warnings = @(); Limitations = @() }
 }
@@ -713,6 +713,7 @@ function ConvertFrom-ProbeJson([string]$Json) {
             throw 'Probe format must be an object when present.'
         }
         $result.FormatName = ConvertTo-ProbeString (Get-ProbeProperty $format 'format_name')
+        $result.FormatTimecode = ConvertTo-ProbeString (Get-ProbeProperty (Get-ProbeProperty $format 'tags') 'timecode')
         if ($result.FormatName -and @($result.FormatName -split ',' | Where-Object { $_ -in @('hls','dash','concat') }).Count) {
             $kind = 'UnsupportedFormat'
             throw 'Playlist/manifest demuxers are not supported video inputs.'
@@ -791,6 +792,9 @@ function ConvertFrom-ProbeJson([string]$Json) {
                 RealFrameRate = (ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'r_frame_rate'));
                 TimeBase = (ConvertTo-ProbeRatio (Get-ProbeProperty $raw 'time_base'));
                 Channels = $channels; SampleRate = $sampleRate;
+                FrameCount = (ConvertTo-ProbeInteger (Get-ProbeProperty $raw 'nb_frames'));
+                CodecTag = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'codec_tag_string'));
+                Timecode = (ConvertTo-ProbeString (Get-ProbeProperty $tags 'timecode'));
                 ChannelLayout = (ConvertTo-ProbeString (Get-ProbeProperty $raw 'channel_layout'));
                 Language = (ConvertTo-ProbeString (Get-ProbeProperty $tags 'language'));
                 DurationSeconds = $duration; DurationRaw = $durationValue
@@ -1390,6 +1394,156 @@ function Close-OutputJob($Job, [bool]$Published, [string]$Stage, [string]$Reason
     return [pscustomobject]@{Warning=$warning}
 }
 
+function Get-OutputDurationTolerance($Plan) {
+    $frames = 0.0; $audioPadding = 0.0
+    if ($null -ne $Plan.Video.AverageFrameRate) { $frames = 2.0 / $Plan.Video.AverageFrameRate.Value }
+    if ($null -ne $Plan.Audio -and $null -ne $Plan.Audio.SampleRate) { $audioPadding = 2048.0 / $Plan.Audio.SampleRate }
+    return [Math]::Min(2.0,[Math]::Max(0.25,$frames + $audioPadding))
+}
+
+function Test-OutputStructure($Output, $Source, $Plan) {
+    if (-not $Output.Succeeded) { throw "Output probe failed [$($Output.FailureKind)]: $($Output.Reason)" }
+    if ('mp4' -notin @($Output.FormatName -split ',')) { throw 'Output probe did not identify the MP4 container family.' }
+    $videos = @($Output.Streams | Where-Object CodecType -eq 'video')
+    $audios = @($Output.Streams | Where-Object CodecType -eq 'audio')
+    $audioCount = [int]($null -ne $Plan.Audio)
+    if ($videos.Count -ne 1 -or $audios.Count -ne $audioCount -or
+        $videos[0].Disposition.AttachedPicture -or $videos[0].CodecName -ne 'h264') {
+        throw 'Output needs exactly one real H.264 video and only the selected AAC audio, without extra streams.'
+    }
+    $video = $videos[0]
+    $warnings = New-Object 'Collections.Generic.List[string]'
+    $extra = @($Output.Streams | Where-Object { $_.CodecType -notin @('video','audio') })
+    if ($extra.Count) {
+        $timecode = if ($null -ne $Source.FormatTimecode) { $Source.FormatTimecode } else { $Plan.Video.Timecode }
+        if ($extra.Count -ne 1 -or $extra[0].CodecType -ne 'data' -or $extra[0].CodecTag -ne 'tmcd' -or
+            $null -eq $timecode -or $video.Timecode -ne $timecode -or $extra[0].Timecode -ne $timecode) {
+            throw 'Unexpected output streams; only a generated tmcd track matching retained video timecode is allowed.'
+        }
+        $warnings.Add('MP4 includes a generated timecode track matching retained source metadata; it is excluded from decode checks.')
+    }
+    if ($video.FrameCount -eq 0) { throw 'Output video explicitly reports zero frames.' }
+    if ($null -eq $video.FrameCount) { $warnings.Add('Output frame count is unavailable; structural validation does not establish decoded frame integrity.') }
+    if ($Plan.Video.Height -gt 1080) {
+        if ($video.Height -ne 1080) { throw 'Output does not match the applied 1080 height cap.' }
+        $widths = @($Plan.Video.Width * 1080.0 / $Plan.Video.Height)
+        if ($null -ne $Plan.Video.RotationDegrees -and [Math]::Abs($Plan.Video.RotationDegrees % 180) -eq 90) {
+            $widths += $Plan.Video.Height * 1080.0 / $Plan.Video.Width
+            $warnings.Add('Quarter-turn scale orientation remains a deferred M3-01 geometry boundary.')
+        }
+        if ($null -eq $Plan.Video.RotationDegrees -or ($Plan.Video.RotationDegrees % 90) -eq 0) {
+            if (-not @($widths | Where-Object { [Math]::Abs($_ - $video.Width) -le 2 }).Count) { throw 'Scaled output width does not match the existing aspect-ratio scale within two-pixel rounding.' }
+        } else { $warnings.Add('Arbitrary-angle geometry remains metadata-only until M3-01; exact dimensions are not validated.') }
+    } elseif ($null -eq $Plan.Video.RotationDegrees -or $Plan.Video.RotationDegrees -eq 0) {
+        if ($video.Width -ne $Plan.Video.Width -or $video.Height -ne $Plan.Video.Height) { throw 'Unscaled output coded dimensions changed.' }
+    } else {
+        if ([Math]::Abs($Plan.Video.RotationDegrees % 180) -eq 90) {
+            $same = $video.Width -eq $Plan.Video.Width -and $video.Height -eq $Plan.Video.Height
+            $swapped = $video.Width -eq $Plan.Video.Height -and $video.Height -eq $Plan.Video.Width
+            if (-not ($same -or $swapped)) { throw 'Quarter-turn output dimensions match neither current geometry candidate.' }
+        } elseif (($Plan.Video.RotationDegrees % 180) -eq 0 -and
+            ($video.Width -ne $Plan.Video.Width -or $video.Height -ne $Plan.Video.Height)) { throw 'Unscaled half-turn coded dimensions changed.' }
+        $warnings.Add('Rotation/display geometry is metadata-only until M3-01; exact orientation is not validated.')
+    }
+    if ($audioCount) {
+        $audio = $audios[0]
+        if ($audio.CodecName -ne 'aac' -or $null -eq $audio.Channels -or $null -eq $audio.SampleRate) {
+            throw 'Selected output audio needs AAC and positive channels/sample rate.'
+        }
+        if ($null -ne $Plan.Audio.Channels -and $audio.Channels -ne $Plan.Audio.Channels) { throw 'Output audio channel count changed.' }
+    }
+    $tolerance = Get-OutputDurationTolerance $Plan
+    $checks = New-Object 'Collections.Generic.List[object]'
+    $videoDuration = $video.DurationSeconds
+    if ($null -eq $videoDuration -and $Output.Streams.Count -eq 1) {
+        $videoDuration = $Output.DurationSeconds
+        $warnings.Add('Output video duration uses the sole-video container fallback.')
+    }
+    if ($null -eq $videoDuration) { throw 'Output video duration is unavailable; retained audio cannot stand in for video.' }
+    if ($audioCount -and $null -eq $audios[0].DurationSeconds) { throw 'Output audio duration is unavailable.' }
+    $videoReference = $Plan.Video.DurationSeconds
+    if ($null -eq $videoReference -and $Source.Streams.Count -eq 1) {
+        $videoReference = $Source.DurationSeconds
+        if ($null -ne $videoReference) { $warnings.Add('Source video duration uses the sole-video container fallback; independent stream duration is unavailable.') }
+    }
+    $references = @([pscustomobject]@{Name='Video';Expected=$videoReference;Actual=$videoDuration})
+    if ($audioCount) { $references += [pscustomobject]@{Name='Audio';Expected=$Plan.Audio.DurationSeconds;Actual=$audios[0].DurationSeconds} }
+    if ($Source.Streams.Count -eq (1+$audioCount) -and $Source.DurationSource -eq 'Format' -and $null -ne $Source.DurationSeconds) {
+        $known = @($references | Where-Object { $null -ne $_.Expected })
+        $longest = ($known | Measure-Object Expected -Maximum).Maximum
+        if ($known.Count -ne $references.Count -or [Math]::Abs($Source.DurationSeconds - $longest) -gt $tolerance) {
+            $warnings.Add('Source container duration disagrees with selected stream durations; aggregate comparison is unavailable because timestamp/edit offsets may be rebased.')
+        } elseif ($Output.DurationSource -ne 'Format') {
+            $warnings.Add('Output container duration is unavailable; a stream fallback cannot satisfy the aggregate comparison.')
+        } else { $references += [pscustomobject]@{Name='RetainedContainer';Expected=$Source.DurationSeconds;Actual=$Output.DurationSeconds} }
+    }
+    foreach ($reference in $references) {
+        if ($null -eq $reference.Expected) {
+            $warnings.Add("Source $($reference.Name.ToLowerInvariant()) duration is unknown; that duration comparison is unavailable.")
+            continue
+        }
+        if ($null -eq $reference.Actual) { throw "Output $($reference.Name) duration is unavailable for its known reference." }
+        $shortLimit = 0.1*$reference.Expected
+        if ($reference.Actual -ge $reference.Expected) { $shortLimit = [Math]::Max(0.05,$shortLimit) }
+        $allowance = [Math]::Min($tolerance,$shortLimit)
+        if ($reference.Expected -lt 0.5) { $warnings.Add('Short duration allows up to 50ms of timestamp padding; shortening remains limited to 10 percent and metadata cannot prove frame integrity.') }
+        $difference = [Math]::Abs($reference.Actual - $reference.Expected)
+        $checks.Add([pscustomobject]@{Stream=$reference.Name;ExpectedSeconds=$reference.Expected;ActualSeconds=$reference.Actual;ToleranceSeconds=$allowance})
+        if ($difference -gt ($allowance + 0.000001)) { throw "Output $($reference.Name) duration differs by $difference seconds (tolerance $allowance)." }
+    }
+    return [pscustomobject]@{DurationChecks=$checks.ToArray();Warnings=$warnings.ToArray()}
+}
+
+function Get-OutputValidation([string]$FFprobe, $Job, $Source, $Plan,
+    [ValidateRange(100,30000)][int]$TimeoutMilliseconds = 10000) {
+    $result = [pscustomobject]@{SchemaVersion=1;Succeeded=$false;JobId=$Job.JobId;SourcePath=$Job.SourcePath;
+        TemporaryPath=$Job.TempPath;Stage='Validation';FailureKind='File';Reason=$null;Inspection=$null;DurationChecks=@();Warnings=@()}
+    $file = $null
+    try {
+        [void](Assert-OutputJob $Job -ForPublication)
+        # Hold read sharing during structural inspection; no writer/deleter can
+        # modify this open file. Close it before the no-clobber publication move.
+        $file = [IO.File]::Open($Job.TempPath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+        if ($file.Length -lt 16) { throw 'Temporary output is empty or too short for an MP4 ftyp header.' }
+        $header = New-Object byte[] 16
+        if ($file.Read($header,0,16) -ne 16) { throw 'Temporary output header is unreadable.' }
+        $boxLength = [long]$header[0]*16777216 + [long]$header[1]*65536 + [long]$header[2]*256 + $header[3]
+        $type = [Text.Encoding]::ASCII.GetString($header,4,4)
+        $brand = [Text.Encoding]::ASCII.GetString($header,8,4)
+        if ($type -cne 'ftyp' -or $boxLength -lt 16 -or $boxLength -gt $file.Length -or $brand -cnotmatch '^(iso[m1-9]|mp4[12]|avc1)$') {
+            throw 'Temporary output lacks an expected MP4 ftyp/brand (QuickTime/3GP are not MP4 output).'
+        }
+        $result.FailureKind = 'Probe'
+        $result.Inspection = Get-MediaInspection $FFprobe $Job.TempPath $TimeoutMilliseconds
+        if (-not $result.Inspection.Succeeded) { throw "Output probe failed [$($result.Inspection.FailureKind)]: $($result.Inspection.Reason)" }
+        $result.FailureKind = 'Structure'
+        $structure = Test-OutputStructure $result.Inspection $Source $Plan
+        [void](Assert-OutputJob $Job -ForPublication)
+        $result.DurationChecks = $structure.DurationChecks; $result.Warnings = $structure.Warnings
+        $result.Succeeded = $true; $result.FailureKind = $null
+    } catch [Management.Automation.PipelineStoppedException] { throw }
+    catch {
+        $result.Reason = "Job $($Job.JobId); source $($Job.SourcePath); temporary $($Job.TempPath): $($_.Exception.Message)"
+    } finally { if ($null -ne $file) { $file.Dispose() } }
+    return $result
+}
+
+function Invoke-OutputDecodeCheck([string]$FFmpeg, $Job, $Validation) {
+    [void](Assert-OutputJob $Job -ForPublication)
+    if (-not $Validation.Succeeded -or $Validation.JobId -ne $Job.JobId -or
+        $Validation.TemporaryPath -ne $Job.TempPath -or $Validation.SourcePath -ne $Job.SourcePath) {
+        throw 'A full decode check requires successful structural validation for this output job.'
+    }
+    $arguments = @('-hide_banner','-nostdin','-v','error','-xerror','-abort_on','empty_output_stream','-err_detect','explode','-protocol_whitelist','file','-i',$Job.TempPath)
+    foreach ($stream in @($Validation.Inspection.Streams | Where-Object { $_.CodecType -in @('video','audio') })) { $arguments += @('-map',('0:'+ $stream.Index)) }
+    $arguments += @('-f','null','NUL')
+    $file = [IO.File]::Open($Job.TempPath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+    try { $native = Invoke-EncodeProcess $FFmpeg $arguments }
+    finally { $file.Dispose() }
+    return [pscustomobject]@{SchemaVersion=1;Succeeded=$native.Succeeded;JobId=$Job.JobId;SourcePath=$Job.SourcePath;
+        TemporaryPath=$Job.TempPath;Native=$native;Reason=$(if ($native.Succeeded) {$null} else {"Job $($Job.JobId); source $($Job.SourcePath): decode check failed [$($native.FailureKind)]: $($native.Error)"})}
+}
+
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
     $outputJob = $null
     $published = $false
@@ -1458,6 +1612,13 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
             Write-Host 'Captured encoder diagnostics retain only the last 1048576 characters per stream; console output was streamed.' -ForegroundColor Yellow
         }
         if (-not $native.Succeeded) { throw "Encoder failed [$($native.FailureKind)]: $($native.Error)" }
+        $stage = 'Validation'
+        $validation = Get-OutputValidation $ffprobe $outputJob $inspection $streamPlan
+        if ($null -ne $validation.Inspection -and $null -ne $validation.Inspection.Native -and $validation.Inspection.Native.StdErr) {
+            Write-Host ("Output probe diagnostics: " + $validation.Inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
+        }
+        if (-not $validation.Succeeded) { throw "Output validation failed [$($validation.FailureKind)]: $($validation.Reason)" }
+        foreach ($warning in $validation.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $stage = 'Promote'
         $publication = Publish-OutputJob $outputJob $CollisionMode
         $published = $publication.Published

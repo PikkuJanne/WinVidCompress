@@ -229,6 +229,8 @@ Describe 'Normalized bounded media inspection [WVC-M2-01]' {
     }
 
     It 'proceeds with unknown duration, indeterminate progress and a visible validation limitation' {
+        # This suite tests its existing boundary; validation has separate real-helper tests.
+        Mock Get-OutputValidation { [pscustomobject]@{Succeeded=$true;Inspection=$null;Warnings=@()} }
         Set-ProbeJson (Read-ProbeFixture 'unknown-duration')
         $result = Get-MediaInspection $ProbeExe $Source
         $result.Succeeded | Should -BeTrue

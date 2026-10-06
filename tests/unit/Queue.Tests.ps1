@@ -187,6 +187,8 @@ Describe 'Queue output separation using a file-writing encoder recorder [WVC-M1-
         $script:Root = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
         [void][IO.Directory]::CreateDirectory($script:Root)
         $script:RecordedJobs = New-Object 'Collections.Generic.List[object]'
+        # This suite tests its existing boundary; validation has separate real-helper tests.
+        Mock Get-OutputValidation { [pscustomobject]@{Succeeded=$true;Inspection=$null;Warnings=@()} }
         $script:Counters = [pscustomobject]@{ Done = 0; Skipped = 0; Failed = 0 }
         Mock Write-Host {}
         Mock Get-MediaInspection {

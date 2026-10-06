@@ -82,7 +82,8 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
         $temporaryTargets = @($captured | Where-Object { $_ -match '\.wvc-job-[0-9a-f]{32}[\\/]encode\.partial\.mp4$' })
         if ($temporaryTargets.Count -ne 2 -or @($temporaryTargets | Select-Object -Unique).Count -ne 2) { throw 'Recorder did not receive two distinct owned temporary targets.' }
         foreach ($final in @($expectedOutput,$expectedOutputTwo)) {
-            if (-not (Test-Path -LiteralPath $final -PathType Leaf) -or [IO.File]::ReadAllText($final) -ne 'synthetic publication sentinel') {
+            $bytes = [IO.File]::ReadAllBytes($final)
+            if ($bytes.Length -le 16 -or [Text.Encoding]::UTF8.GetString($bytes,16,$bytes.Length-16) -ne 'synthetic publication sentinel') {
                 throw 'Synthetic recorder sentinel was not published at the expected final path.'
             }
         }
@@ -134,11 +135,13 @@ public static class WvcEntryRecorder {
     public static int Main(string[] args) {
         if (WvcEnvironmentResponder.Respond(args)) return 0;
         if (Path.GetFileName(Environment.GetCommandLineArgs()[0]).Equals("ffprobe.exe", StringComparison.OrdinalIgnoreCase)) {
-            Console.WriteLine("{\"streams\":[{\"index\":0,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":1280,\"height\":720}],\"format\":{\"duration\":\"1.000000\"}}");
+            Console.WriteLine("{\"streams\":[{\"index\":0,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"width\":1280,\"height\":720,\"duration\":\"1\",\"nb_frames\":\"24\"}],\"format\":{\"duration\":\"1.000000\",\"format_name\":\"mov,mp4,m4a,3gp,3g2,mj2\"}}");
         } else {
             Console.WriteLine("WVC_NATIVE_RECORDER");
             foreach (string arg in args) Console.WriteLine("WVC_ARG:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));
             using (var output = new FileStream(args[args.Length-1], FileMode.CreateNew, FileAccess.Write, FileShare.None)) {
+                byte[] header = new byte[] {0,0,0,16,102,116,121,112,105,115,111,109,0,0,0,0};
+                output.Write(header,0,header.Length);
                 byte[] payload = Encoding.UTF8.GetBytes("synthetic publication sentinel");
                 output.Write(payload,0,payload.Length);
             }
