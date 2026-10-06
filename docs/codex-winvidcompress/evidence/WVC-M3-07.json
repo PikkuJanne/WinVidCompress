@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-07",
+  "acceptance_ids": [
+    "WVC-M3-07-A01",
+    "WVC-M3-07-A02",
+    "WVC-M3-07-A03",
+    "WVC-M3-07-A04"
+  ],
+  "recorded_at": "2026-10-06T17:17:38.686096+00:00",
+  "tested_commits": [
+    "6bf2f9a735175b81b9b795060967fe8d4715e24b",
+    "4b00eee586e9fa131715964897f02a8a373be4b6"
+  ],
+  "application_sha256": "bceae4e33649202ba0517ab1e99253d62236f6911b0e988d7e1efafee7942c85",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300; UBR9457; 26H2; 64-bit",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_tools": [
+      {
+        "name": "ffmpeg",
+        "version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+        "sha256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83"
+      },
+      {
+        "name": "ffprobe",
+        "version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+        "sha256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+      }
+    ]
+  },
+  "command_bindings": {
+    "ps51": "$env:SystemRoot/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "ps7": "existing bundled native pwsh.exe; private runtime root redacted",
+    "modules": "$env:TEMP/wvc-m0-02-dev-modules"
+  },
+  "runs": [
+    {
+      "name": "focused51",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1' -ReportPath .test-results/m307/focused51.json *> .test-results/m307/focused51.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 2,
+        "Failed": 53,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/focused51.json",
+      "report_sha256": "6567c9bdf82207973e68e27a41032c79385d98bf8a3f7918190596badc130965"
+    },
+    {
+      "name": "focused51-v2",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1' -ReportPath .test-results/m307/focused51-v2.json *> .test-results/m307/focused51-v2.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 36,
+        "Failed": 19,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/focused51-v2.json",
+      "report_sha256": "80410d13d57942ac94f939f3597ca0d56b553f1afe6dc982752aeabd126fefd4"
+    },
+    {
+      "name": "focused51-v3",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1' -ReportPath .test-results/m307/focused51-v3.json *> .test-results/m307/focused51-v3.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 52,
+        "Failed": 3,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/focused51-v3.json",
+      "report_sha256": "e1ed7b8b9d3fd70522e32319b90580e053afee5431671eb1f490fb92083e1387"
+    },
+    {
+      "name": "focused51-v4",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1' -ReportPath .test-results/m307/focused51-v4.json *> .test-results/m307/focused51-v4.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 54,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/focused51-v4.json",
+      "report_sha256": "a38d0918574a5ccab44be87129dc9e84a977494b1e75ad85957ae8255c6fcd1f"
+    },
+    {
+      "name": "focused51-v5",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1' -ReportPath .test-results/m307/focused51-v5.json *> .test-results/m307/focused51-v5.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 65,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/focused51-v5.json",
+      "report_sha256": "a3273f27df255b709e5d50266997eb2f189b9078482dd82290bbe48e84a2d15e"
+    },
+    {
+      "name": "quick51",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot $modules -ReportPath .test-results/m307/quick51.json *> .test-results/m307/quick51.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 768,
+        "Failed": 10,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/quick51.json",
+      "report_sha256": "be16898d30b6b231ff85a039bbdf1e59d02700e8f4545258d2feb03b643937c9"
+    },
+    {
+      "name": "compat51",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/Exit.Tests.ps1|tests/launcher/Launcher.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m307/compat51.json *> .test-results/m307/compat51.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 120,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/compat51.json",
+      "report_sha256": "f5a19f20105be1848f8aaab4a0c2aa8144e5fc072790f5084d6449f1d64e1303"
+    },
+    {
+      "name": "focused7",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1' -ReportPath .test-results/m307/focused7.json *> .test-results/m307/focused7.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 68,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/focused7.json",
+      "report_sha256": "cd147cd8a1df5dca5aad2fd556caa828d136cf8214c843f00cb418cba8ce30dc"
+    },
+    {
+      "name": "quick51-final",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot $modules -ReportPath .test-results/m307/quick51-final.json *> .test-results/m307/quick51-final.log",
+      "tested_commit": "d5b7a02507e87d9454da9f95f59ff79ccddd9810",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 779,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/quick51-final.json",
+      "report_sha256": "def07432cf4a564271e0b4e082f55711642b8022cdb6f98587c43b01d05c50c8"
+    },
+    {
+      "name": "full-both",
+      "tier": "Full",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot $modules -WindowsPowerShell $ps51 -PowerShell7 $ps7 -ReportPath .test-results/m307/full-both.json *> .test-results/m307/full-both.log",
+      "tested_commit": "6bf2f9a735175b81b9b795060967fe8d4715e24b",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 1576,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "exit_code": 2,
+      "status": "Incomplete",
+      "report": ".test-results/m307/full-both.json",
+      "report_sha256": "9efe7cfd90388ee3d50d3737a38da051c0508faadb7719e5367ed793c56774da",
+      "outer_tool_exit_code": 1,
+      "exit_code_kind": "report-declared harness exit; outer PowerShell maps nonzero native status to1 without explicit forwarding",
+      "transport_verification": "Direct exit2 process returned2; ordinary parent command returned1; explicit-forwarded Manual tier reported/native/outer2 with 0/0/0/7 NotRun (no manual observations).",
+      "application_sha256": "c37ec0d1a40f5bbe7f7a491e8846d898873f4be4bab9f02eb3bdd1bee2cb2b31"
+    },
+    {
+      "name": "guard-regression",
+      "tier": "Targeted/focused",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1' -ReportPath .test-results/m307/guard-regression.json *> .test-results/m307/guard-regression.log",
+      "tested_commit": "6bf2f9a735175b81b9b795060967fe8d4715e24b",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 37,
+        "Failed": 2,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 1,
+      "status": "Failed",
+      "report": ".test-results/m307/guard-regression.json",
+      "report_sha256": "a65efeb03a6955059c6f246088b325a7c559fab19a02737624dfba23bec24558",
+      "application_sha256": "c37ec0d1a40f5bbe7f7a491e8846d898873f4be4bab9f02eb3bdd1bee2cb2b31"
+    },
+    {
+      "name": "focused7-guard",
+      "tier": "Targeted/focused",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Manifest.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1' -ReportPath .test-results/m307/focused7-guard.json *> .test-results/m307/focused7-guard.log",
+      "tested_commit": "4b00eee586e9fa131715964897f02a8a373be4b6",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 71,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/focused7-guard.json",
+      "report_sha256": "90ac71fee4b75ec2c52242037f03c63621a867aa76a718ce47223367da93c9e2",
+      "application_sha256": "bceae4e33649202ba0517ab1e99253d62236f6911b0e988d7e1efafee7942c85"
+    },
+    {
+      "name": "quick51-guard",
+      "tier": "Quick",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot $modules -ReportPath .test-results/m307/quick51-guard.json *> .test-results/m307/quick51-guard.log; exit $LASTEXITCODE",
+      "tested_commit": "4b00eee586e9fa131715964897f02a8a373be4b6",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 782,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "exit_code": 0,
+      "status": "Passed",
+      "report": ".test-results/m307/quick51-guard.json",
+      "report_sha256": "8ea70dc6f4d129b9695e79e72c1faea3337dec31de1a76d0ca195d899b45d91c",
+      "application_sha256": "bceae4e33649202ba0517ab1e99253d62236f6911b0e988d7e1efafee7942c85"
+    }
+  ],
+  "exit_transport_checks": [
+    {
+      "command": "& $ps51 -NoProfile -NonInteractive -Command 'exit 2' *> .test-results/m307/exit2-wrapper.log",
+      "outer_tool_exit": 1
+    },
+    {
+      "command": "Invoke-WvcTestProcess $ps51 @('-NoProfile','-NonInteractive','-Command','exit 2')",
+      "actual_process_exit": 2,
+      "report": ".test-results/m307/exit2-direct.json"
+    },
+    {
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Manual -ReportPath .test-results/m307/exit-transport-manual.json *> .test-results/m307/exit-transport-manual.log; $nativeExit=$LASTEXITCODE; exit $nativeExit",
+      "actual_native_exit": 2,
+      "outer_tool_exit": 2,
+      "report_exit": 2,
+      "counts": {
+        "Passed": 0,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 7
+      },
+      "reason": "Exit-transport smoke only; no actual manual checks performed."
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "WVC-M3-07-A01",
+      "status": "passed",
+      "evidence": "Final clean PS51 Quick and PS7 focused validate all61 task cases; preceding clean Full includes59 initial task cases per host plus existing output/entry/safety regressions."
+    },
+    {
+      "id": "WVC-M3-07-A02",
+      "status": "passed",
+      "evidence": "Final clean PS51 Quick and PS7 focused validate all61 task cases; preceding clean Full includes59 initial task cases per host plus existing output/entry/safety regressions."
+    },
+    {
+      "id": "WVC-M3-07-A03",
+      "status": "passed",
+      "evidence": "Final clean PS51 Quick and PS7 focused validate all61 task cases; preceding clean Full includes59 initial task cases per host plus existing output/entry/safety regressions."
+    },
+    {
+      "id": "WVC-M3-07-A04",
+      "status": "passed",
+      "evidence": "Final clean PS51 Quick and PS7 focused validate all61 task cases; preceding clean Full includes59 initial task cases per host plus existing output/entry/safety regressions."
+    }
+  ],
+  "manual_checks": [
+    {
+      "task_id": "WVC-M3-06-A01",
+      "status": "not_run",
+      "reason": "No actual five-route physical Ctrl+C observations."
+    },
+    {
+      "task_id": "WVC-M3-04-A04",
+      "status": "not_run",
+      "reason": "Owner playback pending."
+    },
+    {
+      "task_id": "WVC-M2-06-A04",
+      "status": "not_run",
+      "reason": "Actual Explorer/menu/prompt observation pending."
+    }
+  ],
+  "sanitized_artifacts": [
+    "Committed code/tests/specs/usage/evidence only; raw reports/logs/native binaries/media/manifests and machine roots remain local ignored or owned TestDrive."
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-06T17:12:48.773554+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "4b00eee586e9fa131715964897f02a8a373be4b6",
+    "branch": "codex/wvc-m3-07-resume",
+    "upstream": "origin/codex/wvc-m3-07-resume",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "4b00eee586e9fa131715964897f02a8a373be4b6",
+    "live_push_head": "4b00eee586e9fa131715964897f02a8a373be4b6",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after the handoff commit",
+  "pull_request": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/23",
+    "state": "OPEN",
+    "draft": true,
+    "tested_head": "4b00eee586e9fa131715964897f02a8a373be4b6",
+    "check_runs": 0,
+    "workflow_runs": 0,
+    "ci_pass_claim": false
+  },
+  "limitations": [
+    "Full exit2/Incomplete is solely eight historical manual/future NotRun rows; not release acceptance.",
+    "Fast source identity cannot detect same-size/restored-mtime changes; strong source SHA256 is opt-in and costs full reads.",
+    "Output SHA256 and structural checks do not prove full visual/audio integrity.",
+    "Only ordinary local canonical non-reparse drive paths tested; network/power-loss/hostile same-user atomicity unaccepted.",
+    "A crash after publication before checkpoint causes safe rename retry, never blind adoption.",
+    "Intermediate dirty evolving trees have no preserved tree SHA; final clean Quick/focused plus preceding clean Full are acceptance authority.",
+    "Private host/module roots are expressed as command variables; exact argument arrays and raw diagnostics retained locally."
+  ],
+  "next_task": "WVC-M4-01"
+}

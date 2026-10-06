@@ -22,7 +22,9 @@ Owner-approved D005 (2026-10-05): BAT drag/drop excludes environment-variable-sh
 
 ## Optional CLI
 
-Preserve positional file/folder paths. Proposed small controls: -OutputDir, -CollisionMode rename|skip, -WhatIf, -CheckEnvironment; opt-in -Resume / -ManifestPath, -PreserveSubfolders and stronger-identity choice may be added as the associated tasks mature. Only expose options actually implemented and tested; no speculative full preset menu. A per-run override does not implicitly rewrite config.
+Preserve positional file/folder paths. Proposed small controls: -OutputDir, -CollisionMode rename|skip, -WhatIf, -CheckEnvironment; M3-07 implements opt-in -Resume / -ManifestPath / -StrongSourceHash for explicit batches; -PreserveSubfolders remains a future task. Only expose options actually implemented and tested; no speculative full preset menu. A per-run override does not implicitly rewrite config.
+
+For a new resumable batch, use `./WinVidCompress.ps1 -ManifestPath 'D:\Jobs\batch.json' 'D:\Sources'`. Retry with `./WinVidCompress.ps1 -Resume -ManifestPath 'D:\Jobs\batch.json' 'D:\Sources'`. The manifest parent must exist and the first manifest file must not exist. Add `-StrongSourceHash` on creation and every resume to compare source SHA256 instead of only size/mtime. BAT unattended supports the same flags with `-Unattended` first. Manifest controls require explicit input paths and refuse menu/no-input or -CheckEnvironment combinations; they do not alter the four-item menu/config/default profile. Resume needs the exact original frozen eligible source set and current output root, and uses safe rename for retries. See [identity, scope and atomicity policy](OUTPUT_SAFETY.md#manifest-and-resume).
 
 -WhatIf is a genuinely non-writing plan: no config/backup creation, output folders, encode, persistent log or manifest writes. Read-only filesystem inspection and optional native probes are allowed and disclosed. -CheckEnvironment reports dependencies/versions/capabilities and path availability without starting conversion or installing anything. Unattended calls never prompt.
 
