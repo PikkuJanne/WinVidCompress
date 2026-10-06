@@ -164,6 +164,24 @@ Describe 'Structural output validation [WVC-M2-05]' {
         $SourceInspection=Convert-ValidationDocument $SourceDocument;$Plan=Get-StreamPlan $SourceInspection
         (Get-OutputValidation 'unused' $Job $SourceInspection $Plan).Succeeded | Should -BeFalse
     }
+    It 'rejects supplied invalid video duration <Raw> despite a positive silent-container fallback [A01]' -TestCases @(
+        @{Raw='0';Frames='240'},@{Raw='-1';Frames='240'},@{Raw='NaN';Frames='240'},@{Raw='Infinity';Frames='240'},@{Raw='bad';Frames='240'},
+        @{Raw='0';Frames='N/A'},@{Raw='-1';Frames='N/A'},@{Raw='NaN';Frames='N/A'},@{Raw='Infinity';Frames='N/A'},@{Raw='bad';Frames='N/A'}
+    ) {
+        param($Raw,$Frames)
+        $OutputDocument.streams[0].duration=$Raw;$OutputDocument.streams[0].nb_frames=$Frames
+        $result=Get-OutputValidation 'unused' $Job $SourceInspection $Plan
+        $result.Succeeded | Should -BeFalse
+        $result.Reason | Should -Match 'supplied an invalid duration'
+    }
+    It 'permits a disclosed sole-video fallback for actually <Missing> duration metadata [A02]' -TestCases @(@{Missing=$true},@{Missing=$false}) {
+        param($Missing)
+        if ($Missing) { $OutputDocument.streams[0].PSObject.Properties.Remove('duration') }
+        else { $OutputDocument.streams[0].duration=$null }
+        $result=Get-OutputValidation 'unused' $Job $SourceInspection $Plan
+        $result.Succeeded | Should -BeTrue
+        ($result.Warnings -join ' ') | Should -Match 'sole-video container fallback'
+    }
     It 'bounds fractional/low/missing frame-rate tolerance [A02]' -TestCases @(
         @{Rate='30000/1001';Expected=0.25},@{Rate='1/10';Expected=2.0},@{Rate='0/0';Expected=0.25}
     ) {
@@ -235,9 +253,10 @@ Describe 'Validation precedes final publication [WVC-M2-05-A03/A04]' {
         Should -Invoke Get-MediaInspection -Times 2
         Should -Invoke Invoke-OutputDecodeCheck -Times 0 -Exactly
     }
-    It 'retains failed validation with source/job identity and no new final or changed sentinels' {
+    It 'retains failed video-duration <VideoDuration> validation with source/job identity and unchanged sentinels' -TestCases @(@{VideoDuration='1'},@{VideoDuration='0'}) {
+        param($VideoDuration)
         [IO.File]::WriteAllText($Final,'existing final sentinel');$hash=(Get-FileHash -LiteralPath $Final).Hash
-        $OutputDocument.streams[0].duration='1';$OutputDocument.format.duration='1'
+        $OutputDocument.streams[0].duration=$VideoDuration;$OutputDocument.format.duration=$(if ($VideoDuration -eq '0') {'10'} else {'1'})
         Compress-One 'unused' 'unused' $SourcePath $Output 22 ([ref]$Counters)
         $Counters.Done | Should -Be 0;$Counters.Failed | Should -Be 1
         $partials=@(Get-ChildItem -LiteralPath $Output -Recurse -Filter 'encode.partial.mp4')

@@ -1,0 +1,709 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M2-05",
+  "task_status": "verified",
+  "acceptance_ids": [
+    "WVC-M2-05-A01",
+    "WVC-M2-05-A02",
+    "WVC-M2-05-A03",
+    "WVC-M2-05-A04"
+  ],
+  "recorded_at": "2026-10-06T04:07:33.624393+00:00",
+  "tested_commits": [
+    "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+    "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5"
+  ],
+  "base_commit": "a23a917a4881d45c9c061a150f83ef865570cf66",
+  "branch": "codex/wvc-m2-05-validation",
+  "host": {
+    "os": "Microsoft Windows 11 Pro 10.0.26300 UBR9457 (26H2)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg": null,
+    "ffprobe": null
+  },
+  "scope": [
+    "Pre-promotion owned MP4 structural/per-stream duration checks and explicit optional developer decode helper",
+    "66 validation unit cases and eight actual native probe/decode-argv cases per host; two additional real-media cases skipped",
+    "Minimal earlier unit validation seams and entry/concurrent FTYP/JSON/sentinel migrations",
+    "Behavior/test documentation, task/acceptance/status/next/session handoff"
+  ],
+  "runs": [
+    {
+      "name": "focused51-c8a3ed0",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/OutputValidation.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m205/focused51-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/focused51-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 243,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "a0cd87afb1710ab9ca7f3287f6f2b40d70957e7dc59b213be8997ea4e3debe66",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "075:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "076:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "153:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "154:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "focused7-c8a3ed0",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/OutputValidation.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m205/focused7-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/focused7-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 243,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "c7a65353d60153e638b6b9e3f4871e0bd8c26041565939b6a81f1ba4f6eb47b8",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "075:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "076:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "153:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "154:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick51-c8a3ed0",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/quick51-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/quick51-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 405,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "d8c94abff62d28c40206ad523ad39a1f54a94a52dfa7290c774c102e2f89989b",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/055:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/056:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/057:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/058:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "quick7-c8a3ed0",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/quick7-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/quick7-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 405,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "83b4c9cb3881c70aebbe9eea3fee61c450b42c51a6a36f765216517228f2ac4d",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/055:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/056:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/057:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/058:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        }
+      ]
+    },
+    {
+      "name": "targeted51-c8a3ed0",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/targeted51-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/targeted51-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 421,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "artifact_sha256": "843a10f652353a55a5387f17ed558c9e064594ed26533fa08a8693fc3577598d",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/055:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/056:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/057:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/058:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    },
+    {
+      "name": "targeted7-c8a3ed0",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/targeted7-c8a3ed0.json",
+      "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/targeted7-c8a3ed0.json",
+      "status": "PassedWithOmissions",
+      "counts": {
+        "Passed": 421,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "7.6.5",
+          "Edition": "Core"
+        }
+      ],
+      "artifact_sha256": "8fa606c496a15c2be7df6b962c352f9b698e534551c4e199bfe83f584849d717",
+      "failed_case_ids": [],
+      "not_run_case_ids": [],
+      "skipped_cases": [
+        {
+          "Id": "Current/055:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/056:validates and explicitly decodes real synthetic <Fixture> output before publication [WVC-M2-05]",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/057:confirms first inspected video and unique-default audio in actual encoded output",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "Current/058:completes actual silent video without adding an audio stream",
+          "Status": "Skipped",
+          "Reason": ""
+        },
+        {
+          "Id": "fixture/audio-only",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/multi-stream",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/sdr-av",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        },
+        {
+          "Id": "fixture/silent",
+          "Status": "Skipped",
+          "Reason": "FFmpeg/FFprobe unavailable; media generation and probe not tested."
+        }
+      ]
+    },
+    {
+      "name": "full51-aba01e3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/full51-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "exit_code": 2,
+      "local_artifact": ".test-results/m205/full51-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 8
+      },
+      "status": "Incomplete",
+      "artifact_sha256": "47697af1a3773a02432a84d642e99547c37f295c5e542bffc39e7f98417fa07c"
+    },
+    {
+      "name": "full7-aba01e3",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/full7-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "exit_code": 2,
+      "local_artifact": ".test-results/m205/full7-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 8
+      },
+      "status": "Incomplete",
+      "artifact_sha256": "85455a4deee40aa7136d4e6db1c12e84d1692c527760da41f86a6ec210aa72a1"
+    }
+  ],
+  "earlier_checkpoint_runs": [
+    {
+      "name": "focused51-aba01e3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/OutputValidation.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m205/focused51-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/focused51-aba01e3.json",
+      "counts": {
+        "Passed": 229,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "008022ef466575c973523b7fd4d5037260a793c580b3121269cf199f696835e6"
+    },
+    {
+      "name": "focused7-aba01e3",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -TestPath 'tests/unit/OutputValidation.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/unit/Discovery.Tests.ps1|tests/unit/EncodeArguments.Tests.ps1|tests/integration/EncodeProcess.Tests.ps1|tests/unit/Streams.Tests.ps1|tests/integration/Streams.Tests.ps1|tests/unit/Probe.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/WinVidCompress.Characterization.Tests.ps1' -ReportPath .test-results/m205/focused7-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Focused",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/focused7-aba01e3.json",
+      "counts": {
+        "Passed": 229,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "e0f8c0e5e3f5bcedc6d9e6142f81b9249eb2b01c891e73c39c9341a272c3c2fa"
+    },
+    {
+      "name": "quick51-aba01e3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/quick51-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/quick51-aba01e3.json",
+      "counts": {
+        "Passed": 391,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "1fc113601f4b7469572c4b15575f9f304a03a032369b2c37d14d00b4e645417c"
+    },
+    {
+      "name": "quick7-aba01e3",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/quick7-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Quick",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/quick7-aba01e3.json",
+      "counts": {
+        "Passed": 391,
+        "Failed": 0,
+        "Skipped": 4,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "dc905d2f5ad5a62869153bf950462e331ece2702de6d4c24dce92e55188c2dc8"
+    },
+    {
+      "name": "targeted51-aba01e3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/targeted51-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/targeted51-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "a239876b46544f349234d8a7b861468c6c0520fbbe4d1053f9c3c8c2db3e1066"
+    },
+    {
+      "name": "targeted7-aba01e3",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Targeted -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/targeted7-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Targeted",
+      "exit_code": 0,
+      "local_artifact": ".test-results/m205/targeted7-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 0
+      },
+      "status": "PassedWithOmissions",
+      "artifact_sha256": "3c4ac19ecca1a10d0ad6483bc8beac3f1a640c0dde8bfd1a9abff358e578c819"
+    },
+    {
+      "name": "full51-aba01e3",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/full51-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "exit_code": 2,
+      "local_artifact": ".test-results/m205/full51-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 8
+      },
+      "status": "Incomplete",
+      "artifact_sha256": "47697af1a3773a02432a84d642e99547c37f295c5e542bffc39e7f98417fa07c"
+    },
+    {
+      "name": "full7-aba01e3",
+      "command": "pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot (Join-Path $env:TEMP 'wvc-m0-02-dev-modules') -Hosts Current -ReportPath .test-results/m205/full7-aba01e3.json",
+      "tested_commit": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+      "tested_tree_dirty": false,
+      "tier": "Full",
+      "exit_code": 2,
+      "local_artifact": ".test-results/m205/full7-aba01e3.json",
+      "counts": {
+        "Passed": 407,
+        "Failed": 0,
+        "Skipped": 8,
+        "NotRun": 8
+      },
+      "status": "Incomplete",
+      "artifact_sha256": "85455a4deee40aa7136d4e6db1c12e84d1692c527760da41f86a6ec210aa72a1"
+    }
+  ],
+  "manual_checks": [],
+  "owner_approval": null,
+  "implementation_checkpoint_sync": {
+    "checked_at": "2026-10-06T04:00:09.499705+00:00",
+    "head": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+    "branch": "codex/wvc-m2-05-validation",
+    "upstream": "origin/codex/wvc-m2-05-validation",
+    "dirty": false,
+    "operations": [],
+    "live_fetch_head": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+    "live_push_head": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+    "status": "SYNCHRONIZED"
+  },
+  "previous_verified_sync": {
+    "checked_at": "2026-10-06T03:28:42.626707+00:00",
+    "head": "b4fce9bd391d66d8e0f8b5ffecf68bb62ff0f687",
+    "branch": "codex/wvc-m2-04-output",
+    "upstream": "origin/codex/wvc-m2-04-output",
+    "dirty": false,
+    "operations": [],
+    "live_fetch_head": "b4fce9bd391d66d8e0f8b5ffecf68bb62ff0f687",
+    "live_push_head": "b4fce9bd391d66d8e0f8b5ffecf68bb62ff0f687",
+    "status": "SYNCHRONIZED"
+  },
+  "pull_request": {
+    "baseRefName": "main",
+    "headRefName": "codex/wvc-m2-05-validation",
+    "headRefOid": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+    "isDraft": true,
+    "mergeStateStatus": "CLEAN",
+    "number": 15,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/15"
+  },
+  "merged_initial_pull_request": {
+    "headRefOid": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+    "isDraft": false,
+    "mergeCommit": {
+      "oid": "f2897dcab0dfffd8d6b80f4f0452b57aeb5b5cd9"
+    },
+    "mergedAt": "2026-10-06T03:48:37Z",
+    "mergedBy": {
+      "id": "U_kgDOB-_VbQ",
+      "is_bot": false,
+      "login": "PikkuJanne",
+      "name": "Janne Vuorela"
+    },
+    "number": 14,
+    "state": "MERGED",
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/14"
+  },
+  "live_main_reconciliation": {
+    "checked_at": "2026-10-06T04:00:56.6751762Z",
+    "main": "f2897dcab0dfffd8d6b80f4f0452b57aeb5b5cd9",
+    "initial_implementation": "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+    "ancestor": true,
+    "content_diff_empty": true,
+    "reconciliation": "Fetched owner merge; feature retains correction; no reset or merge/rewrite required."
+  },
+  "implementation_ci": {
+    "checked_at": "2026-10-06T04:00:15.5880037Z",
+    "tested_commit": "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5",
+    "check_runs": 0,
+    "statuses": 0,
+    "workflow_runs": 0
+  },
+  "draft_runs": [
+    {
+      "artifact": "validation-unit51.json",
+      "exit_code": 0,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 45,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observation": "Initial dirty 45-case unit draft.",
+      "artifact_sha256": "b3b838359f97670ff0126d2a609c8c195b339af5ff4e95edce467ca2a8ee8ae5"
+    },
+    {
+      "artifact": "validation-focused51-draft.json",
+      "exit_code": 0,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 52,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "Dirty unit/native draft before review refinements: 52 passed, two native-media skips.",
+      "artifact_sha256": "cde38c89eb8c9bb3096d9933682f41c660f535bc7e7dfcc969cd44c22b777609"
+    },
+    {
+      "artifact": "affected51-draft.json",
+      "exit_code": 0,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 187,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "Dirty affected-scope run, 187 passed/two skips before final duration/timecode refinements.",
+      "artifact_sha256": "9976d65f14922058bb3442d65e24249e92e64f1a6deb9d7af6cd6b6ea30488d4"
+    },
+    {
+      "artifact": "validation-final-draft51.json",
+      "exit_code": 1,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 58,
+        "Failed": 2,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "58 passed/two failed/two skipped: two new aggregate test documents assigned in local scope while the mock read script scope. Fixture scope corrected; no passing result inferred.",
+      "artifact_sha256": "5366252a7a9cea84a688e91b529e73ef5a5c31fa64a9b35401f81bab0943095c"
+    },
+    {
+      "artifact": "validation-precommit51.json",
+      "exit_code": 0,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 60,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "Dirty precommit validation draft: 60 passed/two media skips before supplemental invalid-duration review.",
+      "artifact_sha256": "9753996205933efbeb0f4f68e81e4b73f0c510e86273270a77f0b0aca837f97f"
+    },
+    {
+      "artifact": "invalid-duration-before51.json",
+      "exit_code": 1,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 62,
+        "Failed": 12,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "New explicit invalid-duration regressions before the output-only correction demonstrate the positive-container false-completion gap; no pass inferred.",
+      "artifact_sha256": "8917a8c7c0ce870ec0d9f01cf5fd74128769de42e3d771c42b5d77f1b498d576"
+    },
+    {
+      "artifact": "invalid-duration-fixed51.json",
+      "exit_code": 0,
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 74,
+        "Failed": 0,
+        "Skipped": 2,
+        "NotRun": 0
+      },
+      "observation": "Dirty validation draft after invalid-duration correction: 74 passed, two media skips; clean final both-host gates supersede it.",
+      "artifact_sha256": "4cd54e5923afa03b597615b93058c93246e9cb4b2470f2522e88c707f1c00907"
+    }
+  ],
+  "read_only_review": "One read-only subagent reviewed code/tests/docs without edits, Git mutations or application tests. Timecode provenance, sole-video fallback, aggregate provenance/offsets, asymmetric short-clip truncation and explicit invalid-duration findings fixed with regressions. Final review found no remaining material blocker; real FFmpeg compatibility unverified.",
+  "limitations": [
+    "Structural FTYP/probe checks do not decode every packet/frame or prove intended content, visual quality, audio integrity or archival suitability. Explicit optional decode never runs during normal Compress-One; it uses the owned native runner with no total runtime deadline and cannot prove perceptual quality.",
+    "FFmpeg/FFprobe are absent from PATH and script-adjacent locations. New real SDR A/V/silent encode/probe/full-decode checks and existing M2-02 output checks stay skipped. Timing tolerances and timecode compatibility are bounded normalized-fixture policy plus official-doc/source review, not measured behavior of an installed FFmpeg build. No downloads/private media.",
+    "Duration checks compare selected streams independently. Unknown source references, missing aggregate provenance, omitted streams and timestamp/edit-offset ambiguity are disclosed. Sole-video container fallback lacks independent stream measurement. Shortening is capped at 10 percent and the bounded base allowance; positive padding has a 50ms short-clip floor. Metadata cannot detect every loss or false duration.",
+    "Current height-cap/width plausibility and quarter-turn candidates do not establish orientation/SAR/colour correctness. Arbitrary-angle geometry is deferred and disclosed. M3-01 policy remains unchanged; no yuv420p/FPS/channels/quality override was introduced.",
+    "Full risk gate executed with zero failures on both hosts but remains exit2/Incomplete: seven actual Windows manual rows and one future-coverage row NotRun. Full describes aba01e3 before the final output-only invalid-duration guard; final Focused/Quick/Targeted cover the later implementation, with unchanged publication/process boundaries. No Full, new Explorer, playback, cancellation, milestone, release or CI pass is claimed.",
+    "Owned read sharing prevents write/delete during inspection only. Independent reservation and no-clobber move remain accidental-collision protection, not hostile same-user regular-file substitution security. Failed or ambiguous media is retained, never deleted by path. UNC/network atomicity, power-loss durability, durable manifests and full cancellation remain open.",
+    "Minimal existing characterization/Probe/Queue/Streams/ownership validation seams and entry/concurrent native fixture migrations are included so earlier boundaries still run. Synthetic FTYP/sentinel/JSON fixtures are not valid media. Source/existing-final hashes and ownership/resource safeguards remain."
+  ],
+  "pending_action": "Retain M2-02 A01/A03 skips; run actual synthetic media checks with already-installed tools when available. Full actual Windows/manual/future rows remain open.",
+  "final_handoff_sync": "Pending within this record; final documentation commit/push/live refs reported externally to avoid a self-SHA loop.",
+  "next_task": "WVC-M2-06 - Define job results, counters and script exit codes"
+}

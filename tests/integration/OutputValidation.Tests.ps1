@@ -71,7 +71,7 @@ Describe 'Output validation through actual owned native probe [WVC-M2-05]' {
         $arguments[[array]::IndexOf($arguments,'-protocol_whitelist')+1] | Should -BeExactly 'file'
     }
     It 'rejects actual <Kind> probe outcomes with source/job identity [A01 A04]' -TestCases @(
-        @{Kind='native failure'},@{Kind='malformed JSON'},@{Kind='wrong streams'},@{Kind='truncated'},@{Kind='timeout'}
+        @{Kind='native failure'},@{Kind='malformed JSON'},@{Kind='wrong streams'},@{Kind='truncated'},@{Kind='timeout'},@{Kind='invalid duration'}
     ) {
         param($Kind)
         $timeout = 10000
@@ -80,6 +80,7 @@ Describe 'Output validation through actual owned native probe [WVC-M2-05]' {
             'malformed JSON' {[IO.File]::WriteAllText($env:WVC_PROBE_JSON,'{broken')}
             'wrong streams' {[IO.File]::WriteAllText($env:WVC_PROBE_JSON,$ValidJson.Replace('"h264"','"hevc"'))}
             'truncated' {[IO.File]::WriteAllText($env:WVC_PROBE_JSON,$ValidJson.Replace('"duration":"1"','"duration":"0.1"'))}
+            'invalid duration' {[IO.File]::WriteAllText($env:WVC_PROBE_JSON,$ValidJson.Replace('"height":240,"duration":"1"','"height":240,"duration":"0"'))}
             'timeout' {$env:WVC_PROBE_MODE='hang';$timeout=200}
         }
         $result = Get-OutputValidation $ProbeExe $Job $SourceInspection $Plan $timeout

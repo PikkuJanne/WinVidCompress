@@ -16,9 +16,9 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 | GEOMETRY | Small, 1080p, 4K, portrait, rotation, odd dimensions, SAR, ultrawide | Probe + visual test patterns | NOT RUN |
 | COLOUR | SDR, 10-bit SDR, PQ/HLG metadata, ambiguous colour fields | Synthetic/JSON + owner visual review | NOT RUN |
 | METADATA | Valid dates, leap day, impossible dates, ambiguous digits, Unicode/tag precedence | Unit + tag read-back | NOT RUN |
-| TEMP | Failure/start/cancel/validation/promotion; own-only cleanup | Fault injection + sentinel hashes | PASSED M2-04 failure/start/promotion/retention subset ([evidence](evidence/WVC-M2-04.md)); structural validation/full cancellation remain NOT RUN |
+| TEMP | Failure/start/cancel/validation/promotion; own-only cleanup | Fault injection + sentinel hashes | PASSED M2-04 failure/start/promotion/retention subset ([evidence](evidence/WVC-M2-04.md)); structural validation/retention subset PASSED [M2-05](evidence/WVC-M2-05.md); full cancellation remains NOT RUN |
 | COLLISION | Existing output, source=nominal-final, two concurrent instances | No-clobber integration | PASSED A01/A02 for [M2-04](evidence/WVC-M2-04.md), both hosts, actual concurrent native barrier workers and unchanged sentinel hashes; UNC/durability remain unaccepted |
-| VALIDATE | Exit zero with bad/empty/wrong/truncated output, unknown duration | Probe mocks + integration | NOT RUN |
+| VALIDATE | Exit zero with bad/empty/wrong/truncated output, unknown duration | Probe mocks + integration | PASSED A01-A04 [M2-05](evidence/WVC-M2-05.md), both actual hosts with file/metadata faults and native probe processes; real-media decode/timing compatibility skipped, structural checks do not prove visual/audio integrity |
 | RESULT | Success, skip, failed, cancelled, scan errors, no eligible inputs | Exact exit/counter assertions | NOT RUN |
 | PROGRESS | Partial/N/A records, no duration, container finalization, validation stage | Parser + native integration | NOT RUN |
 | CANCEL | Ctrl+C, console close, crash leftovers; unrelated FFmpeg survives | Real Windows + process isolation | NOT RUN |

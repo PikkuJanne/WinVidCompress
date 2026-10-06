@@ -1069,7 +1069,7 @@
       "title": "Validate output before marking it complete",
       "milestone": "M2",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         6
       ],
@@ -1096,35 +1096,54 @@
           "id": "WVC-M2-05-A01",
           "description": "Exit 0 plus zero bytes, unreadable output, wrong streams or materially truncated duration is rejected.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-05.json",
+            "evidence/WVC-M2-05.md"
+          ]
         },
         {
           "id": "WVC-M2-05-A02",
           "description": "Silent-input and known/unknown-duration cases follow explicit policies.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-05.json",
+            "evidence/WVC-M2-05.md"
+          ]
         },
         {
           "id": "WVC-M2-05-A03",
           "description": "Only validated+promoted jobs increment Done.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-05.json",
+            "evidence/WVC-M2-05.md"
+          ]
         },
         {
           "id": "WVC-M2-05-A04",
           "description": "Validation errors carry source/job identity and do not overwrite existing outputs.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M2-05.json",
+            "evidence/WVC-M2-05.md"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "aba01e36a88a7eb2915f86e0bdc800731c18e1f3",
+        "c8a3ed074e87b8be5e51eb42a3d19c532a8a7ee5"
+      ],
+      "evidence": [
+        "evidence/WVC-M2-05.json",
+        "evidence/WVC-M2-05.md",
+        "evidence/WVC-M2-05-session.md"
+      ],
+      "notes": "Verified A01-A04 on clean c8a3ed0, both actual Windows PS5.1.26100.9444/PS7.6.5: Focused 243/0/4/0, Quick 405/0/4/0, Targeted 421/0/8/0. Focused/Quick/Targeted exit0; Earlier Full at clean aba01e3 407/0/8/8, zero failures but exit2/Incomplete with seven manual/one future row NotRun. 66 unit/eight actual native probe/decode-argv cases per host; two new real-media cases skipped. Validation before no-clobber promotion/Done; owned read sharing, FTYP, selected H264/AAC, duration/geometry plausibility, matching generated timecode metadata; unknown/ambiguous timing disclosed. Optional decode explicit only, no normal double pass. Minimal shared fixture migrations; synthetic bytes not media. Real tools absent; M2-02 A01/A03 remain skipped. No Full/Explorer/playback/cancellation/CI/release pass. Exact next WVC-M2-06."
     },
     {
       "id": "WVC-M2-06",
