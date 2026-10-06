@@ -81,7 +81,8 @@ try {
         }
 
         $psFiles = @((Join-Path $repoRoot 'WinVidCompress.ps1')) + @(Get-ChildItem -LiteralPath $testsRoot -Filter '*.ps1' -Recurse |
-            Select-Object -ExpandProperty FullName) + @(Get-ChildItem -LiteralPath $PSScriptRoot -Filter 'test*.ps1' |
+            Select-Object -ExpandProperty FullName) + @(Get-ChildItem -LiteralPath $PSScriptRoot -File |
+            Where-Object { $_.Name -like 'test*.ps1' -or $_.Name -like 'benchmark*.ps1' } |
             Select-Object -ExpandProperty FullName)
         $parseFailures = 0
         foreach ($path in $psFiles) {

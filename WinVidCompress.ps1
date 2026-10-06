@@ -1651,7 +1651,8 @@ function Test-OutputStructure($Output, $Source, $Plan) {
     if ($audioCount) { $references += [pscustomobject]@{Name='Audio';Expected=$Plan.Audio.DurationSeconds;Actual=$audios[0].DurationSeconds} }
     if ($Source.Streams.Count -eq (1+$audioCount) -and $Source.DurationSource -eq 'Format' -and $null -ne $Source.DurationSeconds) {
         $known = @($references | Where-Object { $null -ne $_.Expected })
-        $longest = ($known | Measure-Object Expected -Maximum).Maximum
+        $longest = $null
+        if ($known.Count) { $longest = ($known | Measure-Object Expected -Maximum).Maximum }
         if ($known.Count -ne $references.Count -or [Math]::Abs($Source.DurationSeconds - $longest) -gt $tolerance) {
             $warnings.Add('Source container duration disagrees with selected stream durations; aggregate comparison is unavailable because timestamp/edit offsets may be rebased.')
         } elseif ($Output.DurationSource -ne 'Format') {
@@ -1731,9 +1732,12 @@ function New-JobResult([string]$SourcePath, [int]$CRF) {
         RetainedPath=$null; Outcome='Unstarted'; Stage='Queued'; Reason='Not started.';
         SelectedStreams=$null; Settings=[pscustomobject]@{VideoCodec='libx264';Preset='veryfast';CRF=$CRF;
             PixelFormat='yuv420p';ColourPolicy='SDRCompatibility';AudioCodec='aac';AudioBitrate='160k';Container='mp4';FastStart=$true;HeightCap=1080;Applied=$false};
-        ElapsedSeconds=0.0; InputBytes=$null; OutputBytes=$null; SizeChangeBytes=$null;
-        SizeChangePercent=$null; AbortBatch=$false; CancellationRequested=$false; LogPath=$null;
-        Diagnostics=[pscustomobject]@{Probe=$null;Encode=$null;Validation=$null;Warnings=@()} }
+        DurationSeconds=$null; DurationState='Unknown'; ElapsedSeconds=0.0;
+        Timings=[pscustomobject]@{ProbeSeconds=$null;EncodeAndMuxSeconds=$null;ValidationSeconds=$null;PromotionSeconds=$null};
+        InputBytes=$null; OutputBytes=$null; SizeChangeBytes=$null;
+        SizeChangePercent=$null; SavingsPercent=$null; SizeState='NotProduced';
+        AbortBatch=$false; CancellationRequested=$false; LogPath=$null;
+        Diagnostics=[pscustomobject]@{Probe=$null;EncodeArguments=@();Encode=$null;Validation=$null;Warnings=@()} }
 }
 
 function Get-JobFileLength([string]$FilePath) {
@@ -1744,6 +1748,66 @@ function Get-JobFileLength([string]$FilePath) {
             $_.Exception -is [System.OperationCanceledException]) { throw }
         return $null
     }
+}
+
+function Get-SizeAccounting([string]$Outcome, $InputBytes, $OutputBytes) {
+    # Keep the existing signed output-minus-input delta. Savings is the inverse.
+    $size=[pscustomobject]@{InputBytes=$InputBytes;OutputBytes=$null;SizeChangeBytes=$null;
+        SizeChangePercent=$null;SavingsPercent=$null;State='NotProduced'}
+    if ($Outcome -ne 'Completed') { return $size }
+    $size.OutputBytes=$OutputBytes
+    $size.State='Unknown'
+    if ($null -eq $InputBytes -or $null -eq $OutputBytes -or $InputBytes -lt 0 -or $OutputBytes -lt 0) { return $size }
+    $size.SizeChangeBytes=[decimal]$OutputBytes-[decimal]$InputBytes
+    if ($InputBytes -eq 0) { $size.State='ZeroInput'; return $size }
+    $size.SizeChangePercent=[double](100*[decimal]$size.SizeChangeBytes/[decimal]$InputBytes)
+    $size.SavingsPercent=-$size.SizeChangePercent
+    $size.State=if ($OutputBytes -lt $InputBytes) {'Reduction'} elseif ($OutputBytes -gt $InputBytes) {'Growth'} else {'Unchanged'}
+    return $size
+}
+
+function Format-SizeAccounting($Size) {
+    $inputText=if ($null -ne $Size.InputBytes) {"$($Size.InputBytes) bytes"} else {'original size unavailable'}
+    $outputText=if ($null -ne $Size.OutputBytes) {"$($Size.OutputBytes) bytes"} else {'output size unavailable'}
+    $label=switch ($Size.State) {
+        'Reduction' { '{0:F2}% reduction' -f $Size.SavingsPercent }
+        'Growth' { '{0:F2}% growth' -f $Size.SizeChangePercent }
+        'Unchanged' { '0.00% unchanged' }
+        'ZeroInput' { 'percentage unavailable (zero original bytes)' }
+        'NotProduced' { 'no completed output; percentage unavailable' }
+        default { 'percentage unavailable' }
+    }
+    return "$inputText -> $outputText; $label"
+}
+
+function Format-JobSummary($Job) {
+    $size=Get-SizeAccounting $Job.Outcome $Job.InputBytes $Job.OutputBytes
+    $duration=if ($null -ne $Job.DurationSeconds) {'duration {0:F2} s' -f $Job.DurationSeconds} else {'duration unavailable'}
+    return ('{0}; {1}; elapsed {2:F2} s' -f (Format-SizeAccounting $size),$duration,$Job.ElapsedSeconds)
+}
+
+function Get-BatchMeasurements([object[]]$Jobs) {
+    $completed=@($Jobs | Where-Object Outcome -eq 'Completed')
+    $comparable=@($completed | Where-Object { $null -ne $_.InputBytes -and $_.InputBytes -gt 0 -and
+        $null -ne $_.OutputBytes -and $_.OutputBytes -ge 0 })
+    $inputTotal=$null; $outputTotal=$null
+    if ($comparable.Count) {
+        $inputTotal=[decimal]0; $outputTotal=[decimal]0
+        foreach ($job in $comparable) { $inputTotal+=$job.InputBytes; $outputTotal+=$job.OutputBytes }
+    }
+    $durationJobs=@($completed | Where-Object { $null -ne $_.DurationSeconds -and $_.DurationSeconds -gt 0 })
+    $durationTotal=$null
+    if ($durationJobs.Count) {
+        $durationTotal=0.0
+        foreach ($job in $durationJobs) { $durationTotal+=$job.DurationSeconds }
+    }
+    $elapsedTotal=0.0
+    foreach ($job in $Jobs) { $elapsedTotal+=$job.ElapsedSeconds }
+    return [pscustomobject]@{SizeSummary=[pscustomobject]@{ComparableJobs=$comparable.Count;
+        UnavailableJobs=$completed.Count-$comparable.Count;ExcludedJobs=$Jobs.Count-$completed.Count;
+        Accounting=(Get-SizeAccounting 'Completed' $inputTotal $outputTotal)};
+        DurationSeconds=$durationTotal;DurationKnownJobs=$durationJobs.Count;
+        DurationUnknownJobs=$completed.Count-$durationJobs.Count;ElapsedSeconds=$elapsedTotal}
 }
 
 function Get-BatchResult([object[]]$Jobs, [object[]]$Scans, [switch]$Requested,
@@ -1767,9 +1831,12 @@ function Get-BatchResult([object[]]$Jobs, [object[]]$Scans, [switch]$Requested,
     if ($Cancelled -or $counts.Cancelled -or @($records | Where-Object CancellationRequested).Count) { $code=3 }
     elseif ($StartupFailed -or ($Requested -and -not $records.Count)) { $code=2 }
     elseif ($counts.Failed -or $counts.ScanErrors -or $counts.Unstarted) { $code=1 }
+    $measurements=Get-BatchMeasurements $records
     return [pscustomobject]@{SchemaVersion=1;ExitCode=$code;Requested=[bool]$Requested;Cancelled=($code -eq 3);
         StartupFailed=[bool]$StartupFailed;Reason=$Reason;Warnings=@();Jobs=$records;Scans=$scanRecords;
-        ScanErrors=$scanErrors;Counters=$counts}
+        ScanErrors=$scanErrors;Counters=$counts;SizeSummary=$measurements.SizeSummary;
+        DurationSeconds=$measurements.DurationSeconds;DurationKnownJobs=$measurements.DurationKnownJobs;
+        DurationUnknownJobs=$measurements.DurationUnknownJobs;ElapsedSeconds=$measurements.ElapsedSeconds}
 }
 
 function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]$crf, [ref]$counters) {
@@ -1777,6 +1844,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     # consumes returned records and never uses it as an outcome authority.
     $result=New-JobResult $inPath $crf
     $clock=[Diagnostics.Stopwatch]::StartNew()
+    $stageClock=New-Object Diagnostics.Stopwatch
     $result.Outcome='Failed'
     $outputJob = $null
     $published = $false
@@ -1828,8 +1896,11 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
 
         $result.CandidatePath=$out
         $stage='Probe'
+        $stageClock.Restart()
         $inspection = Get-MediaInspection $ffprobe $inPath
+        $result.Timings.ProbeSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Diagnostics.Probe=$inspection
+        $result.DurationSeconds=$inspection.DurationSeconds; $result.DurationState=$inspection.DurationState
         if ($null -ne $inspection.Native -and $inspection.Native.StdErr) {
             Write-Host ("Probe diagnostics: " + $inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
         }
@@ -1849,13 +1920,16 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $result.TemporaryPath=$outputJob.TempPath
         [void](Assert-OutputJob $outputJob -BeforeEncode)
         $encodeArguments = @(Get-EncodeArguments $inPath $outputJob.TempPath $streamPlan $crf $meta)
+        $result.Diagnostics.EncodeArguments=$encodeArguments
 
         Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
         Write-Host $inPath
         Write-Host "    -> $out"
 
         $stage = 'Encode'
+        $stageClock.Restart()
         $native = Invoke-EncodeProcess $ffmpeg $encodeArguments
+        $result.Timings.EncodeAndMuxSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Settings.Applied=if ($null -ne $native.PSObject.Properties['Started']) { [bool]$native.Started } else { [bool]$native.Succeeded }
         $result.Diagnostics.Encode=$native
         if ($native.StdOutTruncated -or $native.StdErrTruncated) {
@@ -1863,7 +1937,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         }
         if (-not $native.Succeeded) { throw "Encoder failed [$($native.FailureKind)]: $($native.Error)" }
         $stage = 'Validation'
+        $stageClock.Restart()
         $validation = Get-OutputValidation $ffprobe $outputJob $inspection $streamPlan
+        $result.Timings.ValidationSeconds=$stageClock.Elapsed.TotalSeconds
         $result.Diagnostics.Validation=$validation
         if ($null -ne $validation.Inspection -and $null -ne $validation.Inspection.Native -and $validation.Inspection.Native.StdErr) {
             Write-Host ("Output probe diagnostics: " + $validation.Inspection.Native.StdErr.Trim()) -ForegroundColor Yellow
@@ -1871,7 +1947,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         if (-not $validation.Succeeded) { throw "Output validation failed [$($validation.FailureKind)]: $($validation.Reason)" }
         foreach ($warning in $validation.Warnings) { Write-Host $warning -ForegroundColor Yellow }
         $stage = 'Promote'
+        $stageClock.Restart()
         $publication = Publish-OutputJob $outputJob $CollisionMode
+        $result.Timings.PromotionSeconds=$stageClock.Elapsed.TotalSeconds
         $published = $publication.Published
         if ($published) {
             $result.Outcome='Completed'
@@ -1940,10 +2018,9 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
                     $result.CancellationRequested=$true; $result.Diagnostics.Warnings+=@('Output size accounting cancelled after publication.')
                 } else { $result.Diagnostics.Warnings+=@('Output size accounting failed: '+$_.Exception.Message) }
             }
-            if ($null -ne $result.InputBytes -and $null -ne $result.OutputBytes) {
-                $result.SizeChangeBytes=$result.OutputBytes-$result.InputBytes
-                if ($result.InputBytes -gt 0) { $result.SizeChangePercent=100.0*$result.SizeChangeBytes/$result.InputBytes }
-            }
+            $size=Get-SizeAccounting $result.Outcome $result.InputBytes $result.OutputBytes
+            $result.SizeChangeBytes=$size.SizeChangeBytes; $result.SizeChangePercent=$size.SizeChangePercent
+            $result.SavingsPercent=$size.SavingsPercent; $result.SizeState=$size.State
         }
         if ($null -ne $counters -and $null -ne $counters.Value) {
             switch ($result.Outcome) {
@@ -2027,6 +2104,16 @@ function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg) {
         Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
         Write-Host ("Scanned: {0}" -f $counters.Scanned)
         Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+        foreach ($job in $batch.Jobs) {
+            if ($job.Outcome -eq 'Completed') { Write-Host ($job.SourcePath+': '+(Format-JobSummary $job)) }
+        }
+        Write-Host ('Comparable completed jobs: {0}/{1}; sizes unavailable/zero: {2}; other outcomes excluded: {3}' -f
+            $batch.SizeSummary.ComparableJobs,$counters.Done,$batch.SizeSummary.UnavailableJobs,$batch.SizeSummary.ExcludedJobs)
+        Write-Host ('Comparable totals: '+(Format-SizeAccounting $batch.SizeSummary.Accounting))
+        $durationText=if ($null -ne $batch.DurationSeconds) {'{0:F2} s' -f $batch.DurationSeconds} else {'unavailable'}
+        Write-Host ('Completed source duration: {0} ({1} known, {2} unavailable); elapsed jobs: {3:F2} s' -f
+            $durationText,$batch.DurationKnownJobs,$batch.DurationUnknownJobs,$batch.ElapsedSeconds)
+        Write-Host 'Results vary; valid output can be larger. Elapsed jobs excludes queue scanning and summary display.'
     } catch {
         if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
         if ($_.Exception -is [System.OperationCanceledException]) {

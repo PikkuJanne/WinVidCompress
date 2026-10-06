@@ -12,6 +12,8 @@ Supports simple batch processing:
 - Dropping a folder compresses all videos inside (recursive)
 - Dropping multiple files or folders queues everything and processes sequentially
 
+Completed jobs report original/output bytes, reduction or growth, source duration and measured elapsed time. Batch size totals include only completed jobs with a positive known original size and known output size; unavailable sizes and other outcomes are counted separately. Results vary; valid output can be larger. CRF does not set an output size. Developer measurements and optional experiments are described in [the benchmark guide](docs/benchmarks/README.md); the production profile remains unchanged.
+
 **Requirements**
 Windows 11
 PowerShell (Windows PowerShell is fine)
