@@ -113,7 +113,7 @@ Describe 'One explicit video/audio stream plan [WVC-M2-02]' {
         Compress-One $EncoderExe $ProbeExe $Source $Output $DefaultCRF ([ref]$Counters)
         $arguments = Read-EncoderArguments
         ((Read-Maps $arguments) -join ',') | Should -BeExactly '0:3,0:7'
-        $arguments[[array]::IndexOf($arguments,'-vf')+1] | Should -BeExactly 'scale=-2:1080'
+        $arguments[[array]::IndexOf($arguments,'-vf')+1] | Should -BeExactly 'scale=640:1080'
     }
 
     It 'omits oversized cover artwork without mistaking it for video or applying its height cap' {
