@@ -44,7 +44,7 @@ The base allowance in seconds is `min(2, max(0.25, 2/fps + 2048/sampleRate))`, o
 
 An aggregate comparison additionally uses genuine container durations only when all source streams are retained and selected references are known. A source aggregate that differs from the longest selected reference by more than the base allowance is disclosed as ambiguous (timestamp/edit offsets may be rebased). Missing output container duration is disclosed; normalized video fallback never substitutes for it. Selected-stream checks still run. These deterministic normalized fixtures establish policy boundaries, not measured compatibility with every FFmpeg build. Real short SDR A/V and silent encode/probe/decode fixtures require already-installed tools; absent tools stay skipped. Timing, packet loss, frame content and playback require further testing. [FFmpeg timestamp options](https://ffmpeg.org/ffmpeg.html#Advanced-options).
 
-Validation failures retain source/job/temp identity and diagnostics in the existing unverified-job record; no final is published. Done increments only after successful native encode, structural validation and final no-clobber promotion. Structural validation is not full decoding or proof of perfect visual/audio integrity.
+Validation failures retain source/job/temp identity, stage and reason in the existing unverified-job record; no final is published. The validation helper returns native diagnostics and normal conversion displays probe stderr in the console. That stderr is not persisted in retained.json. Done increments only after successful native encode, structural validation and final no-clobber promotion. Structural validation is not full decoding or proof of perfect visual/audio integrity.
 
 ### Explicit developer decode check
 
