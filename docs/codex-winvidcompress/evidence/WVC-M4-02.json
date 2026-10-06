@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M4-02",
+  "acceptance_ids": [
+    "WVC-M4-02-A01",
+    "WVC-M4-02-A02",
+    "WVC-M4-02-A03",
+    "WVC-M4-02-A04"
+  ],
+  "recorded_at": "2026-10-06T19:04:26.821278+00:00",
+  "tested_commits": [
+    "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91"
+  ],
+  "application_sha256": "36ab3b93c4adad963c8141f33744f11c6deb8abd188a9bd913d56d2087648679",
+  "host": {
+    "os": "Windows 11 Pro 10.0.26300 UBR9457 26H2 64-bit",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_build": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffmpeg_sha256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+    "ffprobe_sha256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+  },
+  "command_bindings": {
+    "ps51": "$env:SystemRoot/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "ps7": "existing bundled native pwsh.exe; private runtime root redacted",
+    "modules": "$env:TEMP/wvc-m0-02-dev-modules"
+  },
+  "runs": [
+    {
+      "name": "regression",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1' -ReportPath .test-results/m402/regression.json *> .test-results/m402/regression.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 0,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/regression.json",
+      "report_sha256": "5fada3fe93a15783f568f903b279862804fa484ed574e82a8968602be9d2bc65"
+    },
+    {
+      "name": "first",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1' -ReportPath .test-results/m402/first.json *> .test-results/m402/first.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 1,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/first.json",
+      "report_sha256": "1f19be8c1a323b8e7e5f28eb01648dea6c351de90749aa850466b5f049a4e0fe"
+    },
+    {
+      "name": "unit51",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1|tests/unit/Cli.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/unit/Log.Tests.ps1' -ReportPath .test-results/m402/unit51.json *> .test-results/m402/unit51.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 99,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/unit51.json",
+      "report_sha256": "d150c37b7a73653e7106ee97c3ee920ce9973f61ec58d979ea222d504e5e7cda"
+    },
+    {
+      "name": "target51",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Cli.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/unit/Log.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/unit/Manifest.Tests.ps1|tests/launcher/Launcher.Tests.ps1' -ReportPath .test-results/m402/target51.json *> .test-results/m402/target51.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 222,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/target51.json",
+      "report_sha256": "fedf968649a4e8f74b361fd1273be881a92ec8bcaea8a694126fd161da7cc472"
+    },
+    {
+      "name": "target7",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Cli.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/unit/Log.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/unit/Manifest.Tests.ps1|tests/launcher/Launcher.Tests.ps1' -ReportPath .test-results/m402/target7.json *> .test-results/m402/target7.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 231,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/target7.json",
+      "report_sha256": "1592bf858ce57950dd6abed680080c0d607eb83f7c6999c814372a0adc40d5ee"
+    },
+    {
+      "name": "quick51",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot $modules -ReportPath .test-results/m402/quick51.json *> .test-results/m402/quick51.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 896,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": 0,
+      "report": ".test-results/m402/quick51.json",
+      "report_sha256": "9722cdb4ecea527b7eb35cf48352345dedf8db8101311082ad15f69cbee675cc"
+    },
+    {
+      "name": "final51",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1|tests/integration/WhatIf.Tests.ps1' -ReportPath .test-results/m402/final51.json *> .test-results/m402/final51.log; exit $LASTEXITCODE",
+      "tested_commit": "4d46371f85bf5c82ee2e885fc613486c4b885391",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 87,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_outer_tool_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": null,
+      "report": ".test-results/m402/final51.json",
+      "report_sha256": "5f7c66c52eb42ae9508f2d5c285bfd4c99ea20bff1c891d5667e81fb7f54f03f"
+    },
+    {
+      "name": "full-clean",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot $modules -WindowsPowerShell $ps51 -PowerShell7 $ps7 -ReportPath .test-results/m402/full-clean.json *> .test-results/m402/full-clean.log; exit $LASTEXITCODE",
+      "tested_commit": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 1814,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "observed_outer_tool_exit": 2,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; commands explicitly forward LASTEXITCODE",
+      "report_exit_code": 2,
+      "report": ".test-results/m402/full-clean.json",
+      "report_sha256": "914f25422879d22b3f272de97bb3bc9ce77548403b240da9c73b04d141ce55e4"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "WVC-M4-02-A01",
+      "status": "passed",
+      "evidence": "Default flat rename/skip planning remains unchanged; existing CLI, queue, ownership, manifest, log, launcher and characterization cases pass in clean Full on both hosts."
+    },
+    {
+      "id": "WVC-M4-02-A02",
+      "status": "passed",
+      "evidence": "Repeated camera/scene clip names separate under stable roots; explicit-file parents, shallow ancestors, aliases, reversal, ordinal/culture independence, repeated and literal suffixed names, drive/UNC root labels and Unicode paths. Actual PS1/BAT synthetic native conversions and installed FFmpeg nested media pass on both hosts."
+    },
+    {
+      "id": "WVC-M4-02-A03",
+      "status": "passed",
+      "evidence": "Every nominal/collision path stays separator-bounded beneath the selected root. Traversal/rooted/ADS/invalid/device/superscript/reserved-job/trailing aliases, file blockers, an actual junction and a disappeared root reject safely. Actual jobs use validated descendants and unchanged per-directory no-clobber ownership; sentinel sources/finals remain unchanged."
+    },
+    {
+      "id": "WVC-M4-02-A04",
+      "status": "passed",
+      "evidence": "Preserve mode refuses equal roots, output inside source and source inside output before native/config/output/log writes. Unit boundary guards and actual protected filesystem snapshots confirm this on both hosts, preventing self-reingestion across runs without inferring file ownership. Flat frozen-queue policy remains unchanged."
+    }
+  ],
+  "policy": {
+    "opt_in": "-PreserveSubfolders, per-run only; explicit inputs required",
+    "default": "Flat",
+    "roots": "Contributing selected folders or explicit-file parents; deduplicate canonical Windows identities and choose shallowest covering roots; sort OrdinalIgnoreCase; multiple roots get unique reserved leaf labels, drive roots drive-D, UNC share roots share name",
+    "overlap": "Reject equality or containment in either direction before startup",
+    "manifest": "Preserve mode rejects doctor/ManifestPath/Resume/StrongSourceHash; manifests remain flat-only",
+    "directories": "Selected output root must already exist; preview creates none; dispatch validates and creates only descendants; vanished root is not recreated"
+  },
+  "scope_expansion": "Minimal existing preview/batch/log routing, matching recorder, actual WhatIf integration fixtures and README/spec/test documentation. BAT forwarding unchanged; no new application runtime/config/TUI controls.",
+  "report_name_encoding": "The existing PS5.1 parent Read-WvcChildReport uses Get-Content without an encoding, so six superscript case display names in clean Full have UTF-8-as-ANSI mojibake. They are matched with explicit aliases for those six known names only; original reports/hashes and Passed statuses are preserved. Direct final51 report retains the expected Unicode names. No application or assertion result is changed.",
+  "failures_and_corrections": [
+    "Focused regression initially0 passed/1 failed; minimal implementation1/0.",
+    "Read-only safety review caught a vanished destination root being recreated and superscript COM/LPT aliases; fixed guards and added real junction/root-removal/device cases.",
+    "Read-only test review caught documented drive-root labels passing through GetFileName(D:) and becoming empty; added a pure root-label helper with uppercase/lowercase drive and UNC-share regressions.",
+    "The first real-media fixture used an empty FFREPORT value, which enables FFmpeg reports. Four task-owned diagnostics from target7/Quick were moved to ignored .test-results/m402. The corrected real-media fixture temporarily removes and restores inherited FFREPORT and omits the explicit empty child entry; corrected focused run and clean Full produce no root reports."
+  ],
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-06T18:52:16.878085+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+    "branch": "codex/wvc-m4-02-layout",
+    "upstream": "origin/codex/wvc-m4-02-layout",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+    "live_push_head": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; report live equality externally after committing",
+  "manual_checks": [
+    {
+      "id": "WVC-M3-06-A01 physical Ctrl+C",
+      "status": "not_run"
+    },
+    {
+      "id": "WVC-M3-04-A04 owner playback",
+      "status": "not_run"
+    },
+    {
+      "id": "WVC-M2-06-A04 actual Explorer",
+      "status": "not_run"
+    }
+  ],
+  "owner_approval": null,
+  "pull_request": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/25",
+    "state": "OPEN",
+    "draft": true,
+    "tested_head": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+    "check_runs": 0,
+    "workflow_runs": 0,
+    "ci_pass_claim": false,
+    "observed_at": "2026-10-06T18:52:48.2917599Z"
+  },
+  "limitations": [
+    "Full exit2/Incomplete solely eight historical manual/future NotRun rows; no milestone/release acceptance.",
+    "Preserve layout is per-run only and requires disjoint roots; flat manifest schema is intentionally retained.",
+    "Path validation assumes a stable filesystem; network/power-loss/hostile same-user substitution and broader long-path/UNC/manual gates remain unaccepted. Drive/UNC label units do not constitute actual network-share acceptance.",
+    "New empty descendants can remain after a failed job; no arbitrary folder deletion.",
+    "Preview does not prove writability/media validity/encoder success or reserve names.",
+    "Structural checks and hashes do not prove full visual/audio integrity. Earlier physical Ctrl+C, actual Explorer and owner playback remain not_run.",
+    "Intermediate reports cover evolving dirty trees without preserved tree hashes; final clean both-host Full is the acceptance authority.",
+    "Raw reports/logs/native fixtures/media/config/machine paths stay local/ignored. Private runtime bindings redacted."
+  ],
+  "next_task": "WVC-M4-03",
+  "suite_deadline_milliseconds": 420000,
+  "final_transport": {
+    "outer_tool_exit": 2,
+    "observed_at": "2026-10-06T19:03:26.1051793Z",
+    "session_id": 15861,
+    "report_path": ".test-results/m402/full-clean.json",
+    "report_sha256": "914f25422879d22b3f272de97bb3bc9ce77548403b240da9c73b04d141ce55e4"
+  },
+  "task_case_counts": {
+    "WindowsPowerShell": 56,
+    "PowerShell7": 56,
+    "matching": "45 Layout unit names plus11 new WhatIf case names individually matched as Passed in clean Full per host"
+  },
+  "host_pester_counts": {
+    "WindowsPowerShell": 895,
+    "PowerShell7": 895
+  },
+  "full_not_run": [
+    {
+      "Id": "coverage/future-media-cli-safety-packaging",
+      "Status": "NotRun",
+      "Reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+    },
+    {
+      "Id": "manual/explorer-file-folder-multi-drop",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/explorer-menu-quit",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/explorer-special-character-argv",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/playback-sdr-hdr-audio",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/real-ctrl-c-and-console-close",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/representative-benchmarks",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    },
+    {
+      "Id": "manual/unc-long-paths",
+      "Status": "NotRun",
+      "Reason": "Actual manual acceptance outstanding."
+    }
+  ]
+}
