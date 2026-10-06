@@ -1451,10 +1451,14 @@ function New-SessionLog($Tools, [string]$Root = (Join-Path $ConfigDir 'logs'),
     [ValidateRange(4096,1048576)][int]$LimitBytes = 1048576) {
     $session=[pscustomobject]@{SchemaVersion=1;SessionId=[guid]::NewGuid().ToString('N');Enabled=$false;
         JsonPath=$null;TextPath=$null;LimitBytes=$LimitBytes;Warnings=@()}
+    $quotaLock=$null
     try {
         [void][IO.Directory]::CreateDirectory($Root)
         $directory=Get-Item -LiteralPath $Root -Force
         if (($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'Log root is a reparse point.' }
+        # Serialize admission across local instances; lock contention is a visible
+        # best-effort logging warning, never a reason to fail compression.
+        $quotaLock=New-Object IO.FileStream((Join-Path $Root 'quota.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
         # A hard local retention quota avoids deleting older diagnostics automatically.
         # At most 128 owned sessions, each with two <=1 MiB files; manual removal is explicit.
         if (@(Get-ChildItem -LiteralPath $Root -Directory -Force).Count -ge 128) { throw '128-session log quota reached; remove reviewed old logs manually to resume logging.' }
@@ -1478,7 +1482,7 @@ function New-SessionLog($Tools, [string]$Root = (Join-Path $ConfigDir 'logs'),
     } catch {
         $session.Enabled=$false
         Add-SessionLogWarning $session ('Local session logging unavailable: '+(Limit-LogText $_.Exception.Message 512)+'. Compression outcomes and exit status are unchanged.')
-    }
+    } finally { if ($null -ne $quotaLock) { $quotaLock.Dispose() } }
     return $session
 }
 

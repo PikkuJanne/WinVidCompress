@@ -74,6 +74,19 @@ Describe 'Bounded local session results [WVC-M3-05-A03/A04]' {
         $session.Warnings[0] | Should -Match 'quota'
         @(Get-ChildItem -LiteralPath $Root -Directory).Count | Should -Be 128
     }
+    It 'serializes quota admission with a real exclusive file handle and recovers after release' {
+        [void][IO.Directory]::CreateDirectory($Root)
+        $lock=New-Object IO.FileStream((Join-Path $Root 'quota.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
+        try {
+            $blocked=New-SessionLog $Tools $Root
+            $blocked.Enabled | Should -BeFalse
+            $blocked.Warnings.Count | Should -Be 1
+            @(Get-ChildItem -LiteralPath $Root -Directory).Count | Should -Be 0
+        } finally { $lock.Dispose() }
+        $session=New-SessionLog $Tools $Root
+        $session.Enabled | Should -BeTrue
+        @(Get-ChildItem -LiteralPath $Root -Directory).Count | Should -Be 1
+    }
     It 'leaves doctor non-persisting and restores a caller session after a normal run' {
         Mock Ensure-Tool { 'unused.exe' }
         Mock Get-ToolEnvironment { $Tools }

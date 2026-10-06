@@ -30,6 +30,7 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
     $start.RedirectStandardInput = $true
     $start.EnvironmentVariables['APPDATA'] = $appData
     $start.EnvironmentVariables['PATH'] = $bin + ';' + $env:PATH
+    $start.EnvironmentVariables['WVC_ENTRY_ARGV_PATH'] = $nativeArgumentsPath
     $process = New-Object Diagnostics.Process
     $process.StartInfo = $start
     $started = $false
@@ -58,23 +59,30 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
                 $output -notmatch 'Temporary create/write/remove check passed' -or
                 $output -match 'WVC_NATIVE_RECORDER|========== Summary|========== WinVidCompress ==========' -or
                 (Get-FileHash -LiteralPath $configPath).Hash -ne $configHash -or
-                @(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 0) {
+                @(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 0 -or
+                (Test-Path -LiteralPath $nativeArgumentsPath) -or
+                (Test-Path -LiteralPath (Join-Path $configDir 'logs'))) {
                 throw "Doctor did not preserve isolated preferences/output or avoid conversion/menu: $output"
             }
             return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
         }
         if ($Mode -ne 'Batch') {
             if ([regex]::Matches($output, [regex]::Escape('========== WinVidCompress ==========')).Count -ne 1 -or
-                $output -match 'WVC_NATIVE_RECORDER' -or ($Mode -eq 'MenuShell' -and $output -notmatch 'WVC_QUIT_RETURNED')) {
+                (Test-Path -LiteralPath $nativeArgumentsPath) -or ($Mode -eq 'MenuShell' -and $output -notmatch 'WVC_QUIT_RETURNED')) {
                 throw "Menu did not return once to its documented caller/shell: $output"
             }
             return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
         }
-        if ($output -notmatch 'WVC_NATIVE_RECORDER' -or $output -notmatch 'Done:\s+2' -or $output -notmatch 'Failed:\s+0') {
+        if (-not (Test-Path -LiteralPath $nativeArgumentsPath) -or $output -notmatch 'Done:\s+2' -or $output -notmatch 'Failed:\s+0') {
             throw "Entry smoke did not reach existing folder processing: $output"
         }
-        $captured = @($output -split '\r?\n' | Where-Object { $_.StartsWith('WVC_ARG:') } | ForEach-Object {
-            [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_.Substring(8)))
+        if ($output -match 'WVC_ARG:|WVC_NATIVE_RECORDER|(?m)^(?:progress|out_time_us)=') {
+            throw 'Managed entry unexpectedly streamed raw native output.'
+        }
+        # Machine stdout belongs to progress. Record fixture argv in a separate
+        # owned file so suppressing raw encoder logs cannot hide the assertion.
+        $captured = @(Get-Content -LiteralPath $nativeArgumentsPath | ForEach-Object {
+            [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_))
         })
         foreach ($expectedArgument in @($source,$sourceTwo)) {
             if ($captured -notcontains $expectedArgument) { throw 'Native recorder did not receive the expected source/output paths.' }
@@ -90,6 +98,17 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
         if (@(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 2) { throw 'Owned publication left unexpected artifacts.' }
         if ((Get-FileHash -LiteralPath $source).Hash -ne $sourceHash -or
             (Get-FileHash -LiteralPath $sourceTwo).Hash -ne $sourceHashTwo) { throw 'Synthetic source changed.' }
+        $logs=@(Get-ChildItem -LiteralPath (Join-Path $configDir 'logs') -Recurse -Filter 'results.jsonl' -File)
+        if ($logs.Count -ne 1) { throw 'Entry did not create exactly one owned session report.' }
+        $records=@(Get-Content -LiteralPath $logs[0].FullName -Encoding UTF8 | ForEach-Object { $_ | ConvertFrom-Json })
+        $loggedJobs=@($records | Where-Object Kind -eq 'Job')
+        if ($records.Count -ne 4 -or $records[0].Kind -ne 'Session' -or
+            $records[0].ApplicationSHA256 -ne (Get-FileHash -LiteralPath $application).Hash -or
+            $records[-1].Kind -ne 'Result' -or $records[-1].ExitCode -ne 0 -or $records[-1].Counters.Done -ne 2 -or
+            $loggedJobs.Count -ne 2 -or @($loggedJobs | Where-Object Outcome -ne 'Completed').Count -or
+            @($loggedJobs | Where-Object { $_.ProgressStates[-1] -ne 'Completed' }).Count) {
+            throw 'Persistent entry results disagree with validated/published batch outcomes.'
+        }
         [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = $captured.Count; Passed = $true }
     } finally {
         try {
@@ -137,8 +156,10 @@ public static class WvcEntryRecorder {
         if (Path.GetFileName(Environment.GetCommandLineArgs()[0]).Equals("ffprobe.exe", StringComparison.OrdinalIgnoreCase)) {
             Console.WriteLine("{\"streams\":[{\"index\":0,\"codec_type\":\"video\",\"codec_name\":\"h264\",\"pix_fmt\":\"yuv420p\",\"width\":1280,\"height\":720,\"duration\":\"1\",\"nb_frames\":\"24\"}],\"format\":{\"duration\":\"1.000000\",\"format_name\":\"mov,mp4,m4a,3gp,3g2,mj2\"}}");
         } else {
-            Console.WriteLine("WVC_NATIVE_RECORDER");
-            foreach (string arg in args) Console.WriteLine("WVC_ARG:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));
+            using (var record = new StreamWriter(Environment.GetEnvironmentVariable("WVC_ENTRY_ARGV_PATH"), true, new UTF8Encoding(false))) {
+                foreach (string arg in args) record.WriteLine(Convert.ToBase64String(Encoding.UTF8.GetBytes(arg)));
+            }
+            Console.WriteLine("out_time_us=1000000\nprogress=end");
             using (var output = new FileStream(args[args.Length-1], FileMode.CreateNew, FileAccess.Write, FileShare.None)) {
                 byte[] header = new byte[] {0,0,0,16,102,116,121,112,105,115,111,109,0,0,0,0};
                 output.Write(header,0,header.Length);
@@ -181,6 +202,7 @@ public static class WvcEntryRecorder {
             [void][IO.Directory]::CreateDirectory($outputRoot)
             $expectedOutput = Join-Path $outputRoot 'Band Name 29092025.mp4'
             $expectedOutputTwo = Join-Path $outputRoot 'Other Band 29092025.mp4'
+            $nativeArgumentsPath = Join-Path $fixtureRoot ($definition.Id + '.argv.txt')
             $caseAppData = Join-Path $fixtureRoot ('appdata-' + $definition.Id)
             $appData = $caseAppData
             $configDir = Join-Path $appData 'WinVidCompress'
