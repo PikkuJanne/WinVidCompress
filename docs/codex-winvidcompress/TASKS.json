@@ -2161,7 +2161,7 @@
       "title": "Complete the real Windows workflow acceptance matrix",
       "milestone": "M4",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         18,
         19
@@ -2216,8 +2216,10 @@
       ],
       "approval_gate": "Owner supplies/approves real-media review and confirms manual acceptance.",
       "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "evidence": [
+        "evidence/WVC-M4-05-review.md"
+      ],
+      "notes": "Explicit bounded split: slice A automated/native isolated fresh and upgraded-config workflows plus historical Explorer reconciliation; slice B owner-approved representative playback/manual acceptance and isolated default-profile first launch. Preserve every A01-A04 requirement. See evidence/WVC-M4-05-review.md; no private media selected or approved."
     },
     {
       "id": "WVC-M5-01",
