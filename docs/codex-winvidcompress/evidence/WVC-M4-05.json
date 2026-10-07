@@ -8,7 +8,7 @@
     "WVC-M4-05-A03",
     "WVC-M4-05-A04"
   ],
-  "recorded_at": "2026-10-07T17:29:30.129061+00:00",
+  "recorded_at": "2026-10-07T17:42:44.937983+00:00",
   "tested_commits": [
     "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
     "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9"
@@ -400,43 +400,81 @@
     },
     {
       "acceptance": "A03",
-      "status": "not_run",
-      "scope": "Two owner-approved representative excerpts prepared and automatically verified; actual playback observation pending.",
-      "preparation": "WVC-M4-05-review.md"
+      "status": "passed",
+      "scope": "Owner PASS for both prepared representative pairs; combined with existing automatic tags/decode/source-safety checks.",
+      "preparation": "WVC-M4-05-review.md",
+      "owner_confirmation": {
+        "date": "2026-10-07",
+        "statement": "Playback verdict PASS for all files",
+        "scope": "Displayed two prepared SOURCE/OUTPUT interview-excerpt pairs only",
+        "question_scope": [
+          "Expected upright picture/orientation",
+          "Matching duration",
+          "Clear speech and synchronization",
+          "Acceptable face/text detail"
+        ],
+        "metadata_basis": "Existing automated filename-derived tag read-back; no separate human metadata-property inspection claimed",
+        "application_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+        "limitations": [
+          "Not full original interviews",
+          "No other-player/HDR/archive-wide/release acceptance",
+          "No default-quality-policy change approval"
+        ]
+      }
     }
   ],
   "owner_approval": {
     "date": "2026-10-07",
     "statement": "Theres two interview videos in Downloads folder",
-    "scope": "Local copies and bounded representative excerpts, in response to explicit processing request"
+    "scope": "Local copies and bounded representative excerpts, in response to explicit processing request",
+    "playback_confirmation": {
+      "date": "2026-10-07",
+      "statement": "Playback verdict PASS for all files",
+      "scope": "Displayed two prepared SOURCE/OUTPUT interview-excerpt pairs only",
+      "question_scope": [
+        "Expected upright picture/orientation",
+        "Matching duration",
+        "Clear speech and synchronization",
+        "Acceptable face/text detail"
+      ],
+      "metadata_basis": "Existing automated filename-derived tag read-back; no separate human metadata-property inspection claimed",
+      "application_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "limitations": [
+        "Not full original interviews",
+        "No other-player/HDR/archive-wide/release acceptance",
+        "No default-quality-policy change approval"
+      ]
+    },
+    "task_local_media_manual_gate_fulfilled": true,
+    "release_or_quality_policy_approval": false
   },
   "previous_verified_sync": {
     "schema_version": 1,
-    "checked_at": "2026-10-07T16:52:25.871408+00:00",
+    "checked_at": "2026-10-07T17:38:36.688684+00:00",
     "read_only": true,
     "point_in_time_only": true,
     "repository": "PikkuJanne/WinVidCompress",
-    "head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "head": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
     "branch": "codex/wvc-m4-05-acceptance",
     "upstream": "origin/codex/wvc-m4-05-acceptance",
     "dirty": false,
     "operations": [],
     "issues": [],
     "reasons": [],
-    "live_fetch_head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
-    "live_push_head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "live_fetch_head": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+    "live_push_head": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
     "status": "SYNCHRONIZED"
   },
   "final_handoff_push": "pending; verify externally after commit",
   "limitations": [
     "Initial Full Failed/exit1 includes PS7 harness timeout; affected retry raw status/counts remain recorded separately. Eight combined manual/future NotRun rows are never regraded from evidence overlays.",
-    "Representative preparation has automatic passing evidence; actual owner playback confirmation remains pending.",
+    "Owner playback passed for two bounded samples; whole originals/other players/HDR/archive-wide/release quality remain unaccepted.",
     "Default MyVideos first launch needs isolated Windows profile; no account/system/profile changes",
     "Remote SMB/arbitrary filesystems-long paths/power-loss/hostile substitution and console-close/detached-descendant guarantees remain unaccepted",
     "D005 percent-variable BAT boundary and CMD length/spelling limits remain documented",
     "Candidate ZIP/extraction/reproducibility/package smoke remains later M5 work"
   ],
-  "next_task": "WVC-M4-05 remaining representative playback confirmation; inspect handoff CI. Then WVC-M5-01 after this task is verified.",
+  "next_task": "WVC-M5-01 - Write onboarding, help and troubleshooting for actual behaviour. Stop after this acceptance handoff.",
   "ci_runs": [
     {
       "id": 37655443989,
@@ -652,6 +690,402 @@
       "initial_retry_result": "HTTP500; subsequent metadata still attempt1/failure",
       "second_retry_command": "gh run rerun 37655449563",
       "second_retry_result": "HTTP500, observed exit1; subsequent metadata still attempt1/failure"
+    },
+    {
+      "id": 37659526964,
+      "html_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659526964",
+      "head_sha": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-07T17:29:59Z",
+      "updated_at": "2026-10-07T17:37:00Z",
+      "run_attempt": 1,
+      "artifacts": [
+        {
+          "artifact_id": 11500795253,
+          "name": "windows-results-WindowsPowerShell",
+          "archive_digest": "sha256:be7e5a8040815e9315dad4f0f01e5defcd55f358f3e78b0425b48b1c7a1a9717",
+          "expires_at": "2026-10-14T17:36:55Z",
+          "summary_sha256": "53a4de231c47c219a1c181f3691449d6f63faf457ddc8255b085dd2e1cd6d90f",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+            "HostName": "WindowsPowerShell",
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 0,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112923181883,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659526964/job/112923181883",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "artifact_id": 11500362163,
+          "name": "windows-results-PowerShell7",
+          "archive_digest": "sha256:2b0c2d482c4e0c07baa3c20c3fe6d99bdb011c4eb0b40841dd0fdc66d7712d72",
+          "expires_at": "2026-10-14T17:35:11Z",
+          "summary_sha256": "8f8d017c88b63d8bbb892935e72857053c1a809fee5e857a454878f34637b1f5",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+            "HostName": "PowerShell7",
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 0,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112923182129,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659526964/job/112923182129",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "tested_checkout_commit": "bfef3942f6ffbda417bf12951bcc8b166a96bad1"
+    },
+    {
+      "id": 37659531727,
+      "html_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659531727",
+      "head_sha": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-07T17:30:01Z",
+      "updated_at": "2026-10-07T17:35:15Z",
+      "run_attempt": 1,
+      "artifacts": [
+        {
+          "artifact_id": 11500058657,
+          "name": "windows-results-WindowsPowerShell",
+          "archive_digest": "sha256:b327d9caa3b499c276ee04219c4331a336f24796f1ad534e04213535615f9400",
+          "expires_at": "2026-10-14T17:34:29Z",
+          "summary_sha256": "64246130a184421e0370649965301adb76d73b8c4d590c32bb38822ba6a34705",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "e702a94bd9cc612e13e7306c8e8ccd8ae72e0ead",
+            "HostName": "WindowsPowerShell",
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112923195705,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659531727/job/112923195705",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "artifact_id": 11500194794,
+          "name": "windows-results-PowerShell7",
+          "archive_digest": "sha256:b7be8582d49a4ffd4e97870a5789f8346fb0432fa5a986a01796ffa6b3d98a3d",
+          "expires_at": "2026-10-14T17:35:09Z",
+          "summary_sha256": "50925563a22e73f76fe8271e97377f60475c72186f2316490fe2eea6e35541d5",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "e702a94bd9cc612e13e7306c8e8ccd8ae72e0ead",
+            "HostName": "PowerShell7",
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112923195296,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37659531727/job/112923195296",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "tested_checkout_commit": "e702a94bd9cc612e13e7306c8e8ccd8ae72e0ead",
+      "tested_merge_parents": [
+        "073e4d62633bea4d10954652ea53a198ced579f5",
+        "bfef3942f6ffbda417bf12951bcc8b166a96bad1"
+      ]
     }
   ],
   "full_attempt_diagnostic": "Initial clean both-host Full retained PS51 suite/static/entry/native passes and one PS7 harness failure: Owned test process timed out at420000ms. Representative preparation overlapped the initial PS7 run; cause not established. Only affected PS7 scope rerun alone; no timeout/test expectation changes.",
@@ -703,7 +1137,24 @@
     ],
     "privacy": "Original/full-copy/sample hashes, titles/tags, names/paths, probes and raw logs remain local only; committed evidence uses generic case IDs. No private media upload.",
     "scope": "Two SDR landscape speech excerpts; stream-copy keyframe padding yields23.136016/24.48s source durations; output23.12/24.48s. No full-interview playback/other-player/HDR/archive-wide guarantee.",
-    "manual_observation": "pending",
+    "manual_observation": {
+      "date": "2026-10-07",
+      "statement": "Playback verdict PASS for all files",
+      "scope": "Displayed two prepared SOURCE/OUTPUT interview-excerpt pairs only",
+      "question_scope": [
+        "Expected upright picture/orientation",
+        "Matching duration",
+        "Clear speech and synchronization",
+        "Acceptable face/text detail"
+      ],
+      "metadata_basis": "Existing automated filename-derived tag read-back; no separate human metadata-property inspection claimed",
+      "application_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "limitations": [
+        "Not full original interviews",
+        "No other-player/HDR/archive-wide/release acceptance",
+        "No default-quality-policy change approval"
+      ]
+    },
     "application_sha256": "dd099c8a6c4605ea8b8fb59fd2f143a05f466712b14b01e2802c48862cf80037",
     "host": {
       "Version": "7.6.6",
@@ -742,5 +1193,40 @@
     "Limitation": "Initial whole-file equality assertion failed only for new test PS1: local LF versus clone CRLF according to .gitattributes; product bytes and canonical test blob match.",
     "scope": "Clean feature clone at the implementation checkpoint; tracker/product bytes/canonical test blob, not ZIP/package/fresh-account acceptance. Final handoff clone/live verification is external after push.",
     "command": "git clone --single-branch --no-tags --branch codex/wvc-m4-05-acceptance https://github.com/PikkuJanne/WinVidCompress.git .test-results/m405/reconstruction; then existing bundled Python tools/codex-winvidcompress/validate_tracker.py --repo .test-results/m405/reconstruction"
+  },
+  "task_status": "verified",
+  "acceptance_status": {
+    "WVC-M4-05-A01": "passed",
+    "WVC-M4-05-A02": "passed",
+    "WVC-M4-05-A03": "passed",
+    "WVC-M4-05-A04": "passed"
+  },
+  "clean_clone_reconstruction_at_previous_handoff": {
+    "SourceCommit": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+    "Dirty": false,
+    "ProductRawBytesMatch": true,
+    "CanonicalFilesMatch": 11,
+    "Tracker": {
+      "valid": true,
+      "tasks": 32,
+      "acceptance_criteria": 128,
+      "improvements_covered": 23,
+      "errors": []
+    },
+    "Limitation": "Source reconstruction only, not package/ZIP/fresh-profile acceptance."
+  },
+  "acceptance_followup": {
+    "date": "2026-10-07",
+    "preceding_handoff": "bfef3942f6ffbda417bf12951bcc8b166a96bad1",
+    "changes": "Owner playback/criterion/task/status/matrix/next/session records only; no application/test/runtime changes",
+    "commands": [
+      "git fetch origin",
+      "Existing bundled Python .test-results/m405/collect-acceptance-ci.local.py",
+      "Existing bundled Python tools/codex-winvidcompress/validate_tracker.py --repo .",
+      "git diff --check"
+    ],
+    "ci_collection_scope": "Four sanitized summaries and all job steps; exact pushbfef394 and confirmed mergee702a94 parents",
+    "new_long_suites": "Not rerun after evidence-only changes; applicable native/local gates and subsequent both-host push/PR results retained",
+    "current_handoff_ci_and_sync": "Pending after this followup commit; report externally without self-SHA"
   }
 }

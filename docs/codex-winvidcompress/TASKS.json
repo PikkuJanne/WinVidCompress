@@ -2161,7 +2161,7 @@
       "title": "Complete the real Windows workflow acceptance matrix",
       "milestone": "M4",
       "priority": "P1",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         18,
         19
@@ -2194,7 +2194,7 @@
             "evidence/WVC-M4-05.md",
             "evidence/WVC-M4-05.json"
           ],
-          "notes": "Actual supported Windows automated scopes pass: initial Full PS5.1: 945/shared24, affected PS7 Full retry969/0/0/8 exit2; initial PS7 timeout969/1/0/8 exit1 preserved. Exact603decf push CI969/0 per host/artifacts inspected; PR pre-job GitHub internal error and twoHTTP500 reruns explicitly infrastructure-blocked under this criterion. Raw eight manual/future NotRun rows remain unchanged."
+          "notes": "Actual supported Windows automated scopes pass: initial Full PS5.1: 945/shared24, affected PS7 Full retry969/0/0/8 exit2; initial PS7 timeout969/1/0/8 exit1 preserved. Exact603decf push CI969/0 per host/artifacts inspected; PR pre-job GitHub internal error and twoHTTP500 reruns explicitly infrastructure-blocked under this criterion. Raw eight manual/future NotRun rows remain unchanged. Subsequent handoffbfef394 push37659526964 and PR37659531727 both969/0/0/0 per host, all steps/four sanitized artifacts inspected; PR checkout mergee702a94 parents confirmed. Prior infrastructure failure remains historical."
         },
         {
           "id": "WVC-M4-05-A02",
@@ -2214,13 +2214,13 @@
           "id": "WVC-M4-05-A03",
           "description": "Representative outputs play with expected orientation, duration, audio and metadata.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M4-05.md",
             "evidence/WVC-M4-05.json",
             "evidence/WVC-M4-05-review.md"
           ],
-          "notes": "Owner identified two approved local interview files; owned23/24s source/output samples prepared with matching geometry/duration/audio/filename tags/decode/original-copy hashes. Actual owner PASS/FAIL/UNSURE playback answer pending; preparation is not human acceptance. No private names/paths/tags/media hashes/uploads in GitHub."
+          "notes": "2026-10-07 owner: Playback verdict PASS for all files. This answers the displayed two prepared23/24s source/output sample pairs for picture/orientation, duration, speech/sync and detail; automatic filename metadata/decode/source-copy safety already passed. No whole-original/other-player/HDR/archive/release/default-quality approval or separate human metadata-property inspection inferred."
         },
         {
           "id": "WVC-M4-05-A04",
@@ -2231,7 +2231,7 @@
             "evidence/WVC-M4-05.md",
             "evidence/WVC-M4-05.json"
           ],
-          "notes": "Actual Windows PS5.1/PS7 and exact-source push artifacts, retained real owner observations, honest raw Full omissions/failure/retry and pending A03. No Linux/mocked/preparation-only acceptance or task/release approval inferred."
+          "notes": "Actual Windows PS5.1/PS7 local scopes, exact-source push and confirmed PR merge artifacts, retained real Explorer/cancellation observations and owner representative sample PASS. Historical Full omissions/failure/retry are unchanged. No Linux/mocked/preparation-only or broader release acceptance inferred."
         }
       ],
       "approval_gate": "Owner supplies/approves real-media review and confirms manual acceptance.",
@@ -2245,7 +2245,7 @@
         "evidence/WVC-M4-05-review.md",
         "evidence/WVC-M4-05-session.md"
       ],
-      "notes": "Bounded slice A implemented; owner-approved samples prepared for slice B, actual playback observation pending. Initial extra default-MyVideos gate interpretation explicitly corrected: original brief has no separate default-destination route requirement; genuine fresh CLI override and saved legacy/extended native workflows satisfy step2. Unmodified MyVideos first launch stays not_run as a distribution/support limit, A01-A04 unchanged. No private media/upload/default-quality/profile changes. PR infrastructure block and original PS7 watchdog failure preserved; exact next remains WVC-M4-05 playback confirmation and handoff CI inspection."
+      "notes": "Verified after2026-10-07 owner Playback verdict PASS for all files, completing A03 for the two prepared sample pairs and the task-local media/manual gate. All A01-A04 passed in recorded scopes. Exactbfef394 push and confirmed mergee702a94 PR CI each969/0/0/0 per host, sanitized artifacts inspected; initial PS7 watchdog failure/affected passing retry, raw eight NotRun rows and older pre-job PR infrastructure failure retained. Fresh CLI override plus legacy/extended native workflows satisfy step2; unmodified MyVideos first launch remains a distribution/support limit, A01-A04 unchanged. Private media stays local; no source/default-quality/profile/release changes. Exact next WVC-M5-01; stop after this acceptance handoff."
     },
     {
       "id": "WVC-M5-01",
