@@ -1,5 +1,6 @@
 @{
     IncludeDefaultRules = $true
     Severity = @('Error')
-    # Existing application warning/style debt is outside this harness task.
+    # Whole-tree error gate. test-static.ps1 adds selected safety rules on changed files.
+    # Existing warning/style debt does not require an application formatting rewrite.
 }

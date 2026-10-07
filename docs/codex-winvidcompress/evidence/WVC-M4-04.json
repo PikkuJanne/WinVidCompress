@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M4-04",
+  "acceptance_ids": [
+    "WVC-M4-04-A01",
+    "WVC-M4-04-A02",
+    "WVC-M4-04-A03",
+    "WVC-M4-04-A04"
+  ],
+  "recorded_at": "2026-10-07T16:25:39.679345+00:00",
+  "tested_commits": [
+    "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+    "f0fc177eb02ce842fb85391b2666ab936ee37db8"
+  ],
+  "application_sha256": "dd099c8a6c4605ea8b8fb59fd2f143a05f466712b14b01e2802c48862cf80037",
+  "unchanged_launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "local_host": {
+    "os": "Windows 11 Pro build26300 UBR9457 26H2 x64",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.6 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0"
+  },
+  "command_bindings": {
+    "runtimeRoot": "Existing isolated CI dependency root from earlier M4-04 setup; private absolute path held only in ignored runtime-path.local.txt",
+    "setup": "Verified existing dependency manifest providing exact module, portable PS7 and native paths; no downloads during continuation",
+    "bundled-python-directory": "Existing desktop bundled dependencies/python; only the private absolute path is redacted",
+    "normalization": "Commands retain all tokens except the private Python absolute path, represented by this binding; PATH changes are process-local"
+  },
+  "local_runs": [
+    {
+      "name": "continue-focus51",
+      "command": "$runtimeRoot=(Get-Content -LiteralPath '.test-results/m404/runtime-path.local.txt' -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $setup.ModuleRoot -TestPath 'tests/unit/Ci.Tests.ps1|tests/Harness.Tests.ps1' -ReportPath .test-results/m404/continue-focus51.json *> .test-results/m404/continue-focus51.log; exit $LASTEXITCODE",
+      "tested_commit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_tree_dirty": false,
+      "host": "5.1.26100.9444 Desktop",
+      "counts": {
+        "Passed": 45,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "report": ".test-results/m404/continue-focus51.json",
+      "report_sha256": "2e2c3d1622a577f2603d1d0a8f8f9555902653271297767faa811c7638f0beb6",
+      "log_sha256": "af30acce113d84421e28fd017ff43fad2200bbbb6f45ae536fd56622325412f4"
+    },
+    {
+      "name": "continue-focus7",
+      "command": "$runtimeRoot=(Get-Content -LiteralPath '.test-results/m404/runtime-path.local.txt' -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $setup.ModuleRoot -TestPath 'tests/unit/Ci.Tests.ps1|tests/Harness.Tests.ps1' -ReportPath .test-results/m404/continue-focus7.json *> .test-results/m404/continue-focus7.log; exit $LASTEXITCODE",
+      "tested_commit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_tree_dirty": false,
+      "host": "7.6.6 Core",
+      "counts": {
+        "Passed": 45,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "report": ".test-results/m404/continue-focus7.json",
+      "report_sha256": "9471a220101d587b0c70fc74c22c453f56f42ba1217c2e2057f5881bd2e7ab28",
+      "log_sha256": "f627e6dca0d5dbd91095917a198d14d69486ea53c389746a91f2763aaa172df9"
+    },
+    {
+      "name": "continue-quick51",
+      "command": "$runtimeRoot=(Get-Content -LiteralPath '.test-results/m404/runtime-path.local.txt' -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; $pythonDir='<bundled-python-directory>'; $env:Path=$setup.NativeDirectory+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$pythonDir+';'+$env:Path; $env:FFREPORT=$null; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -IncludeKnownDefects -ModuleRoot $setup.ModuleRoot -ReportPath .test-results/m404/continue-quick51.json *> .test-results/m404/continue-quick51.log; exit $LASTEXITCODE",
+      "tested_commit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_tree_dirty": false,
+      "host": {
+        "Name": "Current",
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop"
+      },
+      "counts": {
+        "Passed": 945,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "report_exit": 0,
+      "report": ".test-results/m404/continue-quick51.json",
+      "report_sha256": "c5cc04dad58e1475520d63b444be4f05175787a92389d011c716b4551542a0b3",
+      "log_sha256": "17119cc85cfc6a2aeec9a2a1100a348df34909e7fd377aae724a1c872da43477"
+    },
+    {
+      "name": "continue-static51",
+      "command": "$runtimeRoot=(Get-Content -LiteralPath '.test-results/m404/runtime-path.local.txt' -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $setup.ModuleRoot -BaseCommit cbcecf7b88b761f482d9a17125ab56074a9ab5c3 -ReportPath .test-results/m404/continue-static51.json; exit $LASTEXITCODE",
+      "tested_commit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_tree_dirty": false,
+      "observed_suite_exit": 0,
+      "analysis": {
+        "SchemaVersion": 1,
+        "AnalyzedFiles": 8,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules",
+        "Passed": true
+      },
+      "report": ".test-results/m404/continue-static51.json",
+      "report_sha256": "fb62d276125abf6b8403bde6ee0917daf7903f7fb864c08a68a557d3db816c15"
+    }
+  ],
+  "exit_provenance": "Observed completed exec_command/write_stdin exit_code; each command forwards LASTEXITCODE. Hosted outcomes and uploaded summary exits inspected independently.",
+  "workflow_command": "& $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./tools/test-ci.ps1 -HostName $env:WVC_CI_HOST -ModuleRoot $env:WVC_CI_MODULES -NativeDirectory $env:WVC_CI_NATIVE -BaseCommit $base -ResultDirectory $reports; exit $LASTEXITCODE",
+  "workflow_command_bindings": "Exact bindings/base selection/setup in windows-tests.yml at tested commit; wrapper runs tools/test.ps1 -Tier Targeted -Hosts Current -IncludeKnownDefects with pinned dependencies.",
+  "workflow_runs": [
+    {
+      "run_id": 37641576132,
+      "url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37641576132",
+      "event": "push",
+      "head_sha_reported_by_github": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_checkout_commit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-07T15:01:22Z",
+      "updated_at": "2026-10-07T15:08:37Z",
+      "artifacts": [
+        {
+          "artifact_id": 11492607736,
+          "name": "windows-results-WindowsPowerShell",
+          "archive_digest_reported_by_github": "sha256:4f5aa8d415338064238b936f53da155be5185bcf3cdc5d841c2614675a218d7f",
+          "summary_sha256": "d942e999721aecd7c8b2f772a2a4496ddc1a3bb98a50f4c6f1e08abfb8fb2181",
+          "expires_at": "2026-10-14T15:07:44Z",
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37641576132/job/112861613393",
+          "job_conclusion": "success",
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+            "HostName": "WindowsPowerShell",
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 965,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 8,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false,
+            "case_count": 965
+          }
+        },
+        {
+          "artifact_id": 11491404729,
+          "name": "windows-results-PowerShell7",
+          "archive_digest_reported_by_github": "sha256:d38421be1dd6e0c6854e13341c3e5516d1f88f66e38a2861ca4535a37c567f83",
+          "summary_sha256": "b8001652f6b4ba655bd21d17482bf952de5990882767df5ef24aa5ddcaa234b0",
+          "expires_at": "2026-10-14T15:06:24Z",
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37641576132/job/112861612728",
+          "job_conclusion": "success",
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+            "HostName": "PowerShell7",
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 965,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 8,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false,
+            "case_count": 965
+          }
+        }
+      ]
+    },
+    {
+      "run_id": 37642013618,
+      "url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37642013618",
+      "event": "pull_request",
+      "head_sha_reported_by_github": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+      "tested_checkout_commit": "f0fc177eb02ce842fb85391b2666ab936ee37db8",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-07T15:04:33Z",
+      "updated_at": "2026-10-07T15:10:00Z",
+      "artifacts": [
+        {
+          "artifact_id": 11492382879,
+          "name": "windows-results-WindowsPowerShell",
+          "archive_digest_reported_by_github": "sha256:00fdd506322d41dd1434c65e34e73018a190808ba69dc57f6a330ec3dd6f59a7",
+          "summary_sha256": "0f7925479c38c53944057ffd138d4e590723f3a7e0f80f5234e738d4d12fbbb6",
+          "expires_at": "2026-10-14T15:09:09Z",
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37642013618/job/112863171646",
+          "job_conclusion": "success",
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "f0fc177eb02ce842fb85391b2666ab936ee37db8",
+            "HostName": "WindowsPowerShell",
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 965,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 8,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false,
+            "case_count": 965
+          }
+        },
+        {
+          "artifact_id": 11491938833,
+          "name": "windows-results-PowerShell7",
+          "archive_digest_reported_by_github": "sha256:474a6a1b04f3be30c21e4fb24302fa1e908f143c839f7106f6017d42b003bb61",
+          "summary_sha256": "99f10540f953baf736939d3cdede1e60decd40c72e3920d933acf2cdeb3678ab",
+          "expires_at": "2026-10-14T15:08:56Z",
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37642013618/job/112863171976",
+          "job_conclusion": "success",
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "f0fc177eb02ce842fb85391b2666ab936ee37db8",
+            "HostName": "PowerShell7",
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 965,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 8,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false,
+            "case_count": 965
+          }
+        }
+      ]
+    }
+  ],
+  "pull_request_merge_parents": [
+    "cbcecf7b88b761f482d9a17125ab56074a9ab5c3",
+    "1e11f759e8de691f575837eeb9d0647c4a0e7e68"
+  ],
+  "pr_url": "https://github.com/PikkuJanne/WinVidCompress/pull/28",
+  "pr_state": "OPEN draft",
+  "review": "Independent read-only audit found no blocking CI/security/failure-propagation defect; primary action/tag/support/archive/module metadata matched pins.",
+  "acceptance": {
+    "A01": "Passed: actual analyzer violation and failing/all-skipped Pester subprocesses return nonzero; report corruption/native failure/omission/static policy probes fail CI admission; workflow forwards child exit and never continues on error.",
+    "A02": "Passed: both real hosted versions/native versions/counts inspected, upload steps succeeded; downloaded artifacts contain only summary.json with allowlisted fields and ordinal case statuses.",
+    "A03": "Passed: read-only token, no secrets/pull_request_target/persistent credentials or merge/tag/release/deploy steps; pinned actions and verified developer-only dependency archives.",
+    "A04": "Passed: push run tests exact feature commit; PR run tests separately identified merge commit; all four real hosted jobs inspected as completed success, not inferred from queued/existing YAML."
+  },
+  "synchronization_checkpoint": {
+    "checked_at": "2026-10-07T16:18:59.070668+00:00",
+    "branch": "codex/wvc-m4-04-ci",
+    "local_head": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+    "live_fetch_head": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+    "live_push_head": "1e11f759e8de691f575837eeb9d0647c4a0e7e68",
+    "dirty": false,
+    "status": "SYNCHRONIZED",
+    "final_handoff": "Pending at record creation; final HEAD/live refs/CI reported externally after commit/push to avoid self-SHA."
+  },
+  "limitations": [
+    "Targeted hosted checks are not Full or release/Explorer/playback acceptance. Prior owner2026-10-07 acceptance remains intact without repeats.",
+    "PR checkout is GitHub generated merge commit, not feature HEAD; both identities retained.",
+    "Runner OS/image family changes. WindowsVersion/image version are reported; current ImageOS value does not match conservative name allowlist, so RunnerImage.Name is null. Logs identify Windows Server2025 image windows-2025-vs2026.",
+    "Artifacts expire after seven days; compact sanitized projections/hashes/run links are committed here. Raw diagnostics remain ignored/local; none uploaded.",
+    "Archive digests pin accepted content, not publisher signing. Supported stable versions require reviewed servicing pin maintenance.",
+    "No workflow failure intentionally pushed; A01 is supported by actual local negative subprocess tests, strict report probes and reviewed workflow exit propagation.",
+    "Structural synthetic media checks do not establish visual/audio integrity; prior broader network/filesystem/durability/player/representative-media/release gates remain open."
+  ]
+}

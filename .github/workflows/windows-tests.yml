@@ -1,0 +1,66 @@
+name: Windows tests
+
+on:
+  push:
+    branches: [main, 'codex/wvc-*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: ${{ matrix.host }}
+    runs-on: windows-2025
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [WindowsPowerShell, PowerShell7]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify and prepare pinned developer dependencies
+        shell: pwsh
+        run: |
+          $runtime = Join-Path $env:RUNNER_TEMP 'wvc-ci-dependencies'
+          & ./tools/test-ci-dependencies.ps1 -RuntimeRoot $runtime
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $setup = Get-Content -LiteralPath (Join-Path $runtime 'dependencies.json') -Raw | ConvertFrom-Json
+          'WVC_CI_MODULES=' + $setup.ModuleRoot | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+          'WVC_CI_PS7=' + $setup.PowerShell7 | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+          'WVC_CI_NATIVE=' + $setup.NativeDirectory | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+          Split-Path -Parent $setup.PowerShell7 | Out-File -LiteralPath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Run real targeted tests and changed-file analysis
+        shell: pwsh
+        env:
+          WVC_CI_HOST: ${{ matrix.host }}
+          WVC_CI_PR_BASE: ${{ github.event.pull_request.base.sha }}
+          WVC_CI_BEFORE: ${{ github.event.before }}
+        run: |
+          $base = $env:WVC_CI_PR_BASE
+          if (-not $base) { $base = $env:WVC_CI_BEFORE }
+          if (-not $base -or $base -eq ('0' * 40)) {
+            $base = (git merge-base HEAD refs/remotes/origin/main).Trim()
+            if ($LASTEXITCODE -ne 0) { throw 'Changed-file merge base is unavailable.' }
+          }
+          if ($base -cnotmatch '^[a-f0-9]{40}$') { throw 'Invalid changed-file base.' }
+          $hostExe = if ($env:WVC_CI_HOST -eq 'WindowsPowerShell') { Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe' } else { $env:WVC_CI_PS7 }
+          $reports = Join-Path $env:RUNNER_TEMP ('wvc-reports/' + $env:WVC_CI_HOST)
+          & $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./tools/test-ci.ps1 -HostName $env:WVC_CI_HOST -ModuleRoot $env:WVC_CI_MODULES -NativeDirectory $env:WVC_CI_NATIVE -BaseCommit $base -ResultDirectory $reports
+          exit $LASTEXITCODE
+      - name: Preserve sanitized results only
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-results-${{ matrix.host }}
+          path: ${{ runner.temp }}/wvc-reports/${{ matrix.host }}/summary.json
+          if-no-files-found: error
+          retention-days: 7
