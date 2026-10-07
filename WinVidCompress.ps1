@@ -1,172 +1,73 @@
 <#
-WinVidCompress.ps1
-Minimal Win11 video compressor for personal interview archiving
-
-Author: Janne Vuorela
-Target OS: Windows 11
-Dependencies: ffmpeg.exe + ffprobe.exe (in PATH or next to this script)
-
-SYNOPSIS
-    One-preset, no-frills video compressor intended for my own workflow.
-    Archiving band interview videos with consistent quality and embedded metadata.
-
-WHAT THIS IS (AND ISN’T)
-    - Personal, purpose-built tool for my specific use case.
-      I don’t expect most people to need this, it trades options for speed and repeatability.
-    - Text-UI (TUI) when run directly, also supports drag-and-drop via the .bat wrapper.
-    - Single compression profile modeled after HandBrake “Very Fast 1080p”:
-        - Video: H.264 (libx264), -preset veryfast, -crf 22
-        - Audio: AAC 160 kbps
-        - Container: MP4 with +faststart (moov moved to front)
-        - Scaling: no crop; only downscale if source height > 1080 (never upscale)
-    - Filename-driven metadata tagging for interviews.
-
-FEATURES
-    - Zero decision surface: exactly one quality level.
-    - Drag & drop batch mode:
-        - Drop one file -> compress that file
-        - Drop one folder -> queue and compress all videos inside (recursive)
-        - Drop multiple files/folders -> queue everything and run sequentially
-        - Prints a simple summary at the end (found/done/skipped/failed)
-    - Output collision behavior:
-        - If an output .mp4 already exists, the script will auto-rename to
-          " (compressed)" / " (compressed 2)" etc. (configurable in script).
-    - Writes MP4 metadata parsed from the filename:
-        - Expected filename forms (examples):
-            "Band Name 29092025 - CamA.mov"
-            "Band Name 29.09.2025.mov"
-            "Band Name 29-09-2025.mkv"
-        - Tags written:
-            artist = Band Name
-            date   = YYYY-MM-DD
-            title  = base filename (without extension)
-            comment = "Interview date dd.mm.yyyy; Band: <name>"
-      If parsing fails, the file is still compressed (no prompt, no block).
-    - Remembers output folder in %APPDATA%\WinVidCompress\config.json.
-      Default output is the Windows “Videos” folder (e.g., C:\Users\<you>\Videos).
-
-MY INTENDED USAGE
-    - I drag a single video file (or a whole folder after a shoot) onto WinVidCompress.bat in my Downloads folder.
-    - The script compresses and drops the MP4(s) into my Videos folder.
-    - That’s it, no clicking around HandBrake.
-
-SETUP
-    1) Download a recent static FFmpeg build for Windows (includes ffmpeg.exe and ffprobe.exe).
-    2) Put ffmpeg.exe and ffprobe.exe somewhere in PATH, or in the same folder as this script.
-    3) Keep these two files together:
-         • WinVidCompress.ps1
-         • WinVidCompress.bat   (wrapper to allow double-click + drag-and-drop)
-    4) First run will create %APPDATA%\WinVidCompress\config.json with OutputDir = Videos.
-
-USAGE
-    A) Drag & drop (my default)
-        - Drag a single video file onto WinVidCompress.bat.
-        - Or drag a folder to batch-compress all videos inside (recursive).
-        - Output MP4(s) will appear in:  %USERPROFILE%\Videos
-    B) Double-click for TUI
-        - Options:
-            1) Set output folder (persists in config)
-            2) Compress ONE file (paste full path)
-            3) Compress ALL videos in a folder (recursive)
-            4) Quit (the .bat window remains at its PowerShell prompt)
-    C) Direct PowerShell
-        - Run:  .\WinVidCompress.ps1  "D:\Interviews\Band 29092025 - CamA.mov"
-        - Or:   .\WinVidCompress.ps1  "D:\Interviews\FolderWithVideos"
-        - Diagnose without conversion: .\WinVidCompress.ps1 -CheckEnvironment
-          Reports exact PATH-before-adjacent binaries, versions and capabilities.
-          Checks writing with an owned temporary file removed on close; no config,
-          backups or output folders are created. Capacity is advisory.
-        - Unattended: .\WinVidCompress.ps1 -Unattended 'D:\Interviews\Folder'
-          Or: WinVidCompress.bat -Unattended "D:\Interviews\Folder"
-          Put -Unattended first in the BAT command; no menu or closing pause.
-          Exit: 0 success/valid skips; 1 job/scan failure; 2 startup/invalid/empty
-          requested batch; 3 observed application cancellation (takes precedence).
-          Default BAT uses -KeepOpen for its retained prompt. Do not combine it
-          with -Unattended. Physical Ctrl+C/console-close handling is unverified.
-
-NOTES
-    - BAT drag/drop does not support %NAME% segments such as %PATH% anywhere in
-      the full path, including folder names. Paste these literal paths into menu
-      option 2/3 or call this PS1 from PowerShell with a single-quoted literal path.
-      An outer CMD caller can also expand !NAME! when delayed expansion is enabled.
-    - In a CMD/BAT command, omit a quoted folder's trailing backslash; for a drive
-      root use D:\. or paste D:\ into the menu. Native quoting can change the slash.
-    - CMD/batch command lines are limited to 8191 characters, including expanded
-      paths and quotes. Drop a folder or use smaller selections for large batches.
-    - If you ever want smaller files, change $DefaultCRF from 22 to 23–24.
-    - Invalid config is preserved in a diagnostic backup before recovery to Videos.
-    - An unavailable saved output folder stops startup without changing the preference.
-    - Saves retain previous config backups and coordinate instances through config.json.lock.
-    - Final files land directly in OutputDir. Reserved GUID job directories hold
-      active or retained partials and are excluded from input discovery.
-
-BATCH RETRY / RESUME (OPT-IN)
-    - Use -ManifestPath with an absolute local .json path in an existing folder.
-    - Repeat the original input selection with -Resume and the same manifest.
-    - Completed skips require current source/settings/output structural checks.
-    - Fast source identity uses size/mtime; add -StrongSourceHash for strict hashing
-      on creation and every resume. Same-size/same-mtime edits evade fast identity.
-    - Retries create fresh temporary jobs and safely rename around old outputs.
-      Retained partials are never appended, adopted or deleted.
-
-LIMITATIONS
-    - No batch parameterization of quality/presets (by design).
-    - Only tags the first video stream and encodes to H.264/AAC MP4.
-    - Cropping, denoise, filters, and subtitles pass-through are out of scope for this tool.
-
-TROUBLESHOOTING
-    - “ffmpeg not found”: place ffmpeg.exe and ffprobe.exe next to the script or add them to PATH.
-    - Drag-and-drop opens TUI instead of compressing:
-        • Ensure you dropped onto the .bat, not the .ps1, and that the .bat and .ps1 are together.
-    - Want a clean slate:
-        • Delete %APPDATA%\WinVidCompress\config.json (it will be recreated with defaults).
-
-LICENSE / WARRANTY
-    - Personal tool; provided as-is, without warranty. Use at your own risk.
-
-#>
-
-<#
 .SYNOPSIS
 Compress local videos sequentially or preview a batch without writing files.
 .DESCRIPTION
-Uses libx264 veryfast CRF 22, AAC 160k and MP4 faststart. With no input paths,
-opens the four-item menu. Per-run controls require explicit input paths and
-never save preferences. Precedence is defaults, saved config, explicit options.
+Windows 11 local PowerShell + FFmpeg tool for lossy viewing copies. Keep source
+originals: the output is not a lossless archival master. Uses libx264 veryfast
+CRF 22, AAC 160k and MP4 +faststart, with no crop or upscale. Supported orientation
+is applied before the 1080-height cap; both dimensions are even, width is not
+capped at 1920, and odd small sources may shrink by one pixel.
+
+Selects the first real video by index (excluding cover art) and the unique default
+audio, otherwise first audio. Silent stays silent. Extra video/audio, subtitles,
+source data and attachments are omitted and reported; no frame-rate/channel override.
+Output is 8-bit yuv420p SDR compatibility. Detected HDR is refused; no tone mapping.
+Ambiguous colour metadata warns and does not establish fidelity or HDR absence.
+
+With no inputs/controls, opens the four-item menu. Ordinary first startup saves
+OutputDir as the Windows Videos known folder, which must be available. Invalid
+config is backed up before recovery; valid offline destinations stop unchanged.
+Per-run controls require inputs and never save or repair preferences. Precedence
+is defaults, saved config, explicit options. Sources and existing finals are
+preserved. Default output is flat; occupied names get (compressed), (compressed 2),
+etc. Failed/cancelled partials may be retained in reserved .wvc-job-GUID directories.
+
+Candidate extensions: mp4, mov, mkv, m4v, avi, mpg, mpeg, mts, m2ts, wmv. Actual
+media must pass inspection. Linked/reparse inputs are refused as scan errors.
+Filename title overrides source title; valid Band ddmmyyyy/dd.mm.yyyy/dd-mm-yyyy
+also supplies artist/date/comment. Invalid/ambiguous dates warn without blocking.
+Compatible source tags can remain: compression does not sanitize private metadata.
 .PARAMETER Path
 Literal file or folder paths. Folders are scanned recursively and deduplicated.
 A filename beginning with a dash needs an absolute path or .\ prefix.
 .PARAMETER OutputDir
 Existing absolute drive or UNC output directory for this invocation only.
 .PARAMETER CollisionMode
-rename or skip. Default rename; a saved CollisionMode is optional. Resume retries
-always use safe rename to preserve existing final and retained partial files.
+rename or skip. Default rename; a saved CollisionMode is optional. A collision
+skip does not validate/adopt the existing file. Resume retries always rename safely.
 .PARAMETER WhatIf
-Read-only filesystem plan. Does not load/recover writable config, test writing,
-start native tools, encode, create logs or manifests. Output names are estimates;
-media validity, destination writability and concurrent collisions are unchecked.
-Requires inputs. Cannot combine with CheckEnvironment or manifest controls.
+Read-only filesystem plan. Does not recover/save config, test writing, start
+native tools, encode, create directories, logs or manifests. Names are estimates;
+media validity, writability and concurrent collisions are unchecked. Requires
+inputs. Cannot combine with CheckEnvironment or manifest controls.
 .PARAMETER PreserveSubfolders
 Per-run relative layout. One root preserves paths below it; multiple roots get
 stable folder labels. Requires disjoint input/output roots and explicit inputs.
 Cannot combine with doctor or manifest controls; manifests remain flat-only.
 .PARAMETER CheckEnvironment
-Report installed dependencies and output availability without conversion or
-config changes. Performs a disclosed temporary create/write/remove check.
-OutputDir may override the saved directory; no CollisionMode or inputs needed.
+Report exact installed dependency paths/versions/capabilities and output access
+without conversion or config changes. Performs a temporary create/write/remove
+check in the existing destination. OutputDir may override the saved directory.
+Capacity is advisory. Inputs are ignored; CollisionMode/layout/manifest controls
+and WhatIf cannot combine with doctor.
 .PARAMETER Unattended
-Never open the menu. Put this first when invoking the BAT wrapper to avoid pause.
+Never open the menu. Put this first in BAT calls to avoid pause. Requires inputs
+except with CheckEnvironment. Direct PS1 batches return the application exit code.
 .PARAMETER KeepOpen
-Used by the interactive BAT wrapper to retain its PowerShell prompt. Cannot be
-combined with Unattended.
+Used by the interactive BAT wrapper to retain its PowerShell prompt. Cannot
+combine with Unattended; later shell exit is separate from the batch result.
 .PARAMETER ManifestPath
-Opt-in absolute local JSON manifest in an existing parent. Must be absent for a
-new batch. Requires input paths; incompatible with WhatIf and CheckEnvironment.
+Opt-in absolute canonical local JSON manifest in an existing parent. Must be
+absent for a new batch. Requires inputs; incompatible with WhatIf, doctor and
+PreserveSubfolders. UNC manifests are unsupported.
 .PARAMETER Resume
-Retry the original explicit source queue using ManifestPath after validating it.
+Retry the original explicit source queue using the same ManifestPath, output,
+hash mode after validation. Changed source/settings/PS1 bytes trigger safe retries;
+queue/root/schema/path mismatches or strong-to-fast downgrade refuse resume.
+A normal rerun does not resume. Retained partials are never appended/adopted/deleted; retries create fresh safely named jobs.
 .PARAMETER StrongSourceHash
-Store/check source SHA256 rather than only size/mtime with ManifestPath. Keep it
-enabled on each resume; same-size/restored-time edits evade the fast default.
+Store/check source SHA256 rather than size/mtime with ManifestPath. Keep the same
+mode on every resume; same-size/restored-time edits evade the fast default.
 .EXAMPLE
 & .\WinVidCompress.ps1 -Unattended -WhatIf -PreserveSubfolders -OutputDir 'D:\Output' 'D:\Sources'
 
@@ -180,11 +81,32 @@ Compress using per-run options without changing the saved output preference.
 
 Check dependencies and writing with an owned temporary file removed on close.
 .NOTES
-BAT automation uses -Unattended first. Variable-shaped percent paths such as
-%PATH% use the literal-path menu or direct PowerShell route. CRF is not a public
-option. Structural validation does not establish full visual/audio integrity.
-#>
+Author: Janne Vuorela. Application requirements: Windows PowerShell 5.1 or a
+supported stable PowerShell 7, and separately installed ffmpeg.exe/ffprobe.exe.
+Keep PS1/BAT together after extracting the ZIP. PATH applications take precedence
+over adjacent copies; aliases/functions are refused. BAT uses system PS5.1 with
+process-only ExecutionPolicy Bypass; no persistent policy/PATH edits or elevation.
 
+BAT automation uses -Unattended first. Variable-shaped percent paths such as
+%PATH% (including installation paths) use the literal menu or direct single-quoted
+PowerShell route. Outer CMD delayed expansion can change !NAME!; omit quoted CMD
+folder trailing backslashes (drive root D:\.). CMD has an 8191-character line limit.
+
+Application exit: 0 no failures/valid skips; 1 job/scan failure; 2 startup/invalid
+or empty requested batch; 3 observed cancellation (takes precedence). Menu Quit
+or cancelling selection before a batch returns 0. Engine binding/parse errors
+can have their own code. BAT KeepOpen retains $LASTEXITCODE at its prompt.
+Physical Ctrl+C is owner-verified in five recorded supported modes; console close,
+Ctrl+Break, crashes, power loss and detached descendants have unverified limits.
+
+Structural validation does not establish full visual/audio integrity; play copies
+before relying on them. CRF is not a public option; output size is not guaranteed.
+Local logs under APPDATA\WinVidCompress\logs, config, manifests and outputs can
+contain private names/paths/tags. No automatic uploads/telemetry/downloads. Explicit
+UNC selections can access shares. Broader SMB/long-path/durability support is
+limited to recorded tests. See README.md and docs/user/{REFERENCE,TROUBLESHOOTING,
+VERIFICATION}.md for setup, config backup/reset, options and evidence boundaries.
+#>
 [CmdletBinding(PositionalBinding=$false)]
 param(
     [string]$OutputDir,

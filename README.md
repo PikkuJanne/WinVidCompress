@@ -1,124 +1,83 @@
-# WinVidCompress — One-preset video compressor for Win11 (PowerShell + FFmpeg)
-Minimal, no-frills video compressor I use to archive my band interview videos with consistent settings and basic metadata. It’s a personal, purpose-built tool, I don’t expect most people to need this. It trades options for speed and repeatability.
+# WinVidCompress
 
-**Synopsis**
-One compression profile (like HandBrake “Very Fast 1080p”):
-H.264 (libx264) -preset veryfast, -crf 22; AAC 160 kbps; MP4 with +faststart.
-No cropping; only downscales if source height > 1080 (never upscales).
-Filename-driven metadata (artist/date/title/comment) for interview archiving.
-Drag & drop workflow: I drop video files or folders onto the .bat and find the result in Videos.
-Supports simple batch processing:
-- Dropping a single file compresses that file
-- Dropping a folder compresses all videos inside (recursive)
-- Dropping multiple files or folders queues everything and processes sequentially
+A local Windows 11 PowerShell + FFmpeg tool for making smaller viewing copies of interview videos. Drop files or folders onto `WinVidCompress.bat`, or use its four-item menu. Batches run sequentially. Keep your originals: H.264/AAC copies are lossy and are not archival masters.
 
-Completed jobs report original/output bytes, reduction or growth, source duration and measured elapsed time. Batch size totals include only completed jobs with a positive known original size and known output size; unavailable sizes and other outcomes are counted separately. Results vary; valid output can be larger. CRF does not set an output size. Developer measurements and optional experiments are described in [the benchmark guide](docs/benchmarks/README.md); the production profile remains unchanged.
+The fixed profile is **libx264, veryfast, CRF 22; AAC 160k; MP4 +faststart**. There is no crop or upscale. The **oriented height** is capped at 1080, with even dimensions for encoder compatibility; width is not capped at 1920. This is the tool's own profile, with no claim of equivalence to another application's preset. Results vary; a valid output can be larger than its source.
 
-**Requirements**
-Windows 11
-PowerShell (Windows PowerShell is fine)
-FFmpeg + FFprobe in PATH or placed next to the script
-(must include libx264, AAC, MP4/faststart, scale and FFprobe CSV/JSON support)
+## Download and extract
 
-**Installation**
-Download a recent static FFmpeg build for Windows (includes ffmpeg.exe and ffprobe.exe).
-Put both exes either in PATH or in the same folder as this repo’s script.
-Place these files together (e.g., in Downloads):
-WinVidCompress.ps1
-WinVidCompress.bat (wrapper for double-click + drag-and-drop)
-On a normal first run the tool creates %APPDATA%\WinVidCompress\config.json and sets the OutputDir to your Videos folder. Preview and per-run overrides leave an absent preference file absent.
+1. Open the [repository](https://github.com/PikkuJanne/WinVidCompress), select the branch or commit you intend to use, then choose **Code > Download ZIP**. A source ZIP is a development snapshot; this guide does not advertise a new packaged release.
+2. Use **Extract All** into a folder you can read and write. Run from the extracted folder, not inside the ZIP. Keep `WinVidCompress.ps1` and `WinVidCompress.bat` together; retain `README.md`, `docs/user` and `LICENSE` for reference. Avoid `%NAME%` segments anywhere in the installation path.
+3. Obtain Windows `ffmpeg.exe` and `ffprobe.exe` from a Windows build provider linked by the [FFmpeg download page](https://ffmpeg.org/download.html). Follow that provider's integrity checks and keep the build updated. Choose a build with libx264, AAC, MP4/faststart, scale and FFprobe JSON/CSV support. FFmpeg is a separate dependency with [build-dependent licensing](https://ffmpeg.org/legal.html).
+4. The simplest setup is to copy both executables from that build's `bin` folder next to the two scripts. Alternatively, use an existing PATH installation. **PATH takes precedence** over adjacent executables; the diagnostic step below shows which copies will run. WinVidCompress does not install or update them.
 
-**Usage**
-1. My everyday flow (drag & drop onto .bat)
-Drag a single video file (or a folder) onto WinVidCompress.bat.
-The compressed .mp4 appears in %USERPROFILE%\Videos.
-Window stays open so you can see progress/logs.
+Use Windows PowerShell **5.1**, already used by the BAT launcher, or a supported stable **PowerShell 7** for direct PS1 commands. Recorded Windows tests include 5.1.26100.9444 and 7.6.6. Python, Git, Pester and an administrator account are not application requirements.
 
-Paths containing `%NAME%` segments, such as `literal %PATH%.mov`, are unsupported for BAT drag/drop because Windows shell expansion can change them. This applies to folder names too; keep the BAT/script installation path free of these segments. Double-click the BAT and paste the literal source path in menu option 2/3, or invoke the PS1 from PowerShell with single quotes:
+## Check setup and make a first copy
+
+Open PowerShell in the extracted folder. Create a separate, existing output folder, for example `D:\Output`, and substitute your actual paths below. Use a short disposable or approved source copy for the first run.
 
 ```powershell
-.\WinVidCompress.ps1 'D:\Interviews\literal %PATH% !NAME!.mov'
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -CheckEnvironment -OutputDir 'D:\Output'
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Sources'
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' 'D:\Sources'
 ```
-1. TUI (double-click)
-Double-click WinVidCompress.bat to open the TUI:
-Set output folder (persists in config)
-Compress ONE file (paste a path)
-Compress ALL videos in a folder (recursive)
-1. Command line
-#One file
-.\WinVidCompress.ps1 "D:\Interviews\Band Name 29092025 - CamA.mov"
-#Whole folder (recursive)
-.\WinVidCompress.ps1 "D:\Interviews\ToArchive"
 
-For unattended use, run the PS1 with `-Unattended`, or put that switch first in the BAT command. These routes never open the menu or pause after completion:
+For PowerShell 7 use `pwsh.exe` in place of `powershell.exe`. `-ExecutionPolicy Bypass` here applies to the new process only, as it does in the BAT launcher. It does not change the saved machine/user policy. Respect organizational policy; see [blocked script troubleshooting](docs/user/TROUBLESHOOTING.md#script-or-dependency-is-blocked).
+
+The **doctor** (`-CheckEnvironment`) reports exact dependency paths, versions, capabilities and output access. It creates and removes an owned temporary write-test file in the existing destination, but creates no output folders, preferences or backups. Capacity is advisory. The **preview** (`-WhatIf`) prints estimated destinations without native tools, writes, logs or config recovery; it does not prove media validity or writability. These two commands are separate.
+
+The conversion prints stream selection, progress, per-job outcomes and a summary. A `Done` result means encoding, structural checks and final publication succeeded. Play the copy to check picture, orientation, speech/sync and detail before relying on it. Structural validation does not establish full visual/audio integrity. These per-run `-OutputDir` commands leave a missing preference file absent.
+
+## Everyday use
+
+Double-click `WinVidCompress.bat` to open the menu:
+
+1. Set output folder and save it.
+2. Compress one file by pasting its literal path.
+3. Compress videos in a folder recursively.
+4. Quit to the retained PowerShell prompt; type `exit` to close the window.
+
+Ordinary first startup creates `%APPDATA%\WinVidCompress\config.json` with the Windows **Videos known folder**, which may be redirected and is not necessarily `%USERPROFILE%\Videos`. It must be available. Subsequent runs use the saved output directory. Option 1 can create a folder you explicitly choose. CLI `-OutputDir` requires an existing directory and applies only to that run.
+
+Drag one file, one folder or several files/folders onto the BAT to queue them. Folders are recursive; eligible paths are deduplicated and sorted before encoding. Keep output separate from input so later folder runs do not pick up previous compressed copies. The default output is **flat**: `Band 29092025.mov` becomes `Band 29092025.mp4` directly in the output folder. Occupied names get ` (compressed)`, then ` (compressed 2)`, etc. Sources and existing finals are never replaced. A normal rerun makes another safely named copy; it does not automatically resume.
+
+Supported extension candidates are `.mp4`, `.mov`, `.mkv`, `.m4v`, `.avi`, `.mpg`, `.mpeg`, `.mts`, `.m2ts` and `.wmv`. Actual codecs, geometry and colour must pass inspection; an extension alone does not guarantee support. Linked/reparse-point inputs are reported as scan errors rather than traversed.
+
+**BAT path limits:** `%NAME%` segments such as `%PATH%` are unsupported in source and installation paths. Use menu option 2/3 or direct PS1 with single-quoted literal paths. An outer CMD with delayed expansion can also change `!NAME!`. In CMD/BAT omit a quoted folder's trailing backslash; for a drive root use `D:\.` or paste `D:\` in the menu. CMD's 8191-character command-line limit includes all expanded paths/quotes; drop a folder or use smaller selections for a large batch.
 
 ```powershell
-powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -Unattended 'D:\Interviews\ToArchive'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' 'D:\Sources\literal %PATH% !NAME!.mov'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Get-Help .\WinVidCompress.ps1 -Full"
 ```
+
+For a CMD/BAT unattended call, put the switch **first**:
 
 ```bat
-WinVidCompress.bat -Unattended "D:\Interviews\ToArchive"
+WinVidCompress.bat -Unattended -OutputDir "D:\Output" "D:\Sources"
 ```
 
-Direct PS1 batches also return the application exit code. Codes are **0** completed with no failures (including valid collision skips), **1** job/scan failure, **2** startup/configuration/invalid or empty requested batch, and **3** observed application cancellation, which takes precedence. Cancelling a menu selection or choosing Quit before a batch returns 0. The default BAT adds `-KeepOpen` and retains its PowerShell prompt; its eventual shell exit is separate from the batch result. `-KeepOpen` and `-Unattended` cannot be combined. Physical Ctrl+C/console-close handling remains unverified; PowerShell engine parse/binding errors can have their own exit code.
+Unattended runs open no menu and do not pause. Direct PS1 batches return the application exit code. Default BAT runs retain a prompt; the batch result is in `$LASTEXITCODE`, separate from the later shell exit. `-KeepOpen` is for that wrapper and cannot combine with `-Unattended`.
 
-Per-run `-OutputDir` selects an existing absolute output directory, and `-CollisionMode rename|skip` controls ordinary collisions. Defaults apply first, then saved config, then supplied options. Neither option saves preferences. Config may contain an optional `CollisionMode`; omission means `rename`. Unknown config fields are preserved. With per-run controls, invalid config fails without recovery; an unavailable saved output can be replaced by a valid `-OutputDir` for that run. The four-item menu and normal config recovery remain available when no per-run controls are supplied.
+| Code | Application result |
+| --- | --- |
+| 0 | No failures, including valid collision skips; menu Quit/selection cancellation before a batch |
+| 1 | Job or scan failure |
+| 2 | Startup/configuration error, invalid options, invalid or empty requested batch |
+| 3 | Observed application cancellation; takes precedence |
 
-```powershell
-.\WinVidCompress.ps1 -Unattended -OutputDir 'D:\Output' -CollisionMode skip 'D:\Interviews'
-.\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Interviews'
-.\WinVidCompress.ps1 -Unattended -PreserveSubfolders -OutputDir 'D:\Output' 'D:\Shoot\camera-a' 'D:\Shoot\camera-b'
-Get-Help .\WinVidCompress.ps1 -Full
-```
+Use Ctrl+C to cancel a running job. Completed finals remain; interrupted jobs may retain diagnostics/partials. Physical Ctrl+C has owner-observed passing evidence in five supported launch modes. Console close, Ctrl+Break, crashes and power loss have broader unverified limits. PowerShell parse/binding errors can produce shell-specific exit codes.
 
-`-WhatIf` reads preferences and the input/output directories to print estimated encode/skip destinations. It creates no config, backups, directories, jobs, logs or manifests and starts no native tools. Media validity, destination writability and concurrent name changes are unchecked. Empty/invalid selection returns 2; a partly failed scan with planned files returns 1. Preview and per-run conversion controls require explicit inputs. Preview cannot combine with `-CheckEnvironment` or manifest controls; preview the same inputs without those flags. The doctor accepts `-OutputDir` and retains its disclosed temporary write check. Resume retries always use safe rename around old outputs. CRF remains 22 and has no public switch. A relative filename beginning with a dash needs a `.\` prefix or an absolute path.
+## Media, metadata and optional controls
 
-`-PreserveSubfolders` opts into relative output for this run. One selected folder preserves its subfolders below output; multiple roots get stable folder labels, with ` (root 2)` suffixes for repeated names. Explicit files use their parent folders as roots; overlapping input selections use the shallowest root. Add `-WhatIf` to see estimated paths without creating folders. The input and output roots must be disjoint in both directions; preserve mode refuses overlap before startup to avoid re-ingesting outputs. It also refuses doctor/manifest controls; manifests remain flat-only. Omission keeps the original flat behavior. Collisions use rename/skip within each output folder. [Detailed root mapping and containment policy](docs/codex-winvidcompress/CONFIG_AND_DISCOVERY.md#implemented-relative-layout-wvc-m4-02).
+The tool encodes the first real video stream by index, excluding cover art, and one audio stream: the unique default, otherwise the first by index. Silent input stays silent. Other video/audio streams, subtitles, source data and attachments are omitted and listed. No frame-rate or channel-count override is added. Output is 8-bit `yuv420p` SDR compatibility; detected HDR is refused and no tone mapping is provided. Ambiguous colour metadata warns and does not establish colour fidelity or absence of HDR.
 
-**Filename → Metadata**
-The script tries to parse band and date from the filename (base name). Supported patterns (with or without trailing “ - …”):
-Band Name ddmmyyyy
-Band Name dd.mm.yyyy
-Band Name dd-mm-yyyy
-Tags written:
-artist = Band Name
-date = YYYY-MM-DD
-title = base filename
-comment = Interview date dd.mm.yyyy; Band: <name>
-Dates must be real Gregorian calendar dates; leap years are checked independently of Windows language settings. Multiple date tokens (even repeated or invalid ones), blank band names and invalid dates omit filename-derived artist/date/comment and print a warning. The base filename still supplies the title, and compression continues without prompts.
+The base filename supplies the title. A valid `Band Name ddmmyyyy`, `Band Name dd.mm.yyyy` or `Band Name dd-mm-yyyy`, optionally followed by ` - ...`, also supplies artist, calendar date and an interview comment. Bad/ambiguous dates warn without blocking conversion. Compatible source tags can remain; compression **does not sanitize private metadata**.
 
-The legacy compact-date fallback, such as `Band Name 29092025 CamA`, accepts one whitespace-delimited, calendar-valid eight-digit token and warns that an unlabelled number may be unrelated to an interview. Longer numbers and tokens embedded in letters are ignored. Dotted/dashed dates use matching separators and the patterns above.
+See the [option and media reference](docs/user/REFERENCE.md) for `-CollisionMode`, `-PreserveSubfolders`, validated opt-in manifest/resume, exact geometry/colour policies and metadata precedence. See [troubleshooting](docs/user/TROUBLESHOOTING.md) for config recovery, offline drives, failed probes, larger outputs and cancellation. [Verification and support limits](docs/user/VERIFICATION.md) link each capability to completed acceptance evidence and distinguish local test extraction from release/package acceptance. Developer measurements are in the [benchmark guide](docs/benchmarks/README.md); the production quality profile remains unchanged.
 
-Metadata precedence: the filename title overrides the source title; a valid band/date pair also overrides source artist/date/comment. Otherwise those source fields can remain. Other compatible global and selected-stream source tags follow FFmpeg's standard single-input copying and MP4 support, including copyright and audio language where supported. Outputs can contain source metadata beyond the four generated fields; compression does not sanitize private metadata. Arbitrary source tags are not guaranteed to survive.
+## Privacy and license
 
-**Output location**
-Default: Windows Videos folder (e.g., C:\Users\<you>\Videos).
-You can change it in the TUI (Option 1).
-The setting is stored in %APPDATA%\WinVidCompress\config.json.
-If an output file already exists, the script auto-renames the new file using a "(compressed)" suffix.
+Compression runs on your machine. There are no application uploads, telemetry, accounts or automatic dependency downloads. Explicit UNC inputs/outputs can access network shares. Config, local logs, manifests and outputs can contain private paths, filenames and metadata; review them before sharing any diagnostic report. Logs are under `%APPDATA%\WinVidCompress\logs`; old logs are not deleted automatically.
 
-**Technical details**
-Video: -c:v libx264 -preset veryfast -crf 22
-Audio: -c:a aac -b:a 160k
-Container: -movflags +faststart
-Scaling: -vf scale=-2:1080 only if source height > 1080
-Invokes FFmpeg through the owned native process adapter with literal argument tokens and Windows quoting.
-
-Stream selection: first real video by index, excluding cover artwork; unique default audio when present, otherwise first audio by index. Silent video stays silent. The console lists selected streams, audio channels and omitted alternatives/subtitles/data/attachments. Explicit maps keep scaling tied to the inspected video; no channel-count or frame-rate override is added.
-
-**Tweaks (optional):**
-Smaller files → increase CRF to 23–24 (lower quality).
-H.265/HEVC (slower, smaller) → swap libx264 to libx265 and use CRF ~27.
-
-**Troubleshooting**
-Run `.\WinVidCompress.ps1 -CheckEnvironment` from PowerShell to report the exact executable paths, versions/build details, required capabilities, output access and available capacity. Applications found in PATH take precedence over copies next to the script; aliases/functions are refused. Each native check has a 10-second timeout, including pipe draining. The tool does not download or replace dependencies, edit PATH or request elevation.
-
-The diagnostic command never converts media or saves/repairs configuration. It uses the saved destination (Videos if no config exists), creates a unique temporary file in that existing directory to test writing, and removes it on close. It creates no config, backups or output folders. Invalid configuration, offline destinations and write denials fail clearly. Normal startup, output selection and each batch also check destination access. Free space is advisory and output size is not guaranteed; permissions and capacity can change after the check. UNC/mount-point capacity may be unknown.
-
-“ffmpeg not found” → put ffmpeg.exe and ffprobe.exe next to the script or add them to PATH.
-TUI appears when dragging a file → the argument didn’t reach the script cleanly; try again, or open the TUI and choose option 2/3.
-Reset output folder → delete %APPDATA%\WinVidCompress\config.json and rerun (defaults to Videos).
-
-**Intent & License**
-This is a personal tool for a very specific workflow (archiving my video interviews with bands). It’s provided as-is, without warranty. Use at your own risk.
-If you want to reuse or adapt it, feel free, just be mindful it intentionally avoids features to keep my workflow fast and predictable.
+Project code uses the [Unlicense](LICENSE), without warranty. External FFmpeg binaries retain their own licensing. Keep originals and review the results for your intended use.

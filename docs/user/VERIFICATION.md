@@ -1,0 +1,26 @@
+# Verification and support limits
+
+This guide describes implemented behavior, not a published release or universal media/filesystem guarantee. [TASKS.json](../codex-winvidcompress/TASKS.json) is the acceptance status authority. The links below are development records; a tool-only ZIP may omit that evidence bundle, which remains available in the repository.
+
+| User-facing capability | Completed evidence | Scope/limit |
+| --- | --- | --- |
+| Menu, literal path input, BAT single/folder/multiple selections | [M1-01](../codex-winvidcompress/evidence/WVC-M1-01.md), [M1-02](../codex-winvidcompress/evidence/WVC-M1-02.md), [owner menu observation](../codex-winvidcompress/evidence/MANUAL-2026-10-07.md) | Actual supported Explorer observations retained; `%NAME%` BAT segments unsupported. |
+| Config backups/recovery and unavailable-output refusal | [M1-03](../codex-winvidcompress/evidence/WVC-M1-03.md) | Isolated config/ACL/sharing checks; no silent offline-drive redirection. |
+| Deterministic recursive discovery and queue | [M1-04](../codex-winvidcompress/evidence/WVC-M1-04.md), [M1-05](../codex-winvidcompress/evidence/WVC-M1-05.md) | Literal filesystem paths, scan errors, dedup/frozen queue; reparse inputs refused. |
+| Doctor and dependency/output checks | [M1-06](../codex-winvidcompress/evidence/WVC-M1-06.md) | Checks installed capabilities/access at a point in time; no installs or persistent changes. |
+| Probe, stream selection, literal native arguments | [M2-01](../codex-winvidcompress/evidence/WVC-M2-01.md), [M2-02](../codex-winvidcompress/evidence/WVC-M2-02.md), [M2-03](../codex-winvidcompress/evidence/WVC-M2-03.md) | Synthetic native and actual short-media checks; not every codec/layout. |
+| Safe partials, collisions and structural completion | [M2-04](../codex-winvidcompress/evidence/WVC-M2-04.md), [M2-05](../codex-winvidcompress/evidence/WVC-M2-05.md) | No-clobber checks; structure does not prove all-frame/sample integrity. |
+| Results/exits and measured bytes/time | [M2-06](../codex-winvidcompress/evidence/WVC-M2-06.md), [M3-04](../codex-winvidcompress/evidence/WVC-M3-04.md) | Actual accounting; no fixed size/reduction promise. |
+| Height cap/orientation and SDR/HDR policy | [M3-01](../codex-winvidcompress/evidence/WVC-M3-01.md), [M3-02](../codex-winvidcompress/evidence/WVC-M3-02.md) | Constructed geometry/colour checks; HDR refused. Ambiguous colour and broader player/calibration fidelity unverified. |
+| Filename dates/tags and local logs/redaction | [M3-03](../codex-winvidcompress/evidence/WVC-M3-03.md), [M3-05](../codex-winvidcompress/evidence/WVC-M3-05.md) | Validated date/native metadata and privacy-aware export checks; no metadata sanitization promise. |
+| Cancellation and opt-in resume | [M3-06](../codex-winvidcompress/evidence/WVC-M3-06.md), [owner Ctrl+C observation](../codex-winvidcompress/evidence/MANUAL-CANCEL-2026-10-07.md), [M3-07](../codex-winvidcompress/evidence/WVC-M3-07.md) | Five physical Ctrl+C modes observed; console-close/Ctrl+Break/crash/power-loss/detached descendants unverified. Resume is opt-in. |
+| Per-run options, no-write preview and relative layout | [M4-01](../codex-winvidcompress/evidence/WVC-M4-01.md), [M4-02](../codex-winvidcompress/evidence/WVC-M4-02.md) | Both supported shells, isolated actual entry/native scopes; preview names estimated. |
+| Filesystem stress and Windows CI | [M4-03](../codex-winvidcompress/evidence/WVC-M4-03.md), [M4-04](../codex-winvidcompress/evidence/WVC-M4-04.md) | Bounded local long roots/config/final races and constructed crash gap; broader SMB/disconnect/arbitrary long paths/power-loss/hostile substitution remain release limits. CI is Targeted, not release acceptance. |
+| Fresh/upgraded workflows and representative playback | [M4-05](../codex-winvidcompress/evidence/WVC-M4-05.md) | Native fresh CLI override/legacy/extended configs; owner PASS for two 23–24-second source/output speech excerpts. No whole-original/archive/HDR/other-player or quality-setting approval inferred. |
+| Onboarding and clean local extraction | [M5-01](../codex-winvidcompress/evidence/WVC-M5-01.md) | Exact documentation-smoke ZIP and commands on Windows; source/host/counts in that record. No new default-folder/profile/Explorer/playback observation implied. |
+
+## Distribution limits
+
+The Videos known folder is independent of APPDATA. Fresh CLI output overrides are tested in isolation; genuine untouched default-folder first launch on a fresh Windows account remains unobserved. No profile/account/default Videos changes were made for the onboarding smoke. Retained Explorer/menu/Ctrl+C/playback observations do not need repetition for these documentation edits.
+
+M5-01's locally created tool-only ZIP checks extraction and documented setup. Deterministic packaging/checksums/version selection are **M5-02**, licensing/distribution review **M5-03**, public product content **M5-04**, and clean-GitHub candidate reconstruction/publication approval **M5-05**. Those are separate tasks. This guide claims no signed/certified package, reproducible public release, release approval or new published download. Keep dependency builds updated through their providers and use copies for initial validation.
