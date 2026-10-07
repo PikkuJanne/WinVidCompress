@@ -1662,7 +1662,7 @@
       "title": "Cancel safely and terminate only this job’s child process",
       "milestone": "M3",
       "priority": "P0",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         15
       ],
@@ -1688,12 +1688,14 @@
           "id": "WVC-M3-06-A01",
           "description": "Ctrl+C in each supported Windows launch mode stops the current batch and does not start the next file.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
             "evidence/MANUAL-2026-10-07.md",
-            "evidence/MANUAL-2026-10-07.json"
+            "evidence/MANUAL-2026-10-07.json",
+            "evidence/MANUAL-CANCEL-2026-10-07.md",
+            "evidence/MANUAL-CANCEL-2026-10-07.json"
           ],
-          "notes": "2026-10-07 owner All PASS preserved. BAT-menu/drop each7/7 automatic PASS. PS51/PS7/BAT-unattended each4/7 with120-second recorder watchdog before observed second-job cancellation;9 failed exercise rows retained. Timely first-job condition remains unestablished for3 routes, no production defect inferred. Fresh bounded600-second three-route retry prepared; owner observations pending."
+          "notes": "2026-10-07 owner second All PASS confirmed by fresh PS51/PS7/BAT-unattended: each 7/7 automatic PASS, one encoder, a Cancelled then b Unstarted, source/final hashes unchanged, application/session exit 3 and graceful encoder exit 0. Combined with retained BAT-menu/drop 7/7 this closes all five supported modes (selected 35/0). Initial 26/9 exercise snapshot is preserved; synthetic-recorder/console-close/crash limitations remain explicit."
         },
         {
           "id": "WVC-M3-06-A02",
@@ -1739,9 +1741,12 @@
         "evidence/WVC-M3-06.json",
         "evidence/WVC-M3-06-session.md",
         "evidence/MANUAL-2026-10-07.md",
-        "evidence/MANUAL-2026-10-07.json"
+        "evidence/MANUAL-2026-10-07.json",
+        "evidence/MANUAL-CANCEL-2026-10-07.md",
+        "evidence/MANUAL-CANCEL-2026-10-07.json",
+        "evidence/MANUAL-CANCEL-2026-10-07-session.md"
       ],
-      "notes": "Historical automated evidence retained: Implemented with both-host clean automated evidence; physical A01 remains pending and blocks applicable acceptance. Full 1458 passed/0 failed/0 skipped/8 historical NotRun, exit2. At that checkpoint app bytes matched tested cc1e2a2; 015f987 changes only manual kit/README and has clean preparation/static evidence. No quality/runtime/entry-point change. 2026-10-07 partial physical acceptance:2 complete routes,3 expired exercises. See MANUAL-2026-10-07; A01 remains not_run pending only3 retries."
+      "notes": "Verified after 2026-10-07 physical five-route Ctrl+C acceptance; see MANUAL-CANCEL-2026-10-07. Historical automated evidence and initial manual 26 PASS/9 FAIL remain intact. A02-A04 retain both-host native safety evidence at cc1e2a2 and supporting manual-kit checkpoint 015f987; historical Full 1458/0/0/8 was not rerun or regraded. Fresh three-route retry 21/0 plus original BAT-menu/drop 14/0 completes A01 on unchanged current app bytes. No quality/runtime/entry-point change or broader release/crash approval."
     },
     {
       "id": "WVC-M3-07",
