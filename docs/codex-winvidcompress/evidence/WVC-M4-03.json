@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M4-03",
+  "acceptance_ids": [
+    "WVC-M4-03-A01",
+    "WVC-M4-03-A02",
+    "WVC-M4-03-A03",
+    "WVC-M4-03-A04"
+  ],
+  "recorded_at": "2026-10-07T13:28:12.884297+00:00",
+  "tested_commits": [
+    "4b7b9c01f9e59efea67d1c623ac76a27451c10f2"
+  ],
+  "application_sha256": "dd099c8a6c4605ea8b8fb59fd2f143a05f466712b14b01e2802c48862cf80037",
+  "unchanged_launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "host": {
+    "os": "Windows 11 Pro 10.0.26300 UBR9457 26H2 64-bit",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.5 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_build": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "ffmpeg_sha256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+    "ffprobe_sha256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+  },
+  "command_bindings": {
+    "ps51": "$env:SystemRoot/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "ps7": "existing bundled native pwsh.exe; private runtime root redacted",
+    "modules": "$env:TEMP/wvc-m0-02-dev-modules",
+    "pythonDir": "existing bundled dependencies/python; private runtime root redacted",
+    "normalization": "Private runtime paths are represented by these bindings; commands otherwise preserve tokens, reports and redirections."
+  },
+  "runs": [
+    {
+      "name": "regression",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/regression.json *> .test-results/m403/regression.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 0,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/regression.json",
+      "report_sha256": "da0ee8e7b524f6c7c7fd159bccac7d5740dffbe21d2a584072fb449bde03bb85",
+      "log_sha256": "d56ff5b3253365cc541fba2c21d08638e0cbf80c4a4da1b173445e7d35f62be7"
+    },
+    {
+      "name": "first51",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/first51.json *> .test-results/m403/first51.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 0,
+        "Failed": 18,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/first51.json",
+      "report_sha256": "58b08e37105b7aa4e55240436be1b5387b17dc5d56195b421644d0543c7201e5",
+      "log_sha256": "04c955a8a4d7967b63e264a31949c093ab6a219c4aa84a83bbfd8331c7d57444"
+    },
+    {
+      "name": "second51",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/second51.json *> .test-results/m403/second51.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 16,
+        "Failed": 2,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/second51.json",
+      "report_sha256": "0d12052ae8eccbf59c89f08d5a2dcb692dbdf1120a768f9a6b1382e7e5bd1dd9",
+      "log_sha256": "b1f8035abaf905f2c34a555fe80656211584ad1f21b090fe1ff5f168bb020c5c"
+    },
+    {
+      "name": "third51",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/third51.json *> .test-results/m403/third51.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 17,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/third51.json",
+      "report_sha256": "2fed62d8e45b75b3cda0306a56e5c6cb553f0334f7633424ea00633adeeb514d",
+      "log_sha256": "666896b78fe5c40070115b959e414785c35561278b7094b7b2d9ad789746f3ea"
+    },
+    {
+      "name": "fourth51",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/fourth51.json *> .test-results/m403/fourth51.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 20,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/fourth51.json",
+      "report_sha256": "8376f2fac883a317bb33eed25dafedbb83b1694d7a58a67f08ea7ac021f98d30",
+      "log_sha256": "6428112c54dbd4ea8947ff17cdb98ea5674f72cd074994764e49d43b02676e17"
+    },
+    {
+      "name": "corrected-regression",
+      "command": "& $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m403/regression-run.ps1 *> .test-results/m403/corrected-regression.log",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 0,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 1,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/corrected-regression.json",
+      "report_sha256": "505a7ae0517fe5225adc24406039190edc606ef67ca64e711126b309730b9ae4",
+      "log_sha256": "4df6c565d2e15285719d5b76f074b37371361122e32228538363aee4a72b32a5"
+    },
+    {
+      "name": "first7",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/first7.json *> .test-results/m403/first7.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 20,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/first7.json",
+      "report_sha256": "7a317368169d77b4be33ec6958f3e85edabcc848113ca9328c9ff8e93f1ec9ab",
+      "log_sha256": "211f06b1c644bb6376b992c26f9f0c218f8f8b8a9aaebad7821bcf7a654a43c2"
+    },
+    {
+      "name": "fifth51",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1' -ReportPath .test-results/m403/fifth51.json *> .test-results/m403/fifth51.log; exit $LASTEXITCODE",
+      "tested_commit": "949db01b646c126e7db8489d425a56f8c6ee23ba",
+      "tested_tree_dirty": true,
+      "counts": {
+        "Passed": 20,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/fifth51.json",
+      "report_sha256": "8376f2fac883a317bb33eed25dafedbb83b1694d7a58a67f08ea7ac021f98d30",
+      "log_sha256": "01b34f731c6ce8226b0883317b76314a484722938b6a914a63d1f983c5a65eb3"
+    },
+    {
+      "name": "quick51",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$pythonDir+';'+$env:Path; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -ModuleRoot $modules -ReportPath .test-results/m403/quick51.json *> .test-results/m403/quick51.log; exit $LASTEXITCODE",
+      "tested_commit": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 919,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/quick51.json",
+      "report_sha256": "b5ae4f39db3efc5285a3d15911cade8968825460d417f79d023e39b9f786b74a",
+      "log_sha256": "566548f465fd1d0dff680d6826188f5efd59f72752e23d59e61c09e314bdad28"
+    },
+    {
+      "name": "target7",
+      "command": "$env:Path='C:/ffmpeg/bin;'+$env:Path; & $ps7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/Config.Tests.ps1|tests/unit/Manifest.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/unit/Layout.Tests.ps1|tests/unit/Queue.Tests.ps1' -ReportPath .test-results/m403/target7.json *> .test-results/m403/target7.log; exit $LASTEXITCODE",
+      "tested_commit": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 232,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_suite_exit": 0,
+      "exit_provenance": "Completed exec_command/write_stdin exit_code; native commands forward LASTEXITCODE. Corrected regression explicitly records suite exit 1 inside a restoration wrapper whose tool exit is 0.",
+      "report": ".test-results/m403/target7.json",
+      "report_sha256": "45ce346f49cf9616dd0d955ac4ace3b5bf950bf3cedba66634190b70946f286b",
+      "log_sha256": "9398fa5ebbf8c8090393651bf1692b223d5e8517445041ff2aae837d37be475f"
+    }
+  ],
+  "acceptance": {
+    "A01": "passed: real native exits/ACL/sharing/persistence faults preserve hashes and retain safe partials; published checkpoint failure stops dispatch",
+    "A02": "passed: four shared-config/native barrier races per host, plus existing collision suite; one config save/one explicit conflict, preserved backup and distinct payloads",
+    "A03": "passed: corrected baseline regression, once-per-selected-destination warning, forced-host leftovers/read-only snapshot/fresh-job resume",
+    "A04": "passed: actual absent drive, unique missing loopback UNC share and installed-FFmpeg 240/300-character local output roots on both hosts; broader boundaries explicitly release-blocking"
+  },
+  "manual_checks": [
+    {
+      "kind": "agent-executable actual Windows filesystem observations",
+      "observed_hosts": [
+        "PS5.1",
+        "PS7"
+      ],
+      "results": [
+        "unused drive and nonexistent loopback UNC preference fail without redirection",
+        "actual FFmpeg root240 completed",
+        "actual FFmpeg root300 completed"
+      ],
+      "human_observation_required": false,
+      "limitation": "No broader Explorer/network/power-loss acceptance."
+    }
+  ],
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-07T13:24:28.813311+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+    "branch": "codex/wvc-m4-03-safety",
+    "upstream": "origin/codex/wvc-m4-03-safety",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+    "live_push_head": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+    "status": "SYNCHRONIZED"
+  },
+  "github": {
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/27",
+    "number": 27,
+    "state": "OPEN",
+    "is_draft": true,
+    "inspected_head": "4b7b9c01f9e59efea67d1c623ac76a27451c10f2",
+    "status_checks": [],
+    "workflows": 0,
+    "ci_pass_claim": false
+  },
+  "final_handoff_push": "pending; verify externally after the evidence commit, avoiding a self-SHA loop",
+  "sanitized_artifacts": [
+    "evidence/WVC-M4-03.md",
+    "evidence/WVC-M4-03.json",
+    "evidence/WVC-M4-03-session.md"
+  ],
+  "limitations": [
+    "Network SMB success/disconnection/durability, arbitrary long paths/filesystems, power loss and hostile same-user substitution remain explicit release-blocking support limits. No remote share was mapped or changed.",
+    "240/300-character local output roots (including longer job temp paths) completed actual installed-FFmpeg compression/structural validation/no-clobber publication on both hosts; this accepts these observed local cases only.",
+    "Crash persistence-gap states are constructed before actual forced termination of a ready host with no native child running. It does not inject a crash inside Move/Replace, establish power-loss durability or accept detached descendants.",
+    "Reserved directory names are warning/discovery filters, never proof of ownership. Only the selected output root and selected nested destinations are inspected; unselected output branches are not recursively traversed.",
+    "Directory modification times are excluded from the read-only crash snapshot because NTFS can defer construction updates. Inventory, attributes, file byte lengths, file timestamps and hashes remain checked.",
+    "Synthetic native recorders establish process/stage/filesystem behavior, not valid media or perceptual integrity. Actual short long-path media cases establish structure, not full playback integrity.",
+    "Initial failure records remain intact locally: regression 0/1; first51 0/18 (test config scope); second51 16/2; third51 17/1 (warning mock scope/hash variable collision/deferred directory times corrected). Corrected baseline regression 0/1 confirms the production warning gap independently.",
+    "Fourth51 long paths used a synthetic .NET Framework producer and failed encoding safely; they are not actual-FFmpeg path evidence. Final installed-tool cases replace that limited producer check without erasing its report.",
+    "Intermediate dirty test trees were evolving and not preserved as tree snapshots; final clean implementation runs are acceptance authority.",
+    "No new Explorer/manual UI or physical Ctrl+C/playback acceptance is claimed. Existing owner observations remain accepted separately and were not repeated.",
+    "Application-byte fingerprint changes invalidate completed manifest settings under the existing policy; retry uses fresh jobs and safe rename. Quality/default layout/publication policy remain unchanged.",
+    "No workflows or status checks exist for this task commit. CI is unverified and is WVC-M4-04 work; no Full/milestone/release acceptance is claimed."
+  ],
+  "next_task": "WVC-M4-04"
+}
