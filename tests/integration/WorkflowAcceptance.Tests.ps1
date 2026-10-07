@@ -30,7 +30,7 @@ Describe 'Isolated real Windows user workflows [WVC-M4-05]' {
             Copy-Item -LiteralPath (Join-Path $RepoRoot $file) -Destination (Join-Path $App $file)
         }
         $script:Environment = @{ APPDATA=$AppData; NAME='must remain literal';
-            PATH=((Split-Path -Parent $Encoder)+';'+$env:SystemRoot+'\System32') }
+            PATH=((Split-Path -Parent $Encoder)+';'+(Split-Path -Parent $Probe)+';'+$env:SystemRoot+'\System32') }
         $script:SourceHashes = @{}
         foreach ($name in @('Synthetic Band 29.02.2024 - A','Synthetic Band 29.02.2024 - B')) {
             $source = Join-Path $Sources ($name+'.mp4')
