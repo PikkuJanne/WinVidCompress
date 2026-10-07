@@ -1164,7 +1164,7 @@
       "title": "Define job results, counters and script exit codes",
       "milestone": "M2",
       "priority": "P1",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         14
       ],
@@ -1221,11 +1221,12 @@
           "id": "WVC-M2-06-A04",
           "description": "Unattended .ps1/launcher path returns a real process exit code; interactive mode remains usable.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
-            "evidence/WVC-M2-06.json",
-            "evidence/WVC-M2-06.md"
-          ]
+            "evidence/MANUAL-2026-10-07.md",
+            "evidence/MANUAL-2026-10-07.json"
+          ],
+          "notes": "2026-10-07 owner All PASS for actual Explorer menu/Quit and usable1+1=2 prompt; existing unattended native-exit evidence retained."
         }
       ],
       "approval_gate": null,
@@ -1237,9 +1238,11 @@
       "evidence": [
         "evidence/WVC-M2-06.json",
         "evidence/WVC-M2-06.md",
-        "evidence/WVC-M2-06-session.md"
+        "evidence/WVC-M2-06-session.md",
+        "evidence/MANUAL-2026-10-07.md",
+        "evidence/MANUAL-2026-10-07.json"
       ],
-      "notes": "Implemented on clean 14f719e: application c0498af plus bounded whole-suite allowance and reporting fixture alias correction. A01-A03 passed on both actual Windows PS5.1.26100.9444/PS7.6.5. A04 manual Explorer observation pending, with actual unattended native exits and scripted default menu/prompt continuation passed. Each host Quick 460/0/4/0 and Targeted 476/0/8/0, exit0; Full both-host counts in evidence, exit2/Incomplete with no failures and eight manual/future rows NotRun. Job records drive counters plus separate scans; completion follows validation/no-clobber publication. Explicit exception type checks preserve ordinary failures vs cancellation and durable completed/skip records. Controlled cancellation is not physical Ctrl+C acceptance. Real tools absent; prior media skips retained. Next WVC-M3-01; no default quality/geometry change."
+      "notes": "Historical implementation on clean 14f719e: application c0498af plus bounded whole-suite allowance and reporting fixture alias correction. A01-A03 passed on both actual Windows PS5.1.26100.9444/PS7.6.5. A04 actual Explorer observation passed on2026-10-07, recorded in MANUAL-2026-10-07, with actual unattended native exits and scripted default menu/prompt continuation passed. Each host Quick 460/0/4/0 and Targeted 476/0/8/0, exit0; Full both-host counts in evidence, exit2/Incomplete with no failures and eight manual/future rows NotRun. Job records drive counters plus separate scans; completion follows validation/no-clobber publication. Explicit exception type checks preserve ordinary failures vs cancellation and durable completed/skip records. Controlled cancellation is not physical Ctrl+C acceptance. Real tools absent; prior media skips retained. Next WVC-M3-01; no default quality/geometry change."
     },
     {
       "id": "WVC-M3-01",
@@ -1492,7 +1495,7 @@
       "title": "Report savings and benchmark rather than guess",
       "milestone": "M3",
       "priority": "P1",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         12
       ],
@@ -1550,12 +1553,12 @@
           "id": "WVC-M3-04-A04",
           "description": "Timing and visual/audio judgments are measured/owner-recorded, not fabricated.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
-            "evidence/WVC-M3-04.md",
-            "evidence/WVC-M3-04.json"
+            "evidence/MANUAL-2026-10-07.md",
+            "evidence/MANUAL-2026-10-07.json"
           ],
-          "notes": "Actual timings measured in three-repeat synthetic benchmark; owner visual/audio observation requested but not recorded. Playback remains NotRun; no representative interview/default approval claimed."
+          "notes": "2026-10-07 owner All PASS for current eight-second synthetic source/default repeat1 pattern+tone comparison; two-repeat timings measured. Face/text/speech-sync/representative/candidate playback unavailable and unclaimed; raw historical reports preserved."
         }
       ],
       "approval_gate": "Changing CRF, preset, codec, audio bitrate or other default quality/performance policy requires owner approval.",
@@ -1566,9 +1569,11 @@
       "evidence": [
         "evidence/WVC-M3-04.md",
         "evidence/WVC-M3-04.json",
-        "evidence/WVC-M3-04-session.md"
+        "evidence/WVC-M3-04-session.md",
+        "evidence/MANUAL-2026-10-07.md",
+        "evidence/MANUAL-2026-10-07.json"
       ],
-      "notes": "Implemented; A01-A03 passed: clean 46d6070 application and 60e12b3 harness-only checkpoints (identical app bytes), Quick PS5.1 665/0/0/0 and Targeted PS5.1/PS7 each 685/0/0/0, exit0. Three-repeat default/medium synthetic benchmark records actual settings/tokens/tools/provenance/timing spread; larger native synthetic outputs retained and private markers/paths excluded. A04 owner playback observation pending. Existing unknown selected-duration strict-mode aggregation guarded; comparison warning policy retained. Default quality unchanged; no Full/Explorer/CI/milestone/release pass. Exact next WVC-M3-05."
+      "notes": "Verified; historical automated evidence: A01-A03 passed: clean 46d6070 application and 60e12b3 harness-only checkpoints (identical app bytes), Quick PS5.1 665/0/0/0 and Targeted PS5.1/PS7 each 685/0/0/0, exit0. Three-repeat default/medium synthetic benchmark records actual settings/tokens/tools/provenance/timing spread; larger native synthetic outputs retained and private markers/paths excluded. A04 owner motion/picture/tone playback passed on2026-10-07 with measured two-repeat default timings; synthetic scope only, no face/text/speech-sync/representative/candidate or quality-policy approval. Existing unknown selected-duration strict-mode aggregation guarded; comparison warning policy retained. Default quality unchanged; no Full/Explorer/CI/milestone/release pass. Exact next WVC-M3-05."
     },
     {
       "id": "WVC-M3-05",
@@ -1657,7 +1662,7 @@
       "title": "Cancel safely and terminate only this job’s child process",
       "milestone": "M3",
       "priority": "P0",
-      "status": "implemented",
+      "status": "verified",
       "improvements": [
         15
       ],
@@ -1683,12 +1688,14 @@
           "id": "WVC-M3-06-A01",
           "description": "Ctrl+C in each supported Windows launch mode stops the current batch and does not start the next file.",
           "tier": "manual",
-          "status": "not_run",
+          "status": "passed",
           "evidence": [
-            "evidence/WVC-M3-06.md",
-            "evidence/WVC-M3-06.json"
+            "evidence/MANUAL-2026-10-07.md",
+            "evidence/MANUAL-2026-10-07.json",
+            "evidence/MANUAL-CANCEL-2026-10-07.md",
+            "evidence/MANUAL-CANCEL-2026-10-07.json"
           ],
-          "notes": "Five-route clean synthetic Ctrl+C kit prepared; owner observation requested but not recorded. Physical Ctrl+C cannot be passed from context/native seams. Default BAT explicit exit3 transport has expected error3/pause."
+          "notes": "2026-10-07 owner second All PASS confirmed by fresh PS51/PS7/BAT-unattended: each 7/7 automatic PASS, one encoder, a Cancelled then b Unstarted, source/final hashes unchanged, application/session exit 3 and graceful encoder exit 0. Combined with retained BAT-menu/drop 7/7 this closes all five supported modes (selected 35/0). Initial 26/9 exercise snapshot is preserved; synthetic-recorder/console-close/crash limitations remain explicit."
         },
         {
           "id": "WVC-M3-06-A02",
@@ -1732,9 +1739,14 @@
       "evidence": [
         "evidence/WVC-M3-06.md",
         "evidence/WVC-M3-06.json",
-        "evidence/WVC-M3-06-session.md"
+        "evidence/WVC-M3-06-session.md",
+        "evidence/MANUAL-2026-10-07.md",
+        "evidence/MANUAL-2026-10-07.json",
+        "evidence/MANUAL-CANCEL-2026-10-07.md",
+        "evidence/MANUAL-CANCEL-2026-10-07.json",
+        "evidence/MANUAL-CANCEL-2026-10-07-session.md"
       ],
-      "notes": "Implemented with both-host clean automated evidence; physical A01 remains pending and blocks applicable acceptance. Full 1458 passed/0 failed/0 skipped/8 historical NotRun, exit2. Current app bytes match tested cc1e2a2; 015f987 changes only manual kit/README and has clean preparation/static evidence. No quality/runtime/entry-point change."
+      "notes": "Verified after 2026-10-07 physical five-route Ctrl+C acceptance; see MANUAL-CANCEL-2026-10-07. Historical automated evidence and initial manual 26 PASS/9 FAIL remain intact. A02-A04 retain both-host native safety evidence at cc1e2a2 and supporting manual-kit checkpoint 015f987; historical Full 1458/0/0/8 was not rerun or regraded. Fresh three-route retry 21/0 plus original BAT-menu/drop 14/0 completes A01 on unchanged current app bytes. No quality/runtime/entry-point change or broader release/crash approval."
     },
     {
       "id": "WVC-M3-07",

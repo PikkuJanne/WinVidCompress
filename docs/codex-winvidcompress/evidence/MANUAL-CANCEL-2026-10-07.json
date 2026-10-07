@@ -1,0 +1,577 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M3-06",
+  "acceptance_ids": [
+    "WVC-M3-06-A01"
+  ],
+  "status": "passed",
+  "recorded_utc": "2026-10-07T13:05:58.476224+00:00",
+  "owner_observation": {
+    "quote": "All PASS",
+    "date": "2026-10-07",
+    "timezone": "Europe/Berlin",
+    "source": "Direct owner reply to the fresh three-route retry instructions in this chat"
+  },
+  "documentation_parent_commit": "529ff1508537195c209a5fcaef342a63aab884e0",
+  "branch": "codex/wvc-manual-acceptance",
+  "observed_application_commit": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+  "application_sha256": "36ab3b93c4adad963c8141f33744f11c6deb8abd188a9bd913d56d2087648679",
+  "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "local_path_policy": "owned_retry_root is an alias for the isolated owned temporary root in the retained local preparation/policy manifest. All suffixes are actual root-relative paths; hashes identify retained local files. Private paths, raw logs and fixture binaries stay local/ignored.",
+  "preparation_policy": {
+    "report": ".test-results/manual-20261007/retry-policy-final.json",
+    "sha256": "c604b618a330e534f8bca93ebb31b8471550b5003abd4c2697e4ca3dc085f492",
+    "watchdog_seconds": 600,
+    "scope": "Only isolated synthetic encoder/probe and preparation wrappers extend watchdog600. Production PS1/BAT and repository helper bytes unchanged. Initial wrapper-only policy superseded before any observation."
+  },
+  "retry_counts": {
+    "routes": 3,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0
+  },
+  "routes": [
+    {
+      "route": "PS51",
+      "status": "passed",
+      "recorded_utc": "2026-10-07T13:01:12.6896495Z",
+      "tested_commit": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+      "tested_tree_dirty": false,
+      "host": {
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop"
+      },
+      "manual_action": "Explorer open route folder, double-click Check-PS51.bat; physical Ctrl+C once during first Encoding; answer PASS in verifier",
+      "launcher_relative_path": "PS51/Check-PS51.bat",
+      "wrapper_sha256": "22e793122204be5e69957a6ef87a17376fbe2227b1c9a05d9154f3f8e7a2c2be",
+      "fixture_sha256": "693b9a4255b07437502ccf9dda42201490e4c85a9aefe856648bb54f71a42685",
+      "watchdog_seconds": 600,
+      "observation_report_alias": "owned_retry_root/PS51/observation-045e7a141d23491db51137455cff3c84.json",
+      "observation_sha256": "186b27875b2ad1e2be7afb403824b0d8ad65f53981054146100ead097bcfc8af",
+      "case_report_sha256": "5d337b914b53d0e99f3c67b218a510a0dd1fa945f838d4925364992f249a5068",
+      "session_report_alias": "owned_retry_root/PS51/appdata/WinVidCompress/logs/b1eb42d1b26f4d40a55c56bf666ba11c/results.jsonl",
+      "session_report_sha256": "8fb09732c6e84d9c647f6f8ac3ea749ee6051b1583a808e129ac93f0881c92dd",
+      "owner_observation": "PASS",
+      "application_exit": 3,
+      "outer_verifier_exit": "not recorded; no tool-exit claim",
+      "counts": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "rows": [
+        {
+          "Name": "Application exit is 3",
+          "Passed": true
+        },
+        {
+          "Name": "Only the first encoder started",
+          "Passed": true
+        },
+        {
+          "Name": "Owned encoder stopped",
+          "Passed": true
+        },
+        {
+          "Name": "Both sources and the existing final are unchanged",
+          "Passed": true
+        },
+        {
+          "Name": "No cancelled partial was published",
+          "Passed": true
+        },
+        {
+          "Name": "Logs contain Cancelled then Unstarted for the two sources",
+          "Passed": true
+        },
+        {
+          "Name": "Session cancellation and counters agree",
+          "Passed": true
+        }
+      ],
+      "encoder_start_count": 1,
+      "sentinels": [
+        {
+          "case_relative_path": "sources/a.mov",
+          "sha256": "041b405ab4ae4edf501cdad1c19677547a38cbe083ada070686350416c7cecd8",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "sources/b.mov",
+          "sha256": "d8d65e8c7a06d438cf460dea4c50e7c66b7da9876217976257507128e19d8371",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "output/a.mp4",
+          "sha256": "25ac499d82c00e48696f3108efb1b1b5d5070c0f2f317dd09f8ea5f42649a6b6",
+          "unchanged": true
+        }
+      ],
+      "copied_application_launcher_hashes_match": true,
+      "jobs": [
+        {
+          "source_name": "a.mov",
+          "outcome": "Cancelled",
+          "stage": "Interrupted",
+          "elapsed_seconds": 1.7817634999999998,
+          "timings": {
+            "ProbeSeconds": 0.1169702,
+            "EncodeAndMuxSeconds": 1.4271428,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": true,
+          "progress_states": [
+            "Encoding",
+            "Cancelled"
+          ],
+          "published_output": false,
+          "encoder": {
+            "exit_code": 0,
+            "failure_kind": "Cancelled",
+            "cancellation": {
+              "Requested": true,
+              "GracefulAttempted": true,
+              "ExitedDuringGrace": true,
+              "Forced": false
+            },
+            "stderr": "owned cancel fixture ready; watchdog seconds=600\r\nprivate graceful q received\r\n"
+          }
+        },
+        {
+          "source_name": "b.mov",
+          "outcome": "Unstarted",
+          "stage": "Queued",
+          "elapsed_seconds": 0,
+          "timings": {
+            "ProbeSeconds": null,
+            "EncodeAndMuxSeconds": null,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": false,
+          "progress_states": [],
+          "published_output": false,
+          "encoder": null
+        }
+      ],
+      "session_result": {
+        "exit_code": 3,
+        "cancelled": true,
+        "counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 0,
+          "Cancelled": 1,
+          "Unstarted": 1,
+          "Scanned": 1,
+          "ScanErrors": 0
+        }
+      },
+      "recorder_only": true,
+      "limitations": [
+        "Physical observation uses a synthetic encoder/probe; actual FFmpeg private-pipe shutdown is covered separately by native tests.",
+        "Console close/Ctrl+Break/hard crash and detached descendants are outside controlled cancellation."
+      ]
+    },
+    {
+      "route": "PS7",
+      "status": "passed",
+      "recorded_utc": "2026-10-07T13:01:36.5752553Z",
+      "tested_commit": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+      "tested_tree_dirty": false,
+      "host": {
+        "Version": "7.6.5",
+        "Edition": "Core"
+      },
+      "manual_action": "Explorer open route folder, double-click Check-PS7.bat; physical Ctrl+C once during first Encoding; answer PASS in verifier",
+      "launcher_relative_path": "PS7/Check-PS7.bat",
+      "wrapper_sha256": "c53c44d9d5e923524a41b31cb494c984b79adf62d74cd20334bbe8849de66637",
+      "fixture_sha256": "693b9a4255b07437502ccf9dda42201490e4c85a9aefe856648bb54f71a42685",
+      "watchdog_seconds": 600,
+      "observation_report_alias": "owned_retry_root/PS7/observation-43cba09e9b844073bd1d87f25a160a93.json",
+      "observation_sha256": "f986c9f182f08761c684859f92980b42e0f56d4387b957ef4ce632f642fa7ce2",
+      "case_report_sha256": "3e88483a9406deff20c6d9dd77113ca8b51e3084c7797a9f997819806e29c5cf",
+      "session_report_alias": "owned_retry_root/PS7/appdata/WinVidCompress/logs/0cd5c38e9f274ddc8fe08d1cbc150630/results.jsonl",
+      "session_report_sha256": "9de7bcefc3bc56e01161fcbe0661cf009687af05c835987de922964eeaba4e69",
+      "owner_observation": "PASS",
+      "application_exit": 3,
+      "outer_verifier_exit": "not recorded; no tool-exit claim",
+      "counts": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "rows": [
+        {
+          "Name": "Application exit is 3",
+          "Passed": true
+        },
+        {
+          "Name": "Only the first encoder started",
+          "Passed": true
+        },
+        {
+          "Name": "Owned encoder stopped",
+          "Passed": true
+        },
+        {
+          "Name": "Both sources and the existing final are unchanged",
+          "Passed": true
+        },
+        {
+          "Name": "No cancelled partial was published",
+          "Passed": true
+        },
+        {
+          "Name": "Logs contain Cancelled then Unstarted for the two sources",
+          "Passed": true
+        },
+        {
+          "Name": "Session cancellation and counters agree",
+          "Passed": true
+        }
+      ],
+      "encoder_start_count": 1,
+      "sentinels": [
+        {
+          "case_relative_path": "sources/a.mov",
+          "sha256": "041b405ab4ae4edf501cdad1c19677547a38cbe083ada070686350416c7cecd8",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "sources/b.mov",
+          "sha256": "d8d65e8c7a06d438cf460dea4c50e7c66b7da9876217976257507128e19d8371",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "output/a.mp4",
+          "sha256": "25ac499d82c00e48696f3108efb1b1b5d5070c0f2f317dd09f8ea5f42649a6b6",
+          "unchanged": true
+        }
+      ],
+      "copied_application_launcher_hashes_match": true,
+      "jobs": [
+        {
+          "source_name": "a.mov",
+          "outcome": "Cancelled",
+          "stage": "Interrupted",
+          "elapsed_seconds": 2.501606,
+          "timings": {
+            "ProbeSeconds": 0.1070479,
+            "EncodeAndMuxSeconds": 2.1640874,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": true,
+          "progress_states": [
+            "Encoding",
+            "Cancelled"
+          ],
+          "published_output": false,
+          "encoder": {
+            "exit_code": 0,
+            "failure_kind": "Cancelled",
+            "cancellation": {
+              "Requested": true,
+              "GracefulAttempted": true,
+              "ExitedDuringGrace": true,
+              "Forced": false
+            },
+            "stderr": "owned cancel fixture ready; watchdog seconds=600\r\nprivate graceful q received\r\n"
+          }
+        },
+        {
+          "source_name": "b.mov",
+          "outcome": "Unstarted",
+          "stage": "Queued",
+          "elapsed_seconds": 0.0,
+          "timings": {
+            "ProbeSeconds": null,
+            "EncodeAndMuxSeconds": null,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": false,
+          "progress_states": [],
+          "published_output": false,
+          "encoder": null
+        }
+      ],
+      "session_result": {
+        "exit_code": 3,
+        "cancelled": true,
+        "counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 0,
+          "Cancelled": 1,
+          "Unstarted": 1,
+          "Scanned": 1,
+          "ScanErrors": 0
+        }
+      },
+      "recorder_only": true,
+      "limitations": [
+        "Physical observation uses a synthetic encoder/probe; actual FFmpeg private-pipe shutdown is covered separately by native tests.",
+        "Console close/Ctrl+Break/hard crash and detached descendants are outside controlled cancellation."
+      ]
+    },
+    {
+      "route": "BAT-unattended",
+      "status": "passed",
+      "recorded_utc": "2026-10-07T13:01:48.8827248Z",
+      "tested_commit": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+      "tested_tree_dirty": false,
+      "host": {
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop"
+      },
+      "manual_action": "Explorer open route folder, double-click Check-BAT-unattended.bat; physical Ctrl+C once during first Encoding; answer PASS in verifier",
+      "launcher_relative_path": "BAT-unattended/Check-BAT-unattended.bat",
+      "wrapper_sha256": "2631a9f8420e6f36895976c84639c8ad7c71e11452a593cf97f8486816ea4b06",
+      "fixture_sha256": "693b9a4255b07437502ccf9dda42201490e4c85a9aefe856648bb54f71a42685",
+      "watchdog_seconds": 600,
+      "observation_report_alias": "owned_retry_root/BAT-unattended/observation-9e10a97c620841f3979438af9a2dcfc9.json",
+      "observation_sha256": "9006b8e90272a6370dc0b3cce85160a0e913e40f772be449a678cd9975b8c044",
+      "case_report_sha256": "041c259647bf54f5eb773581a1c30246492da75f486f585f6de4bd10edf32f5b",
+      "session_report_alias": "owned_retry_root/BAT-unattended/appdata/WinVidCompress/logs/a8656543af164596adf6d3e89adf9e60/results.jsonl",
+      "session_report_sha256": "3cbd03c0e1b201edda532adf9b630c27adda65f7eafde153d59a885773a2e1b8",
+      "owner_observation": "PASS",
+      "application_exit": 3,
+      "outer_verifier_exit": "not recorded; no tool-exit claim",
+      "counts": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "rows": [
+        {
+          "Name": "Application exit is 3",
+          "Passed": true
+        },
+        {
+          "Name": "Only the first encoder started",
+          "Passed": true
+        },
+        {
+          "Name": "Owned encoder stopped",
+          "Passed": true
+        },
+        {
+          "Name": "Both sources and the existing final are unchanged",
+          "Passed": true
+        },
+        {
+          "Name": "No cancelled partial was published",
+          "Passed": true
+        },
+        {
+          "Name": "Logs contain Cancelled then Unstarted for the two sources",
+          "Passed": true
+        },
+        {
+          "Name": "Session cancellation and counters agree",
+          "Passed": true
+        }
+      ],
+      "encoder_start_count": 1,
+      "sentinels": [
+        {
+          "case_relative_path": "sources/a.mov",
+          "sha256": "041b405ab4ae4edf501cdad1c19677547a38cbe083ada070686350416c7cecd8",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "sources/b.mov",
+          "sha256": "d8d65e8c7a06d438cf460dea4c50e7c66b7da9876217976257507128e19d8371",
+          "unchanged": true
+        },
+        {
+          "case_relative_path": "output/a.mp4",
+          "sha256": "25ac499d82c00e48696f3108efb1b1b5d5070c0f2f317dd09f8ea5f42649a6b6",
+          "unchanged": true
+        }
+      ],
+      "copied_application_launcher_hashes_match": true,
+      "jobs": [
+        {
+          "source_name": "a.mov",
+          "outcome": "Cancelled",
+          "stage": "Interrupted",
+          "elapsed_seconds": 1.4798311,
+          "timings": {
+            "ProbeSeconds": 0.11621609999999999,
+            "EncodeAndMuxSeconds": 1.1240318999999999,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": true,
+          "progress_states": [
+            "Encoding",
+            "Cancelled"
+          ],
+          "published_output": false,
+          "encoder": {
+            "exit_code": 0,
+            "failure_kind": "Cancelled",
+            "cancellation": {
+              "Requested": true,
+              "GracefulAttempted": true,
+              "ExitedDuringGrace": true,
+              "Forced": false
+            },
+            "stderr": "owned cancel fixture ready; watchdog seconds=600\r\nprivate graceful q received\r\n"
+          }
+        },
+        {
+          "source_name": "b.mov",
+          "outcome": "Unstarted",
+          "stage": "Queued",
+          "elapsed_seconds": 0,
+          "timings": {
+            "ProbeSeconds": null,
+            "EncodeAndMuxSeconds": null,
+            "ValidationSeconds": null,
+            "PromotionSeconds": null
+          },
+          "cancellation_requested": false,
+          "progress_states": [],
+          "published_output": false,
+          "encoder": null
+        }
+      ],
+      "session_result": {
+        "exit_code": 3,
+        "cancelled": true,
+        "counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 0,
+          "Cancelled": 1,
+          "Unstarted": 1,
+          "Scanned": 1,
+          "ScanErrors": 0
+        }
+      },
+      "recorder_only": true,
+      "limitations": [
+        "Physical observation uses a synthetic encoder/probe; actual FFmpeg private-pipe shutdown is covered separately by native tests.",
+        "Console close/Ctrl+Break/hard crash and detached descendants are outside controlled cancellation."
+      ]
+    }
+  ],
+  "retained_accepted_routes": [
+    {
+      "route": "BAT-menu",
+      "status": "passed",
+      "counts": {
+        "passed": 7,
+        "failed": 0
+      },
+      "evidence": "MANUAL-2026-10-07.json",
+      "observation_sha256": "ebe433810928c08f4fedf33a6ec2002cf8349e57c06025ac4030ad2d5feb9d69"
+    },
+    {
+      "route": "BAT-drop",
+      "status": "passed",
+      "counts": {
+        "passed": 7,
+        "failed": 0
+      },
+      "evidence": "MANUAL-2026-10-07.json",
+      "observation_sha256": "fed042cf428e01e1eb7df0014abb93c9577edb103b8c8867b287f44c143069bb"
+    }
+  ],
+  "selected_five_route_acceptance": {
+    "routes": 5,
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "selection": "Fresh PS51/PS7/BAT-unattended plus original BAT-menu/BAT-drop. This is an acceptance selection, not a new five-route run."
+  },
+  "preserved_initial_exercises": {
+    "evidence": "MANUAL-2026-10-07.json",
+    "sha256": "1d40d8a09e0f9b3b88dd674b0b76f6dc48600b1f4b09aa217388ec4246d2a197",
+    "routes": 5,
+    "passed": 26,
+    "failed": 9,
+    "scope": "Original timed-out PS51/PS7/BAT-unattended rows, all original observations and hashes remain unchanged. The fresh passing retries supersede their incomplete first-job condition."
+  },
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-07T13:03:07.311025+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "529ff1508537195c209a5fcaef342a63aab884e0",
+    "branch": "codex/wvc-manual-acceptance",
+    "upstream": "origin/codex/wvc-manual-acceptance",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "529ff1508537195c209a5fcaef342a63aab884e0",
+    "live_push_head": "529ff1508537195c209a5fcaef342a63aab884e0",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_sync": "Pending final commit/push; report actual live equality externally after push.",
+  "verification": {
+    "manual_verifier": "tests/integration/Test-CancelManualResult.ps1 -CaseRoot <owned route root> -ObservedExit 3; physical interactive observation, outer verifier exit not recorded",
+    "artifact_review": "Read-only report/log/hash/ownership review by root and two independent agents; no additional physical Ctrl+C or product suite run by agents.",
+    "document_checks": [
+      {
+        "command": "python tools/codex-winvidcompress/validate_tracker.py --repo .",
+        "exit_code": 0,
+        "status": "passed",
+        "tasks": 32,
+        "acceptance_criteria": 128,
+        "improvements_covered": 23
+      },
+      {
+        "command": "git -c core.whitespace=cr-at-eol diff --check",
+        "exit_code": 0,
+        "status": "passed"
+      },
+      {
+        "command": "python .test-results/manual-20261007/record-cancellation-acceptance.py",
+        "exit_code": 0,
+        "status": "passed",
+        "scope": "Strict observation/session/hash/fixture and privacy assertions before seven documentation writes; no media test or cleanup."
+      },
+      {
+        "command": "Read-only PowerShell JSON comparison against git show HEAD:TASKS.json and prior evidence SHA256",
+        "exit_code": 0,
+        "status": "passed",
+        "scope": "Only WVC-M3-06 changes semantically; initial manual evidence remains unchanged."
+      }
+    ]
+  },
+  "historical_full": {
+    "tested_commit": "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91",
+    "passed": 1814,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 8,
+    "exit_code": 2,
+    "scope": "Historical unchanged; no Quick/Targeted/Full suite rerun for this documentation-only acceptance update."
+  },
+  "limitations": [
+    "Physical Ctrl+C observations use owned synthetic encoders/probes; actual FFmpeg private-pipe shutdown and unrelated-process isolation have separate retained A02-A04 automated evidence.",
+    "Native encoder exit 0 after graceful q is distinct from application/session cancellation exit 3.",
+    "Outer verifier exits were not recorded; seven passing rows and owner observations are the evidence.",
+    "Console-close, Ctrl+Break, hard crash, power loss and detached descendants are not accepted by this manual criterion.",
+    "Broader playback, representative media, network/durability, CI, release and default-quality approval are not implied."
+  ],
+  "next_task": "WVC-M4-03 - Stress concurrency, crash recovery and filesystem edge cases",
+  "next_manual_action": "None for this five-route Ctrl+C criterion."
+}

@@ -1,0 +1,527 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "kind": "Scoped owner manual acceptance",
+  "local_path_policy": "Observation and session report aliases redact the owned temporary root and session location; they are not literal filesystem paths. The retained local preparation manifest resolves the actual files. Report SHA256 values identify their unchanged contents.",
+  "acceptance_ids": [
+    "WVC-M2-06-A04",
+    "WVC-M3-04-A04",
+    "WVC-M3-06-A01"
+  ],
+  "recorded_utc": "2026-10-07T12:54:33.397399+00:00",
+  "owner_observation": {
+    "quote": "All PASS",
+    "date": "2026-10-07",
+    "timezone": "Europe/Berlin",
+    "source": "Direct owner reply to the three-check instructions in this chat",
+    "interpretation": "Menu and synthetic playback accepted; all5 human cancellation observations preserved; automatic contradictions retain incomplete overall cancellation."
+  },
+  "observed_commit": "7bfe67453c6515a85ac4c8eac09e0de577fe8280",
+  "reconciled_owner_merged_main": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+  "branch": "codex/wvc-manual-acceptance",
+  "application_sha256": "36ab3b93c4adad963c8141f33744f11c6deb8abd188a9bd913d56d2087648679",
+  "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "menu": {
+    "criterion": "WVC-M2-06-A04",
+    "status": "passed",
+    "owner_observation": "Actual Explorer double-click, choose4, menu disappears, usable prompt with1+1=2, then exit",
+    "copied_app_launcher_hashes_match": true,
+    "preparation_report": ".test-results/manual-20261007/menu-preparation.json",
+    "preparation_sha256": "2c67f2bb7e379c7fb4f593584d43d3796f8415f1e76ac3ba96795616cbeb6daa",
+    "startup_sentinels_only": true,
+    "scope": "Owner-visible menu/prompt complements retained automated unattended actual process-exit evidence; no new codec/compression claim."
+  },
+  "playback": {
+    "status": "passed for observed source/default repeat1 comparison",
+    "owner_quote": "All PASS",
+    "observed_at_date": "2026-10-07",
+    "timezone": "Europe/Berlin",
+    "scope": "Eight-second 320x240/24fps generated moving testsrc2 pattern +440Hz steady tone; source and default repeat1 output played with already installed FFplay",
+    "motion_picture": "PASS",
+    "continuous_sound": "PASS",
+    "face_detail": "not_run",
+    "readable_text": "not_run",
+    "speech_synchronization": "not_run",
+    "representative_interview_quality": "not_run",
+    "experimental_candidates": "not_run",
+    "watched_output_repeat": 1,
+    "report": ".test-results/benchmarks/a41c7d8225d64a1492635c9eb3d808b8/report.json",
+    "report_sha256": "cfadda0e21dfbecd72038f3dd25c639c8554930848ec4d71677620c9c5df2ea1",
+    "source_sha256": "d0d86d5849639011236737ef732c5360f21ba7a6df5e9d245454d7d28e416609",
+    "output_sha256": "7ddf75edfe3f9d1a3c4033b7cea07baf18b2949af4835e8d6f98f3f5b140d9e9",
+    "source_bytes": 2283459,
+    "output_bytes": 469644,
+    "measured_elapsed_seconds": [
+      0.9492957,
+      0.5712999999999999
+    ],
+    "measured_timings": [
+      {
+        "ProbeSeconds": 0.08825809999999999,
+        "EncodeAndMuxSeconds": 0.361801,
+        "ValidationSeconds": 0.1884437,
+        "PromotionSeconds": 0.016132999999999998
+      },
+      {
+        "ProbeSeconds": 0.07011529999999999,
+        "EncodeAndMuxSeconds": 0.2977112,
+        "ValidationSeconds": 0.0940458,
+        "PromotionSeconds": 0.0154367
+      }
+    ],
+    "settings": {
+      "VideoCodec": "libx264",
+      "Preset": "veryfast",
+      "CRF": 22,
+      "PixelFormat": "yuv420p",
+      "ColourPolicy": "SDRCompatibility",
+      "AudioCodec": "aac",
+      "AudioBitrate": "160k",
+      "Container": "mp4",
+      "FastStart": true,
+      "HeightCap": 1080,
+      "Applied": true
+    },
+    "tools": [
+      {
+        "Name": "FFmpeg",
+        "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "SHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83"
+      },
+      {
+        "Name": "FFprobe",
+        "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+        "SHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+      }
+    ],
+    "host": {
+      "OS": "Microsoft Windows 11 Pro",
+      "Version": "10.0.26300",
+      "Build": "26300",
+      "Architecture": "64-bit",
+      "PowerShell": "5.1.26100.9444",
+      "Edition": "Desktop"
+    },
+    "original_report_playback_fields": "Preserved NotRun; this scoped observation overlay does not claim repeat2 or historical candidate playback."
+  },
+  "cancellation": {
+    "criterion": "WVC-M3-06-A01",
+    "status": "not_run",
+    "reason": "Required timely first-job Ctrl+C condition was not established for3 routes after the recorder120-second watchdog. Failed exercise rows preserved; no ignored timely-Ctrl+C defect inferred.",
+    "reports_present": 5,
+    "fully_passed_routes": 2,
+    "expired_exercises": 3,
+    "human_pass_observations": 5,
+    "automatic_rows": {
+      "passed": 26,
+      "failed": 9
+    },
+    "routes": [
+      {
+        "route": "PS51",
+        "human_observation": "PASS",
+        "application_exit": 3,
+        "automatic_counts": {
+          "passed": 4,
+          "failed": 3
+        },
+        "automatic_rows": [
+          {
+            "Name": "Application exit is 3",
+            "Passed": true
+          },
+          {
+            "Name": "Only the first encoder started",
+            "Passed": false
+          },
+          {
+            "Name": "Owned encoder stopped",
+            "Passed": true
+          },
+          {
+            "Name": "Both sources and the existing final are unchanged",
+            "Passed": true
+          },
+          {
+            "Name": "No cancelled partial was published",
+            "Passed": true
+          },
+          {
+            "Name": "Logs contain Cancelled then Unstarted for the two sources",
+            "Passed": false
+          },
+          {
+            "Name": "Session cancellation and counters agree",
+            "Passed": false
+          }
+        ],
+        "first_encoder_elapsed_seconds": 120.56833049999999,
+        "outcomes": [
+          "Failed",
+          "Cancelled"
+        ],
+        "result_counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 1,
+          "Cancelled": 1,
+          "Unstarted": 0,
+          "Scanned": 1,
+          "ScanErrors": 0
+        },
+        "first_encoder_exit": 99,
+        "valid_first_job_cancellation": false,
+        "recorded_utc": "2026-10-07T12:42:41.4509394Z",
+        "host": {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        "recorder_only": true,
+        "observation_report_alias": "owned cancellation root/PS51/observation-b7ed2a688afc4e4ebc2812bfabfefd23.json",
+        "observation_sha256": "531c673223c874ca7af305412dc2db0264d1687d5d09284398c9c5dc81469996",
+        "session_report_alias": "owned cancellation root/PS51/session/results.jsonl",
+        "session_report_sha256": "5b761c4f75695fa4aaf3b430a461ef019acbb962968e6de009bed77e85546f34",
+        "sentinels_unchanged": true,
+        "copied_app_launcher_hashes_match": true,
+        "outer_verifier_exit": "not recorded; no tool-exit claim"
+      },
+      {
+        "route": "PS7",
+        "human_observation": "PASS",
+        "application_exit": 3,
+        "automatic_counts": {
+          "passed": 4,
+          "failed": 3
+        },
+        "automatic_rows": [
+          {
+            "Name": "Application exit is 3",
+            "Passed": true
+          },
+          {
+            "Name": "Only the first encoder started",
+            "Passed": false
+          },
+          {
+            "Name": "Owned encoder stopped",
+            "Passed": true
+          },
+          {
+            "Name": "Both sources and the existing final are unchanged",
+            "Passed": true
+          },
+          {
+            "Name": "No cancelled partial was published",
+            "Passed": true
+          },
+          {
+            "Name": "Logs contain Cancelled then Unstarted for the two sources",
+            "Passed": false
+          },
+          {
+            "Name": "Session cancellation and counters agree",
+            "Passed": false
+          }
+        ],
+        "first_encoder_elapsed_seconds": 120.4550792,
+        "outcomes": [
+          "Failed",
+          "Cancelled"
+        ],
+        "result_counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 1,
+          "Cancelled": 1,
+          "Unstarted": 0,
+          "Scanned": 1,
+          "ScanErrors": 0
+        },
+        "first_encoder_exit": 99,
+        "valid_first_job_cancellation": false,
+        "recorded_utc": "2026-10-07T12:43:36.1949424Z",
+        "host": {
+          "Version": "7.6.5",
+          "Edition": "Core"
+        },
+        "recorder_only": true,
+        "observation_report_alias": "owned cancellation root/PS7/observation-58d14bc367174c179b690cabeed0d206.json",
+        "observation_sha256": "c8e5f3cc5c85c36dbf4ee9ea3aebe157bed4108f7ca6b1d85a47e3e3af2fa878",
+        "session_report_alias": "owned cancellation root/PS7/session/results.jsonl",
+        "session_report_sha256": "0eeac6d463017c37d7948f075ff7f1265b4a3b9dcb7be4d462a177b4dae52acd",
+        "sentinels_unchanged": true,
+        "copied_app_launcher_hashes_match": true,
+        "outer_verifier_exit": "not recorded; no tool-exit claim"
+      },
+      {
+        "route": "BAT-unattended",
+        "human_observation": "PASS",
+        "application_exit": 3,
+        "automatic_counts": {
+          "passed": 4,
+          "failed": 3
+        },
+        "automatic_rows": [
+          {
+            "Name": "Application exit is 3",
+            "Passed": true
+          },
+          {
+            "Name": "Only the first encoder started",
+            "Passed": false
+          },
+          {
+            "Name": "Owned encoder stopped",
+            "Passed": true
+          },
+          {
+            "Name": "Both sources and the existing final are unchanged",
+            "Passed": true
+          },
+          {
+            "Name": "No cancelled partial was published",
+            "Passed": true
+          },
+          {
+            "Name": "Logs contain Cancelled then Unstarted for the two sources",
+            "Passed": false
+          },
+          {
+            "Name": "Session cancellation and counters agree",
+            "Passed": false
+          }
+        ],
+        "first_encoder_elapsed_seconds": 120.53734329999999,
+        "outcomes": [
+          "Failed",
+          "Cancelled"
+        ],
+        "result_counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 1,
+          "Cancelled": 1,
+          "Unstarted": 0,
+          "Scanned": 1,
+          "ScanErrors": 0
+        },
+        "first_encoder_exit": 99,
+        "valid_first_job_cancellation": false,
+        "recorded_utc": "2026-10-07T12:43:30.5216646Z",
+        "host": {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        "recorder_only": true,
+        "observation_report_alias": "owned cancellation root/BAT-unattended/observation-232cea5e950f4c428f42940427134a0b.json",
+        "observation_sha256": "5f6d17d03290faca9c61d4d1893e0dc41e956ccaa869d12018070c6c12b51846",
+        "session_report_alias": "owned cancellation root/BAT-unattended/session/results.jsonl",
+        "session_report_sha256": "333936b8643882e13a7a3fd6bd3a4aa2da9a76bc64466197e9b122f83c2272f9",
+        "sentinels_unchanged": true,
+        "copied_app_launcher_hashes_match": true,
+        "outer_verifier_exit": "not recorded; no tool-exit claim"
+      },
+      {
+        "route": "BAT-menu",
+        "human_observation": "PASS",
+        "application_exit": 3,
+        "automatic_counts": {
+          "passed": 7,
+          "failed": 0
+        },
+        "automatic_rows": [
+          {
+            "Name": "Application exit is 3",
+            "Passed": true
+          },
+          {
+            "Name": "Only the first encoder started",
+            "Passed": true
+          },
+          {
+            "Name": "Owned encoder stopped",
+            "Passed": true
+          },
+          {
+            "Name": "Both sources and the existing final are unchanged",
+            "Passed": true
+          },
+          {
+            "Name": "No cancelled partial was published",
+            "Passed": true
+          },
+          {
+            "Name": "Logs contain Cancelled then Unstarted for the two sources",
+            "Passed": true
+          },
+          {
+            "Name": "Session cancellation and counters agree",
+            "Passed": true
+          }
+        ],
+        "first_encoder_elapsed_seconds": 69.8282076,
+        "outcomes": [
+          "Cancelled",
+          "Unstarted"
+        ],
+        "result_counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 0,
+          "Cancelled": 1,
+          "Unstarted": 1,
+          "Scanned": 1,
+          "ScanErrors": 0
+        },
+        "first_encoder_exit": 0,
+        "valid_first_job_cancellation": true,
+        "recorded_utc": "2026-10-07T12:43:21.3295545Z",
+        "host": {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        "recorder_only": true,
+        "observation_report_alias": "owned cancellation root/BAT-menu/observation-74467242f6ee48f4a3a646845f9cfb41.json",
+        "observation_sha256": "ebe433810928c08f4fedf33a6ec2002cf8349e57c06025ac4030ad2d5feb9d69",
+        "session_report_alias": "owned cancellation root/BAT-menu/session/results.jsonl",
+        "session_report_sha256": "1934599b42de662c4dbab746c4151d35a5fd38c92c2a6b286cc34aed4a9c57b2",
+        "sentinels_unchanged": true,
+        "copied_app_launcher_hashes_match": true,
+        "outer_verifier_exit": "not recorded; no tool-exit claim"
+      },
+      {
+        "route": "BAT-drop",
+        "human_observation": "PASS",
+        "application_exit": 3,
+        "automatic_counts": {
+          "passed": 7,
+          "failed": 0
+        },
+        "automatic_rows": [
+          {
+            "Name": "Application exit is 3",
+            "Passed": true
+          },
+          {
+            "Name": "Only the first encoder started",
+            "Passed": true
+          },
+          {
+            "Name": "Owned encoder stopped",
+            "Passed": true
+          },
+          {
+            "Name": "Both sources and the existing final are unchanged",
+            "Passed": true
+          },
+          {
+            "Name": "No cancelled partial was published",
+            "Passed": true
+          },
+          {
+            "Name": "Logs contain Cancelled then Unstarted for the two sources",
+            "Passed": true
+          },
+          {
+            "Name": "Session cancellation and counters agree",
+            "Passed": true
+          }
+        ],
+        "first_encoder_elapsed_seconds": 40.0506406,
+        "outcomes": [
+          "Cancelled",
+          "Unstarted"
+        ],
+        "result_counters": {
+          "Found": 2,
+          "Done": 0,
+          "Skipped": 0,
+          "Failed": 0,
+          "Cancelled": 1,
+          "Unstarted": 1,
+          "Scanned": 2,
+          "ScanErrors": 0
+        },
+        "first_encoder_exit": 0,
+        "valid_first_job_cancellation": true,
+        "recorded_utc": "2026-10-07T12:43:10.9737884Z",
+        "host": {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        "recorder_only": true,
+        "observation_report_alias": "owned cancellation root/BAT-drop/observation-49fdc7b2b8d64853b4dbab6e71661a45.json",
+        "observation_sha256": "fed042cf428e01e1eb7df0014abb93c9577edb103b8c8867b287f44c143069bb",
+        "session_report_alias": "owned cancellation root/BAT-drop/session/results.jsonl",
+        "session_report_sha256": "da3a3cc22d2f0d2c0f8e3f800735e513b43fe266b351ca95d348a63f199ad00a",
+        "sentinels_unchanged": true,
+        "copied_app_launcher_hashes_match": true,
+        "outer_verifier_exit": "not recorded; no tool-exit claim"
+      }
+    ],
+    "observations_are_synthetic_recorder_tests": true,
+    "console_close_ctrlbreak_hardcrash_detached_descendants": "not_run"
+  },
+  "retry": {
+    "status": "not_run",
+    "routes": [
+      "PS51",
+      "PS7",
+      "BAT-unattended"
+    ],
+    "source_commit": "e3d1536bf1408ad52048717bc3e62b50c7c13936",
+    "application_sha256": "36ab3b93c4adad963c8141f33744f11c6deb8abd188a9bd913d56d2087648679",
+    "watchdog_seconds": 600,
+    "policy_report": ".test-results/manual-20261007/retry-policy-final.json",
+    "policy_sha256": "c604b618a330e534f8bca93ebb31b8471550b5003abd4c2697e4ca3dc085f492",
+    "timer_smoke": {
+      "Kind": "OwnedRetryFixtureTimerSmoke",
+      "RecordedUtc": "2026-10-07T12:50:27.1401437Z",
+      "Passed": true,
+      "StayedAliveBeyondSeconds": 16,
+      "WatchdogSeconds": 600,
+      "GracefulExit": 0,
+      "BinarySHA256": "693B9A4255B07437502CCF9DDA42201490E4C85A9AEFE856648BB54F71A42685",
+      "ApplicationChanged": false,
+      "OwnerObservation": "NotRun"
+    },
+    "timer_report_sha256": "11167cc58f7630678c603d09270133ddd707b10670f958061a78ebf77ac63375",
+    "observed_outer_timer_check_exit": 0,
+    "timer_command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/manual-20261007/prepare-retry600.ps1 *> .test-results/manual-20261007/retry-timer-smoke.log; exit $LASTEXITCODE",
+    "user_folder": ".test-results/manual-20261007/4 - Retry cancellation",
+    "instructions": "One route at a time; Ctrl+C once within10 seconds of FIRST Encoding progress; all7 automatic rows plus ownerPASS required.",
+    "scope": "Only fresh owned recorder/probe binaries and wrappers extend the timer. Repository app/BAT/helpers unchanged.",
+    "preparation_correction": "Original fixture recognizes only120, otherwise falls back15. A wrapper-only600 attempt was superseded before any owner retry; isolated compiled fixture now explicitly supports600 and native smoke proves it survives16 seconds and exits0 through private q."
+  },
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-07T12:46:52.279681+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "7bfe67453c6515a85ac4c8eac09e0de577fe8280",
+    "branch": "codex/wvc-m4-02-layout",
+    "upstream": "origin/codex/wvc-m4-02-layout",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "7bfe67453c6515a85ac4c8eac09e0de577fe8280",
+    "live_push_head": "7bfe67453c6515a85ac4c8eac09e0de577fe8280",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; report live equality externally after commit/push",
+  "limits": [
+    "No default quality change/approval or new application runtime.",
+    "Owner-reviewed playback excludes face/text/speech-sync, representative media and experimental candidates.",
+    "Existing Full1814/0/0/8 is historical unchanged; owner observations are not a new full-suite run or release acceptance.",
+    "Physical cancellation uses a synthetic recorder; actual FFmpeg private-pipe shutdown has separate retained automated evidence.",
+    "Raw logs/media/config/owner paths remain local/ignored; public evidence contains projections/hashes only."
+  ],
+  "next_task": "WVC-M4-03 - Stress concurrency, crash recovery and filesystem edge cases",
+  "next_manual_action": "Repeat only PS51/PS7/BAT-unattended in the verified fresh kit."
+}
