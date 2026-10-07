@@ -161,3 +161,13 @@ Explicit output also replaces a blank Windows default when config is absent; exi
 ```
 
 M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. M3-07 raised the per-host whole-Pester deadline to 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
+
+## Relative layout checks (WVC-M4-02)
+
+`unit/Layout.Tests.ps1` checks flat defaults, deterministic folder/file roots, repeated labels, alias/culture/selection-order path identity, shallowest overlapping input roots, directory-local collisions, literal Unicode/special characters, traversal/ADS/device/trailing-dot-space rejection and separator-bounded containment. Owned output junctions and a removed selected root test revalidation before creating descendants. Preserve-mode source/output overlaps and doctor/manifest combinations refuse before native/writing/prompt boundaries; flat mode retains its existing frozen overlap/ambiguous-media tests.
+
+`integration/WhatIf.Tests.ps1` adds protected actual PS1/BAT relative previews, directory-local native collision/publication and JSON/text log agreement, exact no-write overlap/manifest refusals, and a short installed-FFmpeg nested encode/structural probe. The native argument fixture is distinct from real media encoding. All sources/finals/config and FFREPORT/APPDATA roots are isolated. Structural results do not establish playback integrity or physical Explorer acceptance. Preview creates no descendants; conversion creates only descendants beneath an existing selected root. Use fresh report paths: the runner refuses an existing report file.
+
+```powershell
+./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/unit/Layout.Tests.ps1|tests/integration/WhatIf.Tests.ps1|tests/unit/Cli.Tests.ps1|tests/unit/Queue.Tests.ps1|tests/unit/Log.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/unit/Manifest.Tests.ps1|tests/launcher/Launcher.Tests.ps1' -ReportPath $freshReport
+```

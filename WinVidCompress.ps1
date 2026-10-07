@@ -146,6 +146,10 @@ Read-only filesystem plan. Does not load/recover writable config, test writing,
 start native tools, encode, create logs or manifests. Output names are estimates;
 media validity, destination writability and concurrent collisions are unchecked.
 Requires inputs. Cannot combine with CheckEnvironment or manifest controls.
+.PARAMETER PreserveSubfolders
+Per-run relative layout. One root preserves paths below it; multiple roots get
+stable folder labels. Requires disjoint input/output roots and explicit inputs.
+Cannot combine with doctor or manifest controls; manifests remain flat-only.
 .PARAMETER CheckEnvironment
 Report installed dependencies and output availability without conversion or
 config changes. Performs a disclosed temporary create/write/remove check.
@@ -164,7 +168,7 @@ Retry the original explicit source queue using ManifestPath after validating it.
 Store/check source SHA256 rather than only size/mtime with ManifestPath. Keep it
 enabled on each resume; same-size/restored-time edits evade the fast default.
 .EXAMPLE
-& .\WinVidCompress.ps1 -Unattended -WhatIf -OutputDir 'D:\Output' 'D:\Sources'
+& .\WinVidCompress.ps1 -Unattended -WhatIf -PreserveSubfolders -OutputDir 'D:\Output' 'D:\Sources'
 
 Preview without creating config, output jobs, logs or a manifest. No native probes.
 .EXAMPLE
@@ -186,6 +190,7 @@ param(
     [string]$OutputDir,
     [string]$CollisionMode,
     [switch]$WhatIf,
+    [switch]$PreserveSubfolders,
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,
@@ -1347,6 +1352,104 @@ function Get-InputQueue([string[]]$paths) {
     return [pscustomobject]@{ Files = $files; Scans = $scans.ToArray() }
 }
 
+function Test-LayoutPathWithin([string]$PathValue, [string]$Root) {
+    $prefix=$Root.TrimEnd('\','/')+'\'
+    return [StringComparer]::OrdinalIgnoreCase.Equals($PathValue,$Root) -or
+        $PathValue.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)
+}
+
+function Assert-LayoutComponent([string]$Value) {
+    if ([string]::IsNullOrWhiteSpace($Value) -or $Value -in @('.','..') -or
+        $Value -match '[\\/:<>"|?*\x00-\x1f]' -or $Value -match '[. ]$' -or
+        $Value -match '^(CON|PRN|AUX|NUL|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])(?:\.|$)' -or
+        $Value -match '^\.wvc-job-[0-9a-f]{32}$') { throw 'Unsafe relative output path component.' }
+}
+
+function Get-LayoutDestination([string]$OutputDirectory, [string]$RelativePath) {
+    Assert-OutputDirectory $OutputDirectory
+    if (Get-InputReparsePoint $OutputDirectory) { throw 'Output layout root cannot cross reparse points.' }
+    if ([string]::IsNullOrWhiteSpace($RelativePath) -or [IO.Path]::IsPathRooted($RelativePath)) { throw 'Output layout requires a relative file path.' }
+    foreach ($part in @($RelativePath -split '[\\/]')) { Assert-LayoutComponent $part }
+    $root=[IO.Path]::GetFullPath($OutputDirectory)
+    $candidate=[IO.Path]::GetFullPath([IO.Path]::Combine($root,$RelativePath))
+    if (-not (Test-LayoutPathWithin $candidate $root) -or [StringComparer]::OrdinalIgnoreCase.Equals($candidate,$root)) { throw 'Output layout escaped its destination root.' }
+    $ancestor=[IO.Path]::GetDirectoryName($candidate)
+    while (-not (Test-Path -LiteralPath $ancestor)) {
+        $ancestor=[IO.Path]::GetDirectoryName($ancestor)
+        if (-not $ancestor) { throw 'Output layout has no existing destination ancestor.' }
+    }
+    if ((Get-Item -LiteralPath $ancestor -Force -ErrorAction Stop) -isnot [IO.DirectoryInfo]) { throw 'Output layout directory is blocked by a file.' }
+    if ((Get-InputReparsePoint $ancestor) -or
+        ((Test-Path -LiteralPath $candidate) -and (Get-InputReparsePoint $candidate))) { throw 'Output layout cannot cross reparse points.' }
+    return $candidate
+}
+
+function Get-LayoutRootLabel([string]$PathValue) {
+    $trimmed=$PathValue.TrimEnd('\','/')
+    if ($trimmed -match '^[A-Za-z]:$') { $label='drive-'+$trimmed.Substring(0,1).ToUpperInvariant() }
+    elseif ([StringComparer]::OrdinalIgnoreCase.Equals($trimmed,[IO.Path]::GetPathRoot($PathValue).TrimEnd('\','/'))) {
+        $label=($trimmed -split '[\\/]')[-1]
+    } else { $label=[IO.Path]::GetFileName($trimmed) }
+    Assert-LayoutComponent $label
+    return $label
+}
+
+function Get-RelativeOutputLayout($Queue, [string]$OutputDirectory) {
+    Assert-OutputDirectory $OutputDirectory
+    $output=Get-QueuePathKey (Get-Item -LiteralPath $OutputDirectory -Force -ErrorAction Stop).FullName
+    if ($output.Length -gt [IO.Path]::GetPathRoot($output).Length) { $output=$output.TrimEnd('\','/') }
+    $rootNames=New-Object 'Collections.Generic.Dictionary[string,string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($scan in $Queue.Scans) {
+        if (-not $scan.Files.Count) { continue }
+        $item=Get-Item -LiteralPath $scan.NormalizedPath -Force -ErrorAction Stop
+        $root=if ($item -is [IO.FileInfo]) { $item.Directory.FullName } else { $item.FullName }
+        $root=Get-QueuePathKey $root
+        if ($root.Length -gt [IO.Path]::GetPathRoot($root).Length) { $root=$root.TrimEnd('\','/') }
+        if (-not $rootNames.ContainsKey($root)) { $rootNames.Add($root,$root) }
+        elseif ([StringComparer]::Ordinal.Compare($root,$rootNames[$root]) -lt 0) { $rootNames[$root]=$root }
+    }
+    $keys=[string[]]@($rootNames.Keys); [array]::Sort($keys,[StringComparer]::OrdinalIgnoreCase)
+    $roots=New-Object 'Collections.Generic.List[object]'
+    $labels=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($key in $keys) {
+        $path=$rootNames[$key]
+        $covered=@($keys | Where-Object { -not [StringComparer]::OrdinalIgnoreCase.Equals($_,$key) -and (Test-LayoutPathWithin $path $_) }).Count -gt 0
+        if ($covered) { continue }
+        if ((Test-LayoutPathWithin $output $path) -or (Test-LayoutPathWithin $path $output)) { throw 'PreserveSubfolders requires disjoint input and output roots; overlapping roots could re-ingest outputs.' }
+        $label=Get-LayoutRootLabel $path
+        $candidate=$label; $number=2
+        while (-not $labels.Add($candidate)) { $candidate=$label+' (root '+$number+')'; $number++ }
+        $roots.Add([pscustomobject]@{Path=$path;Label=$candidate})
+    }
+    $entries=New-Object 'Collections.Generic.List[object]'
+    foreach ($source in $Queue.Files) {
+        $sourceKey=Get-QueuePathKey $source
+        $matches=@($roots | Where-Object { Test-LayoutPathWithin $sourceKey $_.Path })
+        if ($matches.Count -ne 1) { throw 'Source has no unique selected layout root.' }
+        $relative=$sourceKey.Substring(($matches[0].Path.TrimEnd('\','/')+'\').Length)
+        $relative=[IO.Path]::ChangeExtension($relative,'.mp4')
+        if ($roots.Count -gt 1) { $relative=[IO.Path]::Combine($matches[0].Label,$relative) }
+        $nominal=Get-LayoutDestination $output $relative
+        $entries.Add([pscustomobject]@{SourcePath=$source;RelativePath=$relative;OutputDirectory=[IO.Path]::GetDirectoryName($nominal);NominalPath=$nominal})
+    }
+    return [pscustomobject]@{OutputDirectory=$output;Queue=$Queue;Roots=$roots.ToArray();Entries=$entries.ToArray()}
+}
+
+function New-LayoutOutputDirectory([string]$OutputDirectory, [string]$RelativePath) {
+    $nominal=Get-LayoutDestination $OutputDirectory $RelativePath
+    $parent=[IO.Path]::GetDirectoryName($nominal)
+    $missing=New-Object 'Collections.Generic.Stack[string]'
+    $current=$parent
+    while (-not (Test-Path -LiteralPath $current)) { $missing.Push($current); $current=[IO.Path]::GetDirectoryName($current) }
+    while ($missing.Count) {
+        [void](Get-LayoutDestination $OutputDirectory $RelativePath)
+        $directory=$missing.Pop(); [void][IO.Directory]::CreateDirectory($directory)
+        [void](Get-LayoutDestination $OutputDirectory $RelativePath)
+    }
+    [void](Get-LayoutDestination $OutputDirectory $RelativePath)
+    return $parent
+}
+
 function Get-EncodeArguments([string]$InputPath, [string]$OutputPath, $StreamPlan, [int]$CRF, $Metadata) {
     # Pure token construction: paths and metadata never become shell expressions.
     $tokens = @('-hide_banner','-stdin','-nostats','-progress','pipe:1','-n','-i',$InputPath)
@@ -1524,7 +1627,8 @@ function Write-SessionLogRecord($Session, $Record, [string]$Text) {
 }
 
 function New-SessionLog($Tools, [string]$Root = (Join-Path $ConfigDir 'logs'),
-    [ValidateRange(4096,1048576)][int]$LimitBytes = 1048576) {
+    [ValidateRange(4096,1048576)][int]$LimitBytes = 1048576,
+    [ValidateSet('Flat','PreserveSubfolders')][string]$OutputLayout = 'Flat') {
     $session=[pscustomobject]@{SchemaVersion=1;SessionId=[guid]::NewGuid().ToString('N');Enabled=$false;
         JsonPath=$null;TextPath=$null;LimitBytes=$LimitBytes;Warnings=@()}
     $quotaLock=$null
@@ -1548,13 +1652,13 @@ function New-SessionLog($Tools, [string]$Root = (Join-Path $ConfigDir 'logs'),
         }
         $session.Enabled=$true
         $header=[pscustomobject]@{SchemaVersion=1;Kind='Session';SessionId=$session.SessionId;
-            StartedUtc=[datetime]::UtcNow.ToString('o');Application='WinVidCompress';
+            StartedUtc=[datetime]::UtcNow.ToString('o');Application='WinVidCompress';OutputLayout=$OutputLayout;
             ApplicationSHA256=(Get-FileHash -LiteralPath $script:ApplicationPath -Algorithm SHA256).Hash;
             PowerShell=$PSVersionTable.PSVersion.ToString();Edition=$PSVersionTable.PSEdition;
             FFmpeg=(Get-ProbeProperty $Tools 'FFmpeg');FFprobe=(Get-ProbeProperty $Tools 'FFprobe');
             FFmpegVersion=(Limit-LogText (Get-ProbeProperty $Tools 'FFmpegBuild'));
             FFprobeVersion=(Limit-LogText (Get-ProbeProperty $Tools 'FFprobeBuild'));LimitBytes=$LimitBytes}
-        Write-SessionLogRecord $session $header ('WinVidCompress session '+$session.SessionId+'; PowerShell '+$header.PowerShell+'; application SHA256 '+$header.ApplicationSHA256)
+        Write-SessionLogRecord $session $header ('WinVidCompress session '+$session.SessionId+'; PowerShell '+$header.PowerShell+'; application SHA256 '+$header.ApplicationSHA256+'; output layout '+$OutputLayout)
     } catch {
         $session.Enabled=$false
         Add-SessionLogWarning $session ('Local session logging unavailable: '+(Limit-LogText $_.Exception.Message 512)+'. Compression outcomes and exit status are unchanged.')
@@ -1578,7 +1682,7 @@ function Write-SessionJob($Session, $Job) {
         Encode=(Get-LogNative $Job.Diagnostics.Encode);
         Validation=(Get-LogNative (Get-ProbeProperty (Get-ProbeProperty $Job.Diagnostics.Validation 'Inspection') 'Native'));
         Warnings=@($Job.Diagnostics.Warnings | Select-Object -First 20 | ForEach-Object { Limit-LogText $_ })}
-    Write-SessionLogRecord $Session $record ('{0} {1} [{2}]: {3}; source={4}; elapsed={5:F2}s' -f $Job.JobId,$Job.Outcome,$Job.Stage,$record.Reason,$Job.SourcePath,$Job.ElapsedSeconds)
+    Write-SessionLogRecord $Session $record ('{0} {1} [{2}]: {3}; source={4}; elapsed={5:F2}s; output={6}; candidate={7}' -f $Job.JobId,$Job.Outcome,$Job.Stage,$record.Reason,$Job.SourcePath,$Job.ElapsedSeconds,$Job.OutputPath,$Job.CandidatePath)
 }
 
 function Complete-SessionLog($Session, $Result) {
@@ -1721,14 +1825,14 @@ function Assert-WvcNotCancelled {
 }
 
 function Process-Paths([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
-    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools) {
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools, $BatchLayout) {
     $previous=$script:CancellationContext
     $context=if ($null -ne $previous) { $previous } else { New-WvcCancellationContext }
     $script:CancellationContext=$context
     $batch=$null
     $manifestHolder=[pscustomobject]@{Context=$null}
     try {
-        $batch=Invoke-PathBatch $paths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $ManifestTools -ManifestHolder $manifestHolder
+        $batch=Invoke-PathBatch $paths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $ManifestTools -ManifestHolder $manifestHolder -BatchLayout $BatchLayout
         if (Test-WvcCancellation) { $batch.Cancelled=$true; $batch.ExitCode=3 }
         return $batch
     }
@@ -2823,7 +2927,7 @@ function Invoke-ManifestJob($Context, [int]$Index, $FFmpeg, $FFprobe, [string]$S
 
 
 function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
-    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools, $ManifestHolder) {
+    [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools, $ManifestHolder, $BatchLayout) {
     $manifest=$null
     # Recheck at every requested batch, including after a menu preference change.
     try {
@@ -2831,7 +2935,7 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
         [void](Get-OutputEnvironment $cfg.OutputDir)
         foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
         # Freeze all selections before any encoder can create new candidates.
-        $queue=Get-InputQueue $paths
+        $queue=if ($null -ne $BatchLayout) { $BatchLayout.Queue } else { Get-InputQueue $paths }
         if ($ManifestPath) {
             if ($null -eq $ManifestHolder) { throw 'Manifest batch requires an owned lifetime holder.' }
             $manifest=Open-BatchManifest $ManifestPath $cfg.OutputDir $queue.Files -Resume:$Resume -StrongSourceHash:$StrongSourceHash -Tools $ManifestTools
@@ -2873,7 +2977,14 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
                 if ($null -ne $manifest) {
                     $job=Invoke-ManifestJob $manifest ($fileIndex-1) $ffmpeg $ffprobe $f $queue.Files.Count
                 } else {
-                $job=Compress-One $ffmpeg $ffprobe $f $cfg.OutputDir $DefaultCRF -FileIndex $fileIndex -FileTotal $queue.Files.Count
+                $destination=$cfg.OutputDir
+                if ($null -ne $BatchLayout) {
+                    if (-not [StringComparer]::OrdinalIgnoreCase.Equals((Get-QueuePathKey $cfg.OutputDir).TrimEnd('\','/'),$BatchLayout.OutputDirectory.TrimEnd('\','/'))) { throw 'Layout output root changed after planning.' }
+                    $entry=$BatchLayout.Entries[$fileIndex-1]
+                    if ($entry.SourcePath -cne $f) { throw 'Layout source changed after planning.' }
+                    $destination=New-LayoutOutputDirectory $BatchLayout.OutputDirectory $entry.RelativePath
+                }
+                $job=Compress-One $ffmpeg $ffprobe $f $destination $DefaultCRF -FileIndex $fileIndex -FileTotal $queue.Files.Count
                 }
             } catch {
                 if ($_.Exception -is [System.Management.Automation.PipelineStoppedException]) { throw }
@@ -3024,14 +3135,19 @@ function Resolve-RunConfiguration($Config, [hashtable]$Overrides) {
     return [pscustomobject]@{Config=$copy;CollisionMode=$mode.ToLowerInvariant()}
 }
 
-function Get-PreviewPlan([string[]]$Paths, $Config, [string]$Mode) {
+function Get-PreviewPlan([string[]]$Paths, $Config, [string]$Mode, [switch]$PreserveSubfolders) {
     Assert-OutputDirectory $Config.OutputDir
     $queue=Get-InputQueue $Paths
+    $layout=if ($PreserveSubfolders) { Get-RelativeOutputLayout $queue $Config.OutputDir } else { $null }
+    $index=0
+    Write-Host ('Output layout: '+$(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'}))
     $reserved=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
     $plans=New-Object 'Collections.Generic.List[object]'
     foreach ($source in $queue.Files) {
         $base=[IO.Path]::GetFileNameWithoutExtension($source)
-        $candidate=Join-Path $Config.OutputDir ($base+'.mp4')
+        $directory=if ($null -ne $layout) { $layout.Entries[$index].OutputDirectory } else { $Config.OutputDir }
+        $index++
+        $candidate=Join-Path $directory ($base+'.mp4')
         $nominal=$candidate
         $collision=(Test-Path -LiteralPath $candidate) -or $reserved.Contains((Get-QueuePathKey $candidate))
         $action='WouldEncode'
@@ -3040,11 +3156,15 @@ function Get-PreviewPlan([string[]]$Paths, $Config, [string]$Mode) {
             $number=1
             do {
                 $suffix=if ($number -eq 1) {' (compressed)'} else {' (compressed '+$number+')'}
-                $candidate=Join-Path $Config.OutputDir ($base+$suffix+'.mp4')
+                $candidate=Join-Path $directory ($base+$suffix+'.mp4')
                 $number++
             } while ((Test-Path -LiteralPath $candidate) -or $reserved.Contains((Get-QueuePathKey $candidate)))
         }
         if ($action -eq 'WouldEncode') { [void]$reserved.Add((Get-QueuePathKey $candidate)) }
+        if ($null -ne $layout) {
+            $relative=$candidate.Substring(($layout.OutputDirectory.TrimEnd('\','/')+'\').Length)
+            [void](Get-LayoutDestination $layout.OutputDirectory $relative)
+        }
         $plans.Add([pscustomobject]@{SourcePath=$source;NominalPath=$nominal;OutputPath=$candidate;Action=$action})
         Write-Host ($action+': '+$source+' -> '+$candidate)
     }
@@ -3056,14 +3176,14 @@ function Get-PreviewPlan([string[]]$Paths, $Config, [string]$Mode) {
     $code=if (-not $plans.Count) {2} elseif ($errors.Count) {1} else {0}
     Write-Host 'Preview only: no writes or native probes. Names are estimates; media validity and destination writability are unchecked.'
     return [pscustomobject]@{SchemaVersion=1;ExitCode=$code;Requested=$true;Preview=$true;
-        OutputDir=$Config.OutputDir;CollisionMode=$Mode;CRF=$DefaultCRF;Plans=$plans.ToArray();
+        OutputDir=$Config.OutputDir;OutputLayout=$(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'});CollisionMode=$Mode;CRF=$DefaultCRF;Plans=$plans.ToArray();
         Scans=$queue.Scans;ScanErrors=$errors;Reason='Read-only filesystem plan; conversion checks are deferred.'}
 }
 
 function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     [switch]$Unattended, [switch]$ExplicitRequest,
     [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash,
-    [string]$OutputDir, [Alias('CollisionMode')][string]$RunCollisionMode, [switch]$WhatIf) {
+    [string]$OutputDir, [Alias('CollisionMode')][string]$RunCollisionMode, [switch]$WhatIf, [switch]$PreserveSubfolders) {
     $stage='Startup'
     $session=$null; $run=$null
     $previousSession=$script:SessionLog
@@ -3083,8 +3203,9 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         if ($WhatIf -and ($CheckEnvironment -or $ManifestPath -or $Resume -or $StrongSourceHash)) {
             throw '-WhatIf cannot be combined with -CheckEnvironment or manifest controls; preview the explicit inputs without those controls.'
         }
+        if ($PreserveSubfolders -and ($CheckEnvironment -or $ManifestPath -or $Resume -or $StrongSourceHash)) { throw '-PreserveSubfolders cannot be combined with doctor or manifest controls; manifests require flat output.' }
         if ($CheckEnvironment -and $overrides.ContainsKey('CollisionMode')) { throw '-CollisionMode requires conversion or preview inputs, not -CheckEnvironment.' }
-        if (-not $CheckEnvironment -and ($WhatIf -or $overrides.Count) -and -not $inputPaths.Count) { throw 'Per-run options and -WhatIf require explicit input paths.' }
+        if (-not $CheckEnvironment -and ($WhatIf -or $PreserveSubfolders -or $overrides.Count) -and -not $inputPaths.Count) { throw 'Per-run options and -WhatIf require explicit input paths.' }
 
         if (($ManifestPath -or $Resume -or $StrongSourceHash) -and ($CheckEnvironment -or -not $inputPaths.Count)) {
             throw 'Manifest options require an explicit batch input selection and cannot be used with -CheckEnvironment.'
@@ -3095,7 +3216,12 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         }
         if ($WhatIf) {
             $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
-            return (Get-PreviewPlan $inputPaths $effective.Config $effective.CollisionMode)
+            return (Get-PreviewPlan $inputPaths $effective.Config $effective.CollisionMode -PreserveSubfolders:$PreserveSubfolders)
+        }
+        $batchLayout=$null
+        if ($PreserveSubfolders) {
+            $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
+            $batchLayout=Get-RelativeOutputLayout (Get-InputQueue $inputPaths) $effective.Config.OutputDir
         }
         $ffmpeg=Ensure-Tool 'ffmpeg.exe'
         $ffprobe=Ensure-Tool 'ffprobe.exe'
@@ -3107,17 +3233,17 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             Write-EnvironmentReport $tools $output
             return (Get-BatchResult @() @() -Reason 'Environment check completed.')
         }
-        $cfg=if ($overrides.Count) { Get-EnvironmentConfig @readOptions } else { Load-Config }
+        $cfg=if ($PreserveSubfolders) { $effective.Config } elseif ($overrides.Count) { Get-EnvironmentConfig @readOptions } else { Load-Config }
         $effective=Resolve-RunConfiguration $cfg $overrides
         $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir
         Write-EnvironmentReport $tools $output
-        $session=New-SessionLog $tools
+        $session=New-SessionLog $tools -OutputLayout $(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'})
         $script:SessionLog=$session
         if ($inputPaths.Count -gt 0) {
             $versions=$null
             if ($ManifestPath) { $versions=[pscustomobject]@{FFmpeg=(Limit-LogText (($tools.FFmpegBuild -split "`n")[0]) 1024);FFprobe=(Limit-LogText (($tools.FFprobeBuild -split "`n")[0]) 1024)} }
-            $run=Process-Paths $inputPaths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $versions
+            $run=Process-Paths $inputPaths $ffmpeg $ffprobe $cfg -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash -ManifestTools $versions -BatchLayout $batchLayout
         }
         else { $stage='Menu'; $run=Run-TUI $ffmpeg $ffprobe $cfg }
         return $run
@@ -3149,7 +3275,7 @@ if ($KeepOpen -and $Unattended) {
     exit 2
 }
 $runOptions=@{}
-foreach ($name in @('OutputDir','CollisionMode','WhatIf')) {
+foreach ($name in @('OutputDir','CollisionMode','WhatIf','PreserveSubfolders')) {
     if ($PSBoundParameters.ContainsKey($name)) { $runOptions[$name]=$PSBoundParameters[$name] }
 }
 $run=Invoke-WinVidCompress @runOptions -Paths $Path -CheckEnvironment:$CheckEnvironment -Unattended:$Unattended -ExplicitRequest:($PSBoundParameters.ContainsKey('Path')) -ManifestPath $ManifestPath -Resume:$Resume -StrongSourceHash:$StrongSourceHash

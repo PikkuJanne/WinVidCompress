@@ -3,6 +3,7 @@ param(
     [string]$OutputDir,
     [string]$CollisionMode,
     [switch]$WhatIf,
+    [switch]$PreserveSubfolders,
     [switch]$CheckEnvironment,
     [switch]$Unattended,
     [switch]$KeepOpen,

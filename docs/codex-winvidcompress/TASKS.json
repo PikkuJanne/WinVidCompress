@@ -1905,7 +1905,7 @@
       "title": "Add opt-in relative subfolder preservation",
       "milestone": "M4",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         16
       ],
@@ -1930,35 +1930,53 @@
           "id": "WVC-M4-02-A01",
           "description": "No flag produces the original flat layout.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-02.md",
+            "evidence/WVC-M4-02.json"
+          ]
         },
         {
           "id": "WVC-M4-02-A02",
           "description": "Two cameras with repeated clip names in different input folders produce deterministic separated outputs when enabled.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-02.md",
+            "evidence/WVC-M4-02.json"
+          ]
         },
         {
           "id": "WVC-M4-02-A03",
           "description": "Every planned output remains beneath the selected destination root.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-02.md",
+            "evidence/WVC-M4-02.json"
+          ]
         },
         {
           "id": "WVC-M4-02-A04",
           "description": "Input roots overlapping with destination do not cause self-reingestion.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-02.md",
+            "evidence/WVC-M4-02.json"
+          ]
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "93eecb15ee9ba33cdc8428aaeeb2c4435bc4fb91"
+      ],
+      "evidence": [
+        "evidence/WVC-M4-02.md",
+        "evidence/WVC-M4-02.json",
+        "evidence/WVC-M4-02-session.md"
+      ],
+      "notes": "Per-run PreserveSubfolders opt-in; disjoint roots and flat-only manifests explicitly enforced/documented. Clean both-host Full 1814/0/0/8, exit2 solely historical manual/future rows; all56 task cases passed per host. Prior owner/manual gates remain pending. No quality change."
     },
     {
       "id": "WVC-M4-03",
