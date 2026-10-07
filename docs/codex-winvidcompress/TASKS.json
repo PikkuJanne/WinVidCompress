@@ -2336,7 +2336,7 @@
       "title": "Build deterministic tool-only release packages and checksums",
       "milestone": "M5",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         21
       ],
@@ -2363,35 +2363,57 @@
           "id": "WVC-M5-02-A01",
           "description": "Package excludes private config, logs, videos, development fixture output, .git and credentials.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-02.md",
+            "evidence/WVC-M5-02.json"
+          ],
+          "notes": "Positive allowlist, raw Git runtime bytes and poisoned tracked-file fixture; 11-entry clean-clone package excludes config/log/media/development/.git/credentials/dependency binaries. PS1/BAT hashes unchanged."
         },
         {
           "id": "WVC-M5-02-A02",
           "description": "Two builds from the same inputs have identical file manifests; byte reproducibility is measured and limitations recorded.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-02.md",
+            "evidence/WVC-M5-02.json"
+          ],
+          "notes": "All four manifests/payloads byte-identical; two ZIP builds per exact runtime byte-identical. Cross-runtime ZIPs differ80 bytes: PS51 method8/flags0 versus PS7 method0/flags2048. Exact final hashes/limits and initial stricter checker failure retained."
         },
         {
           "id": "WVC-M5-02-A03",
           "description": "Checksums verify final artifacts and source commit provenance is accurate.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-02.md",
+            "evidence/WVC-M5-02.json"
+          ],
+          "notes": "Four actual Build/Verify commands from clean pushed5afe2b4 clone record true full source SHA/version/tested runtime; every final ZIP/sidecar/manifest/provenance verifies. Corruption/wrong HEAD/dirty/missing/version/runtime mismatch cases fail. Fresh extraction/native smoke76/0."
         },
         {
           "id": "WVC-M5-02-A04",
           "description": "Packaging creates local candidate artifacts only, no tags/releases/uploads.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-02.md",
+            "evidence/WVC-M5-02.json"
+          ],
+          "notes": "Local0.1.0-rc.1 candidate only after live empty tag/release checks; no package tags/releases/uploads/merge/download/elevation/policy change. Explicit feature push/draft PR permitted. Static safety and native source/final/config checks pass."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "5afe2b444f316256f67ed38fb0e2afb5ce1f8bb4"
+      ],
+      "evidence": [
+        "evidence/WVC-M5-02.md",
+        "evidence/WVC-M5-02.json",
+        "evidence/WVC-M5-02-session.md"
+      ],
+      "notes": "Verified A01-A04 at5afe2b4: clean PS51 Quick968/0, PS7 affected19/0, analyzer3/0, clean pushed-clone measurements7/0 and fresh extracted native smoke76/0. Same-runtime ZIP byte repeats/all manifests pass; documented cross-runtime ZIP limit and failed stricter checker retained. Implementation push CI988/0 per host inspected; PR setup failure/retry separately recorded. Runtime/launcher/defaults unchanged; local candidates only. Scope minimally expands tests/Quick discovery/line endings/docs plus mandatory handoff. Exact next WVC-M5-03; final live sync externally after handoff."
     },
     {
       "id": "WVC-M5-03",
