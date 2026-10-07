@@ -2078,7 +2078,7 @@
       "title": "Add Windows CI and targeted static analysis",
       "milestone": "M4",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         18,
         19
@@ -2107,35 +2107,54 @@
           "id": "WVC-M4-04-A01",
           "description": "Failing tests and static-analysis policy failures fail the workflow.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-04.md",
+            "evidence/WVC-M4-04.json"
+          ]
         },
         {
           "id": "WVC-M4-04-A02",
           "description": "CI reports host/FFmpeg versions and preserves sanitized results as artifacts.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-04.md",
+            "evidence/WVC-M4-04.json"
+          ]
         },
         {
           "id": "WVC-M4-04-A03",
           "description": "No automatic merge, tag, GitHub release or deployment is introduced.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-04.md",
+            "evidence/WVC-M4-04.json"
+          ]
         },
         {
           "id": "WVC-M4-04-A04",
           "description": "Real workflow runs on the pushed feature commit are inspected; queued/missing runs are not called passed.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-04.md",
+            "evidence/WVC-M4-04.json"
+          ],
+          "notes": "Actual push and PR jobs inspected with downloaded sanitized artifacts. Push checkout equals feature HEAD; PR checkout is a separately verified merge commit. No owner approval gate for CI inspection."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "1e11f759e8de691f575837eeb9d0647c4a0e7e68"
+      ],
+      "evidence": [
+        "evidence/WVC-M4-04.md",
+        "evidence/WVC-M4-04.json",
+        "evidence/WVC-M4-04-session.md"
+      ],
+      "notes": "Pinned unprivileged two-host Windows CI. Clean PS5.1 Quick945/0, local both-host CI/Harness45/0 and changed-file analyzer8/0; actual push and PR Targeted965/0/0/0 per host inspected at implementation1e11f75 (PR merge f0fc177). No application/launcher/default changes; Full/manual/release acceptance remains separate."
     },
     {
       "id": "WVC-M4-05",
