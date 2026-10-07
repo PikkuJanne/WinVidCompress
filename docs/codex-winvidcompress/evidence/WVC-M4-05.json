@@ -1,0 +1,746 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M4-05",
+  "acceptance_ids": [
+    "WVC-M4-05-A01",
+    "WVC-M4-05-A02",
+    "WVC-M4-05-A03",
+    "WVC-M4-05-A04"
+  ],
+  "recorded_at": "2026-10-07T17:29:30.129061+00:00",
+  "tested_commits": [
+    "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
+    "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9"
+  ],
+  "application_sha256": "dd099c8a6c4605ea8b8fb59fd2f143a05f466712b14b01e2802c48862cf80037",
+  "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "host": {
+    "os": "Windows 11 Pro 10.0.26300 UBR9457 26H2 x64",
+    "powershell": [
+      {
+        "Name": "WindowsPowerShell",
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop"
+      },
+      {
+        "Name": "PowerShell7",
+        "Version": "7.6.6",
+        "Edition": "Core"
+      }
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "native_tools": [
+      {
+        "Name": "FFmpeg",
+        "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "Available": true
+      },
+      {
+        "Name": "FFprobe",
+        "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+        "Available": true
+      }
+    ]
+  },
+  "command_bindings": {
+    "runtimeRoot": "Existing verified isolated M4-04 dependency root; path remains only in ignored local runtime pointer",
+    "setup": "Existing dependencies.json supplies exact prepared module/PowerShell7/native paths; native executable hashes reverified against tests/CiDependencies.psd1",
+    "bundled_python_directory": "Existing desktop dependencies/python; private absolute Python directory alone replaced by this binding",
+    "normalization": "Commands preserve test invocation tokens and redirects; wrapper output display omitted; no new dependency downloads",
+    "split_native_preparation": ". ./tests/TestSupport.ps1; $splitOwner=New-WvcTestRoot; $encodeBin=Join-Path $splitOwner.Path 'encoder'; $probeBin=Join-Path $splitOwner.Path 'probe'; foreach($directory in @($encodeBin,$probeBin)) { [void][IO.Directory]::CreateDirectory($directory) }; Copy-Item -LiteralPath (Join-Path $setup.NativeDirectory 'ffmpeg.exe') -Destination (Join-Path $encodeBin 'ffmpeg.exe'); Copy-Item -LiteralPath (Join-Path $setup.NativeDirectory 'ffprobe.exe') -Destination (Join-Path $probeBin 'ffprobe.exe'); both focused calls ran inside try/finally { Remove-WvcTestRoot $splitOwner }"
+  },
+  "local_runs": [
+    {
+      "name": "quick51",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $pythonDir='<bundled-python-directory>'; $env:Path=$setup.NativeDirectory+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$pythonDir+';'+$env:Path; $env:FFREPORT=$null; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -IncludeKnownDefects -ModuleRoot $setup.ModuleRoot -ReportPath .test-results/m405/quick51.json *> .test-results/m405/quick51.log; exit $LASTEXITCODE",
+      "tested_commit": "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
+      "tested_tree_dirty": false,
+      "status": "Passed",
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 949,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "native_tools": [],
+      "report": ".test-results/m405/quick51.json",
+      "report_sha256": "06df6387e1a3e377a331c2166e745aa646ae7ea40b82318a5d858accaad9ab51",
+      "log_sha256": "ab106a90a9a0e69f8a7de4515a8d80c4206ef8695c54f01b366c07c0036631fd",
+      "not_run": []
+    },
+    {
+      "name": "full",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $pythonDir='<bundled-python-directory>'; $env:Path=$setup.NativeDirectory+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$pythonDir+';'+$env:Path; $env:FFREPORT=$null; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -ModuleRoot $setup.ModuleRoot -WindowsPowerShell $ps51 -PowerShell7 $setup.PowerShell7 -FFmpeg (Join-Path $setup.NativeDirectory 'ffmpeg.exe') -FFprobe (Join-Path $setup.NativeDirectory 'ffprobe.exe') -ReportPath .test-results/m405/full.json *> .test-results/m405/full.log; exit $LASTEXITCODE",
+      "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "tested_tree_dirty": false,
+      "status": "Failed",
+      "observed_exit": 1,
+      "counts": {
+        "Passed": 969,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "hosts": [
+        {
+          "Name": "WindowsPowerShell",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.6",
+          "Edition": "Core"
+        }
+      ],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+          "Available": true
+        },
+        {
+          "Name": "FFprobe",
+          "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+          "Available": true
+        }
+      ],
+      "report": ".test-results/m405/full.json",
+      "report_sha256": "35a8c50136b7a846259339d83ef054b2ec1852b4eb21986276c25b74fe479783",
+      "log_sha256": "9c992a498004c56ef92acd154040fceba2a7394daa3e4f27a8cd4f846715e693",
+      "not_run": [
+        {
+          "Id": "coverage/future-media-cli-safety-packaging",
+          "Status": "NotRun",
+          "Reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+        },
+        {
+          "Id": "manual/explorer-file-folder-multi-drop",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-menu-quit",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-special-character-argv",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/playback-sdr-hdr-audio",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/real-ctrl-c-and-console-close",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/representative-benchmarks",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/unc-long-paths",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        }
+      ]
+    },
+    {
+      "name": "full-retry7",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $pythonDir='<bundled-python-directory>'; $env:Path=$setup.NativeDirectory+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$pythonDir+';'+$env:Path; $env:FFREPORT=$null; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Full -Hosts PowerShell7 -ModuleRoot $setup.ModuleRoot -WindowsPowerShell $ps51 -PowerShell7 $setup.PowerShell7 -FFmpeg (Join-Path $setup.NativeDirectory 'ffmpeg.exe') -FFprobe (Join-Path $setup.NativeDirectory 'ffprobe.exe') -ReportPath .test-results/m405/full-retry7.json *> .test-results/m405/full-retry7.log; exit $LASTEXITCODE",
+      "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "tested_tree_dirty": false,
+      "status": "Incomplete",
+      "observed_exit": 2,
+      "counts": {
+        "Passed": 969,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 8
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.6",
+          "Edition": "Core"
+        }
+      ],
+      "native_tools": [
+        {
+          "Name": "FFmpeg",
+          "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+          "Available": true
+        },
+        {
+          "Name": "FFprobe",
+          "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+          "Available": true
+        }
+      ],
+      "report": ".test-results/m405/full-retry7.json",
+      "report_sha256": "34271230fbcf6fa087bb8c3dbf0cd3ba7169673e5a1253a4b6d152f9efc8b0eb",
+      "log_sha256": "8dffc2a10bdefbd46932cb863ed7b68a3b42e8fb9b085df1bd66335e7d899666",
+      "not_run": [
+        {
+          "Id": "coverage/future-media-cli-safety-packaging",
+          "Status": "NotRun",
+          "Reason": "Later task acceptance matrix not implemented; full is not release acceptance."
+        },
+        {
+          "Id": "manual/explorer-file-folder-multi-drop",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-menu-quit",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/explorer-special-character-argv",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/playback-sdr-hdr-audio",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/real-ctrl-c-and-console-close",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/representative-benchmarks",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        },
+        {
+          "Id": "manual/unc-long-paths",
+          "Status": "NotRun",
+          "Reason": "Actual manual acceptance outstanding."
+        }
+      ]
+    },
+    {
+      "name": "focus7",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $env:Path=$setup.NativeDirectory+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$env:Path; $env:FFREPORT=$null; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $setup.ModuleRoot -TestPath tests/integration/WorkflowAcceptance.Tests.ps1 -ReportPath .test-results/m405/focus7.json *> .test-results/m405/focus7.log; exit $LASTEXITCODE",
+      "tested_commit": "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 0,
+      "host": "7.6.6 Core",
+      "report": ".test-results/m405/focus7.json",
+      "report_sha256": "dcdc2e267306b057002a481e9b80109cf9e0508ddf2493daa6a7caaa84d15d01",
+      "log_sha256": "f2682c667b456e9b59d0eb90581be2bb6afb5b7cacc511be8ed2050e0ea5ba24"
+    },
+    {
+      "name": "focus51-final",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $env:Path=$encodeBin+';'+$probeBin+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$env:Path; $env:FFREPORT=$null; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $setup.ModuleRoot -TestPath tests/integration/WorkflowAcceptance.Tests.ps1 -ReportPath .test-results/m405/focus51-final.json *> .test-results/m405/focus51-final.log; if($LASTEXITCODE -ne 0) { throw 'Split-native PS51 workflow cases failed' }",
+      "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 0,
+      "host": "5.1.26100.9444 Desktop",
+      "report": ".test-results/m405/focus51-final.json",
+      "report_sha256": "816617605de1201b9f38853ecfd65855348551df2693e84242d86bb3f6e3f6c1",
+      "log_sha256": "ee047edcecd2e8270a92ba924777da2fedea840763c458bece9e440eb835d907"
+    },
+    {
+      "name": "focus7-final",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $env:Path=$encodeBin+';'+$probeBin+';'+(Split-Path -Parent $setup.PowerShell7)+';'+$env:Path; $env:FFREPORT=$null; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $setup.ModuleRoot -TestPath tests/integration/WorkflowAcceptance.Tests.ps1 -ReportPath .test-results/m405/focus7-final.json *> .test-results/m405/focus7-final.log; if($LASTEXITCODE -ne 0) { throw 'Split-native PS7 workflow cases failed' }",
+      "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "tested_tree_dirty": false,
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 0,
+      "host": "7.6.6 Core",
+      "report": ".test-results/m405/focus7-final.json",
+      "report_sha256": "dcdc2e267306b057002a481e9b80109cf9e0508ddf2493daa6a7caaa84d15d01",
+      "log_sha256": "283d0dcdd1e4a2e53991feae272dbbed566db616042bd65d2bb9439193fbfb74"
+    },
+    {
+      "name": "static51",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $setup.ModuleRoot -BaseCommit 073e4d62633bea4d10954652ea53a198ced579f5 -ReportPath .test-results/m405/static51.json; exit $LASTEXITCODE",
+      "tested_commit": "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "analysis": {
+        "SchemaVersion": 1,
+        "AnalyzedFiles": 1,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules",
+        "Passed": true
+      },
+      "report_sha256": "bdfb457cc11db93e6e78b78e8faabf60ccaeb820165206f1fa128936a6f4c4eb"
+    },
+    {
+      "name": "static51-final",
+      "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; $ps51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $ps51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $setup.ModuleRoot -BaseCommit 073e4d62633bea4d10954652ea53a198ced579f5 -ReportPath .test-results/m405/static51-final.json; exit $LASTEXITCODE",
+      "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "analysis": {
+        "SchemaVersion": 1,
+        "AnalyzedFiles": 1,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules",
+        "Passed": true
+      },
+      "report_sha256": "bdfb457cc11db93e6e78b78e8faabf60ccaeb820165206f1fa128936a6f4c4eb"
+    }
+  ],
+  "workflow_cases": {
+    "per_host": 4,
+    "scenarios": [
+      "Missing config with explicit output via PS1; config intentionally absent",
+      "Legacy OutputDir-only config via PS1",
+      "Legacy OutputDir-only config via BAT; actual launcher selects Windows PowerShell 5.1",
+      "Extended saved config via PS1"
+    ],
+    "media": "Two 0.5-second moving-pattern/tone sources per case, generated -n; existing final sentinel",
+    "assertions": [
+      "Real entry exit0 and Done2",
+      "Unchanged source/final/config hashes",
+      "Exactly two new flat outputs; no leftover output directories",
+      "h264/aac, 160x120, bounded duration, filename artist/date",
+      "Full decode exits0 for both video/audio",
+      "One Flat session with two matching Completed jobs"
+    ],
+    "limitations": [
+      "Synthetic structure/decode is not representative/perceptual/Explorer acceptance",
+      "Fresh override tests do not create default preferences or exercise actual MyVideos",
+      "BAT route uses PS5.1 even when Pester parent is PS7"
+    ]
+  },
+  "exploratory_runs": [
+    {
+      "name": "explore-focus51",
+      "counts": {
+        "Passed": 0,
+        "Failed": 4,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 1,
+      "source": "Uncommitted test on base073e4d6; four erroneous test summary-label assertions, actual encoding exited0; not acceptance evidence",
+      "report_sha256": "c9e09f405f9eb497533f8a36e87892e62573a45563a5beb47e0cfa066991d41e"
+    },
+    {
+      "name": "explore-focus7",
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 0,
+      "source": "Uncommitted tree; corrected assertion but empty FFREPORT enabled local native report files; final implementation removes/restores key",
+      "report_sha256": "dcdc2e267306b057002a481e9b80109cf9e0508ddf2493daa6a7caaa84d15d01"
+    },
+    {
+      "name": "explore-fixed51",
+      "counts": {
+        "Passed": 4,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "observed_exit": 0,
+      "source": "Precommit corrected tree; superseded by clean exact-commit runs",
+      "report_sha256": "816617605de1201b9f38853ecfd65855348551df2693e84242d86bb3f6e3f6c1"
+    }
+  ],
+  "manual_checks": [
+    {
+      "acceptance": "A02",
+      "status": "passed",
+      "kind": "Composite retained observations, no new Explorer claim",
+      "evidence": [
+        "WVC-M1-02.md:84 and WVC-M1-02.json:401/486/545",
+        "MANUAL-2026-10-07.md:5",
+        "MANUAL-CANCEL-2026-10-07.md:3"
+      ],
+      "observed_dates": [
+        "2026-10-05",
+        "2026-10-07"
+      ],
+      "scope": "Single/folder/ten-file paths, literal menu under D005, menu/Quit/prompt and physical Ctrl+C five modes; recorder binding and synthetic cancellation limitations retained"
+    },
+    {
+      "acceptance": "A03",
+      "status": "not_run",
+      "scope": "Two owner-approved representative excerpts prepared and automatically verified; actual playback observation pending.",
+      "preparation": "WVC-M4-05-review.md"
+    }
+  ],
+  "owner_approval": {
+    "date": "2026-10-07",
+    "statement": "Theres two interview videos in Downloads folder",
+    "scope": "Local copies and bounded representative excerpts, in response to explicit processing request"
+  },
+  "previous_verified_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-07T16:52:25.871408+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "branch": "codex/wvc-m4-05-acceptance",
+    "upstream": "origin/codex/wvc-m4-05-acceptance",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "live_push_head": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "status": "SYNCHRONIZED"
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "Initial Full Failed/exit1 includes PS7 harness timeout; affected retry raw status/counts remain recorded separately. Eight combined manual/future NotRun rows are never regraded from evidence overlays.",
+    "Representative preparation has automatic passing evidence; actual owner playback confirmation remains pending.",
+    "Default MyVideos first launch needs isolated Windows profile; no account/system/profile changes",
+    "Remote SMB/arbitrary filesystems-long paths/power-loss/hostile substitution and console-close/detached-descendant guarantees remain unaccepted",
+    "D005 percent-variable BAT boundary and CMD length/spelling limits remain documented",
+    "Candidate ZIP/extraction/reproducibility/package smoke remains later M5 work"
+  ],
+  "next_task": "WVC-M4-05 remaining representative playback confirmation; inspect handoff CI. Then WVC-M5-01 after this task is verified.",
+  "ci_runs": [
+    {
+      "id": 37655443989,
+      "html_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37655443989",
+      "head_sha": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-07T16:52:28Z",
+      "updated_at": "2026-10-07T16:59:07Z",
+      "run_attempt": 1,
+      "artifacts": [
+        {
+          "artifact_id": 11498014039,
+          "name": "windows-results-WindowsPowerShell",
+          "archive_digest": "sha256:231555c5fcc2f74670dbb2ac10078b324f4bc0660ff21534a712634687eae7b9",
+          "expires_at": "2026-10-14T16:56:36Z",
+          "summary_sha256": "09b4732785852f3a0151ff56685d99ef9783d985a70eac3e2f2c3361cfaa8e69",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+            "HostName": "WindowsPowerShell",
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112909284779,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37655443989/job/112909284779",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "artifact_id": 11497724602,
+          "name": "windows-results-PowerShell7",
+          "archive_digest": "sha256:a4f8abb46b335e2b7f28fc546dd0b082aae5c4eb1fc6b2a1b914b37139713c0d",
+          "expires_at": "2026-10-14T16:57:32Z",
+          "summary_sha256": "c9279e3853629f366724191749c6a28e66240533d0a441031897a607df71563f",
+          "case_count": 969,
+          "summary_projection": {
+            "SchemaVersion": 1,
+            "SourceCommit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+            "HostName": "PowerShell7",
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "Status": "Passed",
+            "ExitCode": 0,
+            "Counts": {
+              "Passed": 969,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Issues": [],
+            "ReleaseAcceptance": false
+          },
+          "job_id": 112909284530,
+          "job_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37655443989/job/112909284530",
+          "job_conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify and prepare pinned developer dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real targeted tests and changed-file analysis",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve sanitized results only",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "tested_checkout_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9"
+    },
+    {
+      "id": 37655449563,
+      "html_url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37655449563",
+      "head_sha": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-07T16:52:30Z",
+      "updated_at": "2026-10-07T16:55:10Z",
+      "run_attempt": 1,
+      "artifacts": [],
+      "verification": "blocked; no jobs or artifacts, no PR tests executed",
+      "provider_annotation": "Internal server error. Correlation ID: e3dddbf1-6db8-4208-92be-cf38d2c6622a",
+      "annotation_source": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37655449563",
+      "initial_retry_command": "gh run rerun 37655449563",
+      "initial_retry_result": "HTTP500; subsequent metadata still attempt1/failure",
+      "second_retry_command": "gh run rerun 37655449563",
+      "second_retry_result": "HTTP500, observed exit1; subsequent metadata still attempt1/failure"
+    }
+  ],
+  "full_attempt_diagnostic": "Initial clean both-host Full retained PS51 suite/static/entry/native passes and one PS7 harness failure: Owned test process timed out at420000ms. Representative preparation overlapped the initial PS7 run; cause not established. Only affected PS7 scope rerun alone; no timeout/test expectation changes.",
+  "representative_preparation": {
+    "owner_source_approval": {
+      "date": "2026-10-07",
+      "statement": "Theres two interview videos in Downloads folder",
+      "scope": "Local copies and bounded representative excerpts, in response to explicit processing request"
+    },
+    "command": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $setup=Get-Content -LiteralPath (Join-Path $runtimeRoot 'dependencies.json') -Raw | ConvertFrom-Json; & $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m405/prepare-representative.local.ps1 *> .test-results/m405/representative-preparation.local.log; exit $LASTEXITCODE",
+    "verification_command": "& $setup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m405/verify-representative.local.ps1",
+    "private_preparation_script_sha256": "9c510fea654de64a127513561ffaa98d57250687664c9fc12749b17d2d4d3ec6",
+    "private_verification_script_sha256": "23d0c7bc4aa6b329cb4766af2efd0523eec44b0bccc65a79730be2ccc56676f6",
+    "recipe": "ffmpeg -hide_banner -nostdin -v error -n -ss 30 -i <owned-approved-full-copy> -t 20 -map 0:v:0 -map 0:a:0 -c copy -avoid_negative_ts make_zero <owned-review-source>; then actual PS7 PS1 -Unattended -OutputDir <owned-review-outputs> <owned-review-source-folder>",
+    "tested_commit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "tested_tree_dirty": false,
+    "entry_exit": 0,
+    "automatic_results": [
+      {
+        "Case": "case-1",
+        "SourceDuration": 23.136016,
+        "OutputDuration": 23.12,
+        "DurationMatch": true,
+        "GeometryMatch": true,
+        "VideoCodec": "h264",
+        "PixelFormat": "yuv420p",
+        "Range": null,
+        "AudioCount": 1,
+        "AudioCodec": "aac",
+        "MetadataMatch": true,
+        "DecodeExit": 0,
+        "OriginalUnchanged": true
+      },
+      {
+        "Case": "case-2",
+        "SourceDuration": 24.48,
+        "OutputDuration": 24.48,
+        "DurationMatch": true,
+        "GeometryMatch": true,
+        "VideoCodec": "h264",
+        "PixelFormat": "yuv420p",
+        "Range": null,
+        "AudioCount": 1,
+        "AudioCodec": "aac",
+        "MetadataMatch": true,
+        "DecodeExit": 0,
+        "OriginalUnchanged": true
+      }
+    ],
+    "privacy": "Original/full-copy/sample hashes, titles/tags, names/paths, probes and raw logs remain local only; committed evidence uses generic case IDs. No private media upload.",
+    "scope": "Two SDR landscape speech excerpts; stream-copy keyframe padding yields23.136016/24.48s source durations; output23.12/24.48s. No full-interview playback/other-player/HDR/archive-wide guarantee.",
+    "manual_observation": "pending",
+    "application_sha256": "dd099c8a6c4605ea8b8fb59fd2f143a05f466712b14b01e2802c48862cf80037",
+    "host": {
+      "Version": "7.6.6",
+      "Edition": "Core"
+    },
+    "prepared_report_sha256": "d4e8b0e642758a0b00307b95e2bc0f23b49994d36864af0615da5c6f9265deff",
+    "verification_report_sha256": "d98ae734fc9f90cddb2e5cab503bafa96342ec0889cbb36c6a038bc3a89751cb",
+    "approved_full_copy_hashes_match_after": true,
+    "verification_exploration": "An initial verification command assumed optional FFprobe color_range existed and failed in the verifier. Corrected local verifier uses nullable Get-ProbeProperty; real preparation/encode/decode succeeded, both outputs omit explicit color_range. No application change or assumed visual/range pass."
+  },
+  "scope_correction": "Initial preparation treated unmodified default-MyVideos first launch as a possible extra task gate. Original brief has no separate requirement for that destination route: native missing-config CLI override and legacy/extended saved workflows exercise step2 on the active workstation. Unmodified default-MyVideos first launch remains not_run as a distribution/support limit. A01-A04 unchanged; no profile/account/system changes.",
+  "clean_clone_reconstruction": {
+    "SourceCommit": "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9",
+    "Dirty": false,
+    "TrackerValid": true,
+    "Files": [
+      {
+        "Path": "WinVidCompress.ps1",
+        "RawBytesMatch": true,
+        "CanonicalBlobMatch": true,
+        "Blob": "9f3f59a62f33391e73106a36fdb19094cfb8caba"
+      },
+      {
+        "Path": "WinVidCompress.bat",
+        "RawBytesMatch": true,
+        "CanonicalBlobMatch": true,
+        "Blob": "8a26f64951733bdcfb3e5905dcf73fe0a496c4fc"
+      },
+      {
+        "Path": "tests/integration/WorkflowAcceptance.Tests.ps1",
+        "RawBytesMatch": false,
+        "CanonicalBlobMatch": true,
+        "Blob": "53bc42b1cbe8dae407d476dd53e9cda78b24cf78"
+      }
+    ],
+    "Limitation": "Initial whole-file equality assertion failed only for new test PS1: local LF versus clone CRLF according to .gitattributes; product bytes and canonical test blob match.",
+    "scope": "Clean feature clone at the implementation checkpoint; tracker/product bytes/canonical test blob, not ZIP/package/fresh-account acceptance. Final handoff clone/live verification is external after push.",
+    "command": "git clone --single-branch --no-tags --branch codex/wvc-m4-05-acceptance https://github.com/PikkuJanne/WinVidCompress.git .test-results/m405/reconstruction; then existing bundled Python tools/codex-winvidcompress/validate_tracker.py --repo .test-results/m405/reconstruction"
+  }
+}

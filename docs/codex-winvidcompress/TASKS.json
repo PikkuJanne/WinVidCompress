@@ -2161,7 +2161,7 @@
       "title": "Complete the real Windows workflow acceptance matrix",
       "milestone": "M4",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "implemented",
       "improvements": [
         18,
         19
@@ -2189,37 +2189,63 @@
           "id": "WVC-M4-05-A01",
           "description": "All required automated gates pass or are explicitly blocked with reproducible evidence.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-05.md",
+            "evidence/WVC-M4-05.json"
+          ],
+          "notes": "Actual supported Windows automated scopes pass: initial Full PS5.1: 945/shared24, affected PS7 Full retry969/0/0/8 exit2; initial PS7 timeout969/1/0/8 exit1 preserved. Exact603decf push CI969/0 per host/artifacts inspected; PR pre-job GitHub internal error and twoHTTP500 reruns explicitly infrastructure-blocked under this criterion. Raw eight manual/future NotRun rows remain unchanged."
         },
         {
           "id": "WVC-M4-05-A02",
           "description": "Single file, folder, multiple selections, menu, paths with special characters and cancellation are checked from Windows Explorer.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-05.md",
+            "evidence/WVC-M4-05.json",
+            "evidence/WVC-M1-02.md",
+            "evidence/MANUAL-2026-10-07.md",
+            "evidence/MANUAL-CANCEL-2026-10-07.md"
+          ],
+          "notes": "Composite retained real owner observations: M1-02/D005 supported single/folder/ten-file/literal menu on2026-10-05; menu/Quit/prompt and physical Ctrl+C five modes35/0 on2026-10-07. Recorder/synthetic limits, dates/commits and historical failures retained; no new complete Explorer matrix or repeated owner check claimed."
         },
         {
           "id": "WVC-M4-05-A03",
           "description": "Representative outputs play with expected orientation, duration, audio and metadata.",
           "tier": "manual",
           "status": "not_run",
-          "evidence": []
+          "evidence": [
+            "evidence/WVC-M4-05.md",
+            "evidence/WVC-M4-05.json",
+            "evidence/WVC-M4-05-review.md"
+          ],
+          "notes": "Owner identified two approved local interview files; owned23/24s source/output samples prepared with matching geometry/duration/audio/filename tags/decode/original-copy hashes. Actual owner PASS/FAIL/UNSURE playback answer pending; preparation is not human acceptance. No private names/paths/tags/media hashes/uploads in GitHub."
         },
         {
           "id": "WVC-M4-05-A04",
           "description": "No implementation is marked accepted solely from Linux or mocked tests.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M4-05.md",
+            "evidence/WVC-M4-05.json"
+          ],
+          "notes": "Actual Windows PS5.1/PS7 and exact-source push artifacts, retained real owner observations, honest raw Full omissions/failure/retry and pending A03. No Linux/mocked/preparation-only acceptance or task/release approval inferred."
         }
       ],
       "approval_gate": "Owner supplies/approves real-media review and confirms manual acceptance.",
-      "implementation_commits": [],
-      "evidence": [
-        "evidence/WVC-M4-05-review.md"
+      "implementation_commits": [
+        "dae8e76f94e5e9fa8c3ae9ffc23283af34a91508",
+        "603decf0da782b4d1d49ad75de1d1b8e12b0c9a9"
       ],
-      "notes": "Explicit bounded split: slice A automated/native isolated fresh and upgraded-config workflows plus historical Explorer reconciliation; slice B owner-approved representative playback/manual acceptance and isolated default-profile first launch. Preserve every A01-A04 requirement. See evidence/WVC-M4-05-review.md; no private media selected or approved."
+      "evidence": [
+        "evidence/WVC-M4-05.md",
+        "evidence/WVC-M4-05.json",
+        "evidence/WVC-M4-05-review.md",
+        "evidence/WVC-M4-05-session.md"
+      ],
+      "notes": "Bounded slice A implemented; owner-approved samples prepared for slice B, actual playback observation pending. Initial extra default-MyVideos gate interpretation explicitly corrected: original brief has no separate default-destination route requirement; genuine fresh CLI override and saved legacy/extended native workflows satisfy step2. Unmodified MyVideos first launch stays not_run as a distribution/support limit, A01-A04 unchanged. No private media/upload/default-quality/profile changes. PR infrastructure block and original PS7 watchdog failure preserved; exact next remains WVC-M4-05 playback confirmation and handoff CI inspection."
     },
     {
       "id": "WVC-M5-01",
