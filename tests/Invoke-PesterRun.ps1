@@ -13,7 +13,7 @@ Import-Module $pesterManifest -ErrorAction Stop
 if ((Get-Module Pester).Version -ne [version]$dependencies.Pester) { throw 'Unexpected Pester version.' }
 $config = New-PesterConfiguration
 $containers = @($TestPath | ForEach-Object { $_ -split '\|' } | ForEach-Object {
-    if ([IO.Path]::GetFileName($_) -eq 'Harness.Tests.ps1') {
+    if ([IO.Path]::GetFileName($_) -in @('Harness.Tests.ps1','Ci.Tests.ps1')) {
         New-PesterContainer -Path $_ -Data @{ ModuleRoot = $ModuleRoot }
     } else { New-PesterContainer -Path $_ }
 })

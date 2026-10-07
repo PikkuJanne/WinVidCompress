@@ -20,6 +20,16 @@ Save-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0 -Path $moduleRoot
 
 Setup is a developer action. Runners never install/download dependencies, elevate or change persistent execution policy. FFmpeg/FFprobe must already be installed or supplied through `-FFmpeg`/`-FFprobe`; no codec fallback or automatic download occurs. Python is used only for the existing developer tracker validator.
 
+## Windows CI (WVC-M4-04)
+
+`.github/workflows/windows-tests.yml` runs one real Targeted tier per Windows PowerShell 5.1/PowerShell 7.6.6 host on `windows-2025`, with `contents: read`, checkout credentials disabled, full-commit action pins and no secrets/privileged PR event. It performs no merge, tag/release or deployment. The Windows image family is selected; its changing image/OS version is reported rather than called immutable. Actual workflow runs still require inspection.
+
+Only the explicit developer/CI setup `tools/test-ci-dependencies.ps1 -RuntimeRoot <new-isolated-directory>` downloads dependencies. It verifies committed archive digests and entry containment/alias/size policy before extraction/import/execution, checks module/host versions and extracted native hashes, and refuses reused roots. Fixed version URLs plus hashes pin accepted bytes; URLs themselves are not guaranteed immutable. Pester5.7.1/analyzer1.24.0 stay pinned. [Dependency/action provenance](CI_PROVENANCE.md) records primary sources and maintenance limits. Application compression and ordinary test runners never invoke this setup.
+
+`tools/test-ci.ps1` runs the existing `tools/test.ps1 -Tier Targeted -Hosts Current -IncludeKnownDefects` in a bounded child. Native failures and invalid reports fail CI; matching source SHA/clean checkout, correct host, both native tools, positive passes and zero failures/skips/NotRun are required. This tightens CI admission without changing the existing local tier omission semantics. Raw stdout/stderr/diagnostics and fixture reports remain local to runner-temp; only `summary.json` is uploaded for seven days, with host/OS/native versions, counts, fixed status/issue values and ordinal case IDs. Arbitrary case names/reasons, fixture/config/module/media paths and raw diagnostics are excluded. A failed/missing artifact cannot turn a failed test step green.
+
+Whole-tree parse/encoding/error-severity/tracker gates remain. `tools/test-static.ps1` also analyzes changed `.ps1/.psm1/.psd1` files against a validated full Git base, enforcing errors plus `PSAvoidUsingInvokeExpression`, `PSAvoidUsingPlainTextForPassword`, `PSAvoidUsingConvertToSecureStringWithPlainText` and `PSAvoidUsingUsernameAndPasswordParams`. These are safety rules; unrelated style warnings stay outside the gate. No suppressions are currently needed. `tests/unit/Ci.Tests.ps1` covers false-green source/count/host/prerequisite reports, redaction, tampered/traversing/alias archives, and an actual analyzer-violation subprocess returning nonzero. Existing Harness tests exercise actual failing/all-skipped Pester processes. These unit probes do not recursively run the complete CI wrapper.
+
 ## Tier entry points
 
 From the repository root, execute in a fresh shell:

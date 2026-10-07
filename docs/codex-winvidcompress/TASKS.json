@@ -2078,7 +2078,7 @@
       "title": "Add Windows CI and targeted static analysis",
       "milestone": "M4",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         18,
         19
