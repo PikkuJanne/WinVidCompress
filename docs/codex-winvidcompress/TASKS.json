@@ -2336,7 +2336,7 @@
       "title": "Build deterministic tool-only release packages and checksums",
       "milestone": "M5",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         21
       ],

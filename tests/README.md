@@ -10,6 +10,8 @@ Prepare one retained colour sheet with `powershell.exe -NoProfile -NonInteractiv
 
 ## Pinned developer dependencies
 
+`unit/Package.Tests.ps1` exercises the M5-02 developer builder in a disposable Git fixture seeded from tracked source, with synthetic private-like poison files and isolated output roots. Cases cover allowlist/binary runtime bytes/source-pinned links, repeated manifest/ZIP equality, no-clobber, dirty/missing/invalid sources, provenance/hash damage and retained write failures. `package*.ps1` joins Quick parse/encoding/analyzer discovery. Actual cross-host candidate/extraction/native checks and limitations are recorded separately in M5-02 evidence; fixture Git commits are not public release provenance.
+
 `tests/Dependencies.psd1` pins Pester **5.7.1** and PSScriptAnalyzer **1.24.0**, verified against their official [Pester release](https://github.com/pester/Pester/releases/tag/5.7.1) and [analyzer release](https://github.com/PowerShell/PSScriptAnalyzer/releases/tag/1.24.0). Actual compatibility is tested on Windows PowerShell 5.1 and supported PowerShell 7 (minimum 7.4). Retain these tested versions until a separate reviewed update.
 
 Prepare an external developer module directory explicitly if needed:

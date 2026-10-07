@@ -3,6 +3,7 @@ WinVidCompress.ps1 -text
 WinVidCompress.bat -text
 tests/** text eol=crlf
 tools/test*.ps1 text eol=crlf
+tools/package*.ps1 text eol=crlf
 *.psd1 text eol=crlf
 # New PS1 files must be ASCII or UTF-8 with BOM for Windows PowerShell 5.1.
 # Git line-ending attributes do not add or remove a BOM.
