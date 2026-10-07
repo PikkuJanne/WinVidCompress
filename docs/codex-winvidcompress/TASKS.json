@@ -1995,7 +1995,7 @@
       "title": "Stress concurrency, crash recovery and filesystem edge cases",
       "milestone": "M4",
       "priority": "P0",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         5,
         6,

@@ -162,6 +162,20 @@ Explicit output also replaces a blank Windows default when config is absent; exi
 
 M3-07 also updates the launcher recorder to the production named-only option/positional Path declaration. M3-07 raised the per-host whole-Pester deadline to 300 seconds because the native resume/validation slice adds about 55 seconds on PS7; short per-fixture deadlines and incomplete/failure reporting remain unchanged.
 
+## Safety stress checks (WVC-M4-03)
+
+`integration/Safety.Tests.ps1` adds 20 cases for shared APPDATA/config snapshot races, two independent native encoders meeting a publication barrier, real Windows ACL failures at job/config/manifest temporary creation, native encode/source/output-probe exits with stderr, sharing-denied promotion/replacement, and post-publication checkpoint failure. All source, existing-final, foreign-partial and prior-config sentinels retain their hashes; a successful config save deliberately preserves previous bytes in its backup. Per-case workers use owned temporary roots outside Pester TestDrive and cleanup runs only after owned processes stop. Cleanup failures retain those roots.
+
+The crash worker deliberately constructs a Running checkpoint, an uncheckpointed final and config/manifest temps, then signals readiness through a closed sibling/no-clobber move. The parent kills that single ready host with no native child running. Warnings/discovery preserve the artifact inventory, file attributes/timestamps and hashes; resume releases abandoned locks and creates a fresh job with safe rename. This is an actual host-termination test around constructed persistence-gap states, not a crash inside File.Move/File.Replace, power-loss durability or detached-descendant acceptance. Directory timestamps are excluded from snapshots because Windows can defer fixture-construction timestamp updates.
+
+Flat batches inspect the output root; preserve-layout batches also inspect each selected nested destination once, before compression. Inspection only reports reserved names, confers no ownership proof, adopts/deletes nothing and does not recursively search unrelated output folders. The nested regression retains foreign crash bytes.
+
+Actual absent-drive and unique missing loopback UNC-share checks preserve preferences without redirection. Two installed-FFmpeg cases create a short synthetic source and observe 240/300-character local output roots, including the longer job path, on the active host. Missing native tools leave these cases skipped. Successful local cases do not accept all long paths/filesystems or successful/disconnected remote SMB storage; those and power-loss/hostile-substitution behavior remain release-blocking support limits. Extended path spelling is used only to construct/clean owned long-path developer fixtures, with final absolute-target, marker, containment and reparse checks before non-recursive directory deletion.
+
+```powershell
+./tests/Invoke-PesterRun.ps1 -ModuleRoot $modules -TestPath 'tests/integration/Safety.Tests.ps1|tests/integration/OutputCollision.Tests.ps1|tests/integration/Resume.Tests.ps1|tests/integration/OutputValidation.Tests.ps1|tests/unit/Config.Tests.ps1|tests/unit/Manifest.Tests.ps1|tests/unit/OutputOwnership.Tests.ps1|tests/unit/Layout.Tests.ps1|tests/unit/Queue.Tests.ps1' -ReportPath $freshReport
+```
+
 ## Relative layout checks (WVC-M4-02)
 
 `unit/Layout.Tests.ps1` checks flat defaults, deterministic folder/file roots, repeated labels, alias/culture/selection-order path identity, shallowest overlapping input roots, directory-local collisions, literal Unicode/special characters, traversal/ADS/device/trailing-dot-space rejection and separator-bounded containment. Owned output junctions and a removed selected root test revalidation before creating descendants. Preserve-mode source/output overlaps and doctor/manifest combinations refuse before native/writing/prompt boundaries; flat mode retains its existing frozen overlap/ambiguous-media tests.

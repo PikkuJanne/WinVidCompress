@@ -2929,11 +2929,13 @@ function Invoke-ManifestJob($Context, [int]$Index, $FFmpeg, $FFprobe, [string]$S
 function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
     [string]$ManifestPath, [switch]$Resume, [switch]$StrongSourceHash, $ManifestTools, $ManifestHolder, $BatchLayout) {
     $manifest=$null
+    $warnedOutputDirs=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
     # Recheck at every requested batch, including after a menu preference change.
     try {
         Assert-WvcNotCancelled
         [void](Get-OutputEnvironment $cfg.OutputDir)
         foreach ($warning in @(Get-OutputJobWarnings $cfg.OutputDir)) { Write-Host $warning -ForegroundColor Yellow }
+        [void]$warnedOutputDirs.Add((Get-QueuePathKey $cfg.OutputDir))
         # Freeze all selections before any encoder can create new candidates.
         $queue=if ($null -ne $BatchLayout) { $BatchLayout.Queue } else { Get-InputQueue $paths }
         if ($ManifestPath) {
@@ -2983,6 +2985,10 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
                     $entry=$BatchLayout.Entries[$fileIndex-1]
                     if ($entry.SourcePath -cne $f) { throw 'Layout source changed after planning.' }
                     $destination=New-LayoutOutputDirectory $BatchLayout.OutputDirectory $entry.RelativePath
+                    # Inspect only each selected destination; never recursively traverse or adopt jobs.
+                    if ($warnedOutputDirs.Add((Get-QueuePathKey $destination))) {
+                        foreach ($warning in @(Get-OutputJobWarnings $destination)) { Write-Host $warning -ForegroundColor Yellow }
+                    }
                 }
                 $job=Compress-One $ffmpeg $ffprobe $f $destination $DefaultCRF -FileIndex $fileIndex -FileTotal $queue.Files.Count
                 }
