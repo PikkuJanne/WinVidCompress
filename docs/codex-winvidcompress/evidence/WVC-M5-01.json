@@ -1,0 +1,376 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M5-01",
+  "acceptance_ids": [
+    "WVC-M5-01-A01",
+    "WVC-M5-01-A02",
+    "WVC-M5-01-A03",
+    "WVC-M5-01-A04"
+  ],
+  "recorded_at": "2026-10-07T18:41:33.106144+00:00",
+  "tested_commits": [
+    "2c2b45362ab14d18fd3c13635fa1d2f987cabc60"
+  ],
+  "application_sha256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
+  "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "runtime_body_sha256": "a3bd458e06b20e02d58986cd5fa4519d46020419cce3c00e3251ab1e083f93ca",
+  "host": {
+    "os": "Windows 11 Pro 10.0.26300 UBR9457 26H2 x64 (registry ProductName retains Windows 10 Pro)",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.6 Core"
+    ],
+    "pester": "5.7.1",
+    "psscriptanalyzer": "1.24.0",
+    "ffmpeg_ffprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
+    "native_hashes_reverified_against": "tests/CiDependencies.psd1"
+  },
+  "command_bindings": {
+    "wvcRuntime": "existing isolated verified dependency runtime from ignored local pointer; absolute private path omitted",
+    "wvcSetup": "dependencies.json: ModuleRoot, PowerShell7, NativeDirectory",
+    "wvcPython": "desktop bundled dependencies/python/python.exe; developer-only",
+    "wvcPythonDir": "parent of wvcPython",
+    "root": "repository root",
+    "redaction": "Only private runtime directory bindings omitted. Invocation tokens/redirects/exit forwarding retained."
+  },
+  "local_runs": [
+    {
+      "name": "quick51",
+      "command": "$wvcRuntime=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $wvcSetup=Get-Content -LiteralPath (Join-Path $wvcRuntime 'dependencies.json') -Raw | ConvertFrom-Json; $env:Path=$wvcSetup.NativeDirectory+';'+(Split-Path -Parent $wvcSetup.PowerShell7)+';'+$wvcPythonDir+';'+$env:Path; $env:FFREPORT=$null; $wvcPS51=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'; & $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -IncludeKnownDefects -ModuleRoot $wvcSetup.ModuleRoot -ReportPath .test-results/m501/quick51.json *> .test-results/m501/quick51.log; exit $LASTEXITCODE",
+      "counts": {
+        "Passed": 949,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ],
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "report": ".test-results/m501/quick51.json",
+      "report_sha256": "f227e4f5f0e9cc1c955912c1d7b9a67a7d0115f93648a1ae7bea065d3c7d5a11"
+    },
+    {
+      "name": "targeted7",
+      "command": "$wvcRuntime=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $wvcSetup=Get-Content -LiteralPath (Join-Path $wvcRuntime 'dependencies.json') -Raw | ConvertFrom-Json; $env:Path=$wvcSetup.NativeDirectory+';'+(Split-Path -Parent $wvcSetup.PowerShell7)+';'+$env:Path; $env:FFREPORT=$null; & $wvcSetup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath 'tests/integration/WhatIf.Tests.ps1|tests/unit/Cli.Tests.ps1|tests/unit/Summary.Tests.ps1|tests/unit/Manifest.Tests.ps1' -ReportPath .test-results/m501/targeted7.json *> .test-results/m501/targeted7.log; exit $LASTEXITCODE",
+      "counts": {
+        "Passed": 129,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "hosts": [
+        {
+          "Name": "PowerShell7",
+          "Version": "7.6.6",
+          "Edition": "Core"
+        }
+      ],
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "report": ".test-results/m501/targeted7.json",
+      "report_sha256": "255c3dbaee2e0eb919463b240eac5d8f1e8ee9668f8c76faa8891843b73c7e4a"
+    },
+    {
+      "name": "smoke",
+      "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m501/Smoke.ps1 -SourceCommit 2c2b45362ab14d18fd3c13635fa1d2f987cabc60 *> .test-results/m501/smoke.log; exit $LASTEXITCODE",
+      "counts": {
+        "NotRun": 0,
+        "Skipped": 0,
+        "Failed": 0,
+        "Passed": 68
+      },
+      "hosts": [
+        {
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        }
+      ],
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "report": ".test-results/m501/smoke.json",
+      "report_sha256": "ddfdade7c4f137d3baa67e9195288d097c56c3bdad82267b94e4453fb997e104"
+    },
+    {
+      "name": "docs",
+      "command": "& $wvcPython -B .test-results/m501/verify_docs.py",
+      "counts": {
+        "Passed": 86,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 1
+      },
+      "pending_evidence_link": [
+        "docs\\codex-winvidcompress\\evidence\\WVC-M5-01.md"
+      ],
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "report": ".test-results/m501/docs.json",
+      "report_sha256": "f21b5fb1484291c71de8e96ac22aaecc9b8abcc9d6267091880dab8a95837bc6"
+    },
+    {
+      "name": "static",
+      "command": "$wvcRuntime=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $wvcSetup=Get-Content -LiteralPath (Join-Path $wvcRuntime 'dependencies.json') -Raw | ConvertFrom-Json; & $wvcSetup.PowerShell7 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $wvcSetup.ModuleRoot -BaseCommit 3b7bc1e28a2835da6d523753662c238ac0df1b13 -ReportPath .test-results/m501/static.json *> .test-results/m501/static.log; exit $LASTEXITCODE",
+      "analyzed_files": 1,
+      "diagnostics": 0,
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "report": ".test-results/m501/static.json",
+      "report_sha256": "4cb0290e5d5277d2f1425ce8632d1106e3a9e752d83ebe3925969e53e113dfdb"
+    },
+    {
+      "name": "handoff-docs",
+      "command": "& $wvcPython -B .test-results/m501/handoff_check.py; & $wvcPython -B tools/codex-winvidcompress/validate_tracker.py --repo .; git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check",
+      "tested_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+      "tested_tree_dirty": true,
+      "tree_scope": "Only six intentional mandatory handoff files dirty, no product/source changes; expected file inventory checked.",
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 87,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m501/handoff-docs.json",
+      "report_sha256": "4ab5857be18c78d2a9bdaab7d2b67d3884d7423aef036c58a8c5d26ee4fbaaa0",
+      "tracker": "32 tasks/128 criteria/23 improvements, valid",
+      "privacy": "Targeted private-path/credential scan has no matches; staged content is inspected before commit."
+    }
+  ],
+  "extraction": {
+    "command": "git archive --format=zip --output=.test-results/m501/onboarding-2c2b453.zip 2c2b45362ab14d18fd3c13635fa1d2f987cabc60 README.md WinVidCompress.ps1 WinVidCompress.bat LICENSE docs/user",
+    "source": "exact tracked implementation commit, no checkout/private/dependency files included",
+    "zip_sha256": "5f32e813224b92806099714b66476bb1c66cafca0cd13b044fb106a5edc2f508",
+    "entries": [
+      "README.md",
+      "WinVidCompress.ps1",
+      "WinVidCompress.bat",
+      "LICENSE",
+      "docs/user/REFERENCE.md",
+      "docs/user/TROUBLESHOOTING.md",
+      "docs/user/VERIFICATION.md"
+    ],
+    "method": "Expand-Archive separately into a newly owned isolated folder per host; copy existing verified FFmpeg/FFprobe adjacent only after extraction; child PATH limited to Windows system dirs; separate APPDATA/source/output roots",
+    "scope": "seven extracted file checks per host, product raw-byte matches, LICENSE canonical-text match, actual doctor/preview/conversion/rename/skip/help and system-PS5.1 BAT, native probe/full decode, source/final hashes, missing config, private local session logs, no active partials; 34 assertions per host",
+    "initial_failed_preflight": {
+      "observed_exit": 1,
+      "reason": "Checker compared CRLF working-copy LICENSE with canonical LF Git ZIP bytes. Failed before native fixtures/application invocations. Corrected checker compares canonical LICENSE text; product raw-byte checks remain strict. No product/source/license edit. Initial helper/log remain ignored locally; initial extraction directory retained.",
+      "initial_helper_sha256": "cd2cec5dc7a32185bdb201a38d436d4d41b23e51574e7ab5dccb10a33720f2c9",
+      "initial_log_sha256": "e5be2bf4f55ef0aff014d433ff86bd47832acf8ba94608b70ab004f6ce156737"
+    },
+    "corrected_helper_sha256": "11fd52017224cbc68eb74bf64f02f26f0aef809ddbe117bf8098c979417e3bcf",
+    "public_release": false,
+    "byte_reproducibility_claimed": false
+  },
+  "acceptance": [
+    {
+      "id": "WVC-M5-01-A01",
+      "status": "passed",
+      "evidence": "68 clean-extraction assertions on both supported Windows hosts; no fresh-profile/default-Videos/new Explorer observation inferred."
+    },
+    {
+      "id": "WVC-M5-01-A02",
+      "status": "passed",
+      "evidence": "949 Quick PS5.1; 129 affected PS7 including three executed actual Get-Help examples; both-host extracted help eleven parameters/three examples; native smoke; one changed PS1/zero analyzer diagnostics."
+    },
+    {
+      "id": "WVC-M5-01-A03",
+      "status": "passed",
+      "evidence": "TROUBLESHOOTING covers unavailable output drive, invalid config recovery/reset, probe failures, growth, failed/cancelled jobs and local diagnostics; read-only source review and 6 coverage assertions plus existing quick safety cases."
+    },
+    {
+      "id": "WVC-M5-01-A04",
+      "status": "passed",
+      "evidence": "VERIFICATION maps claims to verified M1-M4 records/dated owner scopes or explicit distribution/media/filesystem limitations; 86 docs/body/link/source-status assertions. Initial one pending M5 evidence link closed by current evidence; final targeted handoff verification records the closure. Final handoff-docs87/0/0/0 exit0 closes the link; tracker valid."
+    }
+  ],
+  "review": {
+    "sole_writer": "root",
+    "internal_agent": "read-only behavior/source/evidence/help audit; no edits/Git mutations",
+    "corrections": "Manifest byte/source/settings invalidation retries; strong-to-fast refusal/fast-to-strong retry; process-only help policy; named Path arrays; generated timecode track; unknown source duration.",
+    "preserved": "Runtime body from CmdletBinding onward and launcher byte-identical to owner-merged main3b7bc1e; only PS1 comment help changed. Exact PS1 fingerprint change can trigger existing-manifest safe retries."
+  },
+  "references_checked_on": "2026-10-07",
+  "official_references": [
+    "https://ffmpeg.org/download.html",
+    "https://ffmpeg.org/legal.html",
+    "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.6"
+  ],
+  "checkpoint_sync": {
+    "checked_at": "2026-10-07T18:25:47.365239+00:00",
+    "head": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+    "live_fetch_head": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+    "live_push_head": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+    "dirty": false,
+    "status": "SYNCHRONIZED"
+  },
+  "ci": {
+    "implementation_push": {
+      "run_id": 37666721931,
+      "url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37666721931",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "implementation_pr": {
+      "run_id": 37666730987,
+      "url": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37666730987",
+      "status": "completed",
+      "conclusion": "success",
+      "tested_merge": "3a5e56ec4cc5338c7e0f9061583bbf5dcd7dc285",
+      "api_confirmed_parents": [
+        "3b7bc1e28a2835da6d523753662c238ac0df1b13",
+        "2c2b45362ab14d18fd3c13635fa1d2f987cabc60"
+      ]
+    },
+    "artifacts": [
+      {
+        "kind": "push",
+        "run_id": 37666721931,
+        "source_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "counts": {
+          "Passed": 969,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "exit_code": 0,
+        "static": {
+          "AnalyzedFiles": 1,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "release_acceptance": false,
+        "summary_sha256": "3805301154fc9b59481f334ad7aaddf37b8b98d07263d27b8fee265678c9678c"
+      },
+      {
+        "kind": "push",
+        "run_id": 37666721931,
+        "source_commit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "counts": {
+          "Passed": 969,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "exit_code": 0,
+        "static": {
+          "AnalyzedFiles": 1,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "release_acceptance": false,
+        "summary_sha256": "44cdea28e317066173bdc514b546f16038eaaf2741ad22b163753a297ed86dde"
+      },
+      {
+        "kind": "pr",
+        "run_id": 37666730987,
+        "source_commit": "3a5e56ec4cc5338c7e0f9061583bbf5dcd7dc285",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "counts": {
+          "Passed": 969,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "exit_code": 0,
+        "static": {
+          "AnalyzedFiles": 1,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "release_acceptance": false,
+        "summary_sha256": "6e068fa43a2d6849dbfef7e17072120580eb3950c8f11a7ad2bdb220fe4966f1"
+      },
+      {
+        "kind": "pr",
+        "run_id": 37666730987,
+        "source_commit": "3a5e56ec4cc5338c7e0f9061583bbf5dcd7dc285",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "counts": {
+          "Passed": 969,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "exit_code": 0,
+        "static": {
+          "AnalyzedFiles": 1,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "release_acceptance": false,
+        "summary_sha256": "588a6eff2d7635db3a722911e3f1d841802d2b07a2e706974eaa0b1f5154b69e"
+      }
+    ],
+    "inspection": "All steps/two hosts per run and all four allowlisted sanitized summary files inspected;969/0/0/0 each, zero static diagnostics. Hosted Targeted, mutable runner images, seven-day artifacts, not release acceptance.",
+    "commands": [
+      "gh run view <run-id> --json databaseId,headSha,event,status,conclusion,jobs",
+      "gh run download <run-id> --dir .test-results/m501/ci-<kind>",
+      "gh api repos/PikkuJanne/WinVidCompress/commits/3a5e56ec4cc5338c7e0f9061583bbf5dcd7dc285 --jq '{sha:.sha,parents:[.parents[].sha]}'"
+    ],
+    "final_handoff": "Inspect exact final commit after push; preceding CI does not preclaim final CI.",
+    "inspected_at": "2026-10-07T18:41:33.106144+00:00"
+  },
+  "limitations": [
+    "No long unrelated Full/manual repeat for documentation-only changes; actual quick/affected/native Windows checks recorded.",
+    "Local documentation-smoke ZIP, not GitHub browser/MOTW download, final deterministic package or clean-GitHub candidate reconstruction.",
+    "Fresh profile/default Videos first run, broader Explorer/player/HDR/SMB/disconnect/arbitrary long-path/durability/console-close/crash/detached descendant/release/default-quality gates remain explicit.",
+    "Retained owner menu/Ctrl+C/playback/source approval evidence is preserved without repeats.",
+    "Raw helper reports/logs/media/private runtime paths remain local ignored; no media/config/log upload, dependency downloads/elevation/policy edits.",
+    "No merge/main push/tag/release/settings/secrets/deploy or quality changes."
+  ],
+  "next_task": "WVC-M5-02 - Build deterministic tool-only release packages and checksums"
+}

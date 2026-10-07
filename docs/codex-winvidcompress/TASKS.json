@@ -2252,7 +2252,7 @@
       "title": "Write onboarding, help and troubleshooting for actual behaviour",
       "milestone": "M5",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         20
       ],
@@ -2279,35 +2279,57 @@
           "id": "WVC-M5-01-A01",
           "description": "A new user can follow instructions using a clean extracted package.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-01.md",
+            "evidence/WVC-M5-01.json"
+          ],
+          "notes": "Actual local tool-only Git ZIP from exact2c2b453 extracted independently on PS5.1/PS7 with adjacent verified dependencies/system-only PATH and isolated APPDATA/output. 68/0/0/0 assertions: doctor/preview/encode/probe/full-decode/rename/skip/help/BAT/source-final/config/log checks. Initial LICENSE CRLF-vs-canonical-LF checker preflight failure retained and corrected without product edits. No fresh-profile/default-Videos/browser-MOTW/new Explorer/playback or final package/release acceptance inferred."
         },
         {
           "id": "WVC-M5-01-A02",
           "description": "README and Get-Help agree with implemented options and tested shells.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-01.md",
+            "evidence/WVC-M5-01.json"
+          ],
+          "notes": "Clean2c2b453 PS5.1 Quick949/0/0/0 and affected PS7 WhatIf/CLI/Summary/Manifest129/0/0/0; includes3 executed actual Get-Help examples. Both extracted hosts report11 public parameters/3 examples. One changed PS1/zero analyzer diagnostics. Runtime body/BAT bytes match merged main3b7bc1e; comments only. All options/shell/policy/media/defaults/retry limits reviewed."
         },
         {
           "id": "WVC-M5-01-A03",
           "description": "Troubleshooting covers unavailable output drive, invalid config, probe failure, larger output and failed/cancelled jobs.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-01.md",
+            "evidence/WVC-M5-01.json"
+          ],
+          "notes": "TROUBLESHOOTING covers unavailable output drive, malformed config recovery/backup/reset, failed probes, larger output, failed/cancelled jobs and private diagnostics, with retained originals/preferences/finals and no antivirus/permanent-policy weakening. Source review plus6 coverage checks and current Quick safety scopes."
         },
         {
           "id": "WVC-M5-01-A04",
           "description": "All claimed capabilities point to completed acceptance records or explicit limitations.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-01.md",
+            "evidence/WVC-M5-01.json"
+          ],
+          "notes": "VERIFICATION maps claims to completed M1-M4 evidence and dated owner observations or explicit media/filesystem/distribution limits. Docs/body/source-status audit86/0/0/1 preserves then-pending evidence-file link; final handoff audit closes it. Owner manual/source/playback approvals retained without repeats. Exact-byte fingerprint safe retries documented; no release/default-quality claim."
         }
       ],
       "approval_gate": null,
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "2c2b45362ab14d18fd3c13635fa1d2f987cabc60"
+      ],
+      "evidence": [
+        "evidence/WVC-M5-01.md",
+        "evidence/WVC-M5-01.json",
+        "evidence/WVC-M5-01-session.md"
+      ],
+      "notes": "Verified A01-A04 with actual Windows949 Quick/129 affected/68 clean-extraction assertions and source/help/evidence review at2c2b453. Only README/PS1 comment help/three user guides plus mandatory handoff changed; runtime body/BAT/defaults unchanged. Initial local checker normalization failure retained. Implementation CI/live sync and final handoff inspected separately; no private media/config/log/path upload, new manual acceptance or deterministic/public release claim. Exact next WVC-M5-02; stop after handoff."
     },
     {
       "id": "WVC-M5-02",
