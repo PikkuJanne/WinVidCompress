@@ -27,7 +27,7 @@ $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.IO.Compression,System.IO.Compression.FileSystem
 
 function Get-WvcPackagePaths {
-    [string[]]$paths=@('WinVidCompress.ps1','WinVidCompress.bat','README.md','LICENSE','VERSION','CHANGELOG.md',
+    [string[]]$paths=@('WinVidCompress.ps1','WinVidCompress.bat','README.md','LICENSE','VERSION','CHANGELOG.md','SECURITY.md','THIRD_PARTY_NOTICES.md',
         'docs/user/REFERENCE.md','docs/user/TROUBLESHOOTING.md','docs/user/VERIFICATION.md')
     [Array]::Sort($paths,[StringComparer]::Ordinal)
     $paths
