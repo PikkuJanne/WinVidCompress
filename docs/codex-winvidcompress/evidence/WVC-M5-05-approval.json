@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M5-05",
+  "acceptance_ids": [
+    "WVC-M5-05-A04"
+  ],
+  "tested_source": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+  "previous_handoff": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+  "owner_approval": {
+    "recorded_at": "2026-10-08T15:00:11Z",
+    "candidate_decision": "A04 approved",
+    "merge_decision": "Also authorize merging PR 34",
+    "source_commit": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+    "primary_zip_sha256": "5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
+    "primary_zip_bytes": 250197,
+    "scope": "Concrete 1.0.0 candidate and documented support exclusions accepted; no new manual observation or broader-support claim inferred.",
+    "conditional_publication_instruction": "WVC-M5-04 next please. If all tasks on software are done, also publish v1.0.0 on GitHub as when this project is done, we are on v1.0.0",
+    "evidence": "evidence/WVC-M5-05-approval.md"
+  },
+  "counts": {
+    "Passed": 1,
+    "Failed": 0,
+    "Skipped": 0,
+    "NotRun": 0
+  },
+  "completed_handoff_ci": {
+    "SchemaVersion": 1,
+    "ObservedUTC": "2026-10-08T15:00:27.723066+00:00",
+    "Repository": "PikkuJanne/WinVidCompress",
+    "HandoffCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+    "BaseCommit": "2c90ca324ec147485644b1a738ae03fb3c901274",
+    "PullRequest": {
+      "Number": 34,
+      "URL": "https://github.com/PikkuJanne/WinVidCompress/pull/34",
+      "State": "open",
+      "Draft": true,
+      "HeadCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+      "BaseCommit": "2c90ca324ec147485644b1a738ae03fb3c901274",
+      "CurrentAPIMergeCommit": "e6baea1de9e0f257e844426e46a09bd8e7d4cd96",
+      "CurrentAPIMergeParents": [
+        "2c90ca324ec147485644b1a738ae03fb3c901274",
+        "56e26a45d3a20b2d98eba3536186a06cf30ff842"
+      ]
+    },
+    "Runs": [
+      {
+        "RunId": 37791071811,
+        "Event": "push",
+        "HeadCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37791071811",
+        "Status": "completed",
+        "Conclusion": "success",
+        "Attempt": 1,
+        "Jobs": [
+          {
+            "Name": "WindowsPowerShell",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "Name": "PowerShell7",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "Summaries": [
+          {
+            "HostName": "WindowsPowerShell",
+            "SourceCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+            "MergeParents": null,
+            "Counts": {
+              "Passed": 1006,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1006,
+            "Static": {
+              "AnalyzedFiles": 0,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-handoff-agent/37791071811/windows-results-WindowsPowerShell/summary.json",
+            "SHA256": "c6e486d63f5403c01a04b2123768a14a968fbb158ab907ce66e264c1028953cf"
+          },
+          {
+            "HostName": "PowerShell7",
+            "SourceCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+            "MergeParents": null,
+            "Counts": {
+              "Passed": 1016,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1016,
+            "Static": {
+              "AnalyzedFiles": 0,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-handoff-agent/37791071811/windows-results-PowerShell7/summary.json",
+            "SHA256": "c273cc2784c0a9cef4c14f88a6bada02fae6640b92286e99b52931e50750fea7"
+          }
+        ]
+      },
+      {
+        "RunId": 37791081826,
+        "Event": "pull_request",
+        "HeadCommit": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37791081826",
+        "Status": "completed",
+        "Conclusion": "success",
+        "Attempt": 1,
+        "Jobs": [
+          {
+            "Name": "WindowsPowerShell",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "Name": "PowerShell7",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "Summaries": [
+          {
+            "HostName": "WindowsPowerShell",
+            "SourceCommit": "e6baea1de9e0f257e844426e46a09bd8e7d4cd96",
+            "MergeParents": [
+              "2c90ca324ec147485644b1a738ae03fb3c901274",
+              "56e26a45d3a20b2d98eba3536186a06cf30ff842"
+            ],
+            "Counts": {
+              "Passed": 1006,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1006,
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-handoff-agent/37791081826/windows-results-WindowsPowerShell/summary.json",
+            "SHA256": "cabc8012e9ae9135ce3a01af4449c0a2f995a628232cc2054c30e13927c97bc5"
+          },
+          {
+            "HostName": "PowerShell7",
+            "SourceCommit": "e6baea1de9e0f257e844426e46a09bd8e7d4cd96",
+            "MergeParents": [
+              "2c90ca324ec147485644b1a738ae03fb3c901274",
+              "56e26a45d3a20b2d98eba3536186a06cf30ff842"
+            ],
+            "Counts": {
+              "Passed": 1016,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1016,
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "RunnerImage": {
+              "Name": null,
+              "Version": "20260925.250.1"
+            },
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-handoff-agent/37791081826/windows-results-PowerShell7/summary.json",
+            "SHA256": "52790fff9736664174531160b2ce6f1df094f271b3e4413351cf216110683db1"
+          }
+        ]
+      }
+    ],
+    "Summary": {
+      "Checks": 40,
+      "Passed": 40,
+      "Failed": 0,
+      "PendingRunIds": []
+    },
+    "Checks": [
+      {
+        "Check": "PR34 head/base",
+        "Passed": true
+      },
+      {
+        "Check": "API current merge parents",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/run source/event",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/two expected jobs",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/successful run",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/every step successful",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/one available allowlisted artifact",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/summary-only download",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/sanitized schema",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/all cases/counts inspected",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/complete passed admission",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/host/static",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/WindowsPowerShell/actual pushed test source",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/every step successful",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/one available allowlisted artifact",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/summary-only download",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/sanitized schema",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/all cases/counts inspected",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/complete passed admission",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/host/static",
+        "Passed": true
+      },
+      {
+        "Check": "37791071811/PowerShell7/actual pushed test source",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/run source/event",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/two expected jobs",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/successful run",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/every step successful",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/one available allowlisted artifact",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/summary-only download",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/sanitized schema",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/all cases/counts inspected",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/complete passed admission",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/host/static",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/WindowsPowerShell/actual tested PR merge parents",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/every step successful",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/one available allowlisted artifact",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/summary-only download",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/sanitized schema",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/all cases/counts inspected",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/complete passed admission",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/host/static",
+        "Passed": true
+      },
+      {
+        "Check": "37791081826/PowerShell7/actual tested PR merge parents",
+        "Passed": true
+      }
+    ],
+    "ExitCode": 0,
+    "Invocation": "& $reviewPython .test-results/m505/ci-handoff-agent/review-handoff.py",
+    "Commands": [
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/pulls/34"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/git/commits/e6baea1de9e0f257e844426e46a09bd8e7d4cd96"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791071811"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791071811/jobs"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791071811/artifacts"
+      ],
+      [
+        "gh",
+        "run",
+        "download",
+        "37791071811",
+        "--repo",
+        "PikkuJanne/WinVidCompress",
+        "--name",
+        "windows-results-WindowsPowerShell",
+        "--dir",
+        ".test-results/m505/ci-handoff-agent/37791071811/windows-results-WindowsPowerShell"
+      ],
+      [
+        "gh",
+        "run",
+        "download",
+        "37791071811",
+        "--repo",
+        "PikkuJanne/WinVidCompress",
+        "--name",
+        "windows-results-PowerShell7",
+        "--dir",
+        ".test-results/m505/ci-handoff-agent/37791071811/windows-results-PowerShell7"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791081826"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791081826/jobs"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/actions/runs/37791081826/artifacts"
+      ],
+      [
+        "gh",
+        "run",
+        "download",
+        "37791081826",
+        "--repo",
+        "PikkuJanne/WinVidCompress",
+        "--name",
+        "windows-results-WindowsPowerShell",
+        "--dir",
+        ".test-results/m505/ci-handoff-agent/37791081826/windows-results-WindowsPowerShell"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/git/commits/e6baea1de9e0f257e844426e46a09bd8e7d4cd96"
+      ],
+      [
+        "gh",
+        "run",
+        "download",
+        "37791081826",
+        "--repo",
+        "PikkuJanne/WinVidCompress",
+        "--name",
+        "windows-results-PowerShell7",
+        "--dir",
+        ".test-results/m505/ci-handoff-agent/37791081826/windows-results-PowerShell7"
+      ],
+      [
+        "gh",
+        "api",
+        "repos/PikkuJanne/WinVidCompress/git/commits/e6baea1de9e0f257e844426e46a09bd8e7d4cd96"
+      ]
+    ],
+    "Limits": [
+      "API current merge identity is separate from actual tested source in a completed summary.",
+      "Pending runs have no passed-test claim.",
+      "Hosted Targeted is not Full/manual/release acceptance.",
+      "Only public metadata and allowlisted sanitized summary artifacts inspected; no raw logs downloaded.",
+      "Private workstation paths and identifying diagnostic values are omitted."
+    ]
+  },
+  "completed_handoff_ci_sha256": "765b437afc2285791347d07062f63a3af61337e36119f15e41028005c3c34b1f",
+  "merge_performed": false,
+  "publication_performed": false,
+  "final_sync": "Pending externally reported after approval commit/push; no self-SHA.",
+  "approval_integrity": {
+    "SourceCommit": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+    "PreviousHandoff": "56e26a45d3a20b2d98eba3536186a06cf30ff842",
+    "Counts": {
+      "Passed": 482,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "LocalLinks": 128,
+    "ExitCode": 0,
+    "Scope": "Approval-only integrity checks; existing tests/omissions preserved, no new application or manual observations.",
+    "command": "& $wvcPython .test-results/m505/Approval-Audit.py",
+    "report_sha256": "cac0462890f69153c22b5576b906fef79901a973797309d47f16f4c7c9371cd4",
+    "helper_sha256": "4c3ed9acfda99de305af29522fcf69eed52cce67773ff83bb1fed21a35bf5abd"
+  }
+}

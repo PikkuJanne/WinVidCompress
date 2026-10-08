@@ -1,5 +1,9 @@
 # Full acceptance matrix
 
+Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](evidence/WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
+
+## Preparation record (before owner approval)
+
 The 128 task-level criteria in TASKS.json are the primary acceptance checklist. This cross-cutting matrix prevents end-to-end gaps. Every row begins NOT RUN; populate evidence, never pre-fill a pass.
 
 | Area | Required scenarios | Evidence method | Initial status |

@@ -1,5 +1,9 @@
 # WVC-M5-05 session — 2026-10-08
 
+Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
+
+## Preparation record (before owner approval)
+
 Requested: `WVC-M5-05 next please`. One task; owner-selected 1.0.0 and conditional GitHub publication instruction preserved from the earlier handoff. No concrete acceptance, merge/site/default-quality/bundling/signing authorization invented.
 
 Start: clean previous feature ae1a7cfa7213c3e379274cbbf592f2db03442bee; no operations/conflicts. Only approved origin fetch/push URL. Fetch/API/live refs confirm owner merged PR 33 into main2c90ca324ec147485644b1a738ae03fb3c901274; its tree equals previous handoff. Feature `codex/wvc-m5-05-candidate` starts from that current base. Live tag/release inventory empty. No reset, force, stash, overwrite of unknown changes or default-branch mutation.
@@ -12,8 +16,12 @@ Clean exact-source Quick **986/0/0/0 exit 0**, Full51 **1006/0/0/8 exit 2**, raw
 
 Independent audit reconciles23 improvements and all 124 prior criteria: 91 distinct evidence files,31 correct non-template JSON records/all acceptance IDs, resolvable implementation commits and 118 local links across64 targeted/spec/prior-evidence Markdown files. Final docs retain optional decisions, signing/bundling/site/quality gates, raw omissions and broader publication blockers. Owner manual evidence remains dated/scoped.
 
-Read-only clean original-checkout sync at 2026-10-08T13: 42: 03.554075+00: 00 proves local/live fetch/live push 06e with correct branch/upstream/no operations. Two owned untracked authored drafts temporarily moved to ignored draft directory for the check then restored; no unknown changes hidden. Final handoff local/remote SHA/clean state/current CI are verified externally after final commit/push, not self-embedded.
+Read-only clean original-checkout sync at 2026-10-08T13:42:03.554075+00:00 proves local/live fetch/live push 06e with correct branch/upstream/no operations. Two owned untracked authored drafts temporarily moved to ignored draft directory for the check then restored; no unknown changes hidden. Final handoff local/remote SHA/clean state/current CI are verified externally after final commit/push, not self-embedded.
 
 End: **implemented**, A01-A03 passed in their recorded scopes, **A04 not_run**.31 verified/ 1 implemented; 127 passed/ 1 not_run. Concrete1.0.0 candidate presented for owner decision/stated exclusions; no merge/tag/release/site or broader-support waiver. Exact next: finish this task's A04, record actual candidate decision and separate merge permission; retain conditional publication instruction. Final handoff push/live verification pending at this record's creation and reported externally.
 
 Final authored-document/tracker/source/artifact/privacy audit:561/0/0/0 exit0,125 local links resolved; exact command/helper/report hash in JSON. Explicit UTF-8 projection preserves all prior task/status/matrix content. Earlier projection encoding and copied private-path errors were caught in diff/privacy review and repaired before handoff. Independent split review22/0 retains its initial21/1 label-readback observation; the original UTF-8 labels are canonical and all case statuses/counts agree.
+
+Owner follow-up2026-10-08: actualA04 approval and separate PR34 merge permission recorded; taskaccepted/all128passed. Existing conditional GitHubv1.0.0 publication is now actionable after authorizedmerge. Samecleanbranch56e/base2c90 checked/fetched, no operations/conflicts/unknown changes. Source/video/artifacts unchanged. Exact approval/CI/next actions in separate approval record; no self-SHA loop.
+
+Approval-only targeted integrity:482/0/0/0 exit0;128 local links resolved. Exact helper/command/report SHA in JSON. Application tests are retained from exact tested source; no new manual/perceptual observation invented. Final approval-head CI and synchronization are externally inspected after push.

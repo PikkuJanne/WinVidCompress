@@ -1,5 +1,9 @@
 # Final candidate acceptance reconciliation
 
+Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](../codex-winvidcompress/evidence/WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
+
+## Preparation record (before owner approval)
+
 Prepared for WVC-M5-05 on 2026-10-08. [TASKS.json](../codex-winvidcompress/TASKS.json) remains the task-status authority. The prior 31 tasks and their 124 criteria pass in their recorded scopes. This reconciliation does not turn a dated subcase, structural check, raw omission or desired release version into a broader acceptance.
 
 ## All 23 improvement IDs
