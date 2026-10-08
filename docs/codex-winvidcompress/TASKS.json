@@ -2530,35 +2530,59 @@
           "id": "WVC-M5-04-A01",
           "description": "Website data has a schema/version and distinguishes draft candidates from published downloads.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-04.md",
+            "evidence/WVC-M5-04.json"
+          ],
+          "notes": "Actual draft schema/version/null published fields and historical candidate provenance pass; PS7 schema/strict cross-field date/tag/asset/hash negative guards are tested. An empty draft screenshot list is not A03 acceptance."
         },
         {
           "id": "WVC-M5-04-A02",
           "description": "No fabricated download URL, checksum, testimonial or compression measurement is published.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-04.md",
+            "evidence/WVC-M5-04.json"
+          ],
+          "notes": "Clean-source three native synthetic default jobs with actual bytes/timings/native hashes;3/3 independent full decodes/probes/source/hash/size checks, no testimonial or invented public download/checksum. Synthetic lossless source/PlaybackNotRun/variability limits retained."
         },
         {
           "id": "WVC-M5-04-A03",
           "description": "Screenshots show the actual tool and contain no personal paths or footage without permission.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "blocked",
+          "evidence": [
+            "evidence/WVC-M5-04.md",
+            "evidence/WVC-M5-04.json"
+          ],
+          "notes": "Blocked: capture attempts produced no readable actual tool window; all-black PNG rejected and stays local. No screenshot is committed. Dedicated missing-image test fails in clean PS51 Quick985/1/0/0 and PS7 affected27/1/0/0, both exit1. Owner-visible isolated menu launch request is pending."
         },
         {
           "id": "WVC-M5-04-A04",
           "description": "Website content is prepared locally only; no deployment is performed.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-04.md",
+            "evidence/WVC-M5-04.json"
+          ],
+          "notes": "Static content only; no deployment, upload/account/form/server framework/telemetry/release/tag/merge/default-quality change. Runtime/launcher/license unchanged; developer tests/report-byte attribute are minimal expanded scope."
         }
       ],
       "approval_gate": "Public website deployment and connecting release download URLs require owner approval and an actual release.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "M5-04 static schema/copy and clean-source synthetic measurement prepared; actual menu screenshot pending owner-visible demo. Runtime/defaults unchanged. Intended completed-project version is owner-selected 1.0.0; M5-05 remains required before conditional publication."
+      "implementation_commits": [
+        "f6268d190a212d769ebcda48398e22572905d56c",
+        "b39460a06d5a1ca0e34be7dbc1e57e82a9304c40",
+        "83c29d2bb61fb40d9d5a8640c99bc909d259f150"
+      ],
+      "evidence": [
+        "evidence/WVC-M5-04.md",
+        "evidence/WVC-M5-04.json",
+        "evidence/WVC-M5-04-session.md"
+      ],
+      "notes": "Partial M5-04 at83c29d2: A01/A02/A04 passed in scope, A03 blocked by missing genuine readable menu capture. Required Quick985/1 and PS7 affected27/1 are failed, not verified. Native measurements/report-byte clone/source safety pass; analyzer2/zero diagnostics. Owner-selected final1.0.0/conditional GitHub publication persists; M5-05 remains required and no release is created. Exact next finish M5-04-A03; preserve earlier owner manual evidence and explicit broader limits."
     },
     {
       "id": "WVC-M5-05",

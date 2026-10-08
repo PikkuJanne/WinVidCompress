@@ -1,5 +1,19 @@
 # Current programme status
 
+Updated: 2026-10-08. Repository: PikkuJanne/WinVidCompress.
+
+**WVC-M5-04 partially implemented; A03 capture blocked, not verified.** TASKS authority: **30 verified /1 in_progress /1 todo;123 passed /1 blocked /4 not_run**. Implementation/tested **83c29d2bb61fb40d9d5a8640c99bc909d259f150** prepares static schema/copy and a real three-run synthetic measurement, with all published release fields null. PS1/BAT/LICENSE/defaults unchanged. Minimal expanded scope: two developer checks/test guide, exact-report Git byte attribute and handoff.
+
+Clean PS5.1 Quick **985/1/0/0 exit1**; affected PS7 **27/1/0/0 exit1**. Both failures are only missing genuine screenshot; no failed suite is green. Analyzer2/zero diagnostics. Three actual encodes, three full decodes/probes and source/report/byte/hash checks pass; clean live-content clone6/0. Real capture attempts produced no readable tool image; blackPNG rejected/local, screenshots empty. Owner-visible isolated demo launch is pending. Exact [evidence](evidence/WVC-M5-04.md), [commands/results](evidence/WVC-M5-04.json), [session](evidence/WVC-M5-04-session.md).
+
+Feature `codex/wvc-m5-04-content` starts at owner-merged PR32/main **b2582bd24b7efaa896b51d468c3679ee83bcb909**. Sole origin https://github.com/PikkuJanne/WinVidCompress.git. Clean local/live fetch/live push matched83c29d2 at2026-10-08T03:41:23.137203+00:00; [draftPR33](https://github.com/PikkuJanne/WinVidCompress/pull/33) open. Push37723908762/PR37723916694 completed failed: each PS51 1005/1/0/0, PS7 1015/1/0/0; static2/zero diagnostics. All steps/four sanitized summaries/cases inspected; only case-0950 fails, matching local missing-image ordinal. PR merge7e53abc parents API-confirmed. No passed CI claim. Final handoff sync/current CI are reported externally after commit/push.
+
+Owner on2026-10-08 selected completed-project **v1.0.0** and conditional GitHub publication after software tasks are done. [Release handoff](../releases/WEBSITE_CONTENT.md) retains the actual instruction. VERSION remains unpublished0.1.0-rc.1; no tag/release/merge/site is created while A03 and M5-05 remain incomplete. No new playback/Explorer/Ctrl+C/HDR/browser-MOTW/fresh-profile/default-Videos/network/durability/final-candidate/default-quality approval is inferred. Earlier owner evidence remains.
+
+Exact next: **finish WVC-M5-04-A03 actual menu capture**, then affected/Quick gates; **WVC-M5-05** remains the final reconstruction/candidate-review task for1.0.0. Do not publish or mark M5-04 verified while its image check fails.
+
+## Historical status through WVC-M5-03
+
 Updated: 2026-10-07. Repository: PikkuJanne/WinVidCompress.
 
 **WVC-M5-03 verified; A01-A04 passed in recorded scopes.** TASKS.json is authoritative: **30 verified / 0 implemented / 2 todo; 120 passed / 8 not_run**. Implementation/tested `0b61d54ab2490a53528001270928b45c847ce6d2` preserves the original Unlicense and PS1/BAT runtime/defaults. README, SECURITY.md, THIRD_PARTY_NOTICES.md and distribution review describe actual dependency licensing, privacy/reporting, unsigned/checksum/trust boundaries and separate approval gates. Minimal expanded scope adds both policies to the developer allowlist and strengthens existing package regressions for exact LICENSE/runtime bytes, offline links and poison dependency exclusion.
@@ -40,4 +54,4 @@ M2-06/M3-04/M3-06/M4-02 remain verified. Owner2026-10-07 accepted Explorer menu/
 
 Historical M4-05 feature `codex/wvc-m4-05-acceptance` descends from owner-merged PR28/main `073e4d62633bea4d10954652ea53a198ced579f5`; sole origin https://github.com/PikkuJanne/WinVidCompress.git. Clean local/live fetch/live push equality at `2026-10-07T17:38:36.688684+00:00` describes preceding handoffbfef394; implementation603decf sync remains historical. Clean-clone tracker/product bytes/canonical test blob match; test LF/CRLF normalization is explicit. At that historical handoff PR29 was open; owner merged it before M5-01. Precedingbfef394 push/confirmed mergee702a94 PR matrices passed and four sanitized artifacts were inspected. Earlier603decf pre-job PR failure remains historical. That historical handoff SHA/live refs/clone/PR/CI state was reported externally after its push, avoiding self-SHA. No private media/config/logs/paths are committed.
 
-Exact next: **WVC-M5-04 - Prepare website product metadata and genuine demonstration content**. M5-03 is verified; execute only that next bounded task when requested. Stop after this licensing/security handoff; publication/default-quality and broader support limits remain explicit.
+Historical M5-03 handoff next: **WVC-M5-04 - Prepare website product metadata and genuine demonstration content**. M5-03 is verified; execute only that next bounded task when requested. Stop after this licensing/security handoff; publication/default-quality and broader support limits remain explicit.

@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M5-04",
+  "acceptance_ids": [
+    "WVC-M5-04-A01",
+    "WVC-M5-04-A02",
+    "WVC-M5-04-A03",
+    "WVC-M5-04-A04"
+  ],
+  "recorded_at": "2026-10-08T03:48:12.170435+00:00",
+  "tested_commits": [
+    "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "b2582bd24b7efaa896b51d468c3679ee83bcb909"
+  ],
+  "host": {
+    "os": "Windows 11 Pro 10.0.26300 x64",
+    "powershell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.6 Core"
+    ],
+    "pester": "5.7.1",
+    "analyzer": "1.24.0",
+    "ffmpeg_ffprobe": "2026-10-04-git-a35c879992 essentials Windows build"
+  },
+  "exact_commands": {
+    "setup": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $native=(Get-ChildItem (Join-Path $runtimeRoot 'native') -Recurse -Filter ffmpeg.exe).FullName; $env:PATH=(Split-Path -Parent $native)+';'+(Join-Path $runtimeRoot 'powershell')+';'+$env:PATH; $env:FFREPORT=$null; $env:APPDATA=Join-Path (Get-Location).Path '.test-results/m504/Quick-appdata'",
+    "quick": "& powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -ModuleRoot (Join-Path $runtimeRoot 'modules') -ReportPath .test-results/m504/clean-quick.ps51.json *> .test-results/m504/clean-quick.ps51.log",
+    "focused": "& (Join-Path $runtimeRoot 'powershell/pwsh.exe') -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $runtimeRoot 'modules') -TestPath tests/unit/WebsiteContent.Tests.ps1 -ReportPath .test-results/m504/clean-content.ps7.json *> .test-results/m504/clean-content.ps7.log",
+    "static": "& ./tools/test-static.ps1 -ModuleRoot (Join-Path (Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim() 'modules') -BaseCommit b2582bd24b7efaa896b51d468c3679ee83bcb909 -ReportPath .test-results/m504/clean-static.json",
+    "benchmark": "& powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/benchmark.ps1 -FFmpeg $ffmpeg -FFprobe $ffprobe -Repeats 3 -SyntheticSeconds 4 -RunId 488b6b9d919949cfbf9f46d8b1eec70f *> .test-results/m504/benchmark.local.log",
+    "decode_each": "& $ffmpeg -hide_banner -nostdin -v error -i $output -map 0:v:0 -map 0:a:0 -f null NUL 2> $decodeLog",
+    "probe_each": "& $ffprobe -v error -show_format -show_streams -of json $output 2> $probeLog",
+    "capture_initial": "& $ffmpeg -hide_banner -nostdin -v error -n -f gdigrab -draw_mouse 0 -i 'title=WinVidCompress synthetic demonstration' -frames:v 1 -update 1 .test-results/m504/menu-capture.png 2> .test-results/m504/capture.local.log",
+    "capture_retry": "& $ffmpeg -hide_banner -nostdin -v error -n -f gdigrab -draw_mouse 0 -i 'title=WinVidCompress synthetic demonstration' -frames:v 1 -update 1 .test-results/m504/menu-capture.png 2> .test-results/m504/capture-retry.local.log",
+    "clone": "git clone --single-branch --branch codex/wvc-m5-04-content https://github.com/PikkuJanne/WinVidCompress.git $clone",
+    "blob_checksum": "python -B -c \"import hashlib,subprocess; print(hashlib.sha256(subprocess.check_output(['git','show','HEAD:website-content/examples/synthetic-default.json'])).hexdigest())\"",
+    "tracker": "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
+    "live_sync": "python -B tools/codex-winvidcompress/check_repo_sync.py --repo .",
+    "publication_inventory": "gh api repos/PikkuJanne/WinVidCompress/releases --jq 'length'; gh api repos/PikkuJanne/WinVidCompress/tags --jq 'length'"
+  },
+  "local_runs": [
+    {
+      "name": "clean Quick PS5.1",
+      "tested_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+      "dirty": false,
+      "observed_exit": 1,
+      "counts": {
+        "Passed": 985,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failure": "Missing actual screenshot only; all other 985 cases passed."
+    },
+    {
+      "name": "clean focused PS7",
+      "tested_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+      "dirty": false,
+      "observed_exit": 1,
+      "counts": {
+        "Passed": 27,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "failure": "Missing actual screenshot only; all other 27 cases passed."
+    },
+    {
+      "name": "changed static policy",
+      "tested_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+      "observed_exit": 0,
+      "analyzed_files": 2,
+      "diagnostics": 0
+    },
+    {
+      "name": "clean-source benchmark",
+      "tested_commit": "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+      "dirty": false,
+      "observed_exit": 0,
+      "native_jobs_completed": 3,
+      "native_jobs_failed": 0,
+      "playback": "NotRun"
+    },
+    {
+      "name": "retained synthetic output reinspection",
+      "tested_application_commit": "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+      "observed_exit": 0,
+      "outputs": [
+        {
+          "Repeat": 1,
+          "HashMatches": true,
+          "BytesMatch": true,
+          "DecodeExit": 0,
+          "ProbeExit": 0,
+          "Video": "h264",
+          "Audio": "aac",
+          "Width": 320,
+          "Height": 240,
+          "Duration": "4.000000"
+        },
+        {
+          "Repeat": 2,
+          "HashMatches": true,
+          "BytesMatch": true,
+          "DecodeExit": 0,
+          "ProbeExit": 0,
+          "Video": "h264",
+          "Audio": "aac",
+          "Width": 320,
+          "Height": 240,
+          "Duration": "4.000000"
+        },
+        {
+          "Repeat": 3,
+          "HashMatches": true,
+          "BytesMatch": true,
+          "DecodeExit": 0,
+          "ProbeExit": 0,
+          "Video": "h264",
+          "Audio": "aac",
+          "Width": 320,
+          "Height": 240,
+          "Duration": "4.000000"
+        }
+      ],
+      "source_checks": {
+        "ReportByteEqual": true,
+        "SourceHashMatches": true,
+        "SourceBytes": 1134269,
+        "InputBytesMatch": true
+      }
+    },
+    {
+      "name": "clean pushed-content clone",
+      "tested_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+      "observed_exit": 0,
+      "checks": {
+        "CloneHead": true,
+        "CloneClean": true,
+        "ReportHash": true,
+        "ApplicationHash": true,
+        "LauncherHash": true,
+        "HistoricalSource": true
+      },
+      "scope": "Six byte/provenance/clean-state checks; not M5-05 final package reconstruction."
+    }
+  ],
+  "development_failures": [
+    "First focused PS7:10 passed/2 failed (missing screenshot and too-broad marketing regex matching a negative claim). Corrected word boundary; original report retained locally.",
+    "Pending PS5.1:11/1; pending PS7:19/2, screenshot plus schema requiring its missing entry. Later complete focused scopes17/1 and27/1 remain missing-image failures, not passed suites.",
+    "Initial static CLI array was marshalled as one native argument: exit1 before analysis/no report. Correct PowerShell array invocation then analyzed2 files/zero diagnostics.",
+    "Initial capture exit-5/no window. Retry exit0 produced all-black2843x1521 PNG. Both inspected, neither published or accepted. Startup initially lacked native tools and misused per-run OutputDir without input; isolated demo config/tools corrected. No readable targetable menu was returned by window capture inventory.",
+    "Git initially normalized report CRLF: canonical blob SHA25625b726b0dffd54df38ec24174c20bc451b66269b70a4e9743fd8e6fe470232ca disagreed with measured raw0eeed1c63cc0f675baffc6d02687449cbd191426fa85dcf5272c3d9cc082fdef. Added -text attribute; staging attribute alone did not replace existing index blob, so explicit single-file git add --renormalize recorded exact native bytes in83c29d2. Live clone now agrees.",
+    "Independent read-only reviewer found schema cross-field/date gaps and LF anchor flaw; strict helper and negative fixtures corrected them. Review metadata fixtures are not app/image/release evidence."
+  ],
+  "acceptance": {
+    "A01": "passed: actual draft schema/state plus strict cross-field guards; empty draft images do not satisfy A03",
+    "A02": "passed: null published facts and genuine clean-source measurements, no testimonial/fake downloadable asset",
+    "A03": "blocked: no readable actual menu image; dedicated test fails in both tested hosts",
+    "A04": "passed: static local content only; no website/release deployment"
+  },
+  "sanitized_artifacts": [
+    "website-content/product.json",
+    "website-content/product.schema.json",
+    "website-content/examples/synthetic-default.json",
+    "website-content/DEMONSTRATIONS.md"
+  ],
+  "owner_instruction": {
+    "date": "2026-10-08",
+    "verbatim": "WVC-M5-04 next please. If all tasks on software are done, also publish v1.0.0 on GitHub as when this project is done, we are on v1.0.0",
+    "interpretation": "Final version1.0.0 and conditional GitHub publication authorization; M5-04 A03 and M5-05 remain incomplete. No final candidate acceptance or website deployment inferred."
+  },
+  "owner_approval": null,
+  "previous_verified_sync": {
+    "checked_at": "2026-10-08T03:41:23.137203+00:00",
+    "branch": "codex/wvc-m5-04-content",
+    "local_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "live_fetch_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "live_push_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "dirty": false
+  },
+  "pr": {
+    "number": 33,
+    "url": "https://github.com/PikkuJanne/WinVidCompress/pull/33",
+    "state": "OPEN",
+    "draft": true
+  },
+  "ci_observed": {
+    "push_run": 37723908762,
+    "pr_run": 37723916694,
+    "source_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "initial_status": "in_progress at2026-10-08T03:45:42Z; dependency setup succeeded in both hosts, Targeted still running. Final states inspected separately, never claimed passed.",
+    "completed_status": "Both push/PR runs failed in both hosts. All job steps and four distinct sanitized summaries/cases inspected; only case-0950 failed, matching the missing-image ordinal from local clean Quick. No CI pass claim.",
+    "summaries": [
+      {
+        "run": 37723908762,
+        "event": "push",
+        "source_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Failed",
+        "exit_code": 1,
+        "counts": {
+          "Passed": 1015,
+          "Failed": 1,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [
+          "TestExecutionFailed",
+          "FailedOrIncompleteTests"
+        ],
+        "failed_cases": [
+          {
+            "Id": "case-0950",
+            "Status": "Failed"
+          }
+        ],
+        "artifact_sha256": "342ff8a352585a3dc45a72d273dd67b52b9758414d54c53d6ea40242b6eeebff"
+      },
+      {
+        "run": 37723908762,
+        "event": "push",
+        "source_commit": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Failed",
+        "exit_code": 1,
+        "counts": {
+          "Passed": 1005,
+          "Failed": 1,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [
+          "TestExecutionFailed",
+          "FailedOrIncompleteTests"
+        ],
+        "failed_cases": [
+          {
+            "Id": "case-0950",
+            "Status": "Failed"
+          }
+        ],
+        "artifact_sha256": "da31a0dfa7bec1b6fbe2e6892e4c5cd264361ca72565bca76a78265f2f36ce70"
+      },
+      {
+        "run": 37723916694,
+        "event": "pull_request",
+        "source_commit": "7e53abc842818393ed27613a7d0979bf0b7b2be1",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Failed",
+        "exit_code": 1,
+        "counts": {
+          "Passed": 1015,
+          "Failed": 1,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [
+          "TestExecutionFailed",
+          "FailedOrIncompleteTests"
+        ],
+        "failed_cases": [
+          {
+            "Id": "case-0950",
+            "Status": "Failed"
+          }
+        ],
+        "artifact_sha256": "37519ece7ef375b4319fc73e6b1ad2efd0d8906e337e499ad14d35678a879502"
+      },
+      {
+        "run": 37723916694,
+        "event": "pull_request",
+        "source_commit": "7e53abc842818393ed27613a7d0979bf0b7b2be1",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Failed",
+        "exit_code": 1,
+        "counts": {
+          "Passed": 1005,
+          "Failed": 1,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [
+          "TestExecutionFailed",
+          "FailedOrIncompleteTests"
+        ],
+        "failed_cases": [
+          {
+            "Id": "case-0950",
+            "Status": "Failed"
+          }
+        ],
+        "artifact_sha256": "2e979ed9bf8ee9c808ed3fef2a8affd89f04d700b38839f01f505f5c67476ff3"
+      }
+    ],
+    "pr_merge_parents_api_confirmed": [
+      "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+      "83c29d2bb61fb40d9d5a8640c99bc909d259f150"
+    ]
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "Missing real screenshot keeps task/release incomplete and required suites failed.",
+    "No new playback/Explorer/cancellation/HDR/remote-filesystem/browser-MOTW/fresh-profile/default-Videos/final-candidate acceptance. Earlier owner evidence retained.",
+    "Synthetic FFV1/PCM pattern is not representative already-compressed interview savings; timings are local warm-cache observations.",
+    "Metadata/schema/hash/decode checks do not prove full visual/audio integrity, release existence, legal clearance or publisher authenticity.",
+    "No runtime/launcher/license/default-quality changes, dependency download, source/final overwrite, private media/config/path/log upload, tag/release/merge/default-branch push/settings/signing/bundling/site deployment."
+  ],
+  "next_task": "Finish WVC-M5-04-A03 actual menu capture; rerun image/content gates and Quick, then WVC-M5-05 final reconstruction/candidate review for owner-selected1.0.0."
+}
