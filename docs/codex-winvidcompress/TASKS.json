@@ -392,10 +392,7 @@
           "tier": "manual",
           "status": "passed",
           "notes": "D005 supported routes verified from owner-confirmed Explorer folder/ten-file drops and literal menu session on 2026-10-05; exact native/bound paths, source/helper hashes and sentinels agree. Earlier zero/single retained; historical unsupported BAT percent failure preserved.",
-          "evidence": [
-            "evidence/WVC-M1-02.md",
-            "evidence/WVC-M1-02.json"
-          ]
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A02",
@@ -403,20 +400,14 @@
           "tier": "manual",
           "status": "passed",
           "notes": "Owner-confirmed real menu file/folder preserves %PATH% and !NAME! with matching variables. Supplemental native PS1 subcheck preserves both; automatic within human session, not separately typed. Matching-variable BAT and both-host direct coverage retained under D005.",
-          "evidence": [
-            "evidence/WVC-M1-02.md",
-            "evidence/WVC-M1-02.json"
-          ]
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A03",
           "description": "No Invoke-Expression, dynamically constructed cmd /c pipeline or broad execution-policy changes are introduced.",
           "tier": "targeted",
           "status": "passed",
-          "evidence": [
-            "evidence/WVC-M1-02.md",
-            "evidence/WVC-M1-02.json"
-          ]
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         },
         {
           "id": "WVC-M1-02-A04",
@@ -424,10 +415,7 @@
           "tier": "manual",
           "status": "passed",
           "notes": "Owner reported prepared Explorer checks passed; tentative wording preserved in evidence.",
-          "evidence": [
-            "evidence/WVC-M1-02.md",
-            "evidence/WVC-M1-02.json"
-          ]
+          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
         }
       ],
       "approval_gate": null,
