@@ -2590,7 +2590,7 @@
       "title": "Reconstruct from GitHub and present a release candidate for approval",
       "milestone": "M5",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "implemented",
       "improvements": [
         18,
         21,
@@ -2619,35 +2619,58 @@
           "id": "WVC-M5-05-A01",
           "description": "A clean clone of the live GitHub branch reproduces the tested candidate without hidden files from the developer checkout.",
           "tier": "manual",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-05.md",
+            "evidence/WVC-M5-05.json"
+          ],
+          "notes": "Final06e clean live-GitHub clone: four Build/Verify pairs, same-host repeats/all manifests; recovered aggregate report7/0, fresh extracted real-native smoke80/0, bounded inspection20/0, independent90/0. No hidden runtime/dependency payload. Exact artifacts/source/hashes in evidence."
         },
         {
           "id": "WVC-M5-05-A02",
           "description": "All required tasks/acceptance IDs have real evidence; skipped/manual pending items remain visible.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-05.md",
+            "evidence/WVC-M5-05.json"
+          ],
+          "notes": "All23 improvements mapped;31 prior verified tasks/124 passed criteria retain existing real evidence;91 paths/31 JSON records/implementation objects/118 prior local links checked. Actual clean-source Quick/Full51/raw Full7 watchdog failure plus complete disjoint PS7 Pester recovery/exact push/PR CI recorded; raw8 composite omissions and actual exits preserved with scoped owner overlays and broader publication blockers."
         },
         {
           "id": "WVC-M5-05-A03",
           "description": "Local HEAD equals the live GitHub feature ref and worktree is clean at handoff.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-05.md",
+            "evidence/WVC-M5-05.json"
+          ],
+          "notes": "Clean implementation local/live fetch/live push equality06e at actual recorded timestamp; final handoff equality/worktree/current CI verified externally after commit/push, avoiding self-SHA. Feature codex/wvc-m5-05-candidate/draftPR34; no default-branch mutation."
         },
         {
           "id": "WVC-M5-05-A04",
           "description": "Owner explicitly accepts the candidate before publication; approval records cite their actual decision.",
           "tier": "manual",
           "status": "not_run",
-          "evidence": []
+          "evidence": [
+            "evidence/WVC-M5-05.md",
+            "evidence/WVC-M5-05.json"
+          ],
+          "notes": "Owner-selected1.0.0 and prior conditional GitHub publication instruction retained; concrete acceptance of these final bytes/stated support exclusions and separate merge permission still pending. No acceptance inferred from requested version or prior menu/playback passes."
         }
       ],
       "approval_gate": "Merge to default branch, tags, GitHub release publication and website deployment are separate explicit owner approvals.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Preparing owner-selected1.0.0 from owner-merged PR33/main2c90ca324ec147485644b1a738ae03fb3c901274; no runtime/launcher/license/default changes. Final clean-live-clone/test/package/reconciliation and concrete candidate acceptance remain pending. Minimal scope expansion: VERSION/CHANGELOG as expressly directed in prior owner handoff."
+      "implementation_commits": [
+        "3921955441768a2609b0d5c92fb4e1ce98c63c33",
+        "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd"
+      ],
+      "evidence": [
+        "evidence/WVC-M5-05.md",
+        "evidence/WVC-M5-05.json",
+        "evidence/WVC-M5-05-session.md"
+      ],
+      "notes": "Implemented final1.0.0 candidate at06e803d: actual clean-clone supported-host tests/package/extraction/hash/source/23-improvement reconciliation; A01-A03 passed in recorded scopes, A04 pending concrete owner acceptance/support exclusions. Minimal scope expands VERSION/CHANGELOG and version-aware existing package regressions; runtime/launcher/license/builder/defaults unchanged. Initial stale-version Quick/CI failures, interrupted obsolete Full and aggregate-report collision retained/recovered. DraftPR34, no tag/release/merge/site. Exact next: finish this task A04/owner decision and separate merge permission; conditional publication instruction preserved. Final handoff sync/current CI externally after push."
     }
   ]
 }
