@@ -1,0 +1,411 @@
+{
+    "SchemaVersion":  1,
+    "RecordedAt":  "2026-10-08T03:27:04.6268704Z",
+    "SourceCommit":  "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+    "Dirty":  false,
+    "ApplicationSHA256":  "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
+    "RunnerSHA256":  "97f8837e149aed577846b4a4adf26479b7a07fe7b761d7eb600f43843af7b5aa",
+    "Host":  {
+                 "OS":  "Microsoft Windows 11 Pro",
+                 "Version":  "10.0.26300",
+                 "Build":  "26300",
+                 "Architecture":  "64-bit",
+                 "PowerShell":  "5.1.26100.9444",
+                 "Edition":  "Desktop",
+                 "CPU":  "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
+                 "LogicalProcessors":  12,
+                 "MemoryBytes":  16913207296
+             },
+    "Tools":  [
+                  {
+                      "Name":  "FFmpeg",
+                      "Version":  "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+                      "SHA256":  "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83"
+                  },
+                  {
+                      "Name":  "FFprobe",
+                      "Version":  "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+                      "SHA256":  "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d"
+                  }
+              ],
+    "Repeats":  3,
+    "Sources":  [
+                    {
+                        "Id":  "synthetic-01",
+                        "Provenance":  "Generated testsrc2 + 440 Hz sine; FFV1/PCM; no private media",
+                        "RecipeTokens":  [
+                                             "-hide_banner",
+                                             "-nostdin",
+                                             "-v",
+                                             "error",
+                                             "-n",
+                                             "-f",
+                                             "lavfi",
+                                             "-i",
+                                             "testsrc2=size=320x240:rate=24:duration=4",
+                                             "-f",
+                                             "lavfi",
+                                             "-i",
+                                             "sine=frequency=440:sample_rate=48000:duration=4",
+                                             "-map",
+                                             "0:v:0",
+                                             "-map",
+                                             "1:a:0",
+                                             "-c:v",
+                                             "ffv1",
+                                             "-pix_fmt",
+                                             "yuv420p",
+                                             "-c:a",
+                                             "pcm_s16le",
+                                             "\u003cOUTPUT\u003e"
+                                         ],
+                        "SHA256":  "c26fd140f61d347881ec28a5ef3c0d5948de03ac22abfd921d26e63fca4cd1c4",
+                        "InputBytes":  1134269,
+                        "Codec":  "ffv1",
+                        "Width":  320,
+                        "Height":  240,
+                        "Rotation":  null,
+                        "SAR":  "1:1",
+                        "AverageFPS":  {
+                                           "Raw":  "24/1",
+                                           "Numerator":  24,
+                                           "Denominator":  1,
+                                           "Value":  24
+                                       },
+                        "RealFPS":  {
+                                        "Raw":  "24/1",
+                                        "Numerator":  24,
+                                        "Denominator":  1,
+                                        "Value":  24
+                                    },
+                        "DurationSeconds":  4,
+                        "DurationState":  "Known",
+                        "DurationSource":  "Format",
+                        "SelectedStreams":  {
+                                                "Video":  0,
+                                                "Audio":  1
+                                            }
+                    }
+                ],
+    "Profiles":  [
+                     {
+                         "Id":  "default",
+                         "Preset":  "veryfast",
+                         "CRF":  22,
+                         "Experimental":  false
+                     }
+                 ],
+    "Runs":  [
+                 {
+                     "Order":  1,
+                     "SourceId":  "synthetic-01",
+                     "ProfileId":  "default",
+                     "Repeat":  1,
+                     "Experimental":  false,
+                     "Settings":  {
+                                      "VideoCodec":  "libx264",
+                                      "Preset":  "veryfast",
+                                      "CRF":  22,
+                                      "PixelFormat":  "yuv420p",
+                                      "ColourPolicy":  "SDRCompatibility",
+                                      "AudioCodec":  "aac",
+                                      "AudioBitrate":  "160k",
+                                      "Container":  "mp4",
+                                      "FastStart":  true,
+                                      "HeightCap":  1080,
+                                      "Applied":  true
+                                  },
+                     "CommandTokens":  [
+                                           "-hide_banner",
+                                           "-stdin",
+                                           "-nostats",
+                                           "-progress",
+                                           "pipe:1",
+                                           "-n",
+                                           "-i",
+                                           "\u003cSOURCE\u003e",
+                                           "-map",
+                                           "0:0",
+                                           "-map",
+                                           "0:1",
+                                           "-c:v",
+                                           "libx264",
+                                           "-preset",
+                                           "veryfast",
+                                           "-crf",
+                                           "22",
+                                           "-pix_fmt:v:0",
+                                           "yuv420p",
+                                           "-color_range:v:0",
+                                           "tv",
+                                           "-c:a",
+                                           "aac",
+                                           "-b:a",
+                                           "160k",
+                                           "-movflags",
+                                           "+faststart",
+                                           "-metadata",
+                                           "title=synthetic-01",
+                                           "\u003cOUTPUT\u003e"
+                                       ],
+                     "Outcome":  "Completed",
+                     "Size":  {
+                                  "InputBytes":  1134269,
+                                  "OutputBytes":  235009,
+                                  "SizeChangeBytes":  -899260,
+                                  "SizeChangePercent":  -79.281017113224451,
+                                  "SavingsPercent":  79.281017113224451,
+                                  "State":  "Reduction"
+                              },
+                     "DurationSeconds":  4,
+                     "ElapsedSeconds":  0.8004391,
+                     "Timings":  {
+                                     "ProbeSeconds":  0.0789124,
+                                     "EncodeAndMuxSeconds":  0.2523426,
+                                     "ValidationSeconds":  0.1877114,
+                                     "PromotionSeconds":  0.0172375
+                                 },
+                     "FastStartRelocationSeconds":  null,
+                     "FastStartTiming":  "Included in EncodeAndMuxSeconds; not separately measured",
+                     "OutputSHA256":  "801a3c31b109844c1d147905033ada067fd88b9fce6eae82ba190214fea160b2",
+                     "StructuralValidation":  "Passed",
+                     "Playback":  {
+                                      "Status":  "NotRun",
+                                      "Observer":  null,
+                                      "ObservedAt":  null,
+                                      "FacialDetail":  null,
+                                      "Text":  null,
+                                      "Motion":  null,
+                                      "Audio":  null,
+                                      "Sync":  null,
+                                      "Notes":  null
+                                  }
+                 },
+                 {
+                     "Order":  2,
+                     "SourceId":  "synthetic-01",
+                     "ProfileId":  "default",
+                     "Repeat":  2,
+                     "Experimental":  false,
+                     "Settings":  {
+                                      "VideoCodec":  "libx264",
+                                      "Preset":  "veryfast",
+                                      "CRF":  22,
+                                      "PixelFormat":  "yuv420p",
+                                      "ColourPolicy":  "SDRCompatibility",
+                                      "AudioCodec":  "aac",
+                                      "AudioBitrate":  "160k",
+                                      "Container":  "mp4",
+                                      "FastStart":  true,
+                                      "HeightCap":  1080,
+                                      "Applied":  true
+                                  },
+                     "CommandTokens":  [
+                                           "-hide_banner",
+                                           "-stdin",
+                                           "-nostats",
+                                           "-progress",
+                                           "pipe:1",
+                                           "-n",
+                                           "-i",
+                                           "\u003cSOURCE\u003e",
+                                           "-map",
+                                           "0:0",
+                                           "-map",
+                                           "0:1",
+                                           "-c:v",
+                                           "libx264",
+                                           "-preset",
+                                           "veryfast",
+                                           "-crf",
+                                           "22",
+                                           "-pix_fmt:v:0",
+                                           "yuv420p",
+                                           "-color_range:v:0",
+                                           "tv",
+                                           "-c:a",
+                                           "aac",
+                                           "-b:a",
+                                           "160k",
+                                           "-movflags",
+                                           "+faststart",
+                                           "-metadata",
+                                           "title=synthetic-01",
+                                           "\u003cOUTPUT\u003e"
+                                       ],
+                     "Outcome":  "Completed",
+                     "Size":  {
+                                  "InputBytes":  1134269,
+                                  "OutputBytes":  235009,
+                                  "SizeChangeBytes":  -899260,
+                                  "SizeChangePercent":  -79.281017113224451,
+                                  "SavingsPercent":  79.281017113224451,
+                                  "State":  "Reduction"
+                              },
+                     "DurationSeconds":  4,
+                     "ElapsedSeconds":  0.4429265,
+                     "Timings":  {
+                                     "ProbeSeconds":  0.0670684,
+                                     "EncodeAndMuxSeconds":  0.18849739999999998,
+                                     "ValidationSeconds":  0.09019039999999999,
+                                     "PromotionSeconds":  0.0118056
+                                 },
+                     "FastStartRelocationSeconds":  null,
+                     "FastStartTiming":  "Included in EncodeAndMuxSeconds; not separately measured",
+                     "OutputSHA256":  "801a3c31b109844c1d147905033ada067fd88b9fce6eae82ba190214fea160b2",
+                     "StructuralValidation":  "Passed",
+                     "Playback":  {
+                                      "Status":  "NotRun",
+                                      "Observer":  null,
+                                      "ObservedAt":  null,
+                                      "FacialDetail":  null,
+                                      "Text":  null,
+                                      "Motion":  null,
+                                      "Audio":  null,
+                                      "Sync":  null,
+                                      "Notes":  null
+                                  }
+                 },
+                 {
+                     "Order":  3,
+                     "SourceId":  "synthetic-01",
+                     "ProfileId":  "default",
+                     "Repeat":  3,
+                     "Experimental":  false,
+                     "Settings":  {
+                                      "VideoCodec":  "libx264",
+                                      "Preset":  "veryfast",
+                                      "CRF":  22,
+                                      "PixelFormat":  "yuv420p",
+                                      "ColourPolicy":  "SDRCompatibility",
+                                      "AudioCodec":  "aac",
+                                      "AudioBitrate":  "160k",
+                                      "Container":  "mp4",
+                                      "FastStart":  true,
+                                      "HeightCap":  1080,
+                                      "Applied":  true
+                                  },
+                     "CommandTokens":  [
+                                           "-hide_banner",
+                                           "-stdin",
+                                           "-nostats",
+                                           "-progress",
+                                           "pipe:1",
+                                           "-n",
+                                           "-i",
+                                           "\u003cSOURCE\u003e",
+                                           "-map",
+                                           "0:0",
+                                           "-map",
+                                           "0:1",
+                                           "-c:v",
+                                           "libx264",
+                                           "-preset",
+                                           "veryfast",
+                                           "-crf",
+                                           "22",
+                                           "-pix_fmt:v:0",
+                                           "yuv420p",
+                                           "-color_range:v:0",
+                                           "tv",
+                                           "-c:a",
+                                           "aac",
+                                           "-b:a",
+                                           "160k",
+                                           "-movflags",
+                                           "+faststart",
+                                           "-metadata",
+                                           "title=synthetic-01",
+                                           "\u003cOUTPUT\u003e"
+                                       ],
+                     "Outcome":  "Completed",
+                     "Size":  {
+                                  "InputBytes":  1134269,
+                                  "OutputBytes":  235009,
+                                  "SizeChangeBytes":  -899260,
+                                  "SizeChangePercent":  -79.281017113224451,
+                                  "SavingsPercent":  79.281017113224451,
+                                  "State":  "Reduction"
+                              },
+                     "DurationSeconds":  4,
+                     "ElapsedSeconds":  0.5076244,
+                     "Timings":  {
+                                     "ProbeSeconds":  0.069177599999999992,
+                                     "EncodeAndMuxSeconds":  0.2214214,
+                                     "ValidationSeconds":  0.10769569999999999,
+                                     "PromotionSeconds":  0.0160988
+                                 },
+                     "FastStartRelocationSeconds":  null,
+                     "FastStartTiming":  "Included in EncodeAndMuxSeconds; not separately measured",
+                     "OutputSHA256":  "801a3c31b109844c1d147905033ada067fd88b9fce6eae82ba190214fea160b2",
+                     "StructuralValidation":  "Passed",
+                     "Playback":  {
+                                      "Status":  "NotRun",
+                                      "Observer":  null,
+                                      "ObservedAt":  null,
+                                      "FacialDetail":  null,
+                                      "Text":  null,
+                                      "Motion":  null,
+                                      "Audio":  null,
+                                      "Sync":  null,
+                                      "Notes":  null
+                                  }
+                 }
+             ],
+    "Spread":  [
+                   {
+                       "SourceId":  "synthetic-01",
+                       "ProfileId":  "default",
+                       "ElapsedSeconds":  {
+                                              "Count":  3,
+                                              "Minimum":  0.4429265,
+                                              "Median":  0.5076244,
+                                              "Maximum":  0.8004391,
+                                              "Range":  0.35751259999999996
+                                          },
+                       "ProbeSeconds":  {
+                                            "Count":  3,
+                                            "Minimum":  0.0670684,
+                                            "Median":  0.069177599999999992,
+                                            "Maximum":  0.0789124,
+                                            "Range":  0.011843999999999993
+                                        },
+                       "EncodeAndMuxSeconds":  {
+                                                   "Count":  3,
+                                                   "Minimum":  0.18849739999999998,
+                                                   "Median":  0.2214214,
+                                                   "Maximum":  0.2523426,
+                                                   "Range":  0.063845199999999991
+                                               },
+                       "ValidationSeconds":  {
+                                                 "Count":  3,
+                                                 "Minimum":  0.09019039999999999,
+                                                 "Median":  0.10769569999999999,
+                                                 "Maximum":  0.1877114,
+                                                 "Range":  0.09752100000000001
+                                             },
+                       "PromotionSeconds":  {
+                                                "Count":  3,
+                                                "Minimum":  0.0118056,
+                                                "Median":  0.0160988,
+                                                "Maximum":  0.0172375,
+                                                "Range":  0.0054319
+                                            },
+                       "OutputBytes":  {
+                                           "Count":  3,
+                                           "Minimum":  235009,
+                                           "Median":  235009,
+                                           "Maximum":  235009,
+                                           "Range":  0
+                                       }
+                   }
+               ],
+    "Limitations":  [
+                        "Measured local warm-cache examples; run order recorded. Results vary; valid outputs can grow.",
+                        "Synthetic patterns do not establish representative interview quality or playback integrity.",
+                        "Structural validation is not full visual/audio integrity. Playback observations remain NotRun until owner-recorded.",
+                        "Faststart finalization is inside the encoder/mux process; its independent time is unavailable.",
+                        "Default uses Compress-One; experimental path uses the same planning/output-safety helpers with only preset or CRF changed.",
+                        "Paths replaced by placeholders; raw diagnostic objects and input tags excluded. Private reports/media remain outside Git."
+                    ]
+}
