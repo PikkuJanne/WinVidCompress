@@ -392,7 +392,10 @@
           "tier": "manual",
           "status": "passed",
           "notes": "D005 supported routes verified from owner-confirmed Explorer folder/ten-file drops and literal menu session on 2026-10-05; exact native/bound paths, source/helper hashes and sentinels agree. Earlier zero/single retained; historical unsupported BAT percent failure preserved.",
-          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
+          "evidence": [
+            "evidence/WVC-M1-02.md",
+            "evidence/WVC-M1-02.json"
+          ]
         },
         {
           "id": "WVC-M1-02-A02",
@@ -400,14 +403,20 @@
           "tier": "manual",
           "status": "passed",
           "notes": "Owner-confirmed real menu file/folder preserves %PATH% and !NAME! with matching variables. Supplemental native PS1 subcheck preserves both; automatic within human session, not separately typed. Matching-variable BAT and both-host direct coverage retained under D005.",
-          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
+          "evidence": [
+            "evidence/WVC-M1-02.md",
+            "evidence/WVC-M1-02.json"
+          ]
         },
         {
           "id": "WVC-M1-02-A03",
           "description": "No Invoke-Expression, dynamically constructed cmd /c pipeline or broad execution-policy changes are introduced.",
           "tier": "targeted",
           "status": "passed",
-          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
+          "evidence": [
+            "evidence/WVC-M1-02.md",
+            "evidence/WVC-M1-02.json"
+          ]
         },
         {
           "id": "WVC-M1-02-A04",
@@ -415,7 +424,10 @@
           "tier": "manual",
           "status": "passed",
           "notes": "Owner reported prepared Explorer checks passed; tentative wording preserved in evidence.",
-          "evidence": ["evidence/WVC-M1-02.md", "evidence/WVC-M1-02.json"]
+          "evidence": [
+            "evidence/WVC-M1-02.md",
+            "evidence/WVC-M1-02.json"
+          ]
         }
       ],
       "approval_gate": null,
@@ -2590,7 +2602,7 @@
       "title": "Reconstruct from GitHub and present a release candidate for approval",
       "milestone": "M5",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         18,
         21,
@@ -2647,7 +2659,7 @@
       "approval_gate": "Merge to default branch, tags, GitHub release publication and website deployment are separate explicit owner approvals.",
       "implementation_commits": [],
       "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "notes": "Preparing owner-selected1.0.0 from owner-merged PR33/main2c90ca324ec147485644b1a738ae03fb3c901274; no runtime/launcher/license/default changes. Final clean-live-clone/test/package/reconciliation and concrete candidate acceptance remain pending. Minimal scope expansion: VERSION/CHANGELOG as expressly directed in prior owner handoff."
     }
   ]
 }
