@@ -1,5 +1,13 @@
 # Current programme status
 
+Updated: 2026-10-08. **WVC-M5-05 accepted; 31 verified / 1 accepted; all 128 criteria passed. PR 34 merged; GitHub v1.0.0 published and public assets verified.** [Publication](../releases/V1.0.0_PUBLICATION.md), [approval](evidence/WVC-M5-05-approval.md), [evidence](evidence/WVC-M5-05-publication.md).
+
+Main merge **7d6a13ab411f36943b538607db455531145f2a9a** preserves reviewed3b9; tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd** retains the exact accepted ZIP **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**, 250197 bytes. Release published **2026-10-08T15:15:15Z**, with only ZIP/checksum assets. Fresh public downloads match both approved originals; API, tag, merge, provenance and payload verification32/0 exit0, independent review42/0. Approval-head push/PR CI passed before merge. Actual merged-main CI37799140078 also passed PS5.1 1006/0/0/0 and PS7 1016/0/0/0; every step/two sanitized summaries inspected, independent review21/0. Final metadata CI is separately reported after push.
+
+Prepared static download facts identify the verified release; historical candidate, screenshot, example and source links stay unchanged. Existing regression fixtures retain explicit draft coverage and published-state validation. Metadata tests: PS5.1 18/0, PS7 28/0, Quick986/0, explicit analysis1 file/zero diagnostics; all exits0. No software task remains; exact next is review/main integration of the publication metadata handoff. PR34 merge authorization does not grant another PR merge. No website hosting, new runtime, quality change, bundling/signing or broader-support approval. Original failures/omissions stay dated; the owner accepted stated exclusions without new observations.
+
+# Historical approval checkpoint (before merge/publication)
+
 Updated2026-10-08. **WVC-M5-05 accepted; all128 criteria passed:31 verified /1 accepted.** Actual owner decision "A04 approved" accepts exact source06e803d8bfb56df0fd48cd5e073439f3ea93a4fd, primary ZIP5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858 and documented support exclusions. Separate reply "Also authorize merging PR 34" grants that merge. [Approval record](evidence/WVC-M5-05-approval.md), [candidate](../releases/V1.0.0_CANDIDATE.md).
 
 Next: execute the authorized PR34 merge and retained conditional v1.0.0 GitHub publication. Tag/package provenance must remain exact accepted06e; publish its unchanged PS5.1 ZIP/checksum, verify downloaded bytes and actual release facts, then record the handoff. No website hosting, dependency bundling/signing or default-quality change is authorized. Unverified checks/support claims remain excluded, not passed.

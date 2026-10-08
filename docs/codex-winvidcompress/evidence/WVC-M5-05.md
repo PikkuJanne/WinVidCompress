@@ -1,5 +1,7 @@
 # WVC-M5-05 — final clean-GitHub candidate and reconciliation
 
+Current 2026-10-08: A04 accepted; PR 34merged **7d6a13ab411f36943b538607db455531145f2a9a**; GitHub v1.0.0 published **2026-10-08T15:15:15Z**, tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**, unchanged approved primary ZIP SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. Actualpublicdownload readback32/0. [Verified publication](WVC-M5-05-publication.md). No website hosting; all unverified checks/accepted exclusions remain unverified. Earlier pending statements below are dated preparation/approval history, not the current publication state.
+
 Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
 
 ## Preparation record (before owner approval)

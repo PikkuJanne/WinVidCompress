@@ -1,5 +1,7 @@
 # WVC-M5-05 session — 2026-10-08
 
+Current 2026-10-08: A04 accepted; PR 34merged **7d6a13ab411f36943b538607db455531145f2a9a**; GitHub v1.0.0 published **2026-10-08T15:15:15Z**, tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**, unchanged approved primary ZIP SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. Actualpublicdownload readback32/0. [Verified publication](WVC-M5-05-publication.md). No website hosting; all unverified checks/accepted exclusions remain unverified. Earlier pending statements below are dated preparation/approval history, not the current publication state.
+
 Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
 
 ## Preparation record (before owner approval)
@@ -25,3 +27,13 @@ Final authored-document/tracker/source/artifact/privacy audit:561/0/0/0 exit0,12
 Owner follow-up2026-10-08: actualA04 approval and separate PR34 merge permission recorded; taskaccepted/all128passed. Existing conditional GitHubv1.0.0 publication is now actionable after authorizedmerge. Samecleanbranch56e/base2c90 checked/fetched, no operations/conflicts/unknown changes. Source/video/artifacts unchanged. Exact approval/CI/next actions in separate approval record; no self-SHA loop.
 
 Approval-only targeted integrity:482/0/0/0 exit0;128 local links resolved. Exact helper/command/report SHA in JSON. Application tests are retained from exact tested source; no new manual/perceptual observation invented. Final approval-head CI and synchronization are externally inspected after push.
+
+Authorized follow-up: PR34 exact3b9 head passedCI then merge7d6a13ab411f36943b538607db455531145f2a9a at15:14:47Z; ownerconditional v1.0.0 publication executed15:15:15Z with tag06e and unchanged accepted ZIP/checksum. Public freshdownload/readback32/0. Postpublication staticfacts/fixture scope recorded; no hosting/source/media/artifact mutation. Finalfeaturehandoff externally synchronized after commit/push; metadata checks completed and recorded below.
+
+Actual publication-metadata checks: PS5.1 WebsiteContent 18/0/0/0; PS7 WebsiteContent 28/0/0/0; PS5.1 Quick 986/0/0/0; all observed exits 0. Changed-file analysis: 1 file / zero diagnostics / exit 0. Tested HEAD3b9 plus the precise dirty metadata, fixture and document tree; four input file hashes, exact commands, hosts, reports and helper hashes are in JSON. Original candidate tests and raw failures are preserved. No unrelated Full/manual repeat.
+
+Initial static command compared committed HEAD3b9 to the same base and analyzed 0 files, missing the dirty test edit. Independent review caught the scope gap; explicit -Paths recovery analyzed 1 file / zero diagnostics / exit 0. Original report/exit 0 retained as scope-incomplete, not a completed changed-file check.
+
+Actual merged-main CI37799140078 passed at7d6a13a: PS5.1 1006/0/0/0 and PS7 1016/0/0/0, both exit0; analysis1file/zero diagnostics each. Every jobstep/two sanitized summaries reviewed independently,21/0/0/0 exit0. This verifies merged main, not the later metadata handoff; finalfeature CI is separately observed after push.
+
+Final publication/document/tracker/privacy/source/metadata-input audit:572/0/0/0 exit0,154 local links resolved; exact command/report/helper hashes in JSON. Independent metadata review36/0 exit0 and public-download review42/0 exit0 retain original review/scope observations without regrading application tests. Final feature SHA/live refs/CI are externally reported after push; no self-SHA embedded.

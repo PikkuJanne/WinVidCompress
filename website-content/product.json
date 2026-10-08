@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "draft_not_for_publication",
+  "status": "published",
   "product_id": "winvidcompress",
   "name": "WinVidCompress",
   "summary": "A local Windows video compressor built with PowerShell and FFmpeg. Drag files or folders onto the launcher to create consistent H.264/AAC MP4 viewing copies.",
@@ -57,11 +57,11 @@
     "ffmpeg_download": "https://ffmpeg.org/download.html",
     "ffmpeg_license": "https://ffmpeg.org/legal.html"
   },
-  "published_version": null,
-  "release_date": null,
-  "release_url": null,
-  "download_url": null,
-  "sha256": null,
+  "published_version": "1.0.0",
+  "release_date": "2026-10-08",
+  "release_url": "https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.0",
+  "download_url": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip",
+  "sha256": "5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
   "screenshots": [
     {
       "file": "screenshots/menu.png",
@@ -89,7 +89,7 @@
     "Compatible source tags may remain. Compression does not sanitize private metadata.",
     "Structural validation does not prove full visual/audio integrity. Bounded recorded owner playback checks are not whole-original, HDR or every-player acceptance.",
     "Remote SMB/disconnection, arbitrary filesystems/long paths, power loss, hostile substitution, console close and detached descendants have broader unverified limits.",
-    "Final release-source reconstruction, candidate acceptance, browser/MOTW, fresh-profile and default-Videos first launch remain separate distribution limits.",
-    "Unsigned, tool-only unpublished candidate. Checksums detect changed bytes, not publisher authenticity or guaranteed safety. FFmpeg has separate build-dependent license terms."
+    "Release source/ZIP verified and candidate accepted on 2026-10-08 with documented exclusions. Browser/MOTW, fresh-profile, default-Videos first launch and final-candidate perceptual checks remain unobserved.",
+    "Unsigned, tool-only release. Historical candidate provenance remains dated. Checksums detect changed bytes, not publisher authenticity or guaranteed safety. FFmpeg has separate build-dependent license terms."
   ]
 }
