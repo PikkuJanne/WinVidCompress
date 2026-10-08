@@ -1,0 +1,2040 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M5-05",
+  "acceptance_ids": [
+    "WVC-M5-05-A01",
+    "WVC-M5-05-A02",
+    "WVC-M5-05-A03",
+    "WVC-M5-05-A04"
+  ],
+  "owner_approval_record": "WVC-M5-05-approval.json",
+  "publication": {
+    "SchemaVersion": 1,
+    "ObservedUTC": "2026-10-08T15:15:19.796775+00:00",
+    "OwnerAuthorization": "Actual A04 acceptance; separate PR34 merge permission; retained conditional publishv1.0.0 instruction after allsoftwaretasks complete.",
+    "AcceptedSource": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+    "ApprovalCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+    "MergeCommit": "7d6a13ab411f36943b538607db455531145f2a9a",
+    "MergeParents": [
+      "2c90ca324ec147485644b1a738ae03fb3c901274",
+      "3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+    ],
+    "ReleaseId": 406971113,
+    "ReleaseURL": "https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.0",
+    "Tag": "v1.0.0",
+    "TagCommit": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+    "PublishedAt": "2026-10-08T15:15:15Z",
+    "Draft": false,
+    "Prerelease": false,
+    "Assets": [
+      {
+        "id": 622181867,
+        "name": "WinVidCompress-1.0.0.zip",
+        "size": 250197,
+        "state": "uploaded",
+        "digest": "sha256:5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
+        "browser_download_url": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip"
+      },
+      {
+        "id": 622181866,
+        "name": "WinVidCompress-1.0.0.zip.sha256",
+        "size": 91,
+        "state": "uploaded",
+        "digest": "sha256:50b84ed5d0e868aac2850689ed7574c1901372873bc95d57ad92bc6b9260c884",
+        "browser_download_url": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip.sha256"
+      }
+    ],
+    "DownloadedSHA256": {
+      "WinVidCompress-1.0.0.zip": "5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
+      "WinVidCompress-1.0.0.zip.sha256": "50b84ed5d0e868aac2850689ed7574c1901372873bc95d57ad92bc6b9260c884"
+    },
+    "DownloadDirectory": "$publicationReadback",
+    "Counts": {
+      "Passed": 32,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "ExitCode": 0,
+    "Cases": [
+      {
+        "Id": "PR34-actually-merged",
+        "Status": "Passed"
+      },
+      {
+        "Id": "merged-exact-approved-PR-head",
+        "Status": "Passed"
+      },
+      {
+        "Id": "merge-parents-preserve-accepted-source",
+        "Status": "Passed"
+      },
+      {
+        "Id": "tag-resolves-exact-accepted-source",
+        "Status": "Passed"
+      },
+      {
+        "Id": "public-final-release",
+        "Status": "Passed"
+      },
+      {
+        "Id": "canonical-public-release-URL",
+        "Status": "Passed"
+      },
+      {
+        "Id": "only-approved-ZIP-and-checksum-assets",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip/public-downloaded-bytes-equal-approved-original",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip/actual-upload-state-size",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip/canonical-asset-URL",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip/GitHub-reported-digest",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip.sha256/public-downloaded-bytes-equal-approved-original",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip.sha256/actual-upload-state-size",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip.sha256/canonical-asset-URL",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress-1.0.0.zip.sha256/GitHub-reported-digest",
+        "Status": "Passed"
+      },
+      {
+        "Id": "downloaded-ZIP-final-SHA-and-size",
+        "Status": "Passed"
+      },
+      {
+        "Id": "downloaded-checksum-sidecar-exact",
+        "Status": "Passed"
+      },
+      {
+        "Id": "published-PACKAGE-preserves-accepted-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "published-MANIFEST-source-version",
+        "Status": "Passed"
+      },
+      {
+        "Id": "published-13-entry-positive-allowlist",
+        "Status": "Passed"
+      },
+      {
+        "Id": "CHANGELOG.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "LICENSE/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "PACKAGE.json/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "README.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "SECURITY.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "THIRD_PARTY_NOTICES.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "VERSION/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress.bat/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "WinVidCompress.ps1/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "docs/user/REFERENCE.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "docs/user/TROUBLESHOOTING.md/published-payload-SHA",
+        "Status": "Passed"
+      },
+      {
+        "Id": "docs/user/VERIFICATION.md/published-payload-SHA",
+        "Status": "Passed"
+      }
+    ],
+    "Command": "& $wvcPython .test-results/m505/Verify-Publication.py; GHAPI release/tag/PR/commit reads plus ghrelease download to fresh owned ignored directory, no clobber.",
+    "Limits": "Byte/provenance/upload verification only; no new manual/perceptual/support/security/signing/legal-clearance claims or website hosting."
+  },
+  "publication_report_sha256": "dc0277c7c29edf529a5739d66e7824165f9f5b9b211ed96c86f80e2b1fa35cc3",
+  "publication_helper_sha256": "c57a1d4bad496cfc9ae01dc1a539d80d112f873557a02461e43fced8fd5d88e9",
+  "scope_expansion": "Verified published static-download fields, current documentation and minimal state-independent existing website regression fixtures. No application/launcher/builder/profile/schema/runtime/dependency/asset/screenshot/example change or website deployment.",
+  "metadata_tests": {
+    "ps51": {
+      "controller": {
+        "Scope": "ps51",
+        "ExitCode": 0,
+        "Report": "$repo\\.test-results\\m505\\publication-checks-ca8a587ee1ac430ead1a29b1a44a7644\\ps51.json",
+        "Log": "$repo\\.test-results\\m505\\publication-checks-ca8a587ee1ac430ead1a29b1a44a7644\\ps51.log",
+        "Owner": "$repo\\.test-results\\m505\\publication-checks-ca8a587ee1ac430ead1a29b1a44a7644",
+        "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "Dirty": true,
+        "ReportSHA256": "b050dbff8e17fb69ab5dbad724dcffa0192aa4566c1d42ffd9e5b124e20b07f1",
+        "Command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope ps51"
+      },
+      "report": {
+        "SchemaVersion": 1,
+        "Kind": "Pester",
+        "PowerShell": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "Pester": "5.7.1",
+        "Counts": {
+          "Passed": 18,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "OriginalCaseCount": 18,
+        "NonPassedCases": [],
+        "CaseProjection": "Full raw case list remains in the ignored hash-bound original report; shared record retains counts, scope, all nonpassed observations and exact report SHA without duplicating every passing case."
+      },
+      "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope ps51",
+      "tested_tree": "HEAD3b9 with exactly recorded verifiedpublication metadata/currentdocs/state-independentexistingwebsitefixtures; no application/BAT/builder/profile/schema/helper/asset change.",
+      "input_sha256": {
+        "website-content/product.json": "b33db5ef09ba5a7bff4139e3bd588f482b1d01403824f035c12274eceead3abb",
+        "tests/unit/WebsiteContent.Tests.ps1": "02a3823bc62c0d16374d0246c33848862ca8bbbc29d0c402b3fd393e222cdb9b",
+        "website-content/product.schema.json": "5257e51a62079bf1c78d81bd86bcd3bd20b6749f414ae8e9a96c4c107e2fa989",
+        "tests/WebsiteContentSupport.ps1": "d44ea726917017bdb5948e85a8c32e09fc1f6fd90077439b1a08f553d8482943"
+      }
+    },
+    "ps7": {
+      "controller": {
+        "Scope": "ps7",
+        "ExitCode": 0,
+        "Report": "$repo\\.test-results\\m505\\publication-checks-1a14cb949b064ff49363a9262b96fe1c\\ps7.json",
+        "Log": "$repo\\.test-results\\m505\\publication-checks-1a14cb949b064ff49363a9262b96fe1c\\ps7.log",
+        "Owner": "$repo\\.test-results\\m505\\publication-checks-1a14cb949b064ff49363a9262b96fe1c",
+        "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "Dirty": true,
+        "ReportSHA256": "4685738a66d945a4b28bd3d895711723e29f4bd514937bf6920441ea7bf4af80",
+        "Command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope ps7"
+      },
+      "report": {
+        "SchemaVersion": 1,
+        "Kind": "Pester",
+        "PowerShell": "7.6.6",
+        "Edition": "Core",
+        "Pester": "5.7.1",
+        "Counts": {
+          "Passed": 28,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "OriginalCaseCount": 28,
+        "NonPassedCases": [],
+        "CaseProjection": "Full raw case list remains in the ignored hash-bound original report; shared record retains counts, scope, all nonpassed observations and exact report SHA without duplicating every passing case."
+      },
+      "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope ps7",
+      "tested_tree": "HEAD3b9 with exactly recorded verifiedpublication metadata/currentdocs/state-independentexistingwebsitefixtures; no application/BAT/builder/profile/schema/helper/asset change.",
+      "input_sha256": {
+        "website-content/product.json": "b33db5ef09ba5a7bff4139e3bd588f482b1d01403824f035c12274eceead3abb",
+        "tests/unit/WebsiteContent.Tests.ps1": "02a3823bc62c0d16374d0246c33848862ca8bbbc29d0c402b3fd393e222cdb9b",
+        "website-content/product.schema.json": "5257e51a62079bf1c78d81bd86bcd3bd20b6749f414ae8e9a96c4c107e2fa989",
+        "tests/WebsiteContentSupport.ps1": "d44ea726917017bdb5948e85a8c32e09fc1f6fd90077439b1a08f553d8482943"
+      }
+    },
+    "quick": {
+      "controller": {
+        "Scope": "quick",
+        "ExitCode": 0,
+        "Report": "$repo\\.test-results\\m505\\publication-checks-71598ec5d6a74ff6932c1afd23809365\\quick.json",
+        "Log": "$repo\\.test-results\\m505\\publication-checks-71598ec5d6a74ff6932c1afd23809365\\quick.log",
+        "Owner": "$repo\\.test-results\\m505\\publication-checks-71598ec5d6a74ff6932c1afd23809365",
+        "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "Dirty": true,
+        "ReportSHA256": "ca92dc4336c3909badde0438aa83957d55f57df95167667c7096649a1a5edee0",
+        "Command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope quick"
+      },
+      "report": {
+        "SchemaVersion": 1,
+        "Tier": "Quick",
+        "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "Dirty": true,
+        "Status": "Passed",
+        "ExitCode": 0,
+        "Counts": {
+          "Passed": 986,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "KnownDefectsIncluded": true,
+        "ReleaseAcceptance": false,
+        "Dependencies": {
+          "Pester": "5.7.1",
+          "PSScriptAnalyzer": "1.24.0",
+          "WindowsPowerShell": "5.1",
+          "PowerShell7Minimum": "7.4"
+        },
+        "Hosts": [
+          {
+            "Name": "Current",
+            "Version": "5.1.26100.9444",
+            "Edition": "Desktop"
+          }
+        ],
+        "NativeTools": [],
+        "Fixtures": null,
+        "Limitations": [
+          "Synthetic fixtures/structural probes do not establish playback or full visual/audio integrity.",
+          "Full includes known baseline failures and outstanding coverage; Manual remains unfilled until human evidence."
+        ],
+        "OriginalCaseCount": 986,
+        "NonPassedCases": [],
+        "CaseProjection": "Full raw case list remains in the ignored hash-bound original report; shared record retains counts, scope, all nonpassed observations and exact report SHA without duplicating every passing case."
+      },
+      "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope quick",
+      "tested_tree": "HEAD3b9 with exactly recorded verifiedpublication metadata/currentdocs/state-independentexistingwebsitefixtures; no application/BAT/builder/profile/schema/helper/asset change.",
+      "input_sha256": {
+        "website-content/product.json": "b33db5ef09ba5a7bff4139e3bd588f482b1d01403824f035c12274eceead3abb",
+        "tests/unit/WebsiteContent.Tests.ps1": "02a3823bc62c0d16374d0246c33848862ca8bbbc29d0c402b3fd393e222cdb9b",
+        "website-content/product.schema.json": "5257e51a62079bf1c78d81bd86bcd3bd20b6749f414ae8e9a96c4c107e2fa989",
+        "tests/WebsiteContentSupport.ps1": "d44ea726917017bdb5948e85a8c32e09fc1f6fd90077439b1a08f553d8482943"
+      }
+    },
+    "static": {
+      "controller": {
+        "Scope": "static",
+        "ExitCode": 0,
+        "Report": "$repo\\.test-results\\m505\\publication-checks-9b4953ddb46646b9bc89875eaeb4e1ab\\static.json",
+        "Log": "$repo\\.test-results\\m505\\publication-checks-9b4953ddb46646b9bc89875eaeb4e1ab\\static.log",
+        "Owner": "$repo\\.test-results\\m505\\publication-checks-9b4953ddb46646b9bc89875eaeb4e1ab",
+        "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "Dirty": true,
+        "ReportSHA256": "bdfb457cc11db93e6e78b78e8faabf60ccaeb820165206f1fa128936a6f4c4eb",
+        "Command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope static"
+      },
+      "report": {
+        "SchemaVersion": 1,
+        "AnalyzedFiles": 1,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules",
+        "Passed": true
+      },
+      "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope static",
+      "tested_tree": "HEAD3b9 with exactly recorded verifiedpublication metadata/currentdocs/state-independentexistingwebsitefixtures; no application/BAT/builder/profile/schema/helper/asset change.",
+      "input_sha256": {
+        "website-content/product.json": "b33db5ef09ba5a7bff4139e3bd588f482b1d01403824f035c12274eceead3abb",
+        "tests/unit/WebsiteContent.Tests.ps1": "02a3823bc62c0d16374d0246c33848862ca8bbbc29d0c402b3fd393e222cdb9b",
+        "website-content/product.schema.json": "5257e51a62079bf1c78d81bd86bcd3bd20b6749f414ae8e9a96c4c107e2fa989",
+        "tests/WebsiteContentSupport.ps1": "d44ea726917017bdb5948e85a8c32e09fc1f6fd90077439b1a08f553d8482943"
+      }
+    }
+  },
+  "final_handoff_sync": "pending after final feature commit/push; actual local/live refs externally reported, no self-SHA.",
+  "initial_static_scope_observation": {
+    "controller": {
+      "Scope": "static",
+      "ExitCode": 0,
+      "Report": "$repo\\.test-results\\m505\\publication-checks-b5399a04e4c34d46b2ff9d4b7d30e6c2\\static.json",
+      "Log": "$repo\\.test-results\\m505\\publication-checks-b5399a04e4c34d46b2ff9d4b7d30e6c2\\static.log",
+      "Owner": "$repo\\.test-results\\m505\\publication-checks-b5399a04e4c34d46b2ff9d4b7d30e6c2",
+      "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+      "Dirty": true,
+      "ReportSHA256": "6231a20ba2402edf0db30a3b8ac247ff339d6919fc7deab2d655954a7124fb7d",
+      "Command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m505/Run-Publication-Checks.ps1 -Scope static"
+    },
+    "report": {
+      "SchemaVersion": 1,
+      "AnalyzedFiles": 0,
+      "DiagnosticCount": 0,
+      "Policy": "ErrorsAndSelectedSafetyRules",
+      "Passed": true
+    },
+    "reason": "Initial BaseCommit equaled dirty HEAD3b9, so commit-diff analysis covered0files and did not check the edited test. Retained as scope-incomplete, not an application pass/failure. Recovered explicit -Paths analysis covers1file/zero diagnostics/exit0.",
+    "recovery_command": "& $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $publicationSetup.ModuleRoot -Paths (Join-Path $repo \"tests/unit/WebsiteContent.Tests.ps1\") -ReportPath $freshOwnedReport"
+  },
+  "ci_approval_review": {
+    "report": {
+      "SchemaVersion": 1,
+      "ObservedUTC": "2026-10-08T15:14:12.015473+00:00",
+      "Repository": "PikkuJanne/WinVidCompress",
+      "HandoffCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+      "BaseCommit": "2c90ca324ec147485644b1a738ae03fb3c901274",
+      "PullRequest": {
+        "Number": 34,
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/pull/34",
+        "State": "open",
+        "Draft": true,
+        "HeadCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+        "BaseCommit": "2c90ca324ec147485644b1a738ae03fb3c901274",
+        "CurrentAPIMergeCommit": "e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d",
+        "CurrentAPIMergeParents": [
+          "2c90ca324ec147485644b1a738ae03fb3c901274",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+        ]
+      },
+      "Runs": [
+        {
+          "RunId": 37797768887,
+          "Event": "push",
+          "HeadCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37797768887",
+          "Status": "completed",
+          "Conclusion": "success",
+          "Attempt": 1,
+          "Jobs": [
+            {
+              "Name": "PowerShell7",
+              "Status": "completed",
+              "Conclusion": "success",
+              "Steps": [
+                {
+                  "name": "Set up job",
+                  "number": 1,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 2,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Verify and prepare pinned developer dependencies",
+                  "number": 3,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run real targeted tests and changed-file analysis",
+                  "number": 4,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Preserve sanitized results only",
+                  "number": 5,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 10,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Complete job",
+                  "number": 11,
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            },
+            {
+              "Name": "WindowsPowerShell",
+              "Status": "completed",
+              "Conclusion": "success",
+              "Steps": [
+                {
+                  "name": "Set up job",
+                  "number": 1,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 2,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Verify and prepare pinned developer dependencies",
+                  "number": 3,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run real targeted tests and changed-file analysis",
+                  "number": 4,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Preserve sanitized results only",
+                  "number": 5,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 10,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Complete job",
+                  "number": 11,
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            }
+          ],
+          "Summaries": [
+            {
+              "HostName": "PowerShell7",
+              "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+              "MergeParents": null,
+              "Counts": {
+                "Passed": 1016,
+                "Failed": 0,
+                "Skipped": 0,
+                "NotRun": 0
+              },
+              "CasesChecked": 1016,
+              "Static": {
+                "AnalyzedFiles": 0,
+                "DiagnosticCount": 0,
+                "Policy": "ErrorsAndSelectedSafetyRules"
+              },
+              "Host": {
+                "Version": "7.6.6",
+                "Edition": "Core"
+              },
+              "WindowsVersion": "10.0.26100.0",
+              "RunnerImage": {
+                "Name": null,
+                "Version": "20260925.250.1"
+              },
+              "ReleaseAcceptance": false,
+              "SummaryBinding": ".test-results/m505/ci-approval-agent/37797768887/windows-results-PowerShell7/summary.json",
+              "SHA256": "3d09e1c7f4c1a2d157fafbbadc164357557e5b351f3b779ce47bec478506893a"
+            },
+            {
+              "HostName": "WindowsPowerShell",
+              "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+              "MergeParents": null,
+              "Counts": {
+                "Passed": 1006,
+                "Failed": 0,
+                "Skipped": 0,
+                "NotRun": 0
+              },
+              "CasesChecked": 1006,
+              "Static": {
+                "AnalyzedFiles": 0,
+                "DiagnosticCount": 0,
+                "Policy": "ErrorsAndSelectedSafetyRules"
+              },
+              "Host": {
+                "Version": "5.1.26100.33438",
+                "Edition": "Desktop"
+              },
+              "WindowsVersion": "10.0.26100.0",
+              "RunnerImage": {
+                "Name": null,
+                "Version": "20260925.250.1"
+              },
+              "ReleaseAcceptance": false,
+              "SummaryBinding": ".test-results/m505/ci-approval-agent/37797768887/windows-results-WindowsPowerShell/summary.json",
+              "SHA256": "df0ffc46a01e2d957a4d44ee10bc5b430440d3ed28135d4c28abb636a8ca058f"
+            }
+          ]
+        },
+        {
+          "RunId": 37797778431,
+          "Event": "pull_request",
+          "HeadCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37797778431",
+          "Status": "completed",
+          "Conclusion": "success",
+          "Attempt": 1,
+          "Jobs": [
+            {
+              "Name": "PowerShell7",
+              "Status": "completed",
+              "Conclusion": "success",
+              "Steps": [
+                {
+                  "name": "Set up job",
+                  "number": 1,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 2,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Verify and prepare pinned developer dependencies",
+                  "number": 3,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run real targeted tests and changed-file analysis",
+                  "number": 4,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Preserve sanitized results only",
+                  "number": 5,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 10,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Complete job",
+                  "number": 11,
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            },
+            {
+              "Name": "WindowsPowerShell",
+              "Status": "completed",
+              "Conclusion": "success",
+              "Steps": [
+                {
+                  "name": "Set up job",
+                  "number": 1,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 2,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Verify and prepare pinned developer dependencies",
+                  "number": 3,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Run real targeted tests and changed-file analysis",
+                  "number": 4,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Preserve sanitized results only",
+                  "number": 5,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "number": 10,
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "name": "Complete job",
+                  "number": 11,
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            }
+          ],
+          "Summaries": [
+            {
+              "HostName": "PowerShell7",
+              "SourceCommit": "e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d",
+              "MergeParents": [
+                "2c90ca324ec147485644b1a738ae03fb3c901274",
+                "3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+              ],
+              "Counts": {
+                "Passed": 1016,
+                "Failed": 0,
+                "Skipped": 0,
+                "NotRun": 0
+              },
+              "CasesChecked": 1016,
+              "Static": {
+                "AnalyzedFiles": 1,
+                "DiagnosticCount": 0,
+                "Policy": "ErrorsAndSelectedSafetyRules"
+              },
+              "Host": {
+                "Version": "7.6.6",
+                "Edition": "Core"
+              },
+              "WindowsVersion": "10.0.26100.0",
+              "RunnerImage": {
+                "Name": null,
+                "Version": "20260925.250.1"
+              },
+              "ReleaseAcceptance": false,
+              "SummaryBinding": ".test-results/m505/ci-approval-agent/37797778431/windows-results-PowerShell7/summary.json",
+              "SHA256": "c6356516cd18b95edaf34c08db56862bbd816373bf9350a6c96703d825982dff"
+            },
+            {
+              "HostName": "WindowsPowerShell",
+              "SourceCommit": "e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d",
+              "MergeParents": [
+                "2c90ca324ec147485644b1a738ae03fb3c901274",
+                "3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+              ],
+              "Counts": {
+                "Passed": 1006,
+                "Failed": 0,
+                "Skipped": 0,
+                "NotRun": 0
+              },
+              "CasesChecked": 1006,
+              "Static": {
+                "AnalyzedFiles": 1,
+                "DiagnosticCount": 0,
+                "Policy": "ErrorsAndSelectedSafetyRules"
+              },
+              "Host": {
+                "Version": "5.1.26100.33438",
+                "Edition": "Desktop"
+              },
+              "WindowsVersion": "10.0.26100.0",
+              "RunnerImage": {
+                "Name": null,
+                "Version": "20260925.250.1"
+              },
+              "ReleaseAcceptance": false,
+              "SummaryBinding": ".test-results/m505/ci-approval-agent/37797778431/windows-results-WindowsPowerShell/summary.json",
+              "SHA256": "31e119486d5335fb9d3fa28e34050fbd5627bfd69d660988a2c8e47f2748a350"
+            }
+          ]
+        }
+      ],
+      "Summary": {
+        "Checks": 40,
+        "Passed": 40,
+        "Failed": 0,
+        "PendingRunIds": []
+      },
+      "Checks": [
+        {
+          "Check": "PR34 head/base",
+          "Passed": true
+        },
+        {
+          "Check": "API current merge parents",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/run source/event",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/two expected jobs",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/successful run",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/every step successful",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/one available allowlisted artifact",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/summary-only download",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/all cases/counts inspected",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/complete passed admission",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/host/static",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/PowerShell7/actual pushed test source",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/every step successful",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/one available allowlisted artifact",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/summary-only download",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/all cases/counts inspected",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/complete passed admission",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/host/static",
+          "Passed": true
+        },
+        {
+          "Check": "37797768887/WindowsPowerShell/actual pushed test source",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/run source/event",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/two expected jobs",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/successful run",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/every step successful",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/one available allowlisted artifact",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/summary-only download",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/all cases/counts inspected",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/complete passed admission",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/host/static",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/PowerShell7/actual tested PR merge parents",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/every step successful",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/one available allowlisted artifact",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/summary-only download",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/all cases/counts inspected",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/complete passed admission",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/host/static",
+          "Passed": true
+        },
+        {
+          "Check": "37797778431/WindowsPowerShell/actual tested PR merge parents",
+          "Passed": true
+        }
+      ],
+      "ExitCode": 0,
+      "Invocation": "& $reviewPython .test-results/m505/ci-approval-agent/review-approval.py",
+      "Commands": [
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/pulls/34"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797768887"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797768887/jobs"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797768887/artifacts"
+        ],
+        [
+          "gh",
+          "run",
+          "download",
+          "37797768887",
+          "--repo",
+          "PikkuJanne/WinVidCompress",
+          "--name",
+          "windows-results-PowerShell7",
+          "--dir",
+          ".test-results/m505/ci-approval-agent/37797768887/windows-results-PowerShell7"
+        ],
+        [
+          "gh",
+          "run",
+          "download",
+          "37797768887",
+          "--repo",
+          "PikkuJanne/WinVidCompress",
+          "--name",
+          "windows-results-WindowsPowerShell",
+          "--dir",
+          ".test-results/m505/ci-approval-agent/37797768887/windows-results-WindowsPowerShell"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797778431"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797778431/jobs"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37797778431/artifacts"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/e79c7ad3c7c2f3e71035b9f43bd3f4b0c576065d"
+        ]
+      ],
+      "Limits": [
+        "API current merge identity is separate from actual tested source in a completed summary.",
+        "Pending runs have no passed-test claim.",
+        "Hosted Targeted is not Full/manual/release acceptance.",
+        "Only public metadata and allowlisted sanitized summary artifacts inspected; no raw logs downloaded.",
+        "Private workstation paths and identifying diagnostic values are omitted."
+      ]
+    },
+    "report_sha256": "20e0f24cf98a3a1ce5423c73722e7367cc9e1de9cd9d3ee19675acaf100477c4"
+  },
+  "publication_independent_review": {
+    "report": {
+      "SchemaVersion": 1,
+      "ObservedUTC": "2026-10-08T15:17:01.800699+00:00",
+      "Scope": "Independent read-only public API and fresh-download verification; no tracked-source or Git mutations; no application execution.",
+      "Authorization": "Actual owner A04 accepted concrete source06e/primaryZIP5c26 and documented exclusions; actual separate PR34 merge instruction; retained conditional GitHub publication instruction.",
+      "AcceptedSource": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+      "ApprovalHead": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+      "AuthorizedMerge": "7d6a13ab411f36943b538607db455531145f2a9a",
+      "Tag": "refs/tags/v1.0.0",
+      "TagCommit": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+      "ReleaseId": 406971113,
+      "ReleaseURL": "https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.0",
+      "PublishedAt": "2026-10-08T15:15:15Z",
+      "Assets": [
+        {
+          "id": 622181867,
+          "name": "WinVidCompress-1.0.0.zip",
+          "size": 250197,
+          "state": "uploaded",
+          "digest": "sha256:5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
+          "browser_download_url": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip"
+        },
+        {
+          "id": 622181866,
+          "name": "WinVidCompress-1.0.0.zip.sha256",
+          "size": 91,
+          "state": "uploaded",
+          "digest": "sha256:50b84ed5d0e868aac2850689ed7574c1901372873bc95d57ad92bc6b9260c884",
+          "browser_download_url": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip.sha256"
+        }
+      ],
+      "DownloadedSHA256": {
+        "WinVidCompress-1.0.0.zip": "5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858",
+        "WinVidCompress-1.0.0.zip.sha256": "50b84ed5d0e868aac2850689ed7574c1901372873bc95d57ad92bc6b9260c884"
+      },
+      "DownloadBinding": ".test-results/m505/publication-independent-agent/fresh-65a7d92794db4ad89d60a2b5cbf8af81",
+      "RootVerificationSHA256": "dc0277c7c29edf529a5739d66e7824165f9f5b9b211ed96c86f80e2b1fa35cc3",
+      "Counts": {
+        "Passed": 42,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "ExitCode": 0,
+      "Checks": [
+        {
+          "Name": "actual authorized PR34 merged exact approval head",
+          "Status": "Passed"
+        },
+        {
+          "Name": "merge preserves exact base/head parents",
+          "Status": "Passed"
+        },
+        {
+          "Name": "merge tree equals approved PR tree",
+          "Status": "Passed"
+        },
+        {
+          "Name": "live main records authorized merge",
+          "Status": "Passed"
+        },
+        {
+          "Name": "accepted source ancestor of actual merge",
+          "Status": "Passed"
+        },
+        {
+          "Name": "tag commit exactly accepted package source",
+          "Status": "Passed"
+        },
+        {
+          "Name": "release canonical published final state",
+          "Status": "Passed"
+        },
+        {
+          "Name": "exactly two authorized assets no duplicates",
+          "Status": "Passed"
+        },
+        {
+          "Name": "only two fresh downloaded files",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip/fresh bytes equal accepted local original",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip/API size upload-state digest matches bytes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip/canonical verified public URL",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip.sha256/fresh bytes equal accepted local original",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip.sha256/API size upload-state digest matches bytes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress-1.0.0.zip.sha256/canonical verified public URL",
+          "Status": "Passed"
+        },
+        {
+          "Name": "fresh ZIP exact approved SHA256 and size",
+          "Status": "Passed"
+        },
+        {
+          "Name": "sidecar exact filename and byte checksum",
+          "Status": "Passed"
+        },
+        {
+          "Name": "exact 13-entry positive allowlist and unique names",
+          "Status": "Passed"
+        },
+        {
+          "Name": "package exact accepted provenance/build-stage/tool-only",
+          "Status": "Passed"
+        },
+        {
+          "Name": "manifest exact accepted source/version",
+          "Status": "Passed"
+        },
+        {
+          "Name": "internal/external manifest bytes equal",
+          "Status": "Passed"
+        },
+        {
+          "Name": "manifest exact all non-self entries",
+          "Status": "Passed"
+        },
+        {
+          "Name": "CHANGELOG.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "LICENSE/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "PACKAGE.json/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "README.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "SECURITY.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "THIRD_PARTY_NOTICES.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "VERSION/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress.bat/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress.ps1/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "docs/user/REFERENCE.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "docs/user/TROUBLESHOOTING.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "docs/user/VERIFICATION.md/all published payload sizes/hashes",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress.ps1/published bytes equal accepted source Git blob",
+          "Status": "Passed"
+        },
+        {
+          "Name": "WinVidCompress.bat/published bytes equal accepted source Git blob",
+          "Status": "Passed"
+        },
+        {
+          "Name": "LICENSE/published bytes equal accepted source Git blob",
+          "Status": "Passed"
+        },
+        {
+          "Name": "VERSION/published bytes equal accepted source Git blob",
+          "Status": "Passed"
+        },
+        {
+          "Name": "package source links remain exact accepted source",
+          "Status": "Passed"
+        },
+        {
+          "Name": "release notes identify exact accepted source/hash/build marker",
+          "Status": "Passed"
+        },
+        {
+          "Name": "release notes preserve raw failure and support exclusions",
+          "Status": "Passed"
+        },
+        {
+          "Name": "root independent-readback result matches own API/hash",
+          "Status": "Passed"
+        }
+      ],
+      "Invocation": "& $reviewPython -B .test-results/m505/publication-independent-agent/review-publication.py",
+      "Commands": [
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/releases/tags/v1.0.0"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/ref/tags/v1.0.0"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/pulls/34"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/7d6a13ab411f36943b538607db455531145f2a9a"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/branches/main"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/compare/06e803d8bfb56df0fd48cd5e073439f3ea93a4fd...7d6a13ab411f36943b538607db455531145f2a9a"
+        ],
+        [
+          "gh",
+          "release",
+          "download",
+          "v1.0.0",
+          "--repo",
+          "PikkuJanne/WinVidCompress",
+          "--dir",
+          ".test-results/m505/publication-independent-agent/fresh-65a7d92794db4ad89d60a2b5cbf8af81",
+          "--pattern",
+          "WinVidCompress-1.0.0.zip",
+          "--pattern",
+          "WinVidCompress-1.0.0.zip.sha256"
+        ],
+        [
+          "git",
+          "show",
+          "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd:WinVidCompress.ps1"
+        ],
+        [
+          "git",
+          "show",
+          "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd:WinVidCompress.bat"
+        ],
+        [
+          "git",
+          "show",
+          "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd:LICENSE"
+        ],
+        [
+          "git",
+          "show",
+          "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd:VERSION"
+        ]
+      ],
+      "Limitations": [
+        "Exact byte/source/provenance/publication facts only; no new playback, MOTW, fresh-profile, filesystem, security/signing or legal claims.",
+        "No authorization to merge a later PR35 or deploy website hosting is inferred.",
+        "Candidate:true is preserved preparation provenance; tag source archive predates later approval records, explicitly distinguished by release notes."
+      ]
+    },
+    "report_sha256": "ff18c0b61da773a2877466d74c97a6ec4bc7430657a706bbf3cc2831f5eb7425"
+  },
+  "publication_metadata_review": {
+    "report": {
+      "SchemaVersion": 1,
+      "ObservedUTC": "2026-10-08T15:25:05.625466+00:00",
+      "Review": "Read-only publication metadata/diff/invariant audit",
+      "ReviewBaseCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+      "ObservedHeadCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+      "WorkingTreeReview": true,
+      "ChangedPaths": [
+        "docs/codex-winvidcompress/ACCEPTANCE_MATRIX.md",
+        "docs/codex-winvidcompress/NEXT_SESSION.md",
+        "docs/codex-winvidcompress/STATUS.md",
+        "docs/codex-winvidcompress/TASKS.json",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05-approval.json",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05-publication.json",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05-publication.md",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05-session.md",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05.json",
+        "docs/codex-winvidcompress/evidence/WVC-M5-05.md",
+        "docs/releases/FINAL_RECONCILIATION.md",
+        "docs/releases/PACKAGING.md",
+        "docs/releases/V1.0.0_CANDIDATE.md",
+        "docs/releases/V1.0.0_PUBLICATION.md",
+        "docs/releases/WEBSITE_CONTENT.md",
+        "tests/unit/WebsiteContent.Tests.ps1",
+        "website-content/README.md",
+        "website-content/product.json"
+      ],
+      "ChangedProductKeys": [
+        "status",
+        "published_version",
+        "release_date",
+        "release_url",
+        "download_url",
+        "sha256",
+        "known_limitations"
+      ],
+      "Checks": [
+        {
+          "Check": "only intended Product fields changed",
+          "Passed": true
+        },
+        {
+          "Check": "dated Product invariant/candidate",
+          "Passed": true
+        },
+        {
+          "Check": "dated Product invariant/screenshots",
+          "Passed": true
+        },
+        {
+          "Check": "dated Product invariant/measured_examples",
+          "Passed": true
+        },
+        {
+          "Check": "dated Product invariant/links",
+          "Passed": true
+        },
+        {
+          "Check": "dated Product invariant/reviewed_default_profile",
+          "Passed": true
+        },
+        {
+          "Check": "existing support limits preserved",
+          "Passed": true
+        },
+        {
+          "Check": "actual final public release",
+          "Passed": true
+        },
+        {
+          "Check": "actual exact tag source",
+          "Passed": true
+        },
+        {
+          "Check": "published Product facts match actual API",
+          "Passed": true
+        },
+        {
+          "Check": "only approved release assets",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/WinVidCompress.ps1",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/WinVidCompress.bat",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/LICENSE",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/tools/package.ps1",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/tests/WebsiteContentSupport.ps1",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/website-content/product.schema.json",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/website-content/screenshots/menu.png",
+          "Passed": true
+        },
+        {
+          "Check": "unchanged file/website-content/examples/synthetic-default.json",
+          "Passed": true
+        },
+        {
+          "Check": "It-case structure/count retained",
+          "Passed": true
+        },
+        {
+          "Check": "retained assertion/Should -Throw",
+          "Passed": true
+        },
+        {
+          "Check": "retained assertion/Should -BeFalse",
+          "Passed": true
+        },
+        {
+          "Check": "retained assertion/Should -BeExactly 'null'",
+          "Passed": true
+        },
+        {
+          "Check": "retained assertion/Should -BeExactly 'string'",
+          "Passed": true
+        },
+        {
+          "Check": "explicit draft helper resets all release facts",
+          "Passed": true
+        },
+        {
+          "Check": "published fixture version/mismatch targets retained",
+          "Passed": true
+        },
+        {
+          "Check": "no test suppressions introduced",
+          "Passed": true
+        },
+        {
+          "Check": "only intended documentation/metadata/test paths differ",
+          "Passed": true
+        },
+        {
+          "Check": "all reviewed local Markdown links resolve",
+          "Passed": true
+        },
+        {
+          "Check": "bounded privacy scan",
+          "Passed": true
+        },
+        {
+          "Check": "git whitespace diff check",
+          "Passed": true
+        },
+        {
+          "Check": "existing report hash/publication-ps51-record.json",
+          "Passed": true
+        },
+        {
+          "Check": "existing report cases/publication-ps51-record.json",
+          "Passed": true
+        },
+        {
+          "Check": "existing report hash/publication-ps7-record.json",
+          "Passed": true
+        },
+        {
+          "Check": "existing report cases/publication-ps7-record.json",
+          "Passed": true
+        },
+        {
+          "Check": "existing report hash/publication-static-record.json",
+          "Passed": true
+        }
+      ],
+      "Summary": {
+        "Checks": 36,
+        "Passed": 36,
+        "Failed": 0,
+        "ActionableFindings": 0
+      },
+      "Findings": [],
+      "UnchangedFiles": {
+        "WinVidCompress.ps1": {
+          "SHA256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
+          "Comparison": "exact bytes"
+        },
+        "WinVidCompress.bat": {
+          "SHA256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+          "Comparison": "exact bytes"
+        },
+        "LICENSE": {
+          "SHA256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+          "Comparison": "canonical LF text"
+        },
+        "tools/package.ps1": {
+          "SHA256": "1a64876963da9598668fa82cd86456ac8411f82bcf0fb191f7b99501efcb9d97",
+          "Comparison": "canonical LF text"
+        },
+        "tests/WebsiteContentSupport.ps1": {
+          "SHA256": "d44ea726917017bdb5948e85a8c32e09fc1f6fd90077439b1a08f553d8482943",
+          "Comparison": "canonical LF text"
+        },
+        "website-content/product.schema.json": {
+          "SHA256": "5257e51a62079bf1c78d81bd86bcd3bd20b6749f414ae8e9a96c4c107e2fa989",
+          "Comparison": "canonical LF text"
+        },
+        "website-content/screenshots/menu.png": {
+          "SHA256": "894538401cbe2dc7d109cfb8bb2385cbbcb6558f48a815e8b0d261c3495896ba",
+          "Comparison": "exact bytes"
+        },
+        "website-content/examples/synthetic-default.json": {
+          "SHA256": "0eeed1c63cc0f675baffc6d02687449cbd191426fa85dcf5272c3d9cc082fdef",
+          "Comparison": "exact bytes"
+        }
+      },
+      "LocalMarkdownLinksChecked": 154,
+      "BrokenLinks": [],
+      "BoundedPrivacyMatches": [],
+      "ExistingTestReportsReadOnly": [
+        {
+          "RecordBinding": ".test-results/m505/publication-ps51-record.json",
+          "Scope": "ps51",
+          "ExitCode": 0,
+          "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "Dirty": true,
+          "ReportSHA256": "b050dbff8e17fb69ab5dbad724dcffa0192aa4566c1d42ffd9e5b124e20b07f1",
+          "Counts": {
+            "Passed": 18,
+            "Failed": 0,
+            "Skipped": 0,
+            "NotRun": 0
+          },
+          "PowerShell": "5.1.26100.9444",
+          "Edition": "Desktop"
+        },
+        {
+          "RecordBinding": ".test-results/m505/publication-ps7-record.json",
+          "Scope": "ps7",
+          "ExitCode": 0,
+          "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "Dirty": true,
+          "ReportSHA256": "4685738a66d945a4b28bd3d895711723e29f4bd514937bf6920441ea7bf4af80",
+          "Counts": {
+            "Passed": 28,
+            "Failed": 0,
+            "Skipped": 0,
+            "NotRun": 0
+          },
+          "PowerShell": "7.6.6",
+          "Edition": "Core"
+        },
+        {
+          "RecordBinding": ".test-results/m505/publication-static-record.json",
+          "Scope": "static",
+          "ExitCode": 0,
+          "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "Dirty": true,
+          "ReportSHA256": "bdfb457cc11db93e6e78b78e8faabf60ccaeb820165206f1fa128936a6f4c4eb",
+          "AnalyzedFiles": 1,
+          "DiagnosticCount": 0,
+          "Passed": true
+        }
+      ],
+      "ActualPublicationAPI": {
+        "ReleaseId": 406971113,
+        "TagSource": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+        "PublishedAt": "2026-10-08T15:15:15Z",
+        "ReleaseURL": "https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.0",
+        "ZIPURL": "https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip",
+        "ZIPDigest": "sha256:5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858"
+      },
+      "Invocation": "& $reviewPython .test-results/m505/Review-Publication-Metadata.py",
+      "Commands": [
+        [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:website-content/product.json"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/releases/tags/v1.0.0"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/ref/tags/v1.0.0"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:WinVidCompress.ps1"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:WinVidCompress.bat"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:LICENSE"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:tools/package.ps1"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:tests/WebsiteContentSupport.ps1"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:website-content/product.schema.json"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:website-content/screenshots/menu.png"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:website-content/examples/synthetic-default.json"
+        ],
+        [
+          "git",
+          "show",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59:tests/unit/WebsiteContent.Tests.ps1"
+        ],
+        [
+          "git",
+          "diff",
+          "--name-only",
+          "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+          "--"
+        ],
+        [
+          "git",
+          "ls-files",
+          "--others",
+          "--exclude-standard"
+        ]
+      ],
+      "InitialCheckerObservation": "Initial credential scan matched an existing test regex literal. Original exit1/report is retained in publication-metadata-review.initial-checker-false-positive.json. This corrected checker requires actual token material/key-header syntax; no tracked source or credential change.",
+      "ExitCode": 0,
+      "Limits": [
+        "No tests rerun, tracked files edited, Git mutations or remote mutations.",
+        "Read public release/tag metadata only; no assets/raw logs/media/dependencies downloaded.",
+        "Read existing actual test reports; source was recorded dirty, not a clean commit test.",
+        "Bounded privacy/text checks are not exhaustive security or publisher/perceptual certification.",
+        "Snapshot while root completes Quick and bookkeeping; final commit/CI/live sync not covered."
+      ]
+    },
+    "report_sha256": "495f80872b06180b10680fe1fd454c5e0e7203fe4451c241e206e993586d05f1"
+  },
+  "helper_hashes": {
+    "Connect-Publication.py": "17e3b79ca73c8f52ba27314a5f56ab3bfab413a67a1f943926089af0aecdf7c3",
+    "Run-Publication-Checks.ps1": "04bf9d617da541d627e30162a33ec7a6c1fe674596feaa2bf6809b9d40f6004a",
+    "Record-Publication.py": "1fd75ce9ae27aa8fdea21df915ad87fcde3a5be0ced2724cba0033facfb17e26"
+  },
+  "ci_main_review": {
+    "report": {
+      "SchemaVersion": 1,
+      "ObservedUTC": "2026-10-08T15:25:16.561038+00:00",
+      "Repository": "PikkuJanne/WinVidCompress",
+      "MainCommit": "7d6a13ab411f36943b538607db455531145f2a9a",
+      "MainMergeParents": [
+        "2c90ca324ec147485644b1a738ae03fb3c901274",
+        "3b9d0c6d4a54d825224ffac1590f5323f36c2e59"
+      ],
+      "Run": {
+        "RunId": 37799140078,
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37799140078",
+        "HeadCommit": "7d6a13ab411f36943b538607db455531145f2a9a",
+        "Event": "push",
+        "Branch": "main",
+        "Status": "completed",
+        "Conclusion": "success",
+        "Attempt": 1,
+        "Jobs": [
+          {
+            "Name": "PowerShell7",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "Name": "WindowsPowerShell",
+            "Status": "completed",
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "name": "Set up job",
+                "number": 1,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 2,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify and prepare pinned developer dependencies",
+                "number": 3,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run real targeted tests and changed-file analysis",
+                "number": 4,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Preserve sanitized results only",
+                "number": 5,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "number": 10,
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "number": 11,
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "Summaries": [
+          {
+            "HostName": "PowerShell7",
+            "SourceCommit": "7d6a13ab411f36943b538607db455531145f2a9a",
+            "Counts": {
+              "Passed": 1016,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1016,
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "7.6.6",
+              "Edition": "Core"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-main-agent/windows-results-PowerShell7/summary.json",
+            "SHA256": "6afc0cf3cc6cd283a610961a08438013ebedbbc706115a5e55089c95c6a360ad"
+          },
+          {
+            "HostName": "WindowsPowerShell",
+            "SourceCommit": "7d6a13ab411f36943b538607db455531145f2a9a",
+            "Counts": {
+              "Passed": 1006,
+              "Failed": 0,
+              "Skipped": 0,
+              "NotRun": 0
+            },
+            "CasesChecked": 1006,
+            "Static": {
+              "AnalyzedFiles": 1,
+              "DiagnosticCount": 0,
+              "Policy": "ErrorsAndSelectedSafetyRules"
+            },
+            "Host": {
+              "Version": "5.1.26100.33438",
+              "Edition": "Desktop"
+            },
+            "WindowsVersion": "10.0.26100.0",
+            "Dependencies": {
+              "Pester": "5.7.1",
+              "PSScriptAnalyzer": "1.24.0"
+            },
+            "NativeTools": [
+              {
+                "Name": "FFmpeg",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              },
+              {
+                "Name": "FFprobe",
+                "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+              }
+            ],
+            "ReleaseAcceptance": false,
+            "SummaryBinding": ".test-results/m505/ci-main-agent/windows-results-WindowsPowerShell/summary.json",
+            "SHA256": "26a15d7bc509094172bc1ef1c80b4dcdcea296e7a57c410e59c96fb0b5e22e48"
+          }
+        ]
+      },
+      "Summary": {
+        "Checks": 21,
+        "Passed": 21,
+        "Failed": 0,
+        "PendingRunIds": []
+      },
+      "ExitCode": 0,
+      "Checks": [
+        {
+          "Check": "actual main merge parents",
+          "Passed": true
+        },
+        {
+          "Check": "exact pushed main source/event",
+          "Passed": true
+        },
+        {
+          "Check": "two expected supported-host jobs",
+          "Passed": true
+        },
+        {
+          "Check": "completed successful main run",
+          "Passed": true
+        },
+        {
+          "Check": "only expected sanitized artifact names",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/all job steps successful",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/one available allowlisted summary artifact",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/summary only downloaded",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/allowlisted sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/every case/count/unique ordinal inspected",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/exact tested main source",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/complete actual expected test count/exit",
+          "Passed": true
+        },
+        {
+          "Check": "PowerShell7/supported host and analysis no diagnostics",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/all job steps successful",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/one available allowlisted summary artifact",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/summary only downloaded",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/allowlisted sanitized schema",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/every case/count/unique ordinal inspected",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/exact tested main source",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/complete actual expected test count/exit",
+          "Passed": true
+        },
+        {
+          "Check": "WindowsPowerShell/supported host and analysis no diagnostics",
+          "Passed": true
+        }
+      ],
+      "Invocation": "& $reviewPython -B .test-results/m505/ci-main-agent/review-main.py",
+      "Commands": [
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37799140078"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37799140078/jobs"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/git/commits/7d6a13ab411f36943b538607db455531145f2a9a"
+        ],
+        [
+          "gh",
+          "api",
+          "repos/PikkuJanne/WinVidCompress/actions/runs/37799140078/artifacts"
+        ],
+        [
+          "gh",
+          "run",
+          "download",
+          "37799140078",
+          "--repo",
+          "PikkuJanne/WinVidCompress",
+          "--name",
+          "windows-results-PowerShell7",
+          "--dir",
+          ".test-results/m505/ci-main-agent/windows-results-PowerShell7"
+        ],
+        [
+          "gh",
+          "run",
+          "download",
+          "37799140078",
+          "--repo",
+          "PikkuJanne/WinVidCompress",
+          "--name",
+          "windows-results-WindowsPowerShell",
+          "--dir",
+          ".test-results/m505/ci-main-agent/windows-results-WindowsPowerShell"
+        ]
+      ],
+      "Limits": [
+        "This verifies actual main merge CI, not later unpushed publication metadata changes.",
+        "All inspected downloads are allowlisted sanitized summaries; no raw logs/private diagnostics downloaded.",
+        "Hosted Targeted is not a new Full/manual/perceptual/support test or automatic release acceptance.",
+        "No Git/source/PR mutation performed."
+      ]
+    },
+    "report_sha256": "801f22dc959e7b92ccc313cfb91ba84d17855c7feab4798188b62f144ff57c0b"
+  },
+  "final_integrity": {
+    "SourceCommit": "3b9d0c6d4a54d825224ffac1590f5323f36c2e59",
+    "AcceptedSource": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
+    "Counts": {
+      "Passed": 572,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "LocalLinks": 154,
+    "ExitCode": 0,
+    "Scope": "Final publication/metadata/documents/tracker/privacy/provenance integrity; no new application/manual/perceptual/support acceptance.",
+    "command": "& $wvcPython .test-results/m505/Publication-Audit.py",
+    "report_sha256": "fee30cfbafddff5848f715d84b07a0936d11e2463221c0cf167780c0da8c4cc8",
+    "helper_sha256": "4b68eeac1e4fa5967d471c846fd5335d4dd5cabce15af8dd95ad0ddd4daca214"
+  }
+}

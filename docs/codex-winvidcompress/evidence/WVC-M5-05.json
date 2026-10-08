@@ -16,7 +16,7 @@
   "version": "1.0.0",
   "branch": "codex/wvc-m5-05-candidate",
   "runtime_change": false,
-  "publication_performed": false,
+  "publication_performed": true,
   "host": {
     "OS": "Windows 11 Pro10.0.26300 UBR9457 26H2 x64; legacy registry ProductName Windows10Pro",
     "PowerShell": [
@@ -9851,7 +9851,7 @@
     "Same-runtime ZIP pairs identical; cross-runtime ZIPs differ90 bytes by compression framing/flags; no universal byte reproducibility.",
     "Final source embeds06e provenance; later source/merge builds produce different hashes and need concrete verification before substitution/publication."
   ],
-  "next_task": "Execute separately authorized PR34 merge and previously conditionally authorized v1.0.0 publication, preserving exact accepted06e source/primary ZIP. Verify resulting tag/release/download bytes; no website hosting.",
+  "next_task": "Review postpublication metadata/docs/testfixture handoff for mainintegration if desired; no softwaretask left or website/newPRmerge authorization inferred.",
   "application_sha256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
   "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
   "license_sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
@@ -10531,5 +10531,8 @@
     "command": "& $wvcPython .test-results/m505/Approval-Audit.py",
     "report_sha256": "cac0462890f69153c22b5576b906fef79901a973797309d47f16f4c7c9371cd4",
     "helper_sha256": "4c3ed9acfda99de305af29522fcf69eed52cce67773ff83bb1fed21a35bf5abd"
-  }
+  },
+  "publication_record": "WVC-M5-05-publication.json",
+  "merge_performed": true,
+  "merge_commit": "7d6a13ab411f36943b538607db455531145f2a9a"
 }

@@ -1,5 +1,7 @@
 # Local candidate packaging
 
+Current 2026-10-08: A04 accepted; PR 34merged **7d6a13ab411f36943b538607db455531145f2a9a**; GitHub v1.0.0 published **2026-10-08T15:15:15Z**, tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**, unchanged approved primary ZIP SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. Actualpublicdownload readback32/0. [Verified publication](V1.0.0_PUBLICATION.md). No website hosting; all unverified checks/accepted exclusions remain unverified. Earlier pending statements below are dated preparation/approval history, not the current publication state.
+
 `tools/package.ps1` is a developer tool requiring Git and Windows PowerShell5.1 or supported stable PowerShell7. It never installs dependencies, publishes, uploads, tags or merges. Run from a clean tracked repository root whose origin is PikkuJanne/WinVidCompress. VERSION selects **1.0.0**, the owner's chosen final version, prepared as a local candidate pending concrete acceptance; live tags/releases were empty at the 2026-10-08 preparation check. Commit the intended source before packaging. No own-commit SHA is embedded in tracked version/release files.
 
 ```powershell

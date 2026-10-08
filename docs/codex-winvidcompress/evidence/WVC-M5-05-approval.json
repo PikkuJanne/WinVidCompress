@@ -668,8 +668,8 @@
     ]
   },
   "completed_handoff_ci_sha256": "765b437afc2285791347d07062f63a3af61337e36119f15e41028005c3c34b1f",
-  "merge_performed": false,
-  "publication_performed": false,
+  "merge_performed": true,
+  "publication_performed": true,
   "final_sync": "Pending externally reported after approval commit/push; no self-SHA.",
   "approval_integrity": {
     "SourceCommit": "06e803d8bfb56df0fd48cd5e073439f3ea93a4fd",
@@ -686,5 +686,7 @@
     "command": "& $wvcPython .test-results/m505/Approval-Audit.py",
     "report_sha256": "cac0462890f69153c22b5576b906fef79901a973797309d47f16f4c7c9371cd4",
     "helper_sha256": "4c3ed9acfda99de305af29522fcf69eed52cce67773ff83bb1fed21a35bf5abd"
-  }
+  },
+  "publication_record": "WVC-M5-05-publication.json",
+  "merge_commit": "7d6a13ab411f36943b538607db455531145f2a9a"
 }

@@ -2672,9 +2672,11 @@
         "evidence/WVC-M5-05.json",
         "evidence/WVC-M5-05-session.md",
         "evidence/WVC-M5-05-approval.md",
-        "evidence/WVC-M5-05-approval.json"
+        "evidence/WVC-M5-05-approval.json",
+        "evidence/WVC-M5-05-publication.md",
+        "evidence/WVC-M5-05-publication.json"
       ],
-      "notes": "Accepted final1.0.0 candidate at06e803d: allA01-A04 passed; owner explicitly approved exact primary ZIP/stated exclusions and separately authorized PR34 merge. VERSION/CHANGELOG and existing version-aware package regressions are the minimal implementation scope; runtime/launcher/license/builder/defaults unchanged. Original stale-version Quick/CI failures, interrupted obsolete Full, report collision, raw Full7 watchdog failure and8manual/future omissions retained. Previous56e handoff push/PR CI/every step/four summaries passed. Exact next: execute authorized PR34 merge and retained conditional v1.0.0 GitHub publication from unchanged acceptedsource/ZIP, verify public bytes/facts and record finalhandoff. No websitehosting/broader-support/default-quality/bundling/signing permission inferred; finalsync/CI externally after push.",
+      "notes": "Accepted final1.0.0 candidate/source06e/primaryZIP/statedexclusions; allA01-A04passed with actualownerquote and separatePR34mergepermission. PR34merged7d6a13a after exact3b9headCI passed; retained conditional GitHubv1.0.0 publication executed with tag06e and unchanged approvedZIP/checksum. Freshpublicdownload/API/tag/source/provenance/payload readback32/0. Minimal postpublication scope: verified staticdownloadfacts/currentdocs/existing state-independent websitefixtures; runtime/BAT/LICENSE/builder/schema/helper/defaults/screenshot/example unchanged. Initial failures/rawFull7timeout/eightmanualomissions preserved; no broader-support/newperceptual/hosting claim. Exactnext: review postpublication metadatahandoff for mainintegration; no new softwaretask or newPRmergepermission inferred. Finalfeaturelive synchronization/CI externally after push.",
       "owner_approval": {
         "recorded_at": "2026-10-08T15:00:11Z",
         "candidate_decision": "A04 approved",

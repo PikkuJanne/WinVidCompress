@@ -1,0 +1,13 @@
+# WVC-M5-05 authorized merge and publication evidence
+
+Actual [publication record](../../releases/V1.0.0_PUBLICATION.md) and [machine-readable report](WVC-M5-05-publication.json) bind owner decisions, PR 34 merge **7d6a13ab411f36943b538607db455531145f2a9a**, accepted/tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**, public release/date/two assets and independently downloaded exact ZIP SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. Root publicationreadback32/0/0/0 exit 0; no substituted build or asset, no tag rewrite, no branch deletion/default-branch push or website hosting.
+
+Scope expansion for completing the existing conditional publication instruction: connect verified static release facts and adjust existing tests to preserve independent draft/published fixtures after actual metadata becomes published. Existing application/BAT/builder/schema/helper/defaults, owner screenshot and synthetic report are unchanged. The initial record preserved pending checks; completed results follow. Original failures/omissions/support exclusions retain their scopes. Final feature commit/live refs externally checked after push, avoiding self-SHA.
+
+Actual publication-metadata checks: PS5.1 WebsiteContent 18/0/0/0; PS7 WebsiteContent 28/0/0/0; PS5.1 Quick 986/0/0/0; all observed exits 0. Changed-file analysis: 1 file / zero diagnostics / exit 0. Tested HEAD3b9 plus the precise dirty metadata, fixture and document tree; four input file hashes, exact commands, hosts, reports and helper hashes are in JSON. Original candidate tests and raw failures are preserved. No unrelated Full/manual repeat.
+
+Initial static command compared committed HEAD3b9 to the same base and analyzed 0 files, missing the dirty test edit. Independent review caught the scope gap; explicit -Paths recovery analyzed 1 file / zero diagnostics / exit 0. Original report/exit 0 retained as scope-incomplete, not a completed changed-file check.
+
+Actual merged-main CI37799140078 passed at7d6a13a: PS5.1 1006/0/0/0 and PS7 1016/0/0/0, both exit0; analysis1file/zero diagnostics each. Every jobstep/two sanitized summaries reviewed independently,21/0/0/0 exit0. This verifies merged main, not the later metadata handoff; finalfeature CI is separately observed after push.
+
+Final publication/document/tracker/privacy/source/metadata-input audit:572/0/0/0 exit0,154 local links resolved; exact command/report/helper hashes in JSON. Independent metadata review36/0 exit0 and public-download review42/0 exit0 retain original review/scope observations without regrading application tests. Final feature SHA/live refs/CI are externally reported after push; no self-SHA embedded.

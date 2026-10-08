@@ -5,8 +5,16 @@ BeforeAll {
     $Schema=Get-Content -LiteralPath (Join-Path $ContentRoot 'product.schema.json') -Raw | ConvertFrom-Json
     $Example=Get-Content -LiteralPath (Join-Path $ContentRoot 'examples/synthetic-default.json') -Raw | ConvertFrom-Json
     . (Join-Path $RepoRoot 'tests/WebsiteContentSupport.ps1')
-    function New-PublishedWebsiteFixture {
+    function New-DraftWebsiteFixture {
         $document=$Product | ConvertTo-Json -Depth 12 | ConvertFrom-Json
+        $document.status='draft_not_for_publication'
+        foreach ($field in @('published_version','release_date','release_url','download_url','sha256')) {
+            $document.$field=$null
+        }
+        return $document
+    }
+    function New-PublishedWebsiteFixture {
+        $document=New-DraftWebsiteFixture
         $document.status='published'
         $document.published_version='1.0.0'
         $document.release_date='2026-10-08'
@@ -25,17 +33,22 @@ BeforeAll {
     }
 }
 Describe 'Static product content [WVC-M5-04]' {
-    It 'declares the schema version and explicit draft state [A01]' {
+    It 'declares the schema version and a supported publication state [A01]' {
         $Product.schema_version | Should -Be 1
         $Schema.properties.schema_version.const | Should -Be 1
-        $Product.status | Should -BeExactly 'draft_not_for_publication'
+        @('draft_not_for_publication','published') | Should -Contain $Product.status
         $Schema.additionalProperties | Should -BeFalse
         foreach ($property in $Product.PSObject.Properties.Name) { $Schema.properties.PSObject.Properties.Name | Should -Contain $property }
         foreach ($property in $Schema.required) { $Product.PSObject.Properties.Name | Should -Contain $property }
     }
-    It 'keeps all public download facts null [A01 A02]' {
+    It 'keeps public download facts consistent with their state [A01 A02]' {
         foreach ($field in @('published_version','release_date','release_url','download_url','sha256')) {
-            $Product.$field | Should -BeNullOrEmpty
+            if ($Product.status -ceq 'draft_not_for_publication') {
+                $Product.$field | Should -BeNullOrEmpty
+            } else {
+                $Product.$field | Should -BeOfType ([string])
+                $Product.$field | Should -Not -BeNullOrEmpty
+            }
             $Schema.allOf[0].then.properties.$field.type | Should -BeExactly 'null'
             $Schema.allOf[0].else.properties.$field.type | Should -BeExactly 'string'
         }
@@ -52,6 +65,8 @@ Describe 'Static product content [WVC-M5-04]' {
     }
     It 'validates release-field state and canonical cross-field versions [A01 A02]' {
         { Assert-WvcWebsiteReleaseFields $Product } | Should -Not -Throw
+        $document=New-DraftWebsiteFixture
+        { Assert-WvcWebsiteReleaseFields $document } | Should -Not -Throw
         $document=New-PublishedWebsiteFixture
         { Assert-WvcWebsiteReleaseFields $document } | Should -Not -Throw
     }
@@ -80,7 +95,7 @@ Describe 'Static product content [WVC-M5-04]' {
         $document=New-PublishedWebsiteFixture
         $document.published_version="1.0.0`n"
         { Assert-WvcWebsiteReleaseFields $document } | Should -Throw
-        $document=$Product | ConvertTo-Json -Depth 12 | ConvertFrom-Json
+        $document=New-DraftWebsiteFixture
         $document.published_version='1.0.0'
         { Assert-WvcWebsiteReleaseFields $document } | Should -Throw
     }
@@ -178,8 +193,10 @@ Describe 'Static product content [WVC-M5-04]' {
 }
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     Describe 'Actual JSON schema validation on PowerShell 7 [WVC-M5-04 A01 A02]' {
-        It 'validates the actual draft and a structural published fixture' {
+        It 'validates the actual content and structural draft/published fixtures' {
             Test-Json -Json ($Product | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') | Should -BeTrue
+            $document=New-DraftWebsiteFixture
+            Test-Json -Json ($document | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') | Should -BeTrue
             $document=New-PublishedWebsiteFixture
             Test-Json -Json ($document | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') | Should -BeTrue
         }
@@ -191,13 +208,13 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
             @{Field='sha256';Value=('a'*64)}
         ) {
             param($Field,$Value)
-            $document=$Product | ConvertTo-Json -Depth 12 | ConvertFrom-Json
+            $document=New-DraftWebsiteFixture
             Test-Json -Json ($document | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') | Should -BeTrue
             $document.$Field=$Value
             Test-Json -Json ($document | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') -ErrorAction SilentlyContinue | Should -BeFalse
         }
         It 'rejects a published state with missing release facts' {
-            $document=$Product | ConvertTo-Json -Depth 12 | ConvertFrom-Json
+            $document=New-DraftWebsiteFixture
             $document.status='published'
             Test-Json -Json ($document | ConvertTo-Json -Depth 12) -SchemaFile (Join-Path $ContentRoot 'product.schema.json') -ErrorAction SilentlyContinue | Should -BeFalse
         }
