@@ -2674,9 +2674,11 @@
         "evidence/WVC-M5-05-approval.md",
         "evidence/WVC-M5-05-approval.json",
         "evidence/WVC-M5-05-publication.md",
-        "evidence/WVC-M5-05-publication.json"
+        "evidence/WVC-M5-05-publication.json",
+        "evidence/PROJECT_CLOSEOUT-2026-10-08.md",
+        "evidence/PROJECT_CLOSEOUT-2026-10-08.json"
       ],
-      "notes": "Accepted final1.0.0 candidate/source06e/primaryZIP/statedexclusions; allA01-A04passed with actualownerquote and separatePR34mergepermission. PR34merged7d6a13a after exact3b9headCI passed; retained conditional GitHubv1.0.0 publication executed with tag06e and unchanged approvedZIP/checksum. Freshpublicdownload/API/tag/source/provenance/payload readback32/0. Minimal postpublication scope: verified staticdownloadfacts/currentdocs/existing state-independent websitefixtures; runtime/BAT/LICENSE/builder/schema/helper/defaults/screenshot/example unchanged. Initial failures/rawFull7timeout/eightmanualomissions preserved; no broader-support/newperceptual/hosting claim. Exactnext: review postpublication metadatahandoff for mainintegration; no new softwaretask or newPRmergepermission inferred. Finalfeaturelive synchronization/CI externally after push.",
+      "notes": "Accepted final1.0.0 candidate/source06e/primaryZIP/statedexclusions; allA01-A04passed with actualownerquote and separatePR34mergepermission. PR34merged7d6a13a; GitHubv1.0.0 published with unchanged tag06e/approvedZIP/checksum, publicreadback32/0. Owner merged publicationmetadataPR35 into44e6471e/treeequal7fad; sourcepush/PR/mainCI passed1006/1016, independentreview68/0. Latest owner: All approved; close project and delete test/temp files. Projectclosed/no nexttask. Guarded cleanup185 targets/6915 files/2468790149 bytes, demo closed; tracked source/tests/evidence/assets, originals/useroutputs/settings/sharedtools preserved. Historical localartifacts removed; committed projections/publicrelease retained. Original failures/rawFull7timeout/eightomissions and accepted supportexclusions remain scoped. Finalcloseoutdocs/livefeature/PR state externally checked after push.",
       "owner_approval": {
         "recorded_at": "2026-10-08T15:00:11Z",
         "candidate_decision": "A04 approved",

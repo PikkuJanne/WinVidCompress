@@ -1,5 +1,15 @@
 # Current programme status
 
+Updated: 2026-10-08. **Project closed by the owner: 31 verified / 1 accepted; all 128 criteria passed in their recorded scopes.** Owner instruction: "All approved. Please close the project and delete all test and temp etc. files from this machine." [Closeout and cleanup](evidence/PROJECT_CLOSEOUT-2026-10-08.md), [exact receipt and CI review](evidence/PROJECT_CLOSEOUT-2026-10-08.json).
+
+PR 35 was already owner-merged at 2026-10-08T16:09:43Z into **44e6471e8deeb3e20e5889916100c1bcd758d52e**, whose tree equals the tested publication source **7fad9503f057e205c32b098493f79a3980ea598f**. Source push/PR and merged-main CI all passed: PS5.1 1006/0/0/0, PS7 1016/0/0/0, analysis one file/zero diagnostics per host. Every step, six sanitized summaries and cases were inspected; independent closeout review68/0 exit0. Earlier pending snapshots remain dated history.
+
+Authorized local cleanup removed **185 project-owned roots/files, 6,915 files, 2,284 directories and 2,468,790,149 bytes**; both demo shell/wrapper closed, all planned targets absent. Isolated fixture media/copies, raw logs/reports/helpers, disposable reconstructions/extractions, local candidate/readback packages and dedicated test dependencies were deleted. Tracked source/tests/docs/evidence/assets, Git history, user originals/outputs/settings and shared tools remain. Four empty unrelated/unproven TEMP directories were retained. Historical local artifact paths now identify removed provenance; the committed evidence and unchanged public accepted ZIP/checksum remain available.
+
+GitHub **v1.0.0** remains published with tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**, primary ZIP SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. No software task remains. Exact next: **none**. Original failures, eight raw Full omissions and accepted support/distribution exclusions retain their scopes; closure adds no manual/perceptual observation. Final docs-only closeout commit/live refs/PR state are externally checked after push.
+
+# Historical publication checkpoint (before project closure)
+
 Updated: 2026-10-08. **WVC-M5-05 accepted; 31 verified / 1 accepted; all 128 criteria passed. PR 34 merged; GitHub v1.0.0 published and public assets verified.** [Publication](../releases/V1.0.0_PUBLICATION.md), [approval](evidence/WVC-M5-05-approval.md), [evidence](evidence/WVC-M5-05-publication.md).
 
 Main merge **7d6a13ab411f36943b538607db455531145f2a9a** preserves reviewed3b9; tag/package source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd** retains the exact accepted ZIP **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**, 250197 bytes. Release published **2026-10-08T15:15:15Z**, with only ZIP/checksum assets. Fresh public downloads match both approved originals; API, tag, merge, provenance and payload verification32/0 exit0, independent review42/0. Approval-head push/PR CI passed before merge. Actual merged-main CI37799140078 also passed PS5.1 1006/0/0/0 and PS7 1016/0/0/0; every step/two sanitized summaries inspected, independent review21/0. Final metadata CI is separately reported after push.
