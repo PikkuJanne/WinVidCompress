@@ -1,0 +1,31 @@
+# Project closeout — 2026-10-08
+
+The owner instructed: "All approved. Please close the project and delete all test and temp etc. files from this machine." **The project is closed; exact next task: none.** TASKS remains 31 verified / 1 accepted, 128 passed criteria in recorded scopes. [Machine-readable cleanup receipt and CI review](PROJECT_CLOSEOUT-2026-10-08.json).
+
+## Completed publication and integration
+
+[PR 35](https://github.com/PikkuJanne/WinVidCompress/pull/35) was already owner-merged at **2026-10-08T16:09:43Z** into main **44e6471e8deeb3e20e5889916100c1bcd758d52e**. Parents are **7d6a13ab411f36943b538607db455531145f2a9a** and **7fad9503f057e205c32b098493f79a3980ea598f**; main/source trees match. Clean feature inventory, live refs and fetch preceded its safe fast-forward. Only documentation changes follow that baseline for closure.
+
+The accepted [v1.0.0 release](https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.0) remains published, with source/tag **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd** and unchanged approved primary ZIP **250197 bytes**, SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. Its checksum asset remains unchanged. Earlier fresh public downloads passed32/0 and independent readback42/0. [Publication](../../releases/V1.0.0_PUBLICATION.md), [actual acceptance](WVC-M5-05-approval.md). Closure does not rebuild or replace assets.
+
+## Actual cleanup
+
+At **2026-10-08T16:21:32Z**, guarded Windows PowerShell execution completed on **PowerShell 7.6.5 Core**, exit0: **185 targets, 6,915 files, 2,284 directories, 2,468,790,149 bytes removed**. The isolated demo shell and its waiting wrapper were closed; their console exited. All planned targets are absent. No deletion errors or reparse points; protected source hashes unchanged. The receipt lists aggregate category counts without private file paths or media information.
+
+The removed targets comprise 42 token/marker-validated test roots, three entry-smoke roots, seven source-proven orphan Pester fixtures, 128 project TEMP reports/logs/PR-body/map files, the dedicated M0 developer modules, M404 CI dependency runtime, extracted M0 handoff bundle, ignored `.test-results` tree and isolated M504 demo tree. This includes synthetic and approved-copy fixture media, disposable clones/extractions, local candidate/readback packages and developer helper scripts. Ownership came from exact source fixture layouts/markers, committed task evidence, local pointers and matching isolated demo copies. Each absolute target was checked against explicit cleanup boundaries, ancestors and children were checked for reparse points without following links, and target absence was verified after native `Remove-Item -LiteralPath -Recurse -Force`.
+
+An initial guard stopped with exit1 before any file deletion: the idle demo shell had closed, but the batch wrapper still had its system console host child. That child's exact wrapper relationship and system executable were verified; cleanup then closed the wrapper and succeeded. The receipt preserves this observation.
+
+Tracked source/tests/documentation/evidence/assets, the checkout and Git history, original user media, real outputs/settings and shared Codex/installed FFmpeg tools remain. Four empty generic TEMP directories without project ownership proof were retained. No unrelated system or other-project cleanup was performed. Historical local artifact/report/helper paths in previous records now identify **removed provenance**; committed projections/hashes and the public accepted ZIP/checksum remain available. Future development must recreate isolated dependencies and fixtures from tracked instructions.
+
+Cleanup command: `& $cleanupPowerShell -NoProfile -File .test-results/closure/cleanup.ps1`. The exact helper SHA256, host, times and outcomes are retained in the JSON; the helper and inventory were themselves removed with generated files.
+
+## Verification and limits
+
+The independent CI review passed **68/0, exit0**. [Source push37800969542](https://github.com/PikkuJanne/WinVidCompress/actions/runs/37800969542), [source PR37801091975](https://github.com/PikkuJanne/WinVidCompress/actions/runs/37801091975) and [actual main37806607952](https://github.com/PikkuJanne/WinVidCompress/actions/runs/37806607952) all succeeded. Every job step, six sanitized summaries and all reported cases were inspected. Each run: Windows PowerShell5.1 **1006/0/0/0**, supported PowerShell7.6.6 **1016/0/0/0**, exit0; static analysis **one file/zero diagnostics** per host. Exact tested source/merge commits, parent bindings, summary hashes, host/dependency versions, commands and the earlier pending-main snapshot remain in JSON.
+
+Targeted closeout verification passed **85/0/0/0, exit0**, including tracker32 tasks/128 criteria/23 improvements, 44 local links, bounded privacy, unchanged source/tests/tools, six intentional documents, cleanup aggregates and source/CI bindings. `git diff --check` passed. Exact commands/cases are recorded in JSON; developer host PowerShell7.6.5 Core/Python3.12.14, preceding tested main44e plus the precise six-document dirty tree. No additional application, Full or Windows manual/perceptual run is claimed for this documentation and generated-file cleanup. Original raw Full7 timeout and eight raw omissions remain history; earlier scoped manual observations and owner-accepted exclusions retain their exact meaning. No broader support or new distribution observation is inferred.
+
+Final closeout commit/push, live fetch/push feature equality, clean worktree and PR/CI state are checked and reported externally after the handoff. The commit cites preceding tested7fad/main44e rather than embedding its own SHA. All implementation tasks remain complete; no follow-up automation is scheduled.
+
+Independent read-only closeout review passed44 invariant checks plus two final receipt checks, resolved44 local links and corroborated PR35/source/main CI via four live API queries; no actionable findings. An extra sentence-prefix matcher became stale during wording adjustment; semantic recheck passed, with no application failure/source issue. The reviewer created no files and stopped before final commit.
