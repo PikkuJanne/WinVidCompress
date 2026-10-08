@@ -2420,7 +2420,7 @@
       "title": "Preserve licensing and review distribution security",
       "milestone": "M5",
       "priority": "P1",
-      "status": "todo",
+      "status": "verified",
       "improvements": [
         22
       ],
@@ -2448,35 +2448,57 @@
           "id": "WVC-M5-03-A01",
           "description": "Original license remains intact unless the owner explicitly authorizes a change.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-03.md",
+            "evidence/WVC-M5-03.json"
+          ],
+          "notes": "Original LICENSE Git blob/worktree SHA and raw candidate bytes equal baseline; PS1/BAT bytes/defaults unchanged. Both-runtime package regressions and exact candidate byte assertions pass."
         },
         {
           "id": "WVC-M5-03-A02",
           "description": "No FFmpeg binary is silently included under the project license.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-03.md",
+            "evidence/WVC-M5-03.json"
+          ],
+          "notes": "Positive13-entry allowlist includes policies and excludes tracked FFmpeg/FFprobe poison files. Both candidate payloads have no exe/dll/private config/media/log/developer data. External GPLv3-or-later libx264 build described without relicensing or bundling."
         },
         {
           "id": "WVC-M5-03-A03",
           "description": "Release materials avoid claims of certification, guaranteed safety or signed binaries unless demonstrated.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-03.md",
+            "evidence/WVC-M5-03.json"
+          ],
+          "notes": "PS1/builder NotSigned/no certificate; reviewed README/policies/release checklist claim no certification/safety/signing. Checksum not authentication. Actual private reporting disabled/issues enabled; minimal contact request route, no fabricated contact or settings change."
         },
         {
           "id": "WVC-M5-03-A04",
           "description": "No embedded credentials, secret-looking values, private absolute paths or unintended telemetry are found in the candidate.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "evidence/WVC-M5-03.md",
+            "evidence/WVC-M5-03.json"
+          ],
+          "notes": "Every entry read in both actual candidate ZIPs:20passing grouped checks and independent26-entry review; zero bounded secret/private-path findings/no unintended telemetry. Fresh native extraction80/0 across PS51/PS7 with isolated APPDATA/output and unchanged source/final hashes. No universal security guarantee."
         }
       ],
       "approval_gate": "Bundled dependencies, signing setup, license changes or external account/settings changes require explicit owner approval.",
-      "implementation_commits": [],
-      "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "implementation_commits": [
+        "0b61d54ab2490a53528001270928b45c847ce6d2"
+      ],
+      "evidence": [
+        "evidence/WVC-M5-03.md",
+        "evidence/WVC-M5-03.json",
+        "evidence/WVC-M5-03-session.md"
+      ],
+      "notes": "Verified A01-A04 at0b61d54: PS51 Quick968/0, affected PS7 package19/0, analyzer2/zero diagnostics, clean pushed-clone measurements7/0, bounded candidate checks20/0 plus independent26-entry review, fresh extracted native smoke80/0. LICENSE/runtime/defaults unchanged; two policies ship offline; separate dependency GPL terms and unsigned/private-reporting boundaries explicit. Minimal expanded scope package allowlist/regressions plus required handoff. Initial failures retained; candidate/signing/bundling/publication gates remain. Exact next WVC-M5-04; final live sync externally after handoff. Actual implementation push37684831753/PR37684863505 passed988/0/0/0 per host; all steps/four sanitized summaries inspected; merge8ee495c parents API-confirmed. Final handoff audit332/0 and tracker32/128 valid."
     },
     {
       "id": "WVC-M5-04",

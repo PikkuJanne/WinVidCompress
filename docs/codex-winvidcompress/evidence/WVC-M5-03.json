@@ -1,0 +1,2119 @@
+{
+  "schema_version": 1,
+  "template_only": false,
+  "task_id": "WVC-M5-03",
+  "acceptance_ids": [
+    "WVC-M5-03-A01",
+    "WVC-M5-03-A02",
+    "WVC-M5-03-A03",
+    "WVC-M5-03-A04"
+  ],
+  "recorded_at": "2026-10-07T20:58:50.667114+00:00",
+  "tested_commits": [
+    "0b61d54ab2490a53528001270928b45c847ce6d2"
+  ],
+  "source_base": "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+  "version": "0.1.0-rc.1",
+  "runtime_change": false,
+  "application_sha256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
+  "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "license_sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+  "license_git_blob": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657",
+  "host": {
+    "OS": "Windows 11 Pro 10.0.26300 UBR9457 26H2 x64 (registry legacy ProductName Windows 10 Pro)",
+    "PowerShell": [
+      "5.1.26100.9444 Desktop",
+      "7.6.6 Core"
+    ],
+    "Pester": "5.7.1",
+    "PSScriptAnalyzer": "1.24.0"
+  },
+  "command_bindings": {
+    "repo": "actual existing workspace; private absolute path omitted",
+    "wvcRuntime": "existing prepared runtime from ignored m404 pointer",
+    "wvcSetup": "dependencies.json ModuleRoot, PowerShell7, NativeDirectory",
+    "wvcPython": "desktop bundled developer Python, not a runtime dependency",
+    "wvcPS51": "SystemRoot/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "rebuildRoot": "fresh owned ignored m503 reconstruction directory",
+    "clone": "rebuildRoot/clone, clean HTTPS clone of pushed feature",
+    "candidate": "rebuildRoot/ps51-a/WinVidCompress-0.1.0-rc.1-0b61d54ab249",
+    "smokeOwner": "owned independent isolated fixture per shell; successful roots removed with guarded cleanup",
+    "redaction": "Only literal absolute workstation/runtime/fixture path strings are substituted; Get-Help and other invocation tokens preserved."
+  },
+  "commands": {
+    "quick51": "$wvcRuntime=(Get-Content -LiteralPath .test-results/m404/runtime-path.local.txt -Raw).Trim(); $wvcSetup=Get-Content -LiteralPath (Join-Path $wvcRuntime 'dependencies.json') -Raw | ConvertFrom-Json; $env:FFREPORT=$null; $env:PATH=$wvcSetup.NativeDirectory+';'+(Split-Path $wvcSetup.PowerShell7)+';'+(Split-Path $wvcPython)+';'+$env:PATH; & $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -IncludeKnownDefects -ModuleRoot $wvcSetup.ModuleRoot -ReportPath .test-results/m503/quick51-0b61d54.json *> .test-results/m503/quick51-0b61d54.log; exit $LASTEXITCODE",
+    "package7": "& $wvcSetup.PowerShell7 -NoProfile -NonInteractive -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/package7-0b61d54.json *> .test-results/m503/package7-0b61d54.log; exit $LASTEXITCODE",
+    "static": "& $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $wvcSetup.ModuleRoot -BaseCommit 0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f -ReportPath .test-results/m503/static-0b61d54.json *> .test-results/m503/static-0b61d54.log; exit $LASTEXITCODE",
+    "build_orchestration_initial": "& $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m503/Rebuild.ps1 -SourceCommit 0b61d54ab2490a53528001270928b45c847ce6d2 -RebuildRoot $rebuildRoot *> .test-results/m503/rebuild.log; exit $LASTEXITCODE",
+    "reconstruction_measurement": "& $wvcPython .test-results/m503/Inspect-Zip.py; & $wvcSetup.PowerShell7 -NoProfile -NonInteractive -File .test-results/m503/Measure-Rebuild.ps1 *> .test-results/m503/rebuild-measured.log; exit $LASTEXITCODE",
+    "candidate_inspection": "& $wvcPython .test-results/m503/Inspect-Candidate.py",
+    "smoke": "& $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m503/Smoke.ps1 -SourceCommit 0b61d54ab2490a53528001270928b45c847ce6d2 -CandidateDirectory $candidate *> .test-results/m503/smoke.log; exit $LASTEXITCODE",
+    "repository_route": "gh api repos/PikkuJanne/WinVidCompress",
+    "private_reporting": "gh api repos/PikkuJanne/WinVidCompress/private-vulnerability-reporting",
+    "license_blob": "git rev-parse 0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f:LICENSE; git rev-parse HEAD:LICENSE; git diff 0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f HEAD -- LICENSE WinVidCompress.ps1 WinVidCompress.bat",
+    "signing": "Get-AuthenticodeSignature -LiteralPath WinVidCompress.ps1; Get-AuthenticodeSignature -LiteralPath tools/package.ps1",
+    "clone": "git clone --single-branch --branch codex/wvc-m5-03-security https://github.com/PikkuJanne/WinVidCompress.git $clone",
+    "native_pin_verification": "$pins=Import-PowerShellDataFile tests/CiDependencies.psd1; Get-FileHash -LiteralPath (Join-Path $wvcSetup.NativeDirectory 'ffmpeg.exe') -Algorithm SHA256; Get-FileHash -LiteralPath (Join-Path $wvcSetup.NativeDirectory 'ffprobe.exe') -Algorithm SHA256; compare each digest to pins.FFmpeg.FFmpegHash/FFprobeHash; mismatch throws"
+  },
+  "local_runs": [
+    {
+      "name": "quick51",
+      "command": "$wvcRuntime=(Get-Content -LiteralPath .test-results/m404/runtime-path.local.txt -Raw).Trim(); $wvcSetup=Get-Content -LiteralPath (Join-Path $wvcRuntime 'dependencies.json') -Raw | ConvertFrom-Json; $env:FFREPORT=$null; $env:PATH=$wvcSetup.NativeDirectory+';'+(Split-Path $wvcSetup.PowerShell7)+';'+(Split-Path $wvcPython)+';'+$env:PATH; & $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -IncludeKnownDefects -ModuleRoot $wvcSetup.ModuleRoot -ReportPath .test-results/m503/quick51-0b61d54.json *> .test-results/m503/quick51-0b61d54.log; exit $LASTEXITCODE",
+      "tested_commit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 968,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/quick51-0b61d54.json",
+      "report_sha256": "9a1cc16b463ba2ce2cd790293bde24b05ab01c2118589d16e9059f6eea2d6641",
+      "hosts": [
+        {
+          "Name": "Current",
+          "Version": "5.1.26100.9444",
+          "Edition": "Desktop"
+        }
+      ]
+    },
+    {
+      "name": "package7",
+      "command": "& $wvcSetup.PowerShell7 -NoProfile -NonInteractive -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/package7-0b61d54.json *> .test-results/m503/package7-0b61d54.log; exit $LASTEXITCODE",
+      "tested_commit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+      "tested_tree_dirty": false,
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 19,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/package7-0b61d54.json",
+      "report_sha256": "bbec0f51c45c465930fe722108376167160476206c9725c23751585f4b06d5e4",
+      "hosts": []
+    }
+  ],
+  "static": {
+    "SchemaVersion": 1,
+    "AnalyzedFiles": 2,
+    "DiagnosticCount": 0,
+    "Policy": "ErrorsAndSelectedSafetyRules",
+    "Passed": true,
+    "command": "& $wvcPS51 -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test-static.ps1 -ModuleRoot $wvcSetup.ModuleRoot -BaseCommit 0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f -ReportPath .test-results/m503/static-0b61d54.json *> .test-results/m503/static-0b61d54.log; exit $LASTEXITCODE",
+    "report": ".test-results/m503/static-0b61d54.json",
+    "report_sha256": "4886d4bf1824d727ad740d439ed20f99d13e8f93aa65401be8629674138fb0ed",
+    "observed_exit": 0
+  },
+  "reconstruction": {
+    "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "Clone": "$rebuildRoot\\clone",
+    "Status": "Passed",
+    "ExitCode": 0,
+    "Counts": {
+      "Passed": 7,
+      "Failed": 0,
+      "NotRun": 0,
+      "Skipped": 0
+    },
+    "Builds": [
+      {
+        "Name": "ps51-a",
+        "Directory": "$rebuildRoot\\ps51-a\\WinVidCompress-0.1.0-rc.1-0b61d54ab249",
+        "Version": "0.1.0-rc.1",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "ZipSHA256": "7a7d519d6cd12dd5ba5daf28391e126066cfff6d52d249a4c94fb6a2fbf3c555",
+        "ManifestSHA256": "1f1e8840370a8c39064bffee59278369d3780d118d1d29257707b69ab2333f7c",
+        "PowerShell": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "DotNet": "4.0.30319.42000",
+        "Files": 13,
+        "Bytes": 248706,
+        "BuildCLIExit": 0,
+        "VerifyCLIExit": 0,
+        "Executable": "$wvcPS51",
+        "BuildArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-OutputDirectory",
+          "$rebuildRoot\\ps51-a",
+          "-ExpectedCommit",
+          "0b61d54ab2490a53528001270928b45c847ce6d2"
+        ],
+        "VerifyArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-VerifyDirectory",
+          "$rebuildRoot\\ps51-a\\WinVidCompress-0.1.0-rc.1-0b61d54ab249"
+        ]
+      },
+      {
+        "Name": "ps51-b",
+        "Directory": "$rebuildRoot\\ps51-b\\WinVidCompress-0.1.0-rc.1-0b61d54ab249",
+        "Version": "0.1.0-rc.1",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "ZipSHA256": "7a7d519d6cd12dd5ba5daf28391e126066cfff6d52d249a4c94fb6a2fbf3c555",
+        "ManifestSHA256": "1f1e8840370a8c39064bffee59278369d3780d118d1d29257707b69ab2333f7c",
+        "PowerShell": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "DotNet": "4.0.30319.42000",
+        "Files": 13,
+        "Bytes": 248706,
+        "BuildCLIExit": 0,
+        "VerifyCLIExit": 0,
+        "Executable": "$wvcPS51",
+        "BuildArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-OutputDirectory",
+          "$rebuildRoot\\ps51-b",
+          "-ExpectedCommit",
+          "0b61d54ab2490a53528001270928b45c847ce6d2"
+        ],
+        "VerifyArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-VerifyDirectory",
+          "$rebuildRoot\\ps51-b\\WinVidCompress-0.1.0-rc.1-0b61d54ab249"
+        ]
+      },
+      {
+        "Name": "ps7-a",
+        "Directory": "$rebuildRoot\\ps7-a\\WinVidCompress-0.1.0-rc.1-0b61d54ab249",
+        "Version": "0.1.0-rc.1",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "ZipSHA256": "166997bdbddb6fd8690d4c8d141a7f5c8871dda57fc19f8ee1a125e824c372a4",
+        "ManifestSHA256": "1f1e8840370a8c39064bffee59278369d3780d118d1d29257707b69ab2333f7c",
+        "PowerShell": "7.6.6",
+        "Edition": "Core",
+        "DotNet": "10.0.12",
+        "Files": 13,
+        "Bytes": 248616,
+        "BuildCLIExit": 0,
+        "VerifyCLIExit": 0,
+        "Executable": "$wvcSetup.PowerShell7",
+        "BuildArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-OutputDirectory",
+          "$rebuildRoot\\ps7-a",
+          "-ExpectedCommit",
+          "0b61d54ab2490a53528001270928b45c847ce6d2"
+        ],
+        "VerifyArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-VerifyDirectory",
+          "$rebuildRoot\\ps7-a\\WinVidCompress-0.1.0-rc.1-0b61d54ab249"
+        ]
+      },
+      {
+        "Name": "ps7-b",
+        "Directory": "$rebuildRoot\\ps7-b\\WinVidCompress-0.1.0-rc.1-0b61d54ab249",
+        "Version": "0.1.0-rc.1",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "ZipSHA256": "166997bdbddb6fd8690d4c8d141a7f5c8871dda57fc19f8ee1a125e824c372a4",
+        "ManifestSHA256": "1f1e8840370a8c39064bffee59278369d3780d118d1d29257707b69ab2333f7c",
+        "PowerShell": "7.6.6",
+        "Edition": "Core",
+        "DotNet": "10.0.12",
+        "Files": 13,
+        "Bytes": 248616,
+        "BuildCLIExit": 0,
+        "VerifyCLIExit": 0,
+        "Executable": "$wvcSetup.PowerShell7",
+        "BuildArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-OutputDirectory",
+          "$rebuildRoot\\ps7-b",
+          "-ExpectedCommit",
+          "0b61d54ab2490a53528001270928b45c847ce6d2"
+        ],
+        "VerifyArguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$clone\\tools\\package.ps1",
+          "-VerifyDirectory",
+          "$rebuildRoot\\ps7-b\\WinVidCompress-0.1.0-rc.1-0b61d54ab249"
+        ]
+      }
+    ],
+    "Cases": [
+      {
+        "Id": "ps51-a/artifact-content-and-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-b/artifact-content-and-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-a/artifact-content-and-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-b/artifact-content-and-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/repeated-ZIP-and-manifest-bytes",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/repeated-ZIP-and-manifest-bytes",
+        "Status": "Passed"
+      },
+      {
+        "Id": "cross-host-identical-manifest-and-payload",
+        "Status": "Passed"
+      }
+    ],
+    "CrossHostZipBytesIdentical": false,
+    "ObservedZipRuntimeDifference": [
+      {
+        "Host": "ps51",
+        "Bytes": 248706,
+        "SHA256": "7a7d519d6cd12dd5ba5daf28391e126066cfff6d52d249a4c94fb6a2fbf3c555",
+        "Entries": [
+          {
+            "Path": "CHANGELOG.md",
+            "Length": 1215,
+            "Compressed": 1220,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "LICENSE",
+            "Length": 1211,
+            "Compressed": 1216,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "MANIFEST.json",
+            "Length": 2512,
+            "Compressed": 2517,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "PACKAGE.json",
+            "Length": 1382,
+            "Compressed": 1387,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "README.md",
+            "Length": 10762,
+            "Compressed": 10767,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "SECURITY.md",
+            "Length": 3356,
+            "Compressed": 3361,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "THIRD_PARTY_NOTICES.md",
+            "Length": 2315,
+            "Compressed": 2320,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "VERSION",
+            "Length": 11,
+            "Compressed": 16,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "WinVidCompress.bat",
+            "Length": 1527,
+            "Compressed": 1532,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "WinVidCompress.ps1",
+            "Length": 194390,
+            "Compressed": 194420,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/REFERENCE.md",
+            "Length": 10514,
+            "Compressed": 10519,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/TROUBLESHOOTING.md",
+            "Length": 10188,
+            "Compressed": 10193,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/VERIFICATION.md",
+            "Length": 7815,
+            "Compressed": 7820,
+            "Method": 8,
+            "Flags": 0,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          }
+        ]
+      },
+      {
+        "Host": "ps7",
+        "Bytes": 248616,
+        "SHA256": "166997bdbddb6fd8690d4c8d141a7f5c8871dda57fc19f8ee1a125e824c372a4",
+        "Entries": [
+          {
+            "Path": "CHANGELOG.md",
+            "Length": 1215,
+            "Compressed": 1215,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "LICENSE",
+            "Length": 1211,
+            "Compressed": 1211,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "MANIFEST.json",
+            "Length": 2512,
+            "Compressed": 2512,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "PACKAGE.json",
+            "Length": 1382,
+            "Compressed": 1382,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "README.md",
+            "Length": 10762,
+            "Compressed": 10762,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "SECURITY.md",
+            "Length": 3356,
+            "Compressed": 3356,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "THIRD_PARTY_NOTICES.md",
+            "Length": 2315,
+            "Compressed": 2315,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "VERSION",
+            "Length": 11,
+            "Compressed": 11,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "WinVidCompress.bat",
+            "Length": 1527,
+            "Compressed": 1527,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "WinVidCompress.ps1",
+            "Length": 194390,
+            "Compressed": 194390,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/REFERENCE.md",
+            "Length": 10514,
+            "Compressed": 10514,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/TROUBLESHOOTING.md",
+            "Length": 10188,
+            "Compressed": 10188,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          },
+          {
+            "Path": "docs/user/VERIFICATION.md",
+            "Length": 7815,
+            "Compressed": 7815,
+            "Method": 0,
+            "Flags": 2048,
+            "CreateSystem": 0,
+            "CreateVersion": 20,
+            "ExtractVersion": 20,
+            "Attributes": 0,
+            "Extra": "",
+            "Comment": ""
+          }
+        ]
+      }
+    ],
+    "InitialOrchestratorExit": 1,
+    "InitialOrchestratorReason": "Four successful Build/Verify CLI pairs completed; PS5.1 orchestration then failed to load IO.Compression.ZipFile for entry inspection. Preserved existing artifacts and inspected separately.",
+    "report": ".test-results/m503/rebuild-measured.json",
+    "report_sha256": "20cbeb496a4e5e74da2cb9734234622a670fcfd94932f8beb640b5abca2f2d9f",
+    "observed_exit": 0,
+    "CLIObservation": "Original orchestrator reached post-loop ZipFile failure only after all four guarded Build/Verify CLI pairs exited0. Artifacts preserved and each independently reverified; command tokens reconstructed from original retained driver bindings."
+  },
+  "candidate_inspection": {
+    "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "Status": "Passed",
+    "ExitCode": 0,
+    "Counts": {
+      "Passed": 20,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "Cases": [
+      {
+        "Id": "ps51/exact-13-entries",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/no-dependency-private-or-development-payload",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/unchanged-git-bytes/LICENSE",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/unchanged-git-bytes/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/unchanged-git-bytes/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/policy-git-bytes/SECURITY.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/policy-git-bytes/THIRD_PARTY_NOTICES.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/offline-policy-links",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/exact-source-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/bounded-secrets-and-private-path-scan",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/exact-13-entries",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/no-dependency-private-or-development-payload",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/unchanged-git-bytes/LICENSE",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/unchanged-git-bytes/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/unchanged-git-bytes/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/policy-git-bytes/SECURITY.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/policy-git-bytes/THIRD_PARTY_NOTICES.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/offline-policy-links",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/exact-source-provenance",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/bounded-secrets-and-private-path-scan",
+        "Status": "Passed"
+      }
+    ],
+    "Findings": [],
+    "Builds": [
+      {
+        "Host": "ps51",
+        "ZipSHA256": "7a7d519d6cd12dd5ba5daf28391e126066cfff6d52d249a4c94fb6a2fbf3c555",
+        "Entries": [
+          "CHANGELOG.md",
+          "LICENSE",
+          "MANIFEST.json",
+          "PACKAGE.json",
+          "README.md",
+          "SECURITY.md",
+          "THIRD_PARTY_NOTICES.md",
+          "VERSION",
+          "WinVidCompress.bat",
+          "WinVidCompress.ps1",
+          "docs/user/REFERENCE.md",
+          "docs/user/TROUBLESHOOTING.md",
+          "docs/user/VERIFICATION.md"
+        ],
+        "PolicyHashes": {
+          "LICENSE": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+          "SECURITY.md": "4f645e7df3620b85aeba91883160ba7c94277a725a3e5be1b1618f01c2b3ed66",
+          "THIRD_PARTY_NOTICES.md": "5c75954519f8727f63c75b44bb923655b53cbc2adf73663cd70df87d3fd800a3"
+        }
+      },
+      {
+        "Host": "ps7",
+        "ZipSHA256": "166997bdbddb6fd8690d4c8d141a7f5c8871dda57fc19f8ee1a125e824c372a4",
+        "Entries": [
+          "CHANGELOG.md",
+          "LICENSE",
+          "MANIFEST.json",
+          "PACKAGE.json",
+          "README.md",
+          "SECURITY.md",
+          "THIRD_PARTY_NOTICES.md",
+          "VERSION",
+          "WinVidCompress.bat",
+          "WinVidCompress.ps1",
+          "docs/user/REFERENCE.md",
+          "docs/user/TROUBLESHOOTING.md",
+          "docs/user/VERIFICATION.md"
+        ],
+        "PolicyHashes": {
+          "LICENSE": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+          "SECURITY.md": "4f645e7df3620b85aeba91883160ba7c94277a725a3e5be1b1618f01c2b3ed66",
+          "THIRD_PARTY_NOTICES.md": "5c75954519f8727f63c75b44bb923655b53cbc2adf73663cd70df87d3fd800a3"
+        }
+      }
+    ],
+    "Scope": "Every entry in both runtime candidates read; bounded named patterns and exact file/provenance assertions, plus independent human-readable policy/source review. No universal secret detection or safety certification.",
+    "report": ".test-results/m503/candidate-inspection.json",
+    "report_sha256": "0e1ccf041c726121fdb0ccc56d3ec5dcad8deed862f8c348496072a1f45750ef",
+    "observed_exit": 0
+  },
+  "extraction_smoke": {
+    "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "Status": "Passed",
+    "ExitCode": 0,
+    "Counts": {
+      "NotRun": 0,
+      "Skipped": 0,
+      "Failed": 0,
+      "Passed": 80
+    },
+    "Hosts": [
+      {
+        "Version": "5.1.26100.9444",
+        "Edition": "Desktop",
+        "Executable": "$wvcPS51"
+      },
+      {
+        "Version": "7.6.6",
+        "Edition": "Core",
+        "Executable": "$wvcSetup.PowerShell7"
+      }
+    ],
+    "ZipSHA256": "7A7D519D6CD12DD5BA5DAF28391E126066CFFF6D52D249A4C94FB6A2FBF3C555",
+    "ZipEntries": [
+      "README.md",
+      "WinVidCompress.ps1",
+      "WinVidCompress.bat",
+      "LICENSE",
+      "SECURITY.md",
+      "THIRD_PARTY_NOTICES.md",
+      "VERSION",
+      "CHANGELOG.md",
+      "PACKAGE.json",
+      "MANIFEST.json",
+      "docs/user/REFERENCE.md",
+      "docs/user/TROUBLESHOOTING.md",
+      "docs/user/VERIFICATION.md"
+    ],
+    "Cases": [
+      {
+        "Id": "ps51/extracted/README.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/LICENSE",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/SECURITY.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/THIRD_PARTY_NOTICES.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/VERSION",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/CHANGELOG.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/PACKAGE.json",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/MANIFEST.json",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/docs/user/REFERENCE.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/docs/user/TROUBLESHOOTING.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/extracted/docs/user/VERIFICATION.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/bytes/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/bytes/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/license-canonical-text",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-generate/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-doctor/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/doctor-adjacent-paths",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/doctor-no-persistent-write",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-preview/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/preview-no-write",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-convert/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/done",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/nominal-final",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-probe/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/streams-geometry",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/filename-tags",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-decode/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-rename/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/collision-rename",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-skip/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/collision-skip",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51-help/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/help-eleven-parameters-three-examples",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/bat-unattended",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/source-final-preserved",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/missing-config-remains-absent",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/four-private-session-logs",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps51/no-active-partials",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/README.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/LICENSE",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/SECURITY.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/THIRD_PARTY_NOTICES.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/VERSION",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/CHANGELOG.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/PACKAGE.json",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/MANIFEST.json",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/docs/user/REFERENCE.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/docs/user/TROUBLESHOOTING.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/extracted/docs/user/VERIFICATION.md",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/bytes/WinVidCompress.ps1",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/bytes/WinVidCompress.bat",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/license-canonical-text",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-generate/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-doctor/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/doctor-adjacent-paths",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/doctor-no-persistent-write",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-preview/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/preview-no-write",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-convert/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/done",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/nominal-final",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-probe/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/streams-geometry",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/filename-tags",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-decode/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-rename/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/collision-rename",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-skip/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/collision-skip",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7-help/exit",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/help-eleven-parameters-three-examples",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/bat-unattended",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/source-final-preserved",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/missing-config-remains-absent",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/four-private-session-logs",
+        "Status": "Passed"
+      },
+      {
+        "Id": "ps7/no-active-partials",
+        "Status": "Passed"
+      }
+    ],
+    "Details": [
+      {
+        "Id": "ps51-generate",
+        "Executable": "$ffmpeg",
+        "Arguments": [
+          "-hide_banner",
+          "-nostdin",
+          "-v",
+          "error",
+          "-n",
+          "-f",
+          "lavfi",
+          "-i",
+          "testsrc2=size=160x120:rate=24:duration=0.5",
+          "-f",
+          "lavfi",
+          "-i",
+          "sine=frequency=440:sample_rate=48000:duration=0.5",
+          "-map",
+          "0:v:0",
+          "-map",
+          "1:a:0",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "veryfast",
+          "-crf",
+          "18",
+          "-pix_fmt",
+          "yuv420p",
+          "-c:a",
+          "aac",
+          "$smokeOwner_ps51\\sources\\Synthetic Band 29.02.2024 - CamA.mov"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-doctor",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps51\\extracted\\WinVidCompress.ps1",
+          "-CheckEnvironment",
+          "-OutputDir",
+          "$smokeOwner_ps51\\output"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-preview",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps51\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-WhatIf",
+          "-OutputDir",
+          "$smokeOwner_ps51\\output",
+          "$smokeOwner_ps51\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-convert",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps51\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps51\\output",
+          "$smokeOwner_ps51\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-probe",
+        "Executable": "$ffprobe",
+        "Arguments": [
+          "-v",
+          "error",
+          "-show_streams",
+          "-show_format",
+          "-of",
+          "json",
+          "$smokeOwner_ps51\\output\\Synthetic Band 29.02.2024 - CamA.mp4"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-decode",
+        "Executable": "$ffmpeg",
+        "Arguments": [
+          "-hide_banner",
+          "-nostdin",
+          "-v",
+          "error",
+          "-i",
+          "$smokeOwner_ps51\\output\\Synthetic Band 29.02.2024 - CamA.mp4",
+          "-map",
+          "0:v:0",
+          "-map",
+          "0:a:0",
+          "-f",
+          "null",
+          "-"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-rename",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps51\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps51\\output",
+          "$smokeOwner_ps51\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-skip",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps51\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps51\\output",
+          "-CollisionMode",
+          "skip",
+          "$smokeOwner_ps51\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps51-help",
+        "Executable": "$wvcPS51",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Get-Help '$smokeOwner_ps51\\extracted\\WinVidCompress.ps1' -Full | ConvertTo-Json -Depth 20"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-generate",
+        "Executable": "$ffmpeg",
+        "Arguments": [
+          "-hide_banner",
+          "-nostdin",
+          "-v",
+          "error",
+          "-n",
+          "-f",
+          "lavfi",
+          "-i",
+          "testsrc2=size=160x120:rate=24:duration=0.5",
+          "-f",
+          "lavfi",
+          "-i",
+          "sine=frequency=440:sample_rate=48000:duration=0.5",
+          "-map",
+          "0:v:0",
+          "-map",
+          "1:a:0",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "veryfast",
+          "-crf",
+          "18",
+          "-pix_fmt",
+          "yuv420p",
+          "-c:a",
+          "aac",
+          "$smokeOwner_ps7\\sources\\Synthetic Band 29.02.2024 - CamA.mov"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-doctor",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps7\\extracted\\WinVidCompress.ps1",
+          "-CheckEnvironment",
+          "-OutputDir",
+          "$smokeOwner_ps7\\output"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-preview",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps7\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-WhatIf",
+          "-OutputDir",
+          "$smokeOwner_ps7\\output",
+          "$smokeOwner_ps7\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-convert",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps7\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps7\\output",
+          "$smokeOwner_ps7\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-probe",
+        "Executable": "$ffprobe",
+        "Arguments": [
+          "-v",
+          "error",
+          "-show_streams",
+          "-show_format",
+          "-of",
+          "json",
+          "$smokeOwner_ps7\\output\\Synthetic Band 29.02.2024 - CamA.mp4"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-decode",
+        "Executable": "$ffmpeg",
+        "Arguments": [
+          "-hide_banner",
+          "-nostdin",
+          "-v",
+          "error",
+          "-i",
+          "$smokeOwner_ps7\\output\\Synthetic Band 29.02.2024 - CamA.mp4",
+          "-map",
+          "0:v:0",
+          "-map",
+          "0:a:0",
+          "-f",
+          "null",
+          "-"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-rename",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps7\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps7\\output",
+          "$smokeOwner_ps7\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-skip",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "$smokeOwner_ps7\\extracted\\WinVidCompress.ps1",
+          "-Unattended",
+          "-OutputDir",
+          "$smokeOwner_ps7\\output",
+          "-CollisionMode",
+          "skip",
+          "$smokeOwner_ps7\\sources"
+        ],
+        "Exit": 0
+      },
+      {
+        "Id": "ps7-help",
+        "Executable": "$wvcSetup.PowerShell7",
+        "Arguments": [
+          "-NoProfile",
+          "-NonInteractive",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command",
+          "Get-Help '$smokeOwner_ps7\\extracted\\WinVidCompress.ps1' -Full | ConvertTo-Json -Depth 20"
+        ],
+        "Exit": 0
+      }
+    ],
+    "report": ".test-results/m503/smoke.json",
+    "report_sha256": "c92fe2b4a039a0f808bb8fdffc93c29b8ce8ed23daa1315d5c8d3b65dfac0add",
+    "observed_exit": 0
+  },
+  "initial_development_runs": [
+    {
+      "name": "regression-first",
+      "source_base": "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+      "tested_tree_dirty": true,
+      "command": "& $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/regression.json",
+      "observed_exit": 1,
+      "counts": {
+        "Passed": 17,
+        "Failed": 2,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/regression.json",
+      "report_sha256": "bfd4537ea387e892716e52b641e6a02a02351316a3f87d1ffddc20e1ac326a07",
+      "note": "Dirty tree at base0fa5502: new required policy counts/bytes fail before implementation; expected17passed2failed."
+    },
+    {
+      "name": "first-development",
+      "source_base": "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+      "tested_tree_dirty": true,
+      "command": "& $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/package51-dev.json",
+      "observed_exit": 1,
+      "counts": {
+        "Passed": 18,
+        "Failed": 1,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/package51-dev.json",
+      "report_sha256": "738d9bddc2e5ee8d16381b329cd1a1cccf5635c16068265f21d31942a3467704",
+      "note": "Dirty implementation tree:18passed1failed because disposable fixture archived old README. Overlay current README fixed the fixture without weakening expectations."
+    },
+    {
+      "name": "fixed-development-PS51",
+      "source_base": "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+      "tested_tree_dirty": true,
+      "command": "& $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/package51-fixed.json",
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 19,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/package51-fixed.json",
+      "report_sha256": "7f84c48bed4a70c9eadc579ba5fd09a8068cdcd785a70c75802cccfb72e00cf0",
+      "note": "Dirty development tree at base0fa5502:19passed before implementation commit."
+    },
+    {
+      "name": "development-PS7",
+      "source_base": "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+      "tested_tree_dirty": true,
+      "command": "& $hostExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot $wvcSetup.ModuleRoot -TestPath tests/unit/Package.Tests.ps1 -ReportPath .test-results/m503/package7-dev.json",
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 19,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "report": ".test-results/m503/package7-dev.json",
+      "report_sha256": "bbec0f51c45c465930fe722108376167160476206c9725c23751585f4b06d5e4",
+      "note": "Dirty development tree at base0fa5502:19passed before implementation commit."
+    }
+  ],
+  "candidate_independent_review": {
+    "entries_read": 26,
+    "local_links_checked_per_zip": 20,
+    "source_pinned_links_checked_per_zip": 29,
+    "secret_private_path_matches": 0,
+    "actionable_findings": 0,
+    "scope": "Both a ZIPs read; SourceBlob/provenance/payload/header/link/license/unsigned/privacy review. Inspected entries are not Pester pass counts."
+  },
+  "native_dependency_license": [
+    {
+      "Tool": "ffmpeg",
+      "Version": "ffmpeg version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+      "Hash": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+      "GPL": true,
+      "Version3": true,
+      "Libx264": true,
+      "License": "GPL version 3 or later",
+      "LicenseExitCode": 0,
+      "LicenseArguments": [
+        "-L"
+      ],
+      "LicenseOutputReport": ".test-results/m503/ffmpeg-license-confirmed.log"
+    },
+    {
+      "Tool": "ffprobe",
+      "Version": "ffprobe version 2026-10-04-git-a35c879992-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "Hash": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d",
+      "GPL": true,
+      "Version3": true,
+      "Libx264": true,
+      "License": "GPL version 3 or later",
+      "LicenseExitCode": 0,
+      "LicenseArguments": [
+        "-L"
+      ],
+      "LicenseOutputReport": ".test-results/m503/ffprobe-license-confirmed.log"
+    }
+  ],
+  "native_pin_verification": [
+    {
+      "Tool": "ffmpeg.exe",
+      "SHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
+      "PinnedMatch": true
+    },
+    {
+      "Tool": "ffprobe.exe",
+      "SHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d",
+      "PinnedMatch": true
+    }
+  ],
+  "authenticode": [
+    {
+      "Name": "WinVidCompress.ps1",
+      "Status": "NotSigned",
+      "CertificatePresent": false
+    },
+    {
+      "Name": "package.ps1",
+      "Status": "NotSigned",
+      "CertificatePresent": false
+    }
+  ],
+  "authenticode_limit": "PS1 and developer builder NotSigned/no certificate. BAT query yielded UnknownError/no certificate; not counted as successful BAT signature verification. No signing setup performed.",
+  "reporting_route": {
+    "observed_at": "2026-10-07",
+    "repository": {
+      "full_name": "PikkuJanne/WinVidCompress",
+      "has_issues": true
+    },
+    "private_vulnerability_reporting": {
+      "enabled": false
+    },
+    "policy": "Minimal public request for private contact only; sensitive detail waits for confirmed channel. No email invented, request sent or setting enabled."
+  },
+  "primary_references": [
+    {
+      "url": "https://ffmpeg.org/legal.html",
+      "checked": "2026-10-07"
+    },
+    {
+      "url": "https://ffmpeg.org/download.html",
+      "checked": "2026-10-07"
+    },
+    {
+      "url": "https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately",
+      "checked": "2026-10-07"
+    },
+    {
+      "url": "https://unlicense.org/",
+      "checked": "2026-10-07"
+    }
+  ],
+  "developer_helper_hashes": {
+    "Rebuild-initial.ps1": "88b9e3b9c54d6a5685f3fd7d35b285374d906c6ab131c449a930fc90a70a3fad",
+    "Measure-Rebuild.ps1": "07676c086f32687febf0535096f36d58e80272efe4552c6b5b3e190e3e06e1b2",
+    "Inspect-Zip.py": "c8863bf0193986c66a0a1b5748ade5301a99d5211819a40b4917da0fe0751c22",
+    "Inspect-Candidate.py": "ac89c3e23ceecb54904c8155e40f9348845cc5b2deab1e535e4045fc5dcb12d8",
+    "Smoke.ps1": "b47247529ed204aa4c9f04d5898d86b3bb1698d394009d1c4a2bcc90e914c629"
+  },
+  "other_initial_observations": [
+    "Native-pin diagnostic one-liner initially had a foreach-to-pipeline parser error before executing. Corrected array-wrapped statement verified both hashes; no product change.",
+    "Initial reconstruction orchestrator exit1 occurred after all four successful CLI Build/Verify pairs, during ZipFile type lookup under PS5.1. Original helper/log/candidates retained; separate loaded-assembly measurement and candidate scans passed.",
+    "Pre-commit diff caught generic tracker serialization changing unrelated Unicode/format. Regenerated from explicit UTF8 HEAD source with targeted M5-03 splice; unrelated task data/format preserved. Review also corrected a mistaken LICENSE CRLF prose assertion to actual1211 bytes/24LF/0CRLF and added raw report traceability."
+  ],
+  "implementation_sync": {
+    "schema_version": 1,
+    "checked_at": "2026-10-07T20:48:30.575351+00:00",
+    "read_only": true,
+    "point_in_time_only": true,
+    "repository": "PikkuJanne/WinVidCompress",
+    "head": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "branch": "codex/wvc-m5-03-security",
+    "upstream": "origin/codex/wvc-m5-03-security",
+    "dirty": false,
+    "operations": [],
+    "issues": [],
+    "reasons": [],
+    "live_fetch_head": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "live_push_head": "0b61d54ab2490a53528001270928b45c847ce6d2",
+    "status": "SYNCHRONIZED"
+  },
+  "ci": {
+    "push_run": 37684831753,
+    "pr_run": 37684863505,
+    "state": "Both exact implementation push and confirmed PR merge runs completed successfully; all four jobs/steps and four sanitized summaries/cases inspected.",
+    "merge_commit": "8ee495c307d505cdcdb7b7e6a96bf64a72ec750a",
+    "merge_parents": [
+      "0fa5502cd55d31d1b234d8db24f3fdc9caf3b07f",
+      "0b61d54ab2490a53528001270928b45c847ce6d2"
+    ],
+    "inspected_runs": [
+      {
+        "ID": 37684831753,
+        "Event": "push",
+        "HeadSha": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "Status": "completed",
+        "Conclusion": "success",
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37684831753",
+        "Jobs": [
+          {
+            "Name": "PowerShell7",
+            "ID": 113009846790,
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "Name": "Set up job",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Verify and prepare pinned developer dependencies",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run real targeted tests and changed-file analysis",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Preserve sanitized results only",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Complete job",
+                "Conclusion": "success"
+              }
+            ]
+          },
+          {
+            "Name": "WindowsPowerShell",
+            "ID": 113009847005,
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "Name": "Set up job",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Verify and prepare pinned developer dependencies",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run real targeted tests and changed-file analysis",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Preserve sanitized results only",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Complete job",
+                "Conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ID": 37684863505,
+        "Event": "pull_request",
+        "HeadSha": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "Status": "completed",
+        "Conclusion": "success",
+        "URL": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/37684863505",
+        "Jobs": [
+          {
+            "Name": "PowerShell7",
+            "ID": 113009956350,
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "Name": "Set up job",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Verify and prepare pinned developer dependencies",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run real targeted tests and changed-file analysis",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Preserve sanitized results only",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Complete job",
+                "Conclusion": "success"
+              }
+            ]
+          },
+          {
+            "Name": "WindowsPowerShell",
+            "ID": 113009956961,
+            "Conclusion": "success",
+            "Steps": [
+              {
+                "Name": "Set up job",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Verify and prepare pinned developer dependencies",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Run real targeted tests and changed-file analysis",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Preserve sanitized results only",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "Conclusion": "success"
+              },
+              {
+                "Name": "Complete job",
+                "Conclusion": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "inspected_artifacts": [
+      {
+        "Run": 37684831753,
+        "Event": "push",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "HostName": "WindowsPowerShell",
+        "Host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "WindowsVersion": "10.0.26100.0",
+        "RunnerImage": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "NativeTools": [
+          {
+            "Name": "FFmpeg",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          },
+          {
+            "Name": "FFprobe",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          }
+        ],
+        "Dependencies": {
+          "Pester": "5.7.1",
+          "PSScriptAnalyzer": "1.24.0"
+        },
+        "Counts": {
+          "Passed": 988,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "Exit": 0,
+        "Static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "Issues": [],
+        "CasesInspected": 988,
+        "Report": ".test-results/m503/ci/37684831753/windows-results-WindowsPowerShell/summary.json",
+        "ReportSHA256": "3cef45dba2807f06f661a1a5b60bd84254807ce2ff838ba466c91fa0f4d6474d",
+        "ArtifactID": 11511145944,
+        "ArtifactName": "windows-results-WindowsPowerShell",
+        "ArtifactBytes": 3615,
+        "ArtifactDigest": "sha256:7bc7e78a6f5209874c46c69bb5c48acdbccf975d48cbdb3a6773c5513d2e04e7"
+      },
+      {
+        "Run": 37684831753,
+        "Event": "push",
+        "SourceCommit": "0b61d54ab2490a53528001270928b45c847ce6d2",
+        "HostName": "PowerShell7",
+        "Host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "WindowsVersion": "10.0.26100.0",
+        "RunnerImage": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "NativeTools": [
+          {
+            "Name": "FFmpeg",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          },
+          {
+            "Name": "FFprobe",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          }
+        ],
+        "Dependencies": {
+          "Pester": "5.7.1",
+          "PSScriptAnalyzer": "1.24.0"
+        },
+        "Counts": {
+          "Passed": 988,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "Exit": 0,
+        "Static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "Issues": [],
+        "CasesInspected": 988,
+        "Report": ".test-results/m503/ci/37684831753/windows-results-PowerShell7/summary.json",
+        "ReportSHA256": "bb9ec45e01c057454664aefd9303d11be33d505e40bcac31292786833cadda0e",
+        "ArtifactID": 11510797708,
+        "ArtifactName": "windows-results-PowerShell7",
+        "ArtifactBytes": 3313,
+        "ArtifactDigest": "sha256:d9644095f87a82cbf79fa7f77346497ee80834cb48d854db203a2f66e3e67b15"
+      },
+      {
+        "Run": 37684863505,
+        "Event": "pr",
+        "SourceCommit": "8ee495c307d505cdcdb7b7e6a96bf64a72ec750a",
+        "HostName": "WindowsPowerShell",
+        "Host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "WindowsVersion": "10.0.26100.0",
+        "RunnerImage": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "NativeTools": [
+          {
+            "Name": "FFmpeg",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          },
+          {
+            "Name": "FFprobe",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          }
+        ],
+        "Dependencies": {
+          "Pester": "5.7.1",
+          "PSScriptAnalyzer": "1.24.0"
+        },
+        "Counts": {
+          "Passed": 988,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "Exit": 0,
+        "Static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "Issues": [],
+        "CasesInspected": 988,
+        "Report": ".test-results/m503/ci/37684863505/windows-results-WindowsPowerShell/summary.json",
+        "ReportSHA256": "1a2a624eed58aae93192bd08471fa32d377fd130b9713bc51b905a14ee047e1c",
+        "ArtifactID": 11511490420,
+        "ArtifactName": "windows-results-WindowsPowerShell",
+        "ArtifactBytes": 3617,
+        "ArtifactDigest": "sha256:5abdfbc21b1679bdc10a11b9a1a012fa0a3dca934c370d9b2ad502f910a922ac"
+      },
+      {
+        "Run": 37684863505,
+        "Event": "pr",
+        "SourceCommit": "8ee495c307d505cdcdb7b7e6a96bf64a72ec750a",
+        "HostName": "PowerShell7",
+        "Host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "WindowsVersion": "10.0.26100.0",
+        "RunnerImage": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "NativeTools": [
+          {
+            "Name": "FFmpeg",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          },
+          {
+            "Name": "FFprobe",
+            "Version": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev"
+          }
+        ],
+        "Dependencies": {
+          "Pester": "5.7.1",
+          "PSScriptAnalyzer": "1.24.0"
+        },
+        "Counts": {
+          "Passed": 988,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "Exit": 0,
+        "Static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "Issues": [],
+        "CasesInspected": 988,
+        "Report": ".test-results/m503/ci/37684863505/windows-results-PowerShell7/summary.json",
+        "ReportSHA256": "40349b7df82d159cb7b9a39d533265c782c4054e255991f54b7849696f5437cf",
+        "ArtifactID": 11510738426,
+        "ArtifactName": "windows-results-PowerShell7",
+        "ArtifactBytes": 3316,
+        "ArtifactDigest": "sha256:adbba505eb911323b6256738be4fea3924e64a4e82b6a3f18671a32f8fecf336"
+      }
+    ],
+    "commands": [
+      "gh run view <run> --json databaseId,event,status,conclusion,headSha,jobs,url",
+      "gh api repos/PikkuJanne/WinVidCompress/actions/runs/<run>/artifacts",
+      "gh run download 37684831753 --dir .test-results/m503/ci/37684831753",
+      "gh run download 37684863505 --name windows-results-PowerShell7 --dir .test-results/m503/ci/37684863505/windows-results-PowerShell7",
+      "gh run download 37684863505 --name windows-results-WindowsPowerShell --dir .test-results/m503/ci/37684863505/windows-results-WindowsPowerShell",
+      "gh api repos/PikkuJanne/WinVidCompress/git/ref/pull/32/merge",
+      "gh api repos/PikkuJanne/WinVidCompress/commits/8ee495c307d505cdcdb7b7e6a96bf64a72ec750a"
+    ],
+    "final_handoff": "Later evidence-only handoff SHA/live refs/current CI checked externally after commit/push; preceding source success does not preclaim it."
+  },
+  "limitations": [
+    "Bounded secret/private-path patterns and human review are not universal secret detection or security certification.",
+    "Tool-only local unsigned candidate; no bundling/signing/license/account/settings/publication/tag/release/merge/deployment change.",
+    "Both runtime payloads/manifests identical and same-host ZIP pairs byte-identical; cross-runtime ZIP framing differs90bytes and checksums differ.",
+    "Final handoff follows tested implementation; M5-05 must rebuild from final chosen clean pushed source.",
+    "No new Full/Explorer/Ctrl+C/playback/browser-MOTW/fresh-profile/default-Videos/release acceptance; existing owner evidence preserved.",
+    "Remote filesystems/durability/hostile substitution/HDR/other-player/full-original/default-quality boundaries remain. Structural/decode checks are not perceptual proof."
+  ],
+  "final_handoff_push": "Pending final evidence commit; verify externally after push, avoiding self-SHA.",
+  "next_task": "WVC-M5-04 - Prepare website product metadata and genuine demonstration content",
+  "tracker_handoff_validation": {
+    "command": "& $wvcPython tools/codex-winvidcompress/validate_tracker.py --repo $repo",
+    "observed_exit": 0,
+    "valid": true,
+    "tasks": 32,
+    "acceptance_criteria": 128,
+    "improvements_covered": 23,
+    "errors": []
+  },
+  "handoff_audit": {
+    "command": "& $wvcPython .test-results/m503/Audit-Handoff.py",
+    "observed_exit": 0,
+    "counts": {
+      "Passed": 332,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0
+    },
+    "local_links_checked": 79,
+    "report": ".test-results/m503/handoff-audit.json",
+    "report_sha256": "ff7af22c7bdfa8794c264c7f3c5f3347ed119cbe368306aa507be925bce37d22",
+    "helper_sha256": "59260a4a545694797c138a84baac6d7be0bcc586f65127b4cfebd760b8d97aa5",
+    "scope": "Final documentation/tracker/privacy/source/hash/link/smoke-token and available CI projection audit; no new application/manual acceptance."
+  }
+}

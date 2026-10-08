@@ -15,13 +15,13 @@ BeforeAll {
     $export=Invoke-WvcTestProcess $Git @('-C',$RepoRoot,'archive','--format=zip',('--output='+$seed),'HEAD')
     if ($export.ExitCode -ne 0) { throw $export.StdErr }
     [IO.Compression.ZipFile]::ExtractToDirectory($seed,$Fixture)
-    foreach ($file in @('VERSION','CHANGELOG.md','tools/package.ps1','docs/releases/TESTED_ENVIRONMENT.json')) {
+    foreach ($file in @('README.md','VERSION','CHANGELOG.md','SECURITY.md','THIRD_PARTY_NOTICES.md','tools/package.ps1','docs/releases/TESTED_ENVIRONMENT.json')) {
         $target=Join-Path $Fixture $file
         [void][IO.Directory]::CreateDirectory((Split-Path -Parent $target))
         Copy-Item -LiteralPath (Join-Path $RepoRoot $file) -Destination $target -Force
     }
     # Synthetic private-like tracked/untracked data must not leak into artifacts.
-    foreach ($file in @('config.json','private.env','synthetic-private.mp4','session.log')) {
+    foreach ($file in @('config.json','private.env','synthetic-private.mp4','session.log','ffmpeg.exe','ffprobe.exe')) {
         [IO.File]::WriteAllText((Join-Path $Fixture $file),'synthetic private sentinel')
     }
     [void](Invoke-FixtureGit @('init','--quiet'))
@@ -49,7 +49,7 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
         $escaped=$scriptPath.Replace("'","''")
         $load=Invoke-WvcTestProcess $hostExe @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-Command',(". '"+$escaped+"'; (Get-WvcPackagePaths).Count"))
         $load.ExitCode | Should -Be 0
-        $load.StdOut.Trim() | Should -BeExactly '9'
+        $load.StdOut.Trim() | Should -BeExactly '11'
         $output=Join-Path $Owner.Path 'cli';[void][IO.Directory]::CreateDirectory($output)
         $build=Invoke-WvcTestProcess $hostExe @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',$scriptPath,'-OutputDirectory',$output,'-ExpectedCommit',(Invoke-FixtureGit @('rev-parse','HEAD')))
         $build.ExitCode | Should -Be 0
@@ -66,21 +66,26 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
         $result=New-TestPackage 'content'
         $check=Test-WvcPackage $result.Directory
         $check.Passed | Should -BeTrue
-        $check.Files | Should -Be 11
+        $check.Files | Should -Be 13
         $extracted=Join-Path $Owner.Path 'extracted'
         Expand-Archive -LiteralPath (Join-Path $result.Directory 'WinVidCompress-0.1.0-rc.1.zip') -DestinationPath $extracted
-        foreach ($file in @('WinVidCompress.ps1','WinVidCompress.bat')) {
+        foreach ($file in @('WinVidCompress.ps1','WinVidCompress.bat','LICENSE')) {
             (Get-FileHash -LiteralPath (Join-Path $extracted $file)).Hash | Should -BeExactly (Get-FileHash -LiteralPath (Join-Path $Fixture $file)).Hash
         }
-        foreach ($excluded in @('config.json','private.env','synthetic-private.mp4','session.log','.git','tools','tests','docs/codex-winvidcompress')) {
+        foreach ($excluded in @('config.json','private.env','synthetic-private.mp4','session.log','ffmpeg.exe','ffprobe.exe','.git','tools','tests','docs/codex-winvidcompress')) {
             Test-Path -LiteralPath (Join-Path $extracted $excluded) | Should -BeFalse
         }
         $readme=[IO.File]::ReadAllText((Join-Path $extracted 'README.md'))
         $readme | Should -Match ('https://github.com/PikkuJanne/WinVidCompress/blob/'+$result.SourceCommit+'/docs/benchmarks/README.md')
         $readme | Should -Match '\]\(docs/user/REFERENCE.md\)'
+        # M5-03: policy/terms remain readable offline and native poison is excluded.
+        foreach ($file in @('SECURITY.md','THIRD_PARTY_NOTICES.md')) {
+            Test-Path -LiteralPath (Join-Path $extracted $file) -PathType Leaf | Should -BeTrue
+            $readme | Should -Match ('\]\('+[regex]::Escape($file)+'\)')
+        }
         $manifest=Get-Content -LiteralPath (Join-Path $result.Directory 'manifest.json') -Raw | ConvertFrom-Json
         $manifest.ExcludedSelf | Should -BeExactly 'MANIFEST.json'
-        @($manifest.Files).Count | Should -Be 10
+        @($manifest.Files).Count | Should -Be 12
         @($manifest.Files | Where-Object Path -eq 'MANIFEST.json').Count | Should -Be 0
         $package=Get-Content -LiteralPath (Join-Path $extracted 'PACKAGE.json') -Raw | ConvertFrom-Json
         $package.RuntimeTestEvidence.ApplicationTestCommit | Should -BeExactly '2c2b45362ab14d18fd3c13635fa1d2f987cabc60'
