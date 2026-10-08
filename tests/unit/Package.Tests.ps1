@@ -32,6 +32,7 @@ BeforeAll {
     [void](Invoke-FixtureGit @('add','--all'))
     [void](Invoke-FixtureGit @('commit','--quiet','-m','Owned package fixture'))
     $script:OriginalVersion=[IO.File]::ReadAllBytes((Join-Path $Fixture 'VERSION'))
+    $script:FixtureVersion=[Text.Encoding]::UTF8.GetString($OriginalVersion).Trim()
     function New-TestPackage([string]$Name) {
         $directory=Join-Path $Owner.Path $Name
         [void][IO.Directory]::CreateDirectory($directory)
@@ -67,8 +68,9 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
         $check=Test-WvcPackage $result.Directory
         $check.Passed | Should -BeTrue
         $check.Files | Should -Be 13
+        $result.PackageVersion | Should -BeExactly $FixtureVersion
         $extracted=Join-Path $Owner.Path 'extracted'
-        Expand-Archive -LiteralPath (Join-Path $result.Directory 'WinVidCompress-0.1.0-rc.1.zip') -DestinationPath $extracted
+        Expand-Archive -LiteralPath (Join-Path $result.Directory ('WinVidCompress-'+$result.PackageVersion+'.zip')) -DestinationPath $extracted
         foreach ($file in @('WinVidCompress.ps1','WinVidCompress.bat','LICENSE')) {
             (Get-FileHash -LiteralPath (Join-Path $extracted $file)).Hash | Should -BeExactly (Get-FileHash -LiteralPath (Join-Path $Fixture $file)).Hash
         }
@@ -99,7 +101,7 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
     }
     It 'refuses existing candidate artifacts without changing their bytes [A01 A04]' {
         $first=New-TestPackage 'no-clobber'
-        $zip=Join-Path $first.Directory 'WinVidCompress-0.1.0-rc.1.zip'
+        $zip=Join-Path $first.Directory ('WinVidCompress-'+$first.PackageVersion+'.zip')
         $before=(Get-FileHash -LiteralPath $zip).Hash
         { New-TestPackage 'no-clobber' } | Should -Throw '*already exists*'
         (Get-FileHash -LiteralPath $zip).Hash | Should -BeExactly $before
@@ -147,7 +149,8 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
     It 'rejects artifact damage at <Kind> [A03]' -TestCases @(@{Kind='zip'},@{Kind='checksum'},@{Kind='manifest'},@{Kind='provenance'}) {
         param($Kind)
         $result=New-TestPackage ('tamper-'+$Kind)
-        $file=switch($Kind){'zip'{'WinVidCompress-0.1.0-rc.1.zip'}'checksum'{'WinVidCompress-0.1.0-rc.1.zip.sha256'}'manifest'{'manifest.json'}'provenance'{'build.json'}}
+        $zipName='WinVidCompress-'+$result.PackageVersion+'.zip'
+        $file=switch($Kind){'zip'{$zipName}'checksum'{$zipName+'.sha256'}'manifest'{'manifest.json'}'provenance'{'build.json'}}
         [IO.File]::AppendAllText((Join-Path $result.Directory $file),'tampered fixture')
         { Test-WvcPackage $result.Directory } | Should -Throw
     }

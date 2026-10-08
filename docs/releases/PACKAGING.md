@@ -1,6 +1,6 @@
 # Local candidate packaging
 
-`tools/package.ps1` is a developer tool requiring Git and Windows PowerShell5.1 or supported stable PowerShell7. It never installs dependencies, publishes, uploads, tags or merges. Run from a clean tracked repository root whose origin is PikkuJanne/WinVidCompress. VERSION currently selects **0.1.0-rc.1**, a local candidate; live tags/releases were empty when chosen. Commit the intended source before packaging. No own-commit SHA is embedded in tracked version/release files.
+`tools/package.ps1` is a developer tool requiring Git and Windows PowerShell5.1 or supported stable PowerShell7. It never installs dependencies, publishes, uploads, tags or merges. Run from a clean tracked repository root whose origin is PikkuJanne/WinVidCompress. VERSION selects **1.0.0**, the owner's chosen final version, prepared as a local candidate pending concrete acceptance; live tags/releases were empty at the 2026-10-08 preparation check. Commit the intended source before packaging. No own-commit SHA is embedded in tracked version/release files.
 
 ```powershell
 New-Item -ItemType Directory -Path .test-results/packages -Force | Out-Null

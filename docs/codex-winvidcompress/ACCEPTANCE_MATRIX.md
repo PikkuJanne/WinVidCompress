@@ -1,5 +1,9 @@
 # Full acceptance matrix
 
+Owner accepted A04 on2026-10-08 with "A04 approved" and separately authorized "Also authorize merging PR 34". **WVC-M5-05 accepted; all128 criteria passed (31 verified /1 accepted).** Exact06e primary ZIP/source/stated exclusions remain the acceptance target; unverified tests/support claims remain excluded. [Actual approval and completed handoff CI](evidence/WVC-M5-05-approval.md). Merge/conditional v1.0.0 publication pending execution at this approval checkpoint. The preparation record below preserves the earlier pending state and raw outcomes as history.
+
+## Preparation record (before owner approval)
+
 The 128 task-level criteria in TASKS.json are the primary acceptance checklist. This cross-cutting matrix prevents end-to-end gaps. Every row begins NOT RUN; populate evidence, never pre-fill a pass.
 
 | Area | Required scenarios | Evidence method | Initial status |
@@ -38,3 +42,9 @@ The 128 task-level criteria in TASKS.json are the primary acceptance checklist. 
 M4-05 retains the initial603decf Full969/1/0/8 PS7 watchdog failure and affected PS7-alone rerun969/0/0/8 exit2. Full's eight combined manual/future NotRun IDs are unchanged; this dated matrix reconciles passing subcases and remaining limits without rewriting raw reports. Exact603decf push CI969/0/0/0 per host passed; its PR failed pre-job with reproducible GitHub internal error/HTTP500. Subsequentbfef394 push37659526964 and confirmed mergee702a94 PR37659531727 both969/0/0/0 per host passed with four sanitized artifacts inspected. Owner sample PASS completes A03/all criteria; raw reports remain unchanged. Current acceptance-record commit CI requires separate inspection.
 
 Release blockers include source/final overwrite risk, unsafe cancellation/cleanup, false completion, silent output redirection, known unsupported launcher corruption, failing required automated checks, missing required manual Windows acceptance and unverified final GitHub synchronization. Cosmetic/editorial limitations can be documented separately without calling safety gaps cosmetic.
+
+## WVC-M5-05 final-source reconciliation (2026-10-08)
+
+Candidate/tested **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd** reconstructs from clean live GitHub feature, verifies four tool-only builds/recovered report 7/0 and fresh native extraction80/0, with bounded20/0/independent90/0 archive/source/privacy/link checks. Quick **986/0/0/0 exit 0**; separate Full51 **1006/0/0/8 exit 2**, Full7 **24/1/0/8 exit 1**. Full raw8 combined omissions/actual exits stay unchanged; PS7 watchdog failure 24/1/0/8 exit 1 retained, split recovered automation **1016/0/0/0** from all 44 selected files plus recorded shared passes; dated manual overlays, earlier failures and broader-support/publication blockers remain explicit. [All 23 improvement mappings and decisions](../releases/FINAL_RECONCILIATION.md), [actual evidence/CI](evidence/WVC-M5-05.md), [concrete candidate](../releases/V1.0.0_CANDIDATE.md).
+
+All 124 prior criteria retain their scoped evidence. Final-source A01/A02 pass; A03 has clean implementation live equality plus externally verified final handoff. A04 remains **not_run**, requiring actual owner acceptance of these bytes/stated exclusions; separate merge permission and retained conditional publication instruction do not become a release or website deployment automatically.31 verified/ 1 implemented; 127 passed/ 1 not_run. No source/final/runtime/default-quality or license change.

@@ -1,0 +1,13 @@
+# WVC-M5-05 owner acceptance and authorized follow-up
+
+Recorded 2026-10-08T15:00:11Z. After the [concrete candidate](../../releases/V1.0.0_CANDIDATE.md) and its support exclusions were presented, the owner said **"A04 approved"**. In the separate merge question they answered **"Also authorize merging PR 34"**. These are actual user messages in this chat, not inferred approval. WVC-M5-05 is **accepted**:31 verified /1 accepted,128 passed criteria.
+
+Accepted source **06e803d8bfb56df0fd48cd5e073439f3ea93a4fd**; primary Windows PowerShell5.1 ZIP **250197 bytes**, SHA256 **5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858**. The decision accepts the stated candidate scope/exclusions. Unverified support and perceptual checks remain unverified; raw failures, skips and manual omissions remain unchanged. The separate PowerShell7 ZIP is not substituted for the primary checksum target.
+
+The [prior owner instruction](../../releases/WEBSITE_CONTENT.md) to publish v1.0.0 when all software tasks are done remains authorized. A04 completes the remaining software-task criterion. Execute PR34's separately authorized merge, then publish the unchanged accepted ZIP/checksum with tagv1.0.0 pointing at exact accepted source06e. Record merged-main SHA separately. PACKAGE.json's Candidate:true is retained build-stage provenance, not a reason to mutate accepted bytes. Do not rebuild, replace, force-tag, delete a branch or deploy a website.
+
+Prior clean handoff **56e26a45d3a20b2d98eba3536186a06cf30ff842** push37791071811/PR37791081826 both passed. Independent review inspected every job step/four sanitized summaries/all4044 cases:40/0/0/0 exit0; PS5.1 1006/0/0/0 and PS7 1016/0/0/0 for each run. PR tested mergee6baea1de9e0f257e844426e46a09bd8e7d4cd96 has API-confirmed parents2c90ca3+56e. Exact metadata/hash in [approval JSON](WVC-M5-05-approval.json). This is additional CI evidence, not a rerun/regrade of the raw local Full reports.
+
+This follow-up changes approval/status/handoff documents only. Tracker, local links, bounded privacy/source/asset checks are run; application tests are retained because application/BAT/builder/defaults/approved artifact bytes are unchanged. Merge/publication have not yet been executed at this record's creation. Final clean local/live fetch/live push and actual CI/merge/release facts are checked externally after each checkpoint.
+
+Approval-only targeted integrity:482/0/0/0 exit0;128 local links resolved. Exact helper/command/report SHA in JSON. Application tests are retained from exact tested source; no new manual/perceptual observation invented. Final approval-head CI and synchronization are externally inspected after push.
