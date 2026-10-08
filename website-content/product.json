@@ -62,7 +62,17 @@
   "release_url": null,
   "download_url": null,
   "sha256": null,
-  "screenshots": [],
+  "screenshots": [
+    {
+      "file": "screenshots/menu.png",
+      "sha256": "894538401cbe2dc7d109cfb8bb2385cbbcb6558f48a815e8b0d261c3495896ba",
+      "alt": "The actual WinVidCompress four-item menu with an isolated demo output folder.",
+      "caption": "Owner-supplied actual Windows PowerShell 5.1 menu capture, 2026-10-08. The scripts match source b2582bd24b7efaa896b51d468c3679ee83bcb909. Only unrelated desktop at left and bottom was cropped; all retained menu pixels are unchanged. This image demonstrates the menu, not a compression or playback result.",
+      "source_commit": "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+      "capture_method": "actual_window_capture",
+      "redactions": ["Cropped unrelated desktop only: original 1172x435; rectangle x16, y0, width1156, height399. No menu pixels altered."]
+    }
+  ],
   "measured_examples": [
     {
       "file": "examples/synthetic-default.json",
