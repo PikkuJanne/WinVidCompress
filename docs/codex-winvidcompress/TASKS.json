@@ -2505,7 +2505,7 @@
       "title": "Prepare website product metadata and genuine demonstration content",
       "milestone": "M5",
       "priority": "P1",
-      "status": "todo",
+      "status": "in_progress",
       "improvements": [
         23
       ],
@@ -2558,7 +2558,7 @@
       "approval_gate": "Public website deployment and connecting release download URLs require owner approval and an actual release.",
       "implementation_commits": [],
       "evidence": [],
-      "notes": "Read current code and reconcile newer work before implementation; update only with real evidence."
+      "notes": "M5-04 static schema/copy and clean-source synthetic measurement prepared; actual menu screenshot pending owner-visible demo. Runtime/defaults unchanged. Intended completed-project version is owner-selected 1.0.0; M5-05 remains required before conditional publication."
     },
     {
       "id": "WVC-M5-05",
