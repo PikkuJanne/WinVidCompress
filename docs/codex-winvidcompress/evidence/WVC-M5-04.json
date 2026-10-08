@@ -8,8 +8,9 @@
     "WVC-M5-04-A03",
     "WVC-M5-04-A04"
   ],
-  "recorded_at": "2026-10-08T03:48:12.170435+00:00",
+  "recorded_at": "2026-10-08T12:58:22.955648+00:00",
   "tested_commits": [
+    "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
     "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
     "b2582bd24b7efaa896b51d468c3679ee83bcb909"
   ],
@@ -37,7 +38,16 @@
     "blob_checksum": "python -B -c \"import hashlib,subprocess; print(hashlib.sha256(subprocess.check_output(['git','show','HEAD:website-content/examples/synthetic-default.json'])).hexdigest())\"",
     "tracker": "python -B tools/codex-winvidcompress/validate_tracker.py --repo .",
     "live_sync": "python -B tools/codex-winvidcompress/check_repo_sync.py --repo .",
-    "publication_inventory": "gh api repos/PikkuJanne/WinVidCompress/releases --jq 'length'; gh api repos/PikkuJanne/WinVidCompress/tags --jq 'length'"
+    "publication_inventory": "gh api repos/PikkuJanne/WinVidCompress/releases --jq 'length'; gh api repos/PikkuJanne/WinVidCompress/tags --jq 'length'",
+    "capture_quick_setup": "$runtimeRoot=(Get-Content .test-results/m404/runtime-path.local.txt -Raw).Trim(); $native=(Get-ChildItem (Join-Path $runtimeRoot 'native') -Recurse -Filter ffmpeg.exe).FullName; $env:PATH=(Split-Path -Parent $native)+';'+(Join-Path $runtimeRoot 'powershell')+';'+$env:PATH; $env:FFREPORT=$null; $env:APPDATA=Join-Path (Get-Location).Path '.test-results/m504/capture-Quick-appdata'",
+    "capture_quick": "& powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tools/test.ps1 -Tier Quick -Hosts Current -ModuleRoot (Join-Path $runtimeRoot 'modules') -ReportPath .test-results/m504/capture-quick.ps51.json *> .test-results/m504/capture-quick.ps51.log",
+    "capture_focused_setup": "Same process-scoped developer PATH/FFREPORT setup; APPDATA='.test-results/m504/capture-Content-appdata' resolved under the current checkout.",
+    "capture_focused": "& (Join-Path $runtimeRoot 'powershell/pwsh.exe') -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/Invoke-PesterRun.ps1 -ModuleRoot (Join-Path $runtimeRoot 'modules') -TestPath tests/unit/WebsiteContent.Tests.ps1 -ReportPath .test-results/m504/capture-content.ps7.json *> .test-results/m504/capture-content.ps7.log",
+    "owner_crop": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .test-results/m504/prepare-owner-capture.local.ps1",
+    "owner_png_metadata": "python .test-results/m504/check-owner-png.local.py",
+    "ci_push_download": "gh run download 37779830614 --repo PikkuJanne/WinVidCompress --dir .test-results/m504/capture-ci-push-37779830614",
+    "ci_pr_download": "gh run download 37779837569 --repo PikkuJanne/WinVidCompress --dir .test-results/m504/capture-ci-pr-37779837569",
+    "ci_inspection": "python .test-results/m504/inspect-capture-ci.local.py"
   },
   "local_runs": [
     {
@@ -144,6 +154,34 @@
         "HistoricalSource": true
       },
       "scope": "Six byte/provenance/clean-state checks; not M5-05 final package reconstruction."
+    },
+    {
+      "name": "clean capture Quick PS5.1",
+      "tested_commit": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+      "dirty": false,
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 986,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "all_cases_inspected": 986,
+      "report_sha256": "08a361f458088f3e800f0645317065b86c4cdb9323b1efd48191a4441a6806b0"
+    },
+    {
+      "name": "clean capture focused PS7",
+      "tested_commit": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+      "dirty": false,
+      "observed_exit": 0,
+      "counts": {
+        "Passed": 28,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "all_cases_inspected": 28,
+      "report_sha256": "06e58b06adb81e5819daa571e21b59837cf0e3654f34485c388ab3d650926e84"
     }
   ],
   "development_failures": [
@@ -157,27 +195,28 @@
   "acceptance": {
     "A01": "passed: actual draft schema/state plus strict cross-field guards; empty draft images do not satisfy A03",
     "A02": "passed: null published facts and genuine clean-source measurements, no testimonial/fake downloadable asset",
-    "A03": "blocked: no readable actual menu image; dedicated test fails in both tested hosts",
+    "A03": "passed: owner-supplied genuine readable menu; outside-menu desktop cropped, all461244 retained pixels unchanged, bounded privacy/PNG metadata/source/hash checks and both-host content gates pass",
     "A04": "passed: static local content only; no website/release deployment"
   },
   "sanitized_artifacts": [
     "website-content/product.json",
     "website-content/product.schema.json",
     "website-content/examples/synthetic-default.json",
-    "website-content/DEMONSTRATIONS.md"
+    "website-content/DEMONSTRATIONS.md",
+    "website-content/screenshots/menu.png"
   ],
   "owner_instruction": {
     "date": "2026-10-08",
     "verbatim": "WVC-M5-04 next please. If all tasks on software are done, also publish v1.0.0 on GitHub as when this project is done, we are on v1.0.0",
-    "interpretation": "Final version1.0.0 and conditional GitHub publication authorization; M5-04 A03 and M5-05 remain incomplete. No final candidate acceptance or website deployment inferred."
+    "interpretation": "Final version1.0.0 and conditional GitHub publication authorization persist; M5-04 is now verified. M5-05 final reconstruction/reconciliation/concrete candidate acceptance remains todo. No final candidate acceptance, default-branch merge or website deployment inferred."
   },
   "owner_approval": null,
   "previous_verified_sync": {
-    "checked_at": "2026-10-08T03:41:23.137203+00:00",
+    "checked_at": "2026-10-08T12:58:20.801494+00:00",
     "branch": "codex/wvc-m5-04-content",
-    "local_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
-    "live_fetch_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
-    "live_push_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "local_head": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+    "live_fetch_head": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+    "live_push_head": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
     "dirty": false
   },
   "pr": {
@@ -187,6 +226,192 @@
     "draft": true
   },
   "ci_observed": {
+    "push_run": 37779830614,
+    "pr_run": 37779837569,
+    "source_head": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+    "completed_status": "Both push and PR runs passed in both supported hosts; all job steps and all four sanitized summaries/cases inspected.",
+    "summaries": [
+      {
+        "run": 37779830614,
+        "event": "push",
+        "source_commit": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Passed",
+        "exit_code": 0,
+        "counts": {
+          "Passed": 1016,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 0,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [],
+        "failed_cases": [],
+        "all_cases_inspected": 1016,
+        "artifact_sha256": "ee5c25cc71640640040bdbb67580b343b789cb76145a6e8a8e84aa6f1b07fea0"
+      },
+      {
+        "run": 37779830614,
+        "event": "push",
+        "source_commit": "2f6315f32cd1abdc461f85a7e4555bbb905b3709",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Passed",
+        "exit_code": 0,
+        "counts": {
+          "Passed": 1006,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 0,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [],
+        "failed_cases": [],
+        "all_cases_inspected": 1006,
+        "artifact_sha256": "03671883011548e7602a892ff7d5cf6d53d8b4628ac2c01e115cb3e7522f5a4c"
+      },
+      {
+        "run": 37779837569,
+        "event": "pull_request",
+        "source_commit": "26f4bcc9ab9404dc51bcc0a383d9c33f26847ab3",
+        "host_name": "PowerShell7",
+        "host": {
+          "Version": "7.6.6",
+          "Edition": "Core"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Passed",
+        "exit_code": 0,
+        "counts": {
+          "Passed": 1016,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [],
+        "failed_cases": [],
+        "all_cases_inspected": 1016,
+        "artifact_sha256": "566151956513be8c9a43759cbdad2814c071e0592e97320eff2a5492a0cc2035"
+      },
+      {
+        "run": 37779837569,
+        "event": "pull_request",
+        "source_commit": "26f4bcc9ab9404dc51bcc0a383d9c33f26847ab3",
+        "host_name": "WindowsPowerShell",
+        "host": {
+          "Version": "5.1.26100.33438",
+          "Edition": "Desktop"
+        },
+        "windows_version": "10.0.26100.0",
+        "runner_image": {
+          "Name": null,
+          "Version": "20260925.250.1"
+        },
+        "status": "Passed",
+        "exit_code": 0,
+        "counts": {
+          "Passed": 1006,
+          "Failed": 0,
+          "Skipped": 0,
+          "NotRun": 0
+        },
+        "static": {
+          "AnalyzedFiles": 2,
+          "DiagnosticCount": 0,
+          "Policy": "ErrorsAndSelectedSafetyRules"
+        },
+        "issues": [],
+        "failed_cases": [],
+        "all_cases_inspected": 1006,
+        "artifact_sha256": "c0c955733cfd11890a25211894eaaf3e41fc0002f17160dce277af7b7cd33f47"
+      }
+    ],
+    "job_steps": [
+      {
+        "run": 37779830614,
+        "host": "PowerShell7",
+        "conclusion": "success",
+        "all_steps_inspected": 7,
+        "all_steps_successful": true
+      },
+      {
+        "run": 37779830614,
+        "host": "WindowsPowerShell",
+        "conclusion": "success",
+        "all_steps_inspected": 7,
+        "all_steps_successful": true
+      },
+      {
+        "run": 37779837569,
+        "host": "WindowsPowerShell",
+        "conclusion": "success",
+        "all_steps_inspected": 7,
+        "all_steps_successful": true
+      },
+      {
+        "run": 37779837569,
+        "host": "PowerShell7",
+        "conclusion": "success",
+        "all_steps_inspected": 7,
+        "all_steps_successful": true
+      }
+    ],
+    "pr_merge_parents_api_confirmed": [
+      "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+      "2f6315f32cd1abdc461f85a7e4555bbb905b3709"
+    ]
+  },
+  "final_handoff_push": "pending; verify externally after commit",
+  "limitations": [
+    "The actual screenshot demonstrates the menu only; no new conversion/playback/final-candidate acceptance. Earlier failed local/CI/capture records retain their original scope.",
+    "No new playback/Explorer/cancellation/HDR/remote-filesystem/browser-MOTW/fresh-profile/default-Videos/final-candidate acceptance. Earlier owner evidence retained.",
+    "Synthetic FFV1/PCM pattern is not representative already-compressed interview savings; timings are local warm-cache observations.",
+    "Metadata/schema/hash/decode checks do not prove full visual/audio integrity, release existence, legal clearance or publisher authenticity.",
+    "No runtime/launcher/license/default-quality changes, dependency download, source/final overwrite, private media/config/path/log upload, tag/release/merge/default-branch push/settings/signing/bundling/site deployment."
+  ],
+  "next_task": "WVC-M5-05 final clean-GitHub reconstruction, acceptance reconciliation and concrete candidate review for owner-selected1.0.0; retain conditional GitHub publication authorization.",
+  "historical_partial_recorded_at": "2026-10-08T03:48:12.170435+00:00",
+  "historical_partial_acceptance": {
+    "A01": "passed: actual draft schema/state plus strict cross-field guards; empty draft images do not satisfy A03",
+    "A02": "passed: null published facts and genuine clean-source measurements, no testimonial/fake downloadable asset",
+    "A03": "blocked: no readable actual menu image; dedicated test fails in both tested hosts",
+    "A04": "passed: static local content only; no website/release deployment"
+  },
+  "historical_failed_ci_observed": {
     "push_run": 37723908762,
     "pr_run": 37723916694,
     "source_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
@@ -355,13 +580,88 @@
       "83c29d2bb61fb40d9d5a8640c99bc909d259f150"
     ]
   },
-  "final_handoff_push": "pending; verify externally after commit",
-  "limitations": [
-    "Missing real screenshot keeps task/release incomplete and required suites failed.",
-    "No new playback/Explorer/cancellation/HDR/remote-filesystem/browser-MOTW/fresh-profile/default-Videos/final-candidate acceptance. Earlier owner evidence retained.",
-    "Synthetic FFV1/PCM pattern is not representative already-compressed interview savings; timings are local warm-cache observations.",
-    "Metadata/schema/hash/decode checks do not prove full visual/audio integrity, release existence, legal clearance or publisher authenticity.",
-    "No runtime/launcher/license/default-quality changes, dependency download, source/final overwrite, private media/config/path/log upload, tag/release/merge/default-branch push/settings/signing/bundling/site deployment."
-  ],
-  "next_task": "Finish WVC-M5-04-A03 actual menu capture; rerun image/content gates and Quick, then WVC-M5-05 final reconstruction/candidate review for owner-selected1.0.0."
+  "historical_verified_sync": {
+    "checked_at": "2026-10-08T03:41:23.137203+00:00",
+    "branch": "codex/wvc-m5-04-content",
+    "local_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "live_fetch_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "live_push_head": "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+    "dirty": false
+  },
+  "capture_completion": {
+    "date": "2026-10-08",
+    "source": "Owner-supplied actual menu PNG; original stays outside Git.",
+    "application_commit": "b2582bd24b7efaa896b51d468c3679ee83bcb909",
+    "demo_host": "Windows PowerShell5.1.26100.9444 on Windows11Pro10.0.26300x64; prepared owner-visible Show-Demo launcher uses powershell.exe and isolated APPDATA/output.",
+    "application_sha256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
+    "launcher_sha256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+    "capture_method": "actual_window_capture",
+    "original_sha256": "c5c27af0683106f07c1fc9e51940d1659d5f19a2955f2ecf03d37d1f336bcf99",
+    "original_dimensions": {
+      "Height": 435,
+      "Width": 1172
+    },
+    "crop": {
+      "Y": 0,
+      "Width": 1156,
+      "Height": 399,
+      "X": 16
+    },
+    "sanitized_asset": "website-content/screenshots/menu.png",
+    "final_dimensions": {
+      "Width": 1156,
+      "Height": 399
+    },
+    "final_sha256": "894538401cbe2dc7d109cfb8bb2385cbbcb6558f48a815e8b0d261c3495896ba",
+    "retained_pixels_compared": 461244,
+    "pixel_mismatches": 0,
+    "original_unchanged": true,
+    "png_chunks": [
+      {
+        "type": "IHDR",
+        "bytes": 13
+      },
+      {
+        "type": "sRGB",
+        "bytes": 1
+      },
+      {
+        "type": "gAMA",
+        "bytes": 4
+      },
+      {
+        "type": "pHYs",
+        "bytes": 9
+      },
+      {
+        "type": "IDAT",
+        "bytes": 26209
+      },
+      {
+        "type": "IEND",
+        "bytes": 0
+      }
+    ],
+    "text_or_exif_chunks": false,
+    "crc_and_eof_valid": true,
+    "visual_review": "Root plus independent read-only reviewer: complete readable actual menu and public demo path; no unrelated desktop/folder labels, personal paths, credentials or private footage.",
+    "independent_review": "Reviewer independently compared all461244 retained pixels with zero mismatches; verified dimensions/hash/chunks and unchanged demo PS1/BAT.",
+    "scope": "Menu only; no generated/repainted/scaled pixels and no new compression/playback/Explorer/cancellation/final-release acceptance.",
+    "observed_exit": 0
+  },
+  "prior_handoff_ci_status_observed": {
+    "source_head": "7eda486841ca905287b85794a6b9f9faab14cc05",
+    "push_run": 37724784438,
+    "pr_run": 37724788557,
+    "status": "Both completed failure according to live run inventory; not relabelled passed. Capture still missing in that source. Current implementation runs are separately inspected."
+  },
+  "capture_handoff_audit": {
+    "Command": "python .test-results/m504/audit-capture-handoff.local.py",
+    "Passed": 113,
+    "Failed": 0,
+    "Skipped": 0,
+    "NotRun": 0,
+    "Scope": "Bounded text privacy/local links/null release fields/exact working-tree and Git asset hashes/unchanged runtime-license bytes/tracker totals; not a security or release certification.",
+    "IndependentReview": "Tracker/local report and CI summary hashes/counts/source/state/next task agree; no actionable discrepancy after CRC wording clarified."
+  }
 }

@@ -2505,7 +2505,7 @@
       "title": "Prepare website product metadata and genuine demonstration content",
       "milestone": "M5",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [
         23
       ],
@@ -2552,12 +2552,12 @@
           "id": "WVC-M5-04-A03",
           "description": "Screenshots show the actual tool and contain no personal paths or footage without permission.",
           "tier": "targeted",
-          "status": "blocked",
+          "status": "passed",
           "evidence": [
             "evidence/WVC-M5-04.md",
             "evidence/WVC-M5-04.json"
           ],
-          "notes": "Blocked: capture attempts produced no readable actual tool window; all-black PNG rejected and stays local. No screenshot is committed. Dedicated missing-image test fails in clean PS51 Quick985/1/0/0 and PS7 affected27/1/0/0, both exit1. Owner-visible isolated menu launch request is pending."
+          "notes": "Owner-supplied genuine readable1156x399 menu capture on2026-10-08; only outside-menu desktop cropped, all461244 retained pixels identical/source unchanged. Exact source/hash/PNG metadata/bounded privacy and independent review pass. Clean PS51 Quick986/0/0/0 and affectedPS7 28/0/0/0 exit0 at2f6315f. Both push/PR CI pass in actual supported hosts; menu-only scope, no new playback/final-release acceptance."
         },
         {
           "id": "WVC-M5-04-A04",
@@ -2575,14 +2575,15 @@
       "implementation_commits": [
         "f6268d190a212d769ebcda48398e22572905d56c",
         "b39460a06d5a1ca0e34be7dbc1e57e82a9304c40",
-        "83c29d2bb61fb40d9d5a8640c99bc909d259f150"
+        "83c29d2bb61fb40d9d5a8640c99bc909d259f150",
+        "2f6315f32cd1abdc461f85a7e4555bbb905b3709"
       ],
       "evidence": [
         "evidence/WVC-M5-04.md",
         "evidence/WVC-M5-04.json",
         "evidence/WVC-M5-04-session.md"
       ],
-      "notes": "Partial M5-04 at83c29d2: A01/A02/A04 passed in scope, A03 blocked by missing genuine readable menu capture. Required Quick985/1 and PS7 affected27/1 are failed, not verified. Native measurements/report-byte clone/source safety pass; analyzer2/zero diagnostics. Owner-selected final1.0.0/conditional GitHub publication persists; M5-05 remains required and no release is created. Exact next finish M5-04-A03; preserve earlier owner manual evidence and explicit broader limits."
+      "notes": "Verified A01-A04 at2f6315f: owner actual menu capture resolves missing-image gate without weakening tests; clean PS51 Quick986/0 and affectedPS7 28/0 exit0, push37779830614/PR37779837569 pass1006/0 PS51 and1016/0 PS7, PR analysis2/push0 files, zero diagnostics. All steps/four sanitized summaries/cases inspected and PR merge parents API-confirmed. Earlier failed suites/CI/blackcapture remain dated history; measurements/report/source safety retained. Runtime/LICENSE/defaults unchanged. Owner-selected final1.0.0/conditional GitHub publication persists; exact next WVC-M5-05 final reconstruction/candidate review. Final handoff sync reported externally after push."
     },
     {
       "id": "WVC-M5-05",
