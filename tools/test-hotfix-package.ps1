@@ -3,8 +3,9 @@
 Prove installed-tool discovery and conversion through an extracted release BAT.
 .DESCRIPTION
 Developer-only Windows integration. All child environments replace inherited PATH.
-Persistent User variables are changed only with an explicit switch on a disposable
-GitHub-hosted runner, and restored in finally. No application environment is changed.
+Persistent User variables and masking of unrelated Machine tool hints are changed
+only with an explicit switch on a disposable GitHub-hosted runner, and restored
+in finally. No owner-machine persistent environment is changed.
 #>
 [CmdletBinding()]
 param(
@@ -107,7 +108,17 @@ try {
     Assert-Hotfix (-not (Test-Path -LiteralPath $ResultPath)) 'ResultPath must be new.'
     if($EphemeralUserScope) {
         Assert-Hotfix ($env:GITHUB_ACTIONS -eq 'true' -and $env:RUNNER_ENVIRONMENT -eq 'github-hosted') 'Persistent-scope proof is restricted to disposable GitHub-hosted runners.'
-        foreach($name in @('FFMPEG','PATH')) {$saved[$name]=[Environment]::GetEnvironmentVariable($name,'User')}
+        foreach($scope in @('User','Machine')) {
+            $saved[$scope]=@{}
+            foreach($name in @('FFMPEG','PATH')) {$saved[$scope][$name]=[Environment]::GetEnvironmentVariable($name,$scope)}
+        }
+        # Hosted images can contain unrelated codecs on persisted Machine PATH.
+        # Mask only these two values in this disposable runner; keep the current
+        # process intact and replace every child's PATH explicitly below.
+        foreach($scope in @('User','Machine')) {
+            [Environment]::SetEnvironmentVariable('FFMPEG',$null,$scope)
+            [Environment]::SetEnvironmentVariable('PATH','',$scope)
+        }
     }
     $owner=New-WvcTestRoot
     $script:rawOrdinal=1
@@ -199,6 +210,21 @@ try {
     Assert-HotfixSelection (Invoke-HotfixChild $hostExe (($argv | ForEach-Object {ConvertTo-WvcNativeArgument $_}) -join ' ') $hint) $bin 'FFMPEG (Process)'
     Complete-HotfixCase $stage
 
+    $stage='CurrentHostDirectPs1Conversion'
+    $directOutput=Join-Path $owner.Path 'current host output'; [void][IO.Directory]::CreateDirectory($directOutput)
+    $argv=@('-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',(Join-Path $application 'WinVidCompress.ps1'),'-Unattended','-OutputDir',$directOutput,$clip)
+    $direct=Invoke-HotfixChild $hostExe (($argv | ForEach-Object {ConvertTo-WvcNativeArgument $_}) -join ' ') $hint
+    Assert-Hotfix ($direct.ExitCode -eq 0) 'Current-host extracted PS1 conversion failed.'
+    Assert-Hotfix ((Get-FileHash -LiteralPath $clip).Hash -ceq $sourceHash) 'Current-host conversion changed the input hash.'
+    $directFiles=@(Get-ChildItem -LiteralPath $directOutput -Filter '*.mp4' -File)
+    Assert-Hotfix ($directFiles.Count -eq 1) 'Current-host conversion did not publish one MP4.'
+    $directProbe=Invoke-HotfixNative $nativeProbe @('-v','error','-show_streams','-show_format','-of','json',$directFiles[0].FullName)
+    Assert-Hotfix ($directProbe.ExitCode -eq 0) 'Current-host MP4 probe failed.'
+    $directMedia=$directProbe.StdOut | ConvertFrom-Json
+    Assert-Hotfix (@($directMedia.streams | Where-Object {$_.codec_type -eq 'video' -and $_.codec_name -eq 'h264'}).Count -eq 1) 'Current-host output H.264 stream missing.'
+    Assert-Hotfix (@($directMedia.streams | Where-Object {$_.codec_type -eq 'audio' -and $_.codec_name -eq 'aac'}).Count -eq 1) 'Current-host output AAC stream missing.'
+    Complete-HotfixCase $stage
+
     $stage='ShellEquivalentInteractiveQuit'
     [void][IO.Directory]::CreateDirectory((Join-Path $appData 'WinVidCompress'))
     [IO.File]::WriteAllText((Join-Path $appData 'WinVidCompress/config.json'),(@{OutputDir=$output}|ConvertTo-Json))
@@ -210,6 +236,23 @@ try {
     Complete-HotfixCase $stage
 
     if($EphemeralUserScope) {
+        $stage='ActualBatGenuinelyMissingTool'
+        $missing=Invoke-HotfixBat $application 'Doctor' @{}
+        Assert-Hotfix ($missing.ExitCode -eq 2 -and ($missing.StdOut+$missing.StdErr) -match 'ffmpeg.exe not found') 'Missing encoder startup failure differs.'
+        Complete-HotfixCase $stage
+        $stage='ActualBatOnlyFfprobeMissing'
+        $partialBin=Join-Path $owner.Path 'encoder only'; [void][IO.Directory]::CreateDirectory($partialBin)
+        Copy-Item -LiteralPath $nativeEncoder -Destination $partialBin
+        $missing=Invoke-HotfixBat $application 'Doctor' @{FFMPEG=$partialBin}
+        Assert-Hotfix ($missing.ExitCode -eq 2 -and ($missing.StdOut+$missing.StdErr) -match 'ffprobe.exe not found') 'Missing FFprobe startup failure differs.'
+        Complete-HotfixCase $stage
+        $stage='ActualBatInvalidExecutable'
+        $invalidBin=Join-Path $owner.Path 'invalid executable'; [void][IO.Directory]::CreateDirectory($invalidBin)
+        [IO.File]::WriteAllText((Join-Path $invalidBin 'ffmpeg.exe'),'This is an invalid synthetic executable, never a script.')
+        Copy-Item -LiteralPath $nativeProbe -Destination $invalidBin
+        $invalid=Invoke-HotfixBat $application 'Doctor' @{FFMPEG=$invalidBin}
+        Assert-Hotfix ($invalid.ExitCode -eq 2 -and ($invalid.StdOut+$invalid.StdErr) -match 'ffmpeg.exe' -and ($invalid.StdOut+$invalid.StdErr) -notmatch 'ffmpeg.exe not found') 'Invalid executable must retain a distinct tool-specific startup error.'
+        Complete-HotfixCase $stage
         $stage='PersistedUserHintStaleChild'
         [Environment]::SetEnvironmentVariable('PATH','', 'User')
         [Environment]::SetEnvironmentVariable('FFMPEG',$bin,'User')
@@ -238,7 +281,9 @@ try {
     $cases.Add([pscustomobject]@{Id=$stage;Status='Failed'})
     [Console]::Error.WriteLine(('FAIL '+$stage+': '+$failure))
 } finally {
-    foreach($name in $saved.Keys) {[Environment]::SetEnvironmentVariable($name,$saved[$name],'User')}
+    foreach($scope in $saved.Keys) {
+        foreach($name in $saved[$scope].Keys) {[Environment]::SetEnvironmentVariable($name,$saved[$scope][$name],$scope)}
+    }
     if($drive) {
         & (Join-Path $env:SystemRoot 'System32/subst.exe') $drive /d
         if($LASTEXITCODE -ne 0) {$failure='Fixture drive cleanup failed.'}
