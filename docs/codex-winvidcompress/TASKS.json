@@ -2708,7 +2708,7 @@
       "title": "Scoped FFmpeg and FFprobe discovery",
       "milestone": "M6",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [],
       "depends_on": [],
       "acceptance": [
@@ -2716,13 +2716,21 @@
           "id": "WVC-M6-01-A01",
           "description": "Resolution order, scope-aware expansion, provenance and failure diagnostics; native-free WhatIf preserved.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": [],
-          "notes": "Owner hotfix authorization 2026-10-31 replaces manual owner QA and separate publication gate for this patch."
+          "status": "passed",
+          "evidence": [
+            "evidence/HOTFIX-1.0.1-session.md"
+          ],
+          "notes": "Focused local Windows suites and actual packaged BAT/direct PS1 hosted proof pass in the recorded scopes. Wider suite only found separate stale provenance assertions; no functional failure for these criteria. No physical Explorer observation claimed."
         }
       ],
-      "implementation_commits": [],
-      "evidence": [],
+      "implementation_commits": [
+        "81a461a86494697347e0c1f938b339c74afe4466",
+        "9ea22f7b6007f1942fe38a27782ccff6de6c2c82",
+        "ccbe55e3fe037e063be352da62e6efa6ec6991ef"
+      ],
+      "evidence": [
+        "evidence/HOTFIX-1.0.1-session.md"
+      ],
       "notes": "Bounded part of the explicitly requested 1.0.1 hotfix."
     },
     {
@@ -2730,7 +2738,7 @@
       "title": "Media operations terminal",
       "milestone": "M6",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "verified",
       "improvements": [],
       "depends_on": [],
       "acceptance": [
@@ -2738,13 +2746,21 @@
           "id": "WVC-M6-02-A01",
           "description": "Original ASCII normal/narrow/plain layouts; four actions, real stages and summaries; unattended output unchanged.",
           "tier": "targeted",
-          "status": "not_run",
-          "evidence": [],
-          "notes": "Owner hotfix authorization 2026-10-31 replaces manual owner QA and separate publication gate for this patch."
+          "status": "passed",
+          "evidence": [
+            "evidence/HOTFIX-1.0.1-session.md"
+          ],
+          "notes": "Focused local Windows suites and actual packaged BAT/direct PS1 hosted proof pass in the recorded scopes. Wider suite only found separate stale provenance assertions; no functional failure for these criteria. No physical Explorer observation claimed."
         }
       ],
-      "implementation_commits": [],
-      "evidence": [],
+      "implementation_commits": [
+        "81a461a86494697347e0c1f938b339c74afe4466",
+        "9ea22f7b6007f1942fe38a27782ccff6de6c2c82",
+        "ccbe55e3fe037e063be352da62e6efa6ec6991ef"
+      ],
+      "evidence": [
+        "evidence/HOTFIX-1.0.1-session.md"
+      ],
       "notes": "Bounded part of the explicitly requested 1.0.1 hotfix."
     },
     {
@@ -2752,7 +2768,7 @@
       "title": "Windows package proof and public patch",
       "milestone": "M6",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "implemented",
       "improvements": [],
       "depends_on": [],
       "acceptance": [
@@ -2765,8 +2781,12 @@
           "notes": "Owner hotfix authorization 2026-10-31 replaces manual owner QA and separate publication gate for this patch."
         }
       ],
-      "implementation_commits": [],
-      "evidence": [],
+      "implementation_commits": [
+        "c330376a7fc66af8f78b61acdd7254cb30f94aac"
+      ],
+      "evidence": [
+        "evidence/HOTFIX-1.0.1-session.md"
+      ],
       "notes": "Bounded part of the explicitly requested 1.0.1 hotfix."
     }
   ]
