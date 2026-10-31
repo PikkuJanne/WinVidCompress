@@ -1,0 +1,79 @@
+name: Packaged Windows proof
+
+on:
+  push:
+    branches: [main, 'codex/wvc-*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-proof-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package-proof:
+    name: Packaged BAT discovery and MP4 proof
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare verified Windows fixture tools
+        shell: pwsh
+        run: |
+          $runtime = Join-Path $env:RUNNER_TEMP 'wvc-package-dependencies'
+          & ./tools/test-ci-dependencies.ps1 -RuntimeRoot $runtime
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $setup = Get-Content -LiteralPath (Join-Path $runtime 'dependencies.json') -Raw | ConvertFrom-Json
+          'WVC_PROOF_PS7=' + $setup.PowerShell7 | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+          'WVC_PROOF_NATIVE=' + $setup.NativeDirectory | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Build and verify one clean source package with Windows PowerShell
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $package = Join-Path $env:RUNNER_TEMP 'wvc-tested-package'
+          [void][IO.Directory]::CreateDirectory($package)
+          $commit = (git rev-parse HEAD).Trim()
+          $built = & ./tools/package.ps1 -OutputDirectory $package -ExpectedCommit $commit
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $package = ($built | Out-String | ConvertFrom-Json).Directory
+          & ./tools/package.ps1 -VerifyDirectory $package
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          'WVC_PROOF_PACKAGE=' + $package | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Download immutable historical failure fixture
+        shell: pwsh
+        run: |
+          $old = Join-Path $env:RUNNER_TEMP 'WinVidCompress-1.0.0.zip'
+          Invoke-WebRequest -Uri 'https://github.com/PikkuJanne/WinVidCompress/releases/download/v1.0.0/WinVidCompress-1.0.0.zip' -OutFile $old
+          if ((Get-FileHash -LiteralPath $old).Hash -ine '5c26d993e482204f80b81f10b8833315ac40c2c8d800b5bdaa7424567298b858') { throw 'Historical fixture hash mismatch.' }
+          'WVC_PROOF_OLD=' + $old | Out-File -LiteralPath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Prove exact ZIP through actual BAT and both supported hosts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = @(Get-ChildItem -LiteralPath $env:WVC_PROOF_PACKAGE -Filter '*.zip' -File)
+          if ($zip.Count -ne 1) { throw 'Expected exactly one candidate ZIP.' }
+          $ps51 = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          foreach ($item in @(@{Name='WindowsPowerShell';Exe=$ps51},@{Name='PowerShell7';Exe=$env:WVC_PROOF_PS7})) {
+            $report = Join-Path $env:WVC_PROOF_PACKAGE ('proof-' + $item.Name + '.json')
+            & $item.Exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./tools/test-hotfix-package.ps1 -PackagePath $zip[0].FullName -NativeDirectory $env:WVC_PROOF_NATIVE -OldPackagePath $env:WVC_PROOF_OLD -ResultPath $report -EphemeralUserScope
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+      - name: Preserve exact tested release bytes and sanitized proof
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: exact-tested-windows-package
+          path: |
+            ${{ env.WVC_PROOF_PACKAGE }}/*.zip
+            ${{ env.WVC_PROOF_PACKAGE }}/*.zip.sha256
+            ${{ env.WVC_PROOF_PACKAGE }}/build.json
+            ${{ env.WVC_PROOF_PACKAGE }}/manifest.json
+            ${{ env.WVC_PROOF_PACKAGE }}/proof-*.json
+          if-no-files-found: error
+          retention-days: 7
