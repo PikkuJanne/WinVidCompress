@@ -3310,6 +3310,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     $stage='Startup'
     $session=$null; $run=$null
     $previousSession=$script:SessionLog
+    $previousTerminal=$script:TerminalSession
     $inputPaths=@($Paths | Where-Object { $null -ne $_ })
     $overrides=@{}
     if ($PSBoundParameters.ContainsKey('OutputDir')) { $overrides.OutputDir=$OutputDir }
@@ -3357,11 +3358,12 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             Write-EnvironmentReport $tools $output
             return (Get-BatchResult @() @() -Reason 'Environment check completed.')
         }
+        $script:TerminalSession=(-not $Unattended)
         $cfg=if ($PreserveSubfolders) { $effective.Config } elseif ($overrides.Count) { Get-EnvironmentConfig @readOptions } else { Load-Config }
         $effective=Resolve-RunConfiguration $cfg $overrides
         $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir
-        Write-EnvironmentReport $tools $output
+        if ($Unattended) { Write-EnvironmentReport $tools $output }
         $session=New-SessionLog $tools -OutputLayout $(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'})
         $script:SessionLog=$session
         if ($inputPaths.Count -gt 0) {
@@ -3387,6 +3389,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             if ($null -ne $run -and $null -ne $session) { $run.Warnings+=@($session.Warnings) }
         }
         $script:SessionLog=$previousSession
+        $script:TerminalSession=$previousTerminal
     }
 }
 

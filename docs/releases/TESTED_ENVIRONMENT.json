@@ -1,14 +1,17 @@
 {
   "SchemaVersion": 1,
-  "ApplicationTestCommit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
-  "EvidenceSourceCommit": "0c4bd5334938ac5c0ae16876eccd83c3f1da65d9",
-  "ApplicationSHA256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
-  "LauncherSHA256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
+  "ApplicationTestCommit": "ccbe55e3fe037e063be352da62e6efa6ec6991ef",
+  "EvidenceSourceCommit": "ccbe55e3fe037e063be352da62e6efa6ec6991ef",
+  "ApplicationSHA256": "cb17aec50adb8a72742b524c666d45deb911aaa60865de0f8eadb07b4e12fb8b",
+  "LauncherSHA256": "c7a65eea0d2652b367d28b3405a3e6f59c2f573dcf07a891d6b0001f3ac48788",
   "Windows": "Windows 11 Pro 10.0.26300 UBR9457 26H2 x64",
-  "PowerShell": ["5.1.26100.9444 Desktop", "7.6.6 Core"],
+  "PowerShell": [
+    "5.1.26100.9711 Desktop",
+    "7.6.5 Core (supported); CI pinned 7.6.6"
+  ],
   "FFmpegFFprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
   "FFmpegSHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
   "FFprobeSHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d",
-  "EvidenceUrl": "https://github.com/PikkuJanne/WinVidCompress/blob/0c4bd5334938ac5c0ae16876eccd83c3f1da65d9/docs/codex-winvidcompress/evidence/WVC-M5-01.md",
-  "Scope": "Prior application tests for these unchanged PS1/BAT bytes; package-specific checks are recorded separately in WVC-M5-02 evidence. No release acceptance."
+  "EvidenceUrl": "https://github.com/PikkuJanne/WinVidCompress/blob/codex/wvc-1.0.1-hotfix/docs/codex-winvidcompress/evidence/HOTFIX-1.0.1-session.md",
+  "Scope": "1.0.1 runtime under automated Windows validation. Package-specific exact ZIP proof and public download verification are recorded in the hotfix evidence; historical perceptual limits remain."
 }
