@@ -144,25 +144,101 @@ $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts'
 $CollisionMode = 'rename'
 
 # --- Helpers ---
+function Get-ToolEnvironmentVariable([string]$Name, [string]$Scope) {
+    # Read individual values only. Never refresh the process PATH or write scopes.
+    [Environment]::GetEnvironmentVariable($Name, $Scope)
+}
+
+function Expand-ToolHint([string]$Value, [string]$Scope) {
+    if ([string]::IsNullOrWhiteSpace($Value)) { return $null }
+    $valueText = $Value.Trim().Trim('"').Trim()
+    $scopes = switch ($Scope) {
+        'Process' { @('Process','User','Machine') }
+        'User' { @('User','Machine') }
+        'Machine' { @('Machine') }
+    }
+    # Bound both recursive expansion and cycles; unknown references invalidate a hint.
+    for ($depth = 0; $depth -lt 8 -and $valueText.Contains('%'); $depth++) {
+        $matchesFound = [regex]::Matches($valueText, '%([^%]+)%')
+        if ($matchesFound.Count -eq 0) { return $null }
+        foreach ($match in $matchesFound) {
+            $replacement = $null
+            foreach ($readScope in $scopes) {
+                try { $replacement = Get-ToolEnvironmentVariable $match.Groups[1].Value $readScope } catch { $replacement = $null }
+                if (-not [string]::IsNullOrWhiteSpace($replacement)) { break }
+            }
+            if ([string]::IsNullOrWhiteSpace($replacement)) { return $null }
+            $valueText = $valueText.Replace($match.Value, $replacement.Trim().Trim('"').Trim())
+        }
+    }
+    if ($valueText.Contains('%')) { return $null }
+    $valueText = $valueText.Trim().Trim('"').Trim()
+    # Rooted drive/UNC filesystem paths only: no C:relative, provider or shell syntax.
+    if ($valueText -notmatch '^(?:[A-Za-z]:[\\/]|\\\\[^\\/]+[\\/][^\\/]+)' -or
+        $valueText -match '["<>|*?\x00-\x1f]' -or $valueText.Substring(2).Contains(':')) { return $null }
+    try { return [IO.Path]::GetFullPath($valueText) } catch { return $null }
+}
+
+function Get-ToolHintCandidates([string]$Value, [string]$Scope, [string]$Exe, [switch]$PathEntry) {
+    $hint = Expand-ToolHint $Value $Scope
+    if (-not $hint) { return }
+    if ($PathEntry) { Join-Path $hint $Exe; return }
+    if ([IO.Path]::GetFileName($hint) -ieq 'ffmpeg.exe') {
+        Join-Path ([IO.Path]::GetDirectoryName($hint)) $Exe
+    } else {
+        Join-Path $hint $Exe
+        Join-Path (Join-Path $hint 'bin') $Exe
+    }
+}
+
+$script:ToolDiscovery = @{}
 function Ensure-Tool([string]$exe) {
-    # Preserve PATH-before-adjacent selection, but refuse shell-command shadows.
+    # Keep shell shadow safeguards even though all launches use absolute file paths.
     $cmd = Get-Command $exe -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($cmd -and $cmd.CommandType -ne 'Application') {
         throw "$exe resolves to a $($cmd.CommandType), not an application. Remove the shadowing command before retrying."
     }
-    $candidate = Join-Path (Split-Path -Parent $PSCommandPath) $exe
-    if ($cmd) { $candidate = $cmd.Source }
-    if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
-        throw "$exe not found. Put it in PATH or next to this script."
+    $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $readFailure = $null
+    # Discover lazily so successful inherited/adjacent selection needs no scoped reads.
+    foreach ($source in @('Process PATH','Script directory','FFMPEG (Process)','FFMPEG (User)',
+            'FFMPEG (Machine)','PATH (Machine)','PATH (User)')) {
+        $candidates = @()
+        if ($source -eq 'Process PATH') {
+            foreach ($entry in ($env:PATH -split ';')) {
+                $candidates += @(Get-ToolHintCandidates $entry 'Process' $exe -PathEntry)
+            }
+        } elseif ($source -eq 'Script directory') {
+            $candidates = @(Join-Path (Split-Path -Parent $script:ApplicationPath) $exe)
+        } else {
+            $scope = ($source -split '[()]')[1]
+            $name = ($source -split ' ')[0]
+            $value = $null
+            try { $value = Get-ToolEnvironmentVariable $name $scope } catch { }
+            if ($name -eq 'PATH') {
+                foreach ($entry in ($value -split ';')) {
+                    $candidates += @(Get-ToolHintCandidates $entry $scope $exe -PathEntry)
+                }
+            } else { $candidates = @(Get-ToolHintCandidates $value $scope $exe) }
+        }
+        foreach ($candidate in $candidates) {
+            if (-not $seen.Add($candidate)) { continue }
+            try {
+                if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) { continue }
+                $stream = [IO.File]::Open($candidate, [IO.FileMode]::Open,
+                    [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+                $stream.Dispose()
+                $selected = (Get-Item -LiteralPath $candidate -Force).FullName
+                $script:ToolDiscovery[$exe] = [pscustomobject]@{ Path = $selected; Source = $source }
+                return $selected
+            } catch {
+                $readFailure = "$exe cannot be read at '$candidate'. Check read/execute permissions. Details: $($_.Exception.Message)"
+                if ($source -in @('Process PATH','Script directory')) { throw $readFailure }
+            }
+        }
     }
-    try {
-        $stream = [IO.File]::Open($candidate, [IO.FileMode]::Open,
-            [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
-        $stream.Dispose()
-    } catch {
-        throw "$exe cannot be read at '$candidate'. Check read/execute permissions or use an accessible copy in PATH or next to this script. Details: $($_.Exception.Message)"
-    }
-    return (Get-Item -LiteralPath $candidate -Force).FullName
+    if ($readFailure) { throw $readFailure }
+    throw "$exe not found. Put it in PATH or next to this script, or set FFMPEG to an accessible bin directory, installation root or ffmpeg.exe. Persisted Windows PATH is also checked."
 }
 
 function Get-DefaultOutputDir {
@@ -304,6 +380,8 @@ function Get-ToolEnvironment([string]$FFmpeg, [string]$FFprobe,
     } catch { throw "FFprobe JSON/program inspection failed at '$FFprobe': $($_.Exception.Message) stderr: $($json.StdErr)" }
     return [pscustomobject]@{
         FFmpeg = $FFmpeg; FFprobe = $FFprobe
+        FFmpegSource = $(if ($script:ToolDiscovery.ContainsKey('ffmpeg.exe') -and $script:ToolDiscovery['ffmpeg.exe'].Path -ieq $FFmpeg) { $script:ToolDiscovery['ffmpeg.exe'].Source } else { 'Provided path' })
+        FFprobeSource = $(if ($script:ToolDiscovery.ContainsKey('ffprobe.exe') -and $script:ToolDiscovery['ffprobe.exe'].Path -ieq $FFprobe) { $script:ToolDiscovery['ffprobe.exe'].Source } else { 'Provided path' })
         FFmpegBuild = $versions.ffmpeg; FFprobeBuild = $versions.ffprobe
         Capabilities = 'libx264, AAC, MP4/faststart, scale, FFprobe CSV/JSON and selection/entries options'
         Calls = $calls.ToArray()
@@ -349,10 +427,12 @@ function Get-EnvironmentConfig([string]$DefaultDestination) {
 }
 
 function Write-EnvironmentReport($Tools, $Output) {
-    Write-Host "Dependency selection: PATH before script-adjacent applications."
+    Write-Host 'Dependency selection: Process PATH, script directory, FFMPEG (Process/User/Machine), persisted PATH (Machine/User).'
     Write-Host "FFmpeg: $($Tools.FFmpeg)"
+    if ($Tools.PSObject.Properties['FFmpegSource']) { Write-Host "FFmpeg source: $($Tools.FFmpegSource)" }
     Write-Host $Tools.FFmpegBuild
     Write-Host "FFprobe: $($Tools.FFprobe)"
+    if ($Tools.PSObject.Properties['FFprobeSource']) { Write-Host "FFprobe source: $($Tools.FFprobeSource)" }
     Write-Host $Tools.FFprobeBuild
     Write-Host "Capabilities: $($Tools.Capabilities)"
     foreach ($call in $Tools.Calls) {
@@ -3151,6 +3231,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
             $batchLayout=Get-RelativeOutputLayout (Get-InputQueue $inputPaths) $effective.Config.OutputDir
         }
+        $script:ToolDiscovery=@{}
         $ffmpeg=Ensure-Tool 'ffmpeg.exe'
         $ffprobe=Ensure-Tool 'ffprobe.exe'
         $tools=Get-ToolEnvironment $ffmpeg $ffprobe
