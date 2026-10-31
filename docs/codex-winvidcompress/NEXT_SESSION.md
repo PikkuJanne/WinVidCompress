@@ -1,3 +1,6 @@
+# 1.0.1 hotfix in progress - 2026-10-31
+
+Exact next: finish current Windows regression checks, merge PR37 after green checks, use tools/package.ps1 on clean merged main, test that exact extracted ZIP, publish stable v1.0.1 and verify fresh public ZIP/sidecar against tested bytes. Owner authorization is already explicit; do not request owner testing or publication approval. Preserve v1.0.0 and all newer artwork. Current branch codex/wvc-1.0.1-hotfix. See [session evidence](evidence/HOTFIX-1.0.1-session.md) and live GitHub checks. Historical closure instructions below are superseded only for this explicit patch.
 # Project closed — 2026-10-08
 
 **Exact next task: none.** The owner approved closure and deletion of project test/temporary files. All 32 tasks are complete: 31 verified / 1 accepted, all 128 criteria passed in recorded scopes. PR 35 is owner-merged into main **44e6471e8deeb3e20e5889916100c1bcd758d52e**; its source push/PR and actual main CI passed PS5.1 1006/0/0/0 and PS7 1016/0/0/0. [Closeout, cleanup and limits](evidence/PROJECT_CLOSEOUT-2026-10-08.md), [exact receipt/CI review](evidence/PROJECT_CLOSEOUT-2026-10-08.json).

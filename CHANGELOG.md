@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 - 2026-10-31
+
+- Finds separately installed FFmpeg and FFprobe when a shortcut inherits stale PATH: process PATH, script-adjacent copies, scoped FFMPEG hints, then persisted Windows PATH. Reports exact selection and source without changing the environment.
+- Adds an original, understated media operations terminal with cyan/teal headings, readable narrow/plain layouts, real queue stages and output/log summaries. The four menu actions and drag/drop workflow remain unchanged.
+- Keeps libx264 veryfast CRF 22, AAC 160k, MP4 faststart and all existing file protections. Adds automated Windows extracted-package BAT discovery and real MP4 regression proof.
+
 ## 1.0.0 - local release candidate
 
 Prepared on 2026-10-08 using the owner's selected completed-project version. This is a local candidate pending concrete owner acceptance; no tag or public release is implied.

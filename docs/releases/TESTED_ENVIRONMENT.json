@@ -1,14 +1,18 @@
 {
   "SchemaVersion": 1,
-  "ApplicationTestCommit": "2c2b45362ab14d18fd3c13635fa1d2f987cabc60",
-  "EvidenceSourceCommit": "0c4bd5334938ac5c0ae16876eccd83c3f1da65d9",
-  "ApplicationSHA256": "ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b",
-  "LauncherSHA256": "0d97c046847d7002e78b23d91c4caca3498c88b9c932ae84158da9e4db51ba3f",
-  "Windows": "Windows 11 Pro 10.0.26300 UBR9457 26H2 x64",
-  "PowerShell": ["5.1.26100.9444 Desktop", "7.6.6 Core"],
+  "ApplicationTestCommit": "c330376a7fc66af8f78b61acdd7254cb30f94aac",
+  "EvidenceSourceCommit": "c330376a7fc66af8f78b61acdd7254cb30f94aac",
+  "ApplicationSHA256": "7f4d3600bc842aaa65cccab481768c4c9121b57e79f0416ab31b9777788638fa",
+  "LauncherSHA256": "c7a65eea0d2652b367d28b3405a3e6f59c2f573dcf07a891d6b0001f3ac48788",
+  "Windows": "Local Windows 11 Pro 10.0.26300.9711 26H2 x64; hosted Windows Server 2025 10.0.26100 x64",
+  "PowerShell": [
+    "5.1.26100.9711 Desktop (local)",
+    "5.1.26100.33648 Desktop (hosted)",
+    "7.6.6 Core"
+  ],
   "FFmpegFFprobe": "2026-10-04-git-a35c879992-essentials_build-www.gyan.dev",
   "FFmpegSHA256": "b6cc0d3390ae4969166895ee94657134a1de0c7790fa24ac0b4e315b8a667f83",
   "FFprobeSHA256": "aa14bea18d5b7e3834adade04c818bdf321e15a1fad1b99d29ad13181c975d1d",
-  "EvidenceUrl": "https://github.com/PikkuJanne/WinVidCompress/blob/0c4bd5334938ac5c0ae16876eccd83c3f1da65d9/docs/codex-winvidcompress/evidence/WVC-M5-01.md",
-  "Scope": "Prior application tests for these unchanged PS1/BAT bytes; package-specific checks are recorded separately in WVC-M5-02 evidence. No release acceptance."
+  "EvidenceUrl": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/41230898925",
+  "Scope": "Preceding exact-source Windows package proof: 19 passed, zero failures/skips/not-run per host on PS5.1 and PS7.6.6, including actual BAT conversion and native-console Quit, real persisted scopes, historical ZIP miss, source/final hashes and synthetic MP4 decode. Final release ZIP and wider regression results are recorded separately in hotfix evidence. Structural/decode checks do not establish full perceptual integrity."
 }

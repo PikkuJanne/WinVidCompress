@@ -28,7 +28,7 @@ Describe 'Actual Windows executable exit boundary [WVC-M2-06]' {
         Write-WvcTestJson (Join-Path $config 'config.json') ([pscustomobject]@{OutputDir=$OutputRoot})
         $script:Good=Join-Path $SourceRoot 'ok & [x] !NAME!.mov'
         $script:Bad=Join-Path $SourceRoot 'fail.mov'
-        $script:Environment=@{APPDATA=$AppData;PATH=($Bin+';'+$env:SystemRoot+'\System32');FFREPORT='';
+        $script:Environment=@{APPDATA=$AppData;PATH=($Bin+';'+$env:SystemRoot+'\System32');FFREPORT='';FFMPEG='';
             WVC_EXIT_BAT=(Join-Path $App 'WinVidCompress.bat');WVC_EXIT_SOURCE=$SourceRoot}
     }
 
@@ -43,9 +43,18 @@ Describe 'Actual Windows executable exit boundary [WVC-M2-06]' {
         param($Route,$Case,$Code)
         if ($Case -in @('success','mixed failure','scan failure plus success')) { [IO.File]::WriteAllText($Good,'source sentinel') }
         if ($Case -eq 'mixed failure') { [IO.File]::WriteAllText($Bad,'failed source sentinel') }
-        if ($Case -eq 'startup failure') { $Environment.PATH=Join-Path $CaseRoot 'absent-bin' }
+        $application=Join-Path $App 'WinVidCompress.ps1'
+        if ($Case -eq 'startup failure') {
+            $Environment.PATH=Join-Path $CaseRoot 'absent-bin'
+            $failureApp=Join-Path $CaseRoot 'missing-tool-application'
+            [void][IO.Directory]::CreateDirectory($failureApp)
+            $application=Join-Path $failureApp 'WinVidCompress.ps1'
+            Write-WvcMissingToolApplication (Join-Path $App 'WinVidCompress.ps1') $application
+            $Environment.WVC_EXIT_BAT=Join-Path $failureApp 'WinVidCompress.bat'
+            Copy-Item -LiteralPath (Join-Path $App 'WinVidCompress.bat') -Destination $Environment.WVC_EXIT_BAT
+        }
         $arguments=@('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
-            (Join-Path $App 'WinVidCompress.ps1'),'-Unattended')
+            $application,'-Unattended')
         $cmd='/d /v:off /s /c ""%WVC_EXIT_BAT%" -Unattended'
         if ($Case -ne 'no input') { $arguments+=@($SourceRoot); $cmd+=' "%WVC_EXIT_SOURCE%"' }
         if ($Case -eq 'scan failure plus success') {
@@ -108,7 +117,7 @@ Describe 'Actual Windows executable exit boundary [WVC-M2-06]' {
         $result=Invoke-WvcLauncherProcess $env:ComSpec '/d /v:off /s /c ""%WVC_EXIT_BAT%""' $Environment `
             ("4`r`nWrite-Output ('WVC_INTERACTIVE_' + 'ALIVE')`r`nexit 0`r`n")
         $result.ExitCode | Should -Be 0
-        $result.StdOut | Should -Match '1\) Set output folder'
+        $result.StdOut | Should -Match '\[1\] Set output folder'
         $result.StdOut | Should -Match 'WVC_INTERACTIVE_ALIVE'
         $result.StdErr | Should -BeNullOrEmpty
     }

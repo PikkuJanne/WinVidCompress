@@ -31,6 +31,7 @@ BeforeAll {
     [void](Invoke-FixtureGit @('remote','add','origin','https://github.com/PikkuJanne/WinVidCompress.git'))
     [void](Invoke-FixtureGit @('add','--all'))
     [void](Invoke-FixtureGit @('commit','--quiet','-m','Owned package fixture'))
+    $script:FixtureRuntimeEvidence=(Invoke-FixtureGit @('show','HEAD:docs/releases/TESTED_ENVIRONMENT.json')) | ConvertFrom-Json
     $script:OriginalVersion=[IO.File]::ReadAllBytes((Join-Path $Fixture 'VERSION'))
     $script:FixtureVersion=[Text.Encoding]::UTF8.GetString($OriginalVersion).Trim()
     function New-TestPackage([string]$Name) {
@@ -90,7 +91,10 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
         @($manifest.Files).Count | Should -Be 12
         @($manifest.Files | Where-Object Path -eq 'MANIFEST.json').Count | Should -Be 0
         $package=Get-Content -LiteralPath (Join-Path $extracted 'PACKAGE.json') -Raw | ConvertFrom-Json
-        $package.RuntimeTestEvidence.ApplicationTestCommit | Should -BeExactly '2c2b45362ab14d18fd3c13635fa1d2f987cabc60'
+        $package.RuntimeTestEvidence.ApplicationTestCommit | Should -BeExactly $FixtureRuntimeEvidence.ApplicationTestCommit
+        $package.RuntimeTestEvidence.EvidenceSourceCommit | Should -BeExactly $FixtureRuntimeEvidence.EvidenceSourceCommit
+        $package.RuntimeTestEvidence.ApplicationSHA256 | Should -BeExactly $FixtureRuntimeEvidence.ApplicationSHA256
+        $package.RuntimeTestEvidence.LauncherSHA256 | Should -BeExactly $FixtureRuntimeEvidence.LauncherSHA256
         $package.DependenciesBundled | Should -BeFalse
     }
     It 'repeats identical manifests and ZIP bytes in one host [A02]' {
@@ -139,8 +143,10 @@ Describe 'Tool-only local packaging [WVC-M5-02]' {
     It 'refuses nonmatching runtime test provenance before artifacts [A03]' {
         $file=Join-Path $Fixture 'docs/releases/TESTED_ENVIRONMENT.json';$bytes=[IO.File]::ReadAllBytes($file)
         try {
-            $text=[Text.Encoding]::UTF8.GetString($bytes).Replace('ead0c7b785a4a6092ce70af8b34097a579e9c6ac31ecaeba2087692c9266476b',('a'*64))
-            [IO.File]::WriteAllText($file,$text);[void](Invoke-FixtureGit @('add','docs/releases/TESTED_ENVIRONMENT.json'));[void](Invoke-FixtureGit @('commit','--quiet','-m','Bad runtime provenance fixture'))
+            $record=[Text.Encoding]::UTF8.GetString($bytes) | ConvertFrom-Json
+            $record.ApplicationSHA256='a'*64
+            $record.ApplicationSHA256 | Should -Not -BeExactly $FixtureRuntimeEvidence.ApplicationSHA256
+            [IO.File]::WriteAllText($file,($record | ConvertTo-Json -Depth 8));[void](Invoke-FixtureGit @('add','docs/releases/TESTED_ENVIRONMENT.json'));[void](Invoke-FixtureGit @('commit','--quiet','-m','Bad runtime provenance fixture'))
             { New-TestPackage 'bad-runtime' } | Should -Throw '*tested-environment*'
         } finally {
             [IO.File]::WriteAllBytes($file,$bytes);[void](Invoke-FixtureGit @('add','docs/releases/TESTED_ENVIRONMENT.json'));[void](Invoke-FixtureGit @('commit','--quiet','-m','Restore runtime fixture'))

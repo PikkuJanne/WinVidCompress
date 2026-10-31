@@ -1,3 +1,6 @@
+# 1.0.1 hotfix active - 2026-10-31
+
+Owner reopened development for scoped FFmpeg/FFprobe discovery and an original operations terminal. M6-01/M6-02 implementation and automated coverage are in place; M6-03 publication remains in progress. The owner explicitly authorizes push, merge, tag and public stable release after automated Windows proof, replacing additional owner QA/publication gates for this patch. See [session and current evidence](evidence/HOTFIX-1.0.1-session.md). Historical project closure below remains dated history.
 # Current programme status
 
 Updated: 2026-10-08. **Project closed by the owner: 31 verified / 1 accepted; all 128 criteria passed in their recorded scopes.** Owner instruction: "All approved. Please close the project and delete all test and temp etc. files from this machine." [Closeout and cleanup](evidence/PROJECT_CLOSEOUT-2026-10-08.md), [exact receipt and CI review](evidence/PROJECT_CLOSEOUT-2026-10-08.json).

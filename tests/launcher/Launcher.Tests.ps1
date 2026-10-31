@@ -180,6 +180,7 @@ Describe 'Actionable launcher startup errors [WVC-M1-02-A04]' {
         $ErrorEnvironment.WVC_TEST_BAT = Join-Path $ErrorApp 'WinVidCompress.bat'
         $ErrorEnvironment.APPDATA = Join-Path $ErrorApp 'appdata'
         $ErrorEnvironment.PATH = (Split-Path -Parent $PS51)
+        $ErrorEnvironment.FFMPEG = ''
     }
 
     It 'reports the missing adjacent PS1 and how to fix it' {
@@ -212,14 +213,14 @@ Describe 'Actionable launcher startup errors [WVC-M1-02-A04]' {
     }
 
     It 'reports missing FFmpeg before config or output creation' {
-        Copy-Item -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.ps1') -Destination (Join-Path $ErrorApp 'WinVidCompress.ps1')
+        Write-WvcMissingToolApplication (Join-Path $RepoRoot 'WinVidCompress.ps1') (Join-Path $ErrorApp 'WinVidCompress.ps1')
         $result = Invoke-WvcLauncherProcess $env:ComSpec '/d /v:off /s /c ""%WVC_TEST_BAT%""' $ErrorEnvironment "exit`r`n"
         $result.StdErr | Should -Match 'ffmpeg.exe not found.*PATH or next to this script'
         Test-Path -LiteralPath $ErrorEnvironment.APPDATA | Should -BeFalse
     }
 
     It 'reports missing FFprobe before config or output creation' {
-        Copy-Item -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.ps1') -Destination (Join-Path $ErrorApp 'WinVidCompress.ps1')
+        Write-WvcMissingToolApplication (Join-Path $RepoRoot 'WinVidCompress.ps1') (Join-Path $ErrorApp 'WinVidCompress.ps1')
         [IO.File]::WriteAllText((Join-Path $ErrorApp 'ffmpeg.exe'), 'startup-only readable sentinel, never executed')
         $result = Invoke-WvcLauncherProcess $env:ComSpec '/d /v:off /s /c ""%WVC_TEST_BAT%""' $ErrorEnvironment "exit`r`n"
         $result.StdErr | Should -Match 'ffprobe.exe not found.*PATH or next to this script'
@@ -227,7 +228,7 @@ Describe 'Actionable launcher startup errors [WVC-M1-02-A04]' {
     }
 
     It 'rejects an adjacent directory masquerading as a dependency' {
-        Copy-Item -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.ps1') -Destination (Join-Path $ErrorApp 'WinVidCompress.ps1')
+        Write-WvcMissingToolApplication (Join-Path $RepoRoot 'WinVidCompress.ps1') (Join-Path $ErrorApp 'WinVidCompress.ps1')
         [void][IO.Directory]::CreateDirectory((Join-Path $ErrorApp 'ffmpeg.exe'))
         $result = Invoke-WvcLauncherProcess $env:ComSpec '/d /v:off /s /c ""%WVC_TEST_BAT%""' $ErrorEnvironment "exit`r`n"
         $result.StdErr | Should -Match 'ffmpeg.exe not found.*PATH or next to this script'

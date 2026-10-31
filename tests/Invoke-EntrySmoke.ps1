@@ -57,7 +57,7 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
             if ($output -notmatch [regex]::Escape("FFmpeg: $(Join-Path $bin 'ffmpeg.exe')") -or
                 $output -notmatch [regex]::Escape("FFprobe: $(Join-Path $bin 'ffprobe.exe')") -or
                 $output -notmatch 'Temporary create/write/remove check passed' -or
-                $output -match 'WVC_NATIVE_RECORDER|========== Summary|========== WinVidCompress ==========' -or
+                $output -match 'WVC_NATIVE_RECORDER|========== Summary|MEDIA OPERATIONS|RESULTS  //' -or
                 (Get-FileHash -LiteralPath $configPath).Hash -ne $configHash -or
                 @(Get-ChildItem -LiteralPath $outputRoot -Force).Count -ne 0 -or
                 (Test-Path -LiteralPath $nativeArgumentsPath) -or
@@ -67,13 +67,13 @@ function Invoke-SmokeProcess([string]$Executable, [string]$Arguments, [string]$M
             return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
         }
         if ($Mode -ne 'Batch') {
-            if ([regex]::Matches($output, [regex]::Escape('========== WinVidCompress ==========')).Count -ne 1 -or
+            if ([regex]::Matches($output, [regex]::Escape('MEDIA OPERATIONS')).Count -ne 1 -or
                 (Test-Path -LiteralPath $nativeArgumentsPath) -or ($Mode -eq 'MenuShell' -and $output -notmatch 'WVC_QUIT_RETURNED')) {
                 throw "Menu did not return once to its documented caller/shell: $output"
             }
             return [pscustomobject]@{ Executable = [IO.Path]::GetFileName($Executable); ExitCode = $process.ExitCode; NativeArguments = 0; Passed = $true }
         }
-        if (-not (Test-Path -LiteralPath $nativeArgumentsPath) -or $output -notmatch 'Done:\s+2' -or $output -notmatch 'Failed:\s+0') {
+        if (-not (Test-Path -LiteralPath $nativeArgumentsPath) -or $output -notmatch 'Found 2 \| Done 2 \| Skipped 0 \| Failed 0') {
             throw "Entry smoke did not reach existing folder processing: $output"
         }
         if ($output -match 'WVC_ARG:|WVC_NATIVE_RECORDER|(?m)^(?:progress|out_time_us)=') {

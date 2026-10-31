@@ -84,7 +84,8 @@ Check dependencies and writing with an owned temporary file removed on close.
 Author: Janne Vuorela. Application requirements: Windows PowerShell 5.1 or a
 supported stable PowerShell 7, and separately installed ffmpeg.exe/ffprobe.exe.
 Keep PS1/BAT together after extracting the ZIP. PATH applications take precedence
-over adjacent copies; aliases/functions are refused. BAT uses system PS5.1 with
+over adjacent copies, scoped FFMPEG hints and persisted Windows PATH (Machine/User).
+Aliases/functions are refused. BAT uses system PS5.1 with
 process-only ExecutionPolicy Bypass; no persistent policy/PATH edits or elevation.
 
 BAT automation uses -Unattended first. Variable-shaped percent paths such as
@@ -134,6 +135,7 @@ $script:ConfigSnapshot = $null
 $script:ApplicationPath = $PSCommandPath
 $script:SessionLog = $null
 $script:CancellationContext = $null
+$script:TerminalSession = $false
 
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
@@ -144,25 +146,121 @@ $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts'
 $CollisionMode = 'rename'
 
 # --- Helpers ---
+function Get-ToolEnvironmentVariable([string]$Name, [string]$Scope) {
+    # Read individual values only. Never refresh the process PATH or write scopes.
+    if ($Scope -eq 'Process') { return [Environment]::GetEnvironmentVariable($Name, 'Process') }
+    $key = $null
+    try {
+        if ($Scope -eq 'User') { $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $false) }
+        elseif ($Scope -eq 'Machine') {
+            $key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment', $false)
+        } else { throw 'Unknown environment scope.' }
+        if ($null -eq $key) { return $null }
+        # .NET Framework's environment getter expands REG_EXPAND_SZ against the
+        # stale child environment. Keep raw references for scoped expansion here.
+        $value = $key.GetValue($Name, $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+        if ($value -is [string]) { return $value }
+        return $null
+    } finally { if ($null -ne $key) { $key.Dispose() } }
+}
+
+function Expand-ToolHint([string]$Value, [string]$Scope) {
+    if ([string]::IsNullOrWhiteSpace($Value)) { return $null }
+    $valueText = $Value.Trim().Trim('"').Trim()
+    $scopes = switch ($Scope) {
+        'Process' { @('Process','User','Machine') }
+        'User' { @('User','Machine') }
+        'Machine' { @('Machine') }
+    }
+    # Bound both recursive expansion and cycles; unknown references invalidate a hint.
+    for ($depth = 0; $depth -lt 8 -and $valueText.Contains('%'); $depth++) {
+        $matchesFound = [regex]::Matches($valueText, '%([^%]+)%')
+        if ($matchesFound.Count -eq 0) { return $null }
+        foreach ($match in $matchesFound) {
+            $replacement = $null
+            foreach ($readScope in $scopes) {
+                try { $replacement = Get-ToolEnvironmentVariable $match.Groups[1].Value $readScope } catch { $replacement = $null }
+                if (-not [string]::IsNullOrWhiteSpace($replacement)) { break }
+            }
+            # Windows synthesizes these login/system values rather than always
+            # storing them in HKCU/HKLM Environment. Allow only these built-ins
+            # as a final process fallback, never a stale process FFMPEG override.
+            if ([string]::IsNullOrWhiteSpace($replacement) -and $match.Groups[1].Value -in
+                @('SystemRoot','windir','SystemDrive','USERPROFILE','APPDATA','LOCALAPPDATA','ProgramFiles','ProgramFiles(x86)','ProgramW6432','ProgramData')) {
+                try { $replacement = Get-ToolEnvironmentVariable $match.Groups[1].Value 'Process' } catch { $replacement = $null }
+            }
+            if ([string]::IsNullOrWhiteSpace($replacement)) { return $null }
+            $valueText = $valueText.Replace($match.Value, $replacement.Trim().Trim('"').Trim())
+        }
+    }
+    if ($valueText.Contains('%')) { return $null }
+    $valueText = $valueText.Trim().Trim('"').Trim()
+    # Rooted drive/UNC filesystem paths only: no C:relative, provider or shell syntax.
+    if ($valueText -notmatch '^(?:[A-Za-z]:[\\/]|\\\\[^\\/]+[\\/][^\\/]+)' -or
+        $valueText -match '["<>|*?\x00-\x1f]' -or $valueText.Substring(2).Contains(':')) { return $null }
+    try { return [IO.Path]::GetFullPath($valueText) } catch { return $null }
+}
+
+function Get-ToolHintCandidates([string]$Value, [string]$Scope, [string]$Exe, [switch]$PathEntry) {
+    $hint = Expand-ToolHint $Value $Scope
+    if (-not $hint) { return }
+    if ($PathEntry) { Join-Path $hint $Exe; return }
+    if ([IO.Path]::GetFileName($hint) -ieq 'ffmpeg.exe') {
+        Join-Path ([IO.Path]::GetDirectoryName($hint)) $Exe
+    } else {
+        Join-Path $hint $Exe
+        Join-Path (Join-Path $hint 'bin') $Exe
+    }
+}
+
+$script:ToolDiscovery = @{}
 function Ensure-Tool([string]$exe) {
-    # Preserve PATH-before-adjacent selection, but refuse shell-command shadows.
+    # Keep shell shadow safeguards even though all launches use absolute file paths.
     $cmd = Get-Command $exe -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($cmd -and $cmd.CommandType -ne 'Application') {
         throw "$exe resolves to a $($cmd.CommandType), not an application. Remove the shadowing command before retrying."
     }
-    $candidate = Join-Path (Split-Path -Parent $PSCommandPath) $exe
-    if ($cmd) { $candidate = $cmd.Source }
-    if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
-        throw "$exe not found. Put it in PATH or next to this script."
+    $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    $readFailure = $null
+    # Discover lazily so successful inherited/adjacent selection needs no scoped reads.
+    foreach ($source in @('Process PATH','Script directory','FFMPEG (Process)','FFMPEG (User)',
+            'FFMPEG (Machine)','PATH (Machine)','PATH (User)')) {
+        $candidates = @()
+        if ($source -eq 'Process PATH') {
+            foreach ($entry in ($env:PATH -split ';')) {
+                $candidates += @(Get-ToolHintCandidates $entry 'Process' $exe -PathEntry)
+            }
+        } elseif ($source -eq 'Script directory') {
+            $candidates = @(Join-Path (Split-Path -Parent $script:ApplicationPath) $exe)
+        } else {
+            $scope = ($source -split '[()]')[1]
+            $name = ($source -split ' ')[0]
+            $value = $null
+            try { $value = Get-ToolEnvironmentVariable $name $scope } catch { }
+            if ($name -eq 'PATH') {
+                foreach ($entry in ($value -split ';')) {
+                    $candidates += @(Get-ToolHintCandidates $entry $scope $exe -PathEntry)
+                }
+            } else { $candidates = @(Get-ToolHintCandidates $value $scope $exe) }
+        }
+        foreach ($candidate in $candidates) {
+            if (-not $seen.Add($candidate)) { continue }
+            try {
+                if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) { continue }
+                $stream = [IO.File]::Open($candidate, [IO.FileMode]::Open,
+                    [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+                $stream.Dispose()
+                $selected = (Get-Item -LiteralPath $candidate -Force).FullName
+                $script:ToolDiscovery[$exe] = [pscustomobject]@{ Path = $selected; Source = $source }
+                return $selected
+            } catch {
+                $readFailure = "$exe cannot be read at '$candidate'. Check read/execute permissions. Details: $($_.Exception.Message)"
+                if ($source -in @('Process PATH','Script directory')) { throw $readFailure }
+            }
+        }
     }
-    try {
-        $stream = [IO.File]::Open($candidate, [IO.FileMode]::Open,
-            [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
-        $stream.Dispose()
-    } catch {
-        throw "$exe cannot be read at '$candidate'. Check read/execute permissions or use an accessible copy in PATH or next to this script. Details: $($_.Exception.Message)"
-    }
-    return (Get-Item -LiteralPath $candidate -Force).FullName
+    if ($readFailure) { throw $readFailure }
+    throw "$exe not found. Put it in PATH or next to this script, or set FFMPEG to an accessible bin directory, installation root or ffmpeg.exe. Persisted Windows PATH is also checked."
 }
 
 function Get-DefaultOutputDir {
@@ -304,6 +402,8 @@ function Get-ToolEnvironment([string]$FFmpeg, [string]$FFprobe,
     } catch { throw "FFprobe JSON/program inspection failed at '$FFprobe': $($_.Exception.Message) stderr: $($json.StdErr)" }
     return [pscustomobject]@{
         FFmpeg = $FFmpeg; FFprobe = $FFprobe
+        FFmpegSource = $(if ($script:ToolDiscovery.ContainsKey('ffmpeg.exe') -and $script:ToolDiscovery['ffmpeg.exe'].Path -ieq $FFmpeg) { $script:ToolDiscovery['ffmpeg.exe'].Source } else { 'Provided path' })
+        FFprobeSource = $(if ($script:ToolDiscovery.ContainsKey('ffprobe.exe') -and $script:ToolDiscovery['ffprobe.exe'].Path -ieq $FFprobe) { $script:ToolDiscovery['ffprobe.exe'].Source } else { 'Provided path' })
         FFmpegBuild = $versions.ffmpeg; FFprobeBuild = $versions.ffprobe
         Capabilities = 'libx264, AAC, MP4/faststart, scale, FFprobe CSV/JSON and selection/entries options'
         Calls = $calls.ToArray()
@@ -349,10 +449,12 @@ function Get-EnvironmentConfig([string]$DefaultDestination) {
 }
 
 function Write-EnvironmentReport($Tools, $Output) {
-    Write-Host "Dependency selection: PATH before script-adjacent applications."
+    Write-Host 'Dependency selection: Process PATH, script directory, FFMPEG (Process/User/Machine), persisted PATH (Machine/User).'
     Write-Host "FFmpeg: $($Tools.FFmpeg)"
+    if ($Tools.PSObject.Properties['FFmpegSource']) { Write-Host "FFmpeg source: $($Tools.FFmpegSource)" }
     Write-Host $Tools.FFmpegBuild
     Write-Host "FFprobe: $($Tools.FFprobe)"
+    if ($Tools.PSObject.Properties['FFprobeSource']) { Write-Host "FFprobe source: $($Tools.FFprobeSource)" }
     Write-Host $Tools.FFprobeBuild
     Write-Host "Capabilities: $($Tools.Capabilities)"
     foreach ($call in $Tools.Calls) {
@@ -1409,7 +1511,7 @@ function New-EncodeProgress($DurationSeconds, [int]$FileIndex = 1, [int]$FileTot
     return [pscustomobject]@{ Buffer=''; DiscardLine=$false; Fields=@{}; State='Encoding';
         EndReceived=$false; Records=0; MalformedLines=0; MediaSeconds=$null; Speed=$null;
         DurationSeconds=$duration; Percent=-1; RemainingSeconds=$null; ElapsedSeconds=0.0;
-        FileIndex=$FileIndex; FileTotal=$FileTotal; Clock=[Diagnostics.Stopwatch]::StartNew();
+        FileIndex=$FileIndex; FileTotal=$FileTotal; SourceName=''; Clock=[Diagnostics.Stopwatch]::StartNew();
         LastDisplaySeconds=-1.0; LastDisplayState=''; States=@() }
 }
 
@@ -1480,9 +1582,19 @@ function Update-EncodeProgress($Progress, [string]$Chunk, [switch]$Flush) {
 function Write-JobProgress($Progress, [switch]$Finish) {
     $elapsed=$Progress.Clock.Elapsed.TotalSeconds
     if (-not $Finish -and $Progress.State -eq $Progress.LastDisplayState -and $elapsed-$Progress.LastDisplaySeconds -lt 0.5) { return }
+    $stateChanged=$Progress.State -ne $Progress.LastDisplayState
     $Progress.LastDisplaySeconds=$elapsed; $Progress.LastDisplayState=$Progress.State
     $remaining=if ($null -ne $Progress.RemainingSeconds) { 'approx. {0:F0}s remaining in encode' -f $Progress.RemainingSeconds } else { 'remaining unknown' }
-    Write-Progress -Id 1 -Activity ('File {0}/{1}' -f $Progress.FileIndex,$Progress.FileTotal) -Status (
+    $activity='File {0}/{1}' -f $Progress.FileIndex,$Progress.FileTotal
+    if ($Progress.SourceName) { $activity+=' // '+$Progress.SourceName }
+    if ($script:TerminalSession -and $stateChanged) {
+        $label=if ($Progress.State -eq 'Completed') {'DONE'} else {$Progress.State.ToUpperInvariant()}
+        $tone=if ($Progress.State -eq 'Completed') {'Success'} elseif ($Progress.State -in @('Failed','Cancelled','Skipped','Unstarted')) {'Warning'} else {'Heading'}
+        Write-TerminalText ('[{0}/{1}] {2} // {3}' -f $Progress.FileIndex,$Progress.FileTotal,$label,$Progress.SourceName) $tone
+    }
+    # The transcript uses state transitions when cursor-based progress is unavailable.
+    if ($script:TerminalSession -and -not (Get-TerminalStyle).Color) { return }
+    Write-Progress -Id 1 -Activity $activity -Status (
         '{0}; elapsed {1:F0}s; {2}' -f $Progress.State,$elapsed,$remaining) -PercentComplete $Progress.Percent -Completed:$Finish
 }
 
@@ -2373,6 +2485,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     $result=New-JobResult $inPath $crf
     $clock=[Diagnostics.Stopwatch]::StartNew()
     $progress=New-EncodeProgress $null $FileIndex $FileTotal
+    $progress.SourceName=[IO.Path]::GetFileName($inPath)
     $stageClock=New-Object Diagnostics.Stopwatch
     $result.Outcome='Failed'
     $outputJob = $null
@@ -2453,9 +2566,14 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $encodeArguments = @(Get-EncodeArguments $inPath $outputJob.TempPath $streamPlan $crf $meta)
         $result.Diagnostics.EncodeArguments=$encodeArguments
 
-        Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
-        Write-Host $inPath
-        Write-Host "    -> $out"
+        if ($script:TerminalSession) {
+            Write-TerminalText ('SOURCE   '+$inPath)
+            Write-TerminalText ('OUTPUT   '+$out)
+        } else {
+            Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
+            Write-Host $inPath
+            Write-Host "    -> $out"
+        }
 
         $stage = 'Encode'
         $progress.DurationSeconds=$result.DurationSeconds
@@ -2943,15 +3061,18 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
     $counters=$batch.Counters
 
     try {
-        Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
-        Write-Host ("Found:   {0}" -f $counters.Found)
-        Write-Host ("Done:    {0}" -f $counters.Done)
-        Write-Host ("Skipped: {0}" -f $counters.Skipped)
-        Write-Host ("Failed:  {0}" -f $counters.Failed)
-        Write-Host ("Cancelled: {0}" -f $counters.Cancelled)
-        Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
-        Write-Host ("Scanned: {0}" -f $counters.Scanned)
-        Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+        if ($script:TerminalSession) { Write-TerminalBatchSummary $batch $cfg.OutputDir $script:SessionLog }
+        else {
+            Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
+            Write-Host ("Found:   {0}" -f $counters.Found)
+            Write-Host ("Done:    {0}" -f $counters.Done)
+            Write-Host ("Skipped: {0}" -f $counters.Skipped)
+            Write-Host ("Failed:  {0}" -f $counters.Failed)
+            Write-Host ("Cancelled: {0}" -f $counters.Cancelled)
+            Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
+            Write-Host ("Scanned: {0}" -f $counters.Scanned)
+            Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+        }
         foreach ($job in $batch.Jobs) {
             if ($job.Outcome -eq 'Completed') { Write-Host ($job.SourcePath+': '+(Format-JobSummary $job)) }
         }
@@ -2988,20 +3109,114 @@ function Get-SessionResult([object[]]$Batches) {
 }
 
 # --- TUI ---
+function Get-TerminalStyle {
+    # Write-Host chooses host colors; no ANSI or cursor commands enter transcripts.
+    $width=59; $color=$false
+    try {
+        if (-not [Console]::IsOutputRedirected) {
+            $available=$Host.UI.RawUI.WindowSize.Width
+            if ($available -gt 0) {
+                $width=[math]::Max(20,[math]::Min(100,$available-1))
+                $color=-not $env:NO_COLOR -and $env:TERM -ne 'dumb'
+            }
+        }
+    } catch { }
+    return [pscustomobject]@{Width=$width;Color=$color}
+}
+
+function Split-TerminalLine([string]$Text, [int]$Width = 59) {
+    $width=[math]::Max(1,$Width)
+    if (-not $Text) { return '' }
+    # Hard wrapping preserves every character, including long filenames and paths.
+    for ($start=0; $start -lt $Text.Length; $start+=$width) {
+        $Text.Substring($start,[math]::Min($width,$Text.Length-$start))
+    }
+}
+
+function Write-TerminalText([string]$Text, [ValidateSet('Normal','Heading','Muted','Success','Warning')][string]$Tone = 'Normal') {
+    $style=Get-TerminalStyle
+    foreach ($line in @(Split-TerminalLine $Text $style.Width)) {
+        if ($style.Color -and $Tone -ne 'Normal') {
+            $color=switch ($Tone) { 'Heading' {'Cyan'} 'Muted' {'DarkCyan'} 'Success' {'Green'} 'Warning' {'Yellow'} }
+            Write-Host $line -ForegroundColor $color
+        } else { Write-Host $line }
+    }
+}
+
+function Get-TerminalVersion {
+    try {
+        $version=([IO.File]::ReadAllText((Join-Path ([IO.Path]::GetDirectoryName($script:ApplicationPath)) 'VERSION'))).Trim()
+        if ($version -match '^\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$') { return ('v'+$version) }
+    } catch { }
+    return 'local build'
+}
+
+function Get-TerminalMenuLines([string]$Destination, [string]$Version, [int]$Width = 59, [bool]$EngineReady = $true) {
+    $width=[math]::Max(20,$Width)
+    $heading='WINVIDCOMPRESS  //  MEDIA OPERATIONS'
+    if ($width -ge $heading.Length+$Version.Length+2) {
+        $heading.PadRight($width-$Version.Length)+$Version
+    } else {
+        if ($width -lt $heading.Length) {
+            'WINVIDCOMPRESS'
+            '//  MEDIA OPERATIONS'
+        } else { $heading }
+        $Version
+    }
+    '-'*[math]::Min(59,$width)
+    Split-TerminalLine ('ENGINE   '+$(if ($EngineReady) {'FFmpeg + FFprobe ready'} else {'Dependency unavailable'})) $width
+    Split-TerminalLine ('OUTPUT   '+$Destination) $width
+    $profile='PROFILE  H.264 / CRF '+$DefaultCRF+' / AAC when present / MP4'
+    if ($width -ge $profile.Length) { $profile }
+    else {
+        Split-TerminalLine ('PROFILE  H.264 / CRF '+$DefaultCRF) $width
+        Split-TerminalLine '         AAC when present / MP4' $width
+    }
+    ''
+    if ($width -ge 59) {
+        '[1] Set output folder        [2] Compress one file'
+        '[3] Compress folder          [4] Quit'
+    } else {
+        foreach ($control in @('[1] Set output folder','[2] Compress one file','[3] Compress folder','[4] Quit')) {
+            Split-TerminalLine $control $width
+        }
+    }
+}
+
+function Write-TerminalMenu([string]$Destination, [bool]$EngineReady) {
+    $style=Get-TerminalStyle
+    Write-Host ''
+    foreach ($line in @(Get-TerminalMenuLines $Destination (Get-TerminalVersion) $style.Width $EngineReady)) {
+        $tone=if ($line -like 'WINVIDCOMPRESS*' -or $line -like '*MEDIA OPERATIONS*') {'Heading'}
+            elseif ($line -match '^-+$') {'Muted'}
+            elseif ($line -like 'ENGINE*' -and -not $EngineReady) {'Warning'} else {'Normal'}
+        Write-TerminalText $line $tone
+    }
+}
+
+function Write-TerminalBatchSummary($Batch, [string]$Destination, $Session) {
+    $counts=$Batch.Counters
+    $attention=$Batch.ExitCode -ne 0
+    Write-TerminalText ''
+    Write-TerminalText ('RESULTS  //  '+$(if ($attention) {'ATTENTION'} else {'COMPLETE'})) $(if ($attention) {'Warning'} else {'Heading'})
+    Write-TerminalText ('-'*[math]::Min(59,(Get-TerminalStyle).Width)) 'Muted'
+    Write-TerminalText ('Found {0} | Done {1} | Skipped {2} | Failed {3}' -f $counts.Found,$counts.Done,$counts.Skipped,$counts.Failed) $(if ($attention) {'Warning'} else {'Success'})
+    Write-TerminalText ('Cancelled {0} | Unstarted {1}' -f $counts.Cancelled,$counts.Unstarted)
+    Write-TerminalText ('Scanned {0} | Scan errors {1}' -f $counts.Scanned,$counts.ScanErrors)
+    Write-TerminalText ('OUTPUT   '+$Destination)
+    $log=Get-ProbeProperty $Session 'JsonPath'
+    if ($log) { Write-TerminalText ('LOG      '+$log) }
+}
+
 function Run-TUI($ffmpeg, $ffprobe, $cfg) {
     $batches=New-Object 'Collections.Generic.List[object]'
+    $previousTerminal=$script:TerminalSession
+    $script:TerminalSession=$true
     try {
     while ($true) {
-        Write-Host ""
-        Write-Host "========== WinVidCompress =========="
-        Write-Host "Output folder: $($cfg.OutputDir)"
-        Write-Host ""
-        Write-Host "1) Set output folder"
-        Write-Host "2) Compress ONE file"
-        Write-Host "3) Compress ALL videos in a folder (recursive)"
-        Write-Host "4) Quit"
+        Write-TerminalMenu $cfg.OutputDir ([bool]$ffmpeg -and [bool]$ffprobe)
 
-        $c = Read-Host "Choose [1-4]"
+        $c = Read-Host "Select [1-4]"
         switch ($c) {
             '1' {
                 $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder -CreateIfMissing
@@ -3015,7 +3230,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
                     } catch {
                         if ($_.Exception -is [System.Management.Automation.PipelineStoppedException] -or
                             $_.Exception -is [System.OperationCanceledException]) { throw }
-                        Write-Host "Output preference was not changed: $($_.Exception.Message)" -ForegroundColor Yellow
+                        Write-TerminalText "Output preference was not changed: $($_.Exception.Message)" 'Warning'
                     }
                 }
             }
@@ -3044,7 +3259,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
         $cancelled=$_.Exception -is [System.OperationCanceledException]
         $batches.Add((Get-BatchResult @() @() -Cancelled:$cancelled -StartupFailed:(-not $cancelled) -Reason $_.Exception.Message))
         return (Get-SessionResult $batches.ToArray())
-    }
+    } finally { $script:TerminalSession=$previousTerminal }
 }
 
 function Resolve-RunConfiguration($Config, [hashtable]$Overrides) {
@@ -3115,6 +3330,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
     $stage='Startup'
     $session=$null; $run=$null
     $previousSession=$script:SessionLog
+    $previousTerminal=$script:TerminalSession
     $inputPaths=@($Paths | Where-Object { $null -ne $_ })
     $overrides=@{}
     if ($PSBoundParameters.ContainsKey('OutputDir')) { $overrides.OutputDir=$OutputDir }
@@ -3151,6 +3367,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             $effective=Resolve-RunConfiguration (Get-EnvironmentConfig @readOptions) $overrides
             $batchLayout=Get-RelativeOutputLayout (Get-InputQueue $inputPaths) $effective.Config.OutputDir
         }
+        $script:ToolDiscovery=@{}
         $ffmpeg=Ensure-Tool 'ffmpeg.exe'
         $ffprobe=Ensure-Tool 'ffprobe.exe'
         $tools=Get-ToolEnvironment $ffmpeg $ffprobe
@@ -3161,11 +3378,22 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             Write-EnvironmentReport $tools $output
             return (Get-BatchResult @() @() -Reason 'Environment check completed.')
         }
+        $script:TerminalSession=(-not $Unattended)
         $cfg=if ($PreserveSubfolders) { $effective.Config } elseif ($overrides.Count) { Get-EnvironmentConfig @readOptions } else { Load-Config }
         $effective=Resolve-RunConfiguration $cfg $overrides
         $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir
-        Write-EnvironmentReport $tools $output
+        if ($Unattended) { Write-EnvironmentReport $tools $output }
+        else {
+            if ($tools.PSObject.Properties['Calls']) {
+                foreach ($call in $tools.Calls) {
+                    if (-not [string]::IsNullOrWhiteSpace($call.StdErr)) { Write-TerminalText $call.StdErr.TrimEnd() 'Warning' }
+                }
+            }
+            if ($output.PSObject.Properties['AvailableBytes'] -and $null -ne $output.AvailableBytes -and $output.AvailableBytes -lt 1GB) {
+                Write-TerminalText 'Capacity concern: less than 1 GiB is available in the output location.' 'Warning'
+            }
+        }
         $session=New-SessionLog $tools -OutputLayout $(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'})
         $script:SessionLog=$session
         if ($inputPaths.Count -gt 0) {
@@ -3191,6 +3419,7 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
             if ($null -ne $run -and $null -ne $session) { $run.Warnings+=@($session.Warnings) }
         }
         $script:SessionLog=$previousSession
+        $script:TerminalSession=$previousTerminal
     }
 }
 
