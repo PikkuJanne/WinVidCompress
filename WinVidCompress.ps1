@@ -148,7 +148,20 @@ $CollisionMode = 'rename'
 # --- Helpers ---
 function Get-ToolEnvironmentVariable([string]$Name, [string]$Scope) {
     # Read individual values only. Never refresh the process PATH or write scopes.
-    [Environment]::GetEnvironmentVariable($Name, $Scope)
+    if ($Scope -eq 'Process') { return [Environment]::GetEnvironmentVariable($Name, 'Process') }
+    $key = $null
+    try {
+        if ($Scope -eq 'User') { $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $false) }
+        elseif ($Scope -eq 'Machine') {
+            $key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment', $false)
+        } else { throw 'Unknown environment scope.' }
+        if ($null -eq $key) { return $null }
+        # .NET Framework's environment getter expands REG_EXPAND_SZ against the
+        # stale child environment. Keep raw references for scoped expansion here.
+        $value = $key.GetValue($Name, $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+        if ($value -is [string]) { return $value }
+        return $null
+    } finally { if ($null -ne $key) { $key.Dispose() } }
 }
 
 function Expand-ToolHint([string]$Value, [string]$Scope) {
@@ -168,6 +181,13 @@ function Expand-ToolHint([string]$Value, [string]$Scope) {
             foreach ($readScope in $scopes) {
                 try { $replacement = Get-ToolEnvironmentVariable $match.Groups[1].Value $readScope } catch { $replacement = $null }
                 if (-not [string]::IsNullOrWhiteSpace($replacement)) { break }
+            }
+            # Windows synthesizes these login/system values rather than always
+            # storing them in HKCU/HKLM Environment. Allow only these built-ins
+            # as a final process fallback, never a stale process FFMPEG override.
+            if ([string]::IsNullOrWhiteSpace($replacement) -and $match.Groups[1].Value -in
+                @('SystemRoot','windir','SystemDrive','USERPROFILE','APPDATA','LOCALAPPDATA','ProgramFiles','ProgramFiles(x86)','ProgramW6432','ProgramData')) {
+                try { $replacement = Get-ToolEnvironmentVariable $match.Groups[1].Value 'Process' } catch { $replacement = $null }
             }
             if ([string]::IsNullOrWhiteSpace($replacement)) { return $null }
             $valueText = $valueText.Replace($match.Value, $replacement.Trim().Trim('"').Trim())
@@ -3364,6 +3384,16 @@ function Invoke-WinVidCompress([string[]]$Paths, [switch]$CheckEnvironment,
         $cfg=$effective.Config; $CollisionMode=$effective.CollisionMode
         $output=Get-OutputEnvironment $cfg.OutputDir
         if ($Unattended) { Write-EnvironmentReport $tools $output }
+        else {
+            if ($tools.PSObject.Properties['Calls']) {
+                foreach ($call in $tools.Calls) {
+                    if (-not [string]::IsNullOrWhiteSpace($call.StdErr)) { Write-TerminalText $call.StdErr.TrimEnd() 'Warning' }
+                }
+            }
+            if ($output.PSObject.Properties['AvailableBytes'] -and $null -ne $output.AvailableBytes -and $output.AvailableBytes -lt 1GB) {
+                Write-TerminalText 'Capacity concern: less than 1 GiB is available in the output location.' 'Warning'
+            }
+        }
         $session=New-SessionLog $tools -OutputLayout $(if ($PreserveSubfolders) {'PreserveSubfolders'} else {'Flat'})
         $script:SessionLog=$session
         if ($inputPaths.Count -gt 0) {
