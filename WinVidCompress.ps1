@@ -84,7 +84,8 @@ Check dependencies and writing with an owned temporary file removed on close.
 Author: Janne Vuorela. Application requirements: Windows PowerShell 5.1 or a
 supported stable PowerShell 7, and separately installed ffmpeg.exe/ffprobe.exe.
 Keep PS1/BAT together after extracting the ZIP. PATH applications take precedence
-over adjacent copies; aliases/functions are refused. BAT uses system PS5.1 with
+over adjacent copies, scoped FFMPEG hints and persisted Windows PATH (Machine/User).
+Aliases/functions are refused. BAT uses system PS5.1 with
 process-only ExecutionPolicy Bypass; no persistent policy/PATH edits or elevation.
 
 BAT automation uses -Unattended first. Variable-shaped percent paths such as

@@ -1,0 +1,7 @@
+# 1.0.1 hotfix session - 2026-10-31
+
+Owner request: execute the supplied hotfix in PikkuJanne/WinVidCompress, repair FFmpeg/FFprobe discovery and design an original understated media operations terminal. Preserve four actions, drag/drop, settings and file protections. Owner explicitly authorizes push, merge, tag and public stable publication, without another owner QA/publication step. Automated Windows tests replace physical Explorer acceptance for this patch; shell-equivalent coverage will be labelled accurately.
+
+Scope is split into M6-01 discovery, M6-02 terminal and M6-03 Windows packaged proof/publication. Historical M0-M5 completion/evidence stays intact. Starting checkout was clean at 8c0d5ca; fetched live main 263e87831865b8a3324489cca920ffa171eae3aa. Its newer branding assets are preserved. Only v1.0.0 existed; v1.0.1 selected. Primary work branch codex/wvc-1.0.1-hotfix; delegated tasks use separate isolated worktrees/branches. No concurrent writers to a checkout.
+
+Implementation/testing/publication evidence is pending; no passing result or release is inferred here. Exact commands, tested commits, counts, CI URLs, package SHA256 and public readback will be recorded after execution. Personal paths/raw logs/media are excluded from GitHub. Test binaries/dependencies and synthetic fixtures live outside the repository.
