@@ -36,6 +36,14 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
+          # actions/checkout omits .git; preserve the builder's strict identity gate.
+          $origin = (git remote get-url --all origin | Out-String).Trim()
+          if ($origin -ceq 'https://github.com/PikkuJanne/WinVidCompress') {
+            git remote set-url origin 'https://github.com/PikkuJanne/WinVidCompress.git'
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot normalize the verified checkout origin.' }
+          } elseif ($origin -cne 'https://github.com/PikkuJanne/WinVidCompress.git') {
+            throw 'Unexpected checkout origin.'
+          }
           $package = Join-Path $env:RUNNER_TEMP 'wvc-tested-package'
           [void][IO.Directory]::CreateDirectory($package)
           $commit = (git rev-parse HEAD).Trim()

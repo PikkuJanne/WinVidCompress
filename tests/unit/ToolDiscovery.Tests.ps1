@@ -186,6 +186,15 @@ Describe 'Scoped executable discovery [WVC-HOTFIX-1.0.1]' {
         $ToolDiscovery['ffmpeg.exe'].Source | Should -BeExactly 'PATH (User)'
     }
 
+    It 'expands a Windows login variable synthesized only in the process environment' {
+        $root = Join-Path $DiscoveryRoot 'login profile'
+        $expected = New-DiscoveryTool (Join-Path $root 'codec tools')
+        $ScopeValues['Process:LOCALAPPDATA'] = $root
+        $ScopeValues['User:PATH'] = '%LOCALAPPDATA%\codec tools'
+        Ensure-Tool 'ffmpeg.exe' | Should -BeExactly $expected
+        $ToolDiscovery['ffmpeg.exe'].Source | Should -BeExactly 'PATH (User)'
+    }
+
     It 'ignores a <Kind> hint and proceeds to a valid later path' -TestCases @(
         @{Kind='empty';Value=''}, @{Kind='whitespace';Value='   '},
         @{Kind='unresolved';Value='%WVC_NO_SUCH_VARIABLE%'},
