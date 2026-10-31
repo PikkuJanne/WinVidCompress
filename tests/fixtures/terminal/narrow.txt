@@ -1,0 +1,13 @@
+WINVIDCOMPRESS
+//  MEDIA OPERATIONS
+v1.0.1
+--------------------------------
+ENGINE   FFmpeg + FFprobe ready
+OUTPUT   D:\Videos
+PROFILE  H.264 / CRF 22
+         AAC when present / MP4
+
+[1] Set output folder
+[2] Compress one file
+[3] Compress folder
+[4] Quit

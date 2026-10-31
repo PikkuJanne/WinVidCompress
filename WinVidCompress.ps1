@@ -135,6 +135,7 @@ $script:ConfigSnapshot = $null
 $script:ApplicationPath = $PSCommandPath
 $script:SessionLog = $null
 $script:CancellationContext = $null
+$script:TerminalSession = $false
 
 $DefaultCRF = 22
 $VideoExts  = @('.mp4','.mov','.mkv','.m4v','.avi','.mpg','.mpeg','.mts','.m2ts','.wmv')
@@ -1490,7 +1491,7 @@ function New-EncodeProgress($DurationSeconds, [int]$FileIndex = 1, [int]$FileTot
     return [pscustomobject]@{ Buffer=''; DiscardLine=$false; Fields=@{}; State='Encoding';
         EndReceived=$false; Records=0; MalformedLines=0; MediaSeconds=$null; Speed=$null;
         DurationSeconds=$duration; Percent=-1; RemainingSeconds=$null; ElapsedSeconds=0.0;
-        FileIndex=$FileIndex; FileTotal=$FileTotal; Clock=[Diagnostics.Stopwatch]::StartNew();
+        FileIndex=$FileIndex; FileTotal=$FileTotal; SourceName=''; Clock=[Diagnostics.Stopwatch]::StartNew();
         LastDisplaySeconds=-1.0; LastDisplayState=''; States=@() }
 }
 
@@ -1561,9 +1562,19 @@ function Update-EncodeProgress($Progress, [string]$Chunk, [switch]$Flush) {
 function Write-JobProgress($Progress, [switch]$Finish) {
     $elapsed=$Progress.Clock.Elapsed.TotalSeconds
     if (-not $Finish -and $Progress.State -eq $Progress.LastDisplayState -and $elapsed-$Progress.LastDisplaySeconds -lt 0.5) { return }
+    $stateChanged=$Progress.State -ne $Progress.LastDisplayState
     $Progress.LastDisplaySeconds=$elapsed; $Progress.LastDisplayState=$Progress.State
     $remaining=if ($null -ne $Progress.RemainingSeconds) { 'approx. {0:F0}s remaining in encode' -f $Progress.RemainingSeconds } else { 'remaining unknown' }
-    Write-Progress -Id 1 -Activity ('File {0}/{1}' -f $Progress.FileIndex,$Progress.FileTotal) -Status (
+    $activity='File {0}/{1}' -f $Progress.FileIndex,$Progress.FileTotal
+    if ($Progress.SourceName) { $activity+=' // '+$Progress.SourceName }
+    if ($script:TerminalSession -and $stateChanged) {
+        $label=if ($Progress.State -eq 'Completed') {'DONE'} else {$Progress.State.ToUpperInvariant()}
+        $tone=if ($Progress.State -eq 'Completed') {'Success'} elseif ($Progress.State -in @('Failed','Cancelled','Skipped','Unstarted')) {'Warning'} else {'Heading'}
+        Write-TerminalText ('[{0}/{1}] {2} // {3}' -f $Progress.FileIndex,$Progress.FileTotal,$label,$Progress.SourceName) $tone
+    }
+    # The transcript uses state transitions when cursor-based progress is unavailable.
+    if ($script:TerminalSession -and -not (Get-TerminalStyle).Color) { return }
+    Write-Progress -Id 1 -Activity $activity -Status (
         '{0}; elapsed {1:F0}s; {2}' -f $Progress.State,$elapsed,$remaining) -PercentComplete $Progress.Percent -Completed:$Finish
 }
 
@@ -2454,6 +2465,7 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
     $result=New-JobResult $inPath $crf
     $clock=[Diagnostics.Stopwatch]::StartNew()
     $progress=New-EncodeProgress $null $FileIndex $FileTotal
+    $progress.SourceName=[IO.Path]::GetFileName($inPath)
     $stageClock=New-Object Diagnostics.Stopwatch
     $result.Outcome='Failed'
     $outputJob = $null
@@ -2534,9 +2546,14 @@ function Compress-One($ffmpeg, $ffprobe, [string]$inPath, [string]$outDir, [int]
         $encodeArguments = @(Get-EncodeArguments $inPath $outputJob.TempPath $streamPlan $crf $meta)
         $result.Diagnostics.EncodeArguments=$encodeArguments
 
-        Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
-        Write-Host $inPath
-        Write-Host "    -> $out"
+        if ($script:TerminalSession) {
+            Write-TerminalText ('SOURCE   '+$inPath)
+            Write-TerminalText ('OUTPUT   '+$out)
+        } else {
+            Write-Host "`n>>> Compressing:" -ForegroundColor Cyan
+            Write-Host $inPath
+            Write-Host "    -> $out"
+        }
 
         $stage = 'Encode'
         $progress.DurationSeconds=$result.DurationSeconds
@@ -3024,15 +3041,18 @@ function Invoke-PathBatch([string[]]$paths, $ffmpeg, $ffprobe, $cfg,
     $counters=$batch.Counters
 
     try {
-        Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
-        Write-Host ("Found:   {0}" -f $counters.Found)
-        Write-Host ("Done:    {0}" -f $counters.Done)
-        Write-Host ("Skipped: {0}" -f $counters.Skipped)
-        Write-Host ("Failed:  {0}" -f $counters.Failed)
-        Write-Host ("Cancelled: {0}" -f $counters.Cancelled)
-        Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
-        Write-Host ("Scanned: {0}" -f $counters.Scanned)
-        Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+        if ($script:TerminalSession) { Write-TerminalBatchSummary $batch $cfg.OutputDir $script:SessionLog }
+        else {
+            Write-Host "`n========== Summary ==========" -ForegroundColor Cyan
+            Write-Host ("Found:   {0}" -f $counters.Found)
+            Write-Host ("Done:    {0}" -f $counters.Done)
+            Write-Host ("Skipped: {0}" -f $counters.Skipped)
+            Write-Host ("Failed:  {0}" -f $counters.Failed)
+            Write-Host ("Cancelled: {0}" -f $counters.Cancelled)
+            Write-Host ("Unstarted: {0}" -f $counters.Unstarted)
+            Write-Host ("Scanned: {0}" -f $counters.Scanned)
+            Write-Host ("Scan errors: {0}" -f $counters.ScanErrors)
+        }
         foreach ($job in $batch.Jobs) {
             if ($job.Outcome -eq 'Completed') { Write-Host ($job.SourcePath+': '+(Format-JobSummary $job)) }
         }
@@ -3069,20 +3089,114 @@ function Get-SessionResult([object[]]$Batches) {
 }
 
 # --- TUI ---
+function Get-TerminalStyle {
+    # Write-Host chooses host colors; no ANSI or cursor commands enter transcripts.
+    $width=59; $color=$false
+    try {
+        if (-not [Console]::IsOutputRedirected) {
+            $available=$Host.UI.RawUI.WindowSize.Width
+            if ($available -gt 0) {
+                $width=[math]::Max(20,[math]::Min(100,$available-1))
+                $color=-not $env:NO_COLOR -and $env:TERM -ne 'dumb'
+            }
+        }
+    } catch { }
+    return [pscustomobject]@{Width=$width;Color=$color}
+}
+
+function Split-TerminalLine([string]$Text, [int]$Width = 59) {
+    $width=[math]::Max(1,$Width)
+    if (-not $Text) { return '' }
+    # Hard wrapping preserves every character, including long filenames and paths.
+    for ($start=0; $start -lt $Text.Length; $start+=$width) {
+        $Text.Substring($start,[math]::Min($width,$Text.Length-$start))
+    }
+}
+
+function Write-TerminalText([string]$Text, [ValidateSet('Normal','Heading','Muted','Success','Warning')][string]$Tone = 'Normal') {
+    $style=Get-TerminalStyle
+    foreach ($line in @(Split-TerminalLine $Text $style.Width)) {
+        if ($style.Color -and $Tone -ne 'Normal') {
+            $color=switch ($Tone) { 'Heading' {'Cyan'} 'Muted' {'DarkCyan'} 'Success' {'Green'} 'Warning' {'Yellow'} }
+            Write-Host $line -ForegroundColor $color
+        } else { Write-Host $line }
+    }
+}
+
+function Get-TerminalVersion {
+    try {
+        $version=([IO.File]::ReadAllText((Join-Path ([IO.Path]::GetDirectoryName($script:ApplicationPath)) 'VERSION'))).Trim()
+        if ($version -match '^\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$') { return ('v'+$version) }
+    } catch { }
+    return 'local build'
+}
+
+function Get-TerminalMenuLines([string]$Destination, [string]$Version, [int]$Width = 59, [bool]$EngineReady = $true) {
+    $width=[math]::Max(20,$Width)
+    $heading='WINVIDCOMPRESS  //  MEDIA OPERATIONS'
+    if ($width -ge $heading.Length+$Version.Length+2) {
+        $heading.PadRight($width-$Version.Length)+$Version
+    } else {
+        if ($width -lt $heading.Length) {
+            'WINVIDCOMPRESS'
+            '//  MEDIA OPERATIONS'
+        } else { $heading }
+        $Version
+    }
+    '-'*[math]::Min(59,$width)
+    Split-TerminalLine ('ENGINE   '+$(if ($EngineReady) {'FFmpeg + FFprobe ready'} else {'Dependency unavailable'})) $width
+    Split-TerminalLine ('OUTPUT   '+$Destination) $width
+    $profile='PROFILE  H.264 / CRF '+$DefaultCRF+' / AAC when present / MP4'
+    if ($width -ge $profile.Length) { $profile }
+    else {
+        Split-TerminalLine ('PROFILE  H.264 / CRF '+$DefaultCRF) $width
+        Split-TerminalLine '         AAC when present / MP4' $width
+    }
+    ''
+    if ($width -ge 59) {
+        '[1] Set output folder        [2] Compress one file'
+        '[3] Compress folder          [4] Quit'
+    } else {
+        foreach ($control in @('[1] Set output folder','[2] Compress one file','[3] Compress folder','[4] Quit')) {
+            Split-TerminalLine $control $width
+        }
+    }
+}
+
+function Write-TerminalMenu([string]$Destination, [bool]$EngineReady) {
+    $style=Get-TerminalStyle
+    Write-Host ''
+    foreach ($line in @(Get-TerminalMenuLines $Destination (Get-TerminalVersion) $style.Width $EngineReady)) {
+        $tone=if ($line -like 'WINVIDCOMPRESS*' -or $line -like '*MEDIA OPERATIONS*') {'Heading'}
+            elseif ($line -match '^-+$') {'Muted'}
+            elseif ($line -like 'ENGINE*' -and -not $EngineReady) {'Warning'} else {'Normal'}
+        Write-TerminalText $line $tone
+    }
+}
+
+function Write-TerminalBatchSummary($Batch, [string]$Destination, $Session) {
+    $counts=$Batch.Counters
+    $attention=$Batch.ExitCode -ne 0
+    Write-TerminalText ''
+    Write-TerminalText ('RESULTS  //  '+$(if ($attention) {'ATTENTION'} else {'COMPLETE'})) $(if ($attention) {'Warning'} else {'Heading'})
+    Write-TerminalText ('-'*[math]::Min(59,(Get-TerminalStyle).Width)) 'Muted'
+    Write-TerminalText ('Found {0} | Done {1} | Skipped {2} | Failed {3}' -f $counts.Found,$counts.Done,$counts.Skipped,$counts.Failed) $(if ($attention) {'Warning'} else {'Success'})
+    Write-TerminalText ('Cancelled {0} | Unstarted {1}' -f $counts.Cancelled,$counts.Unstarted)
+    Write-TerminalText ('Scanned {0} | Scan errors {1}' -f $counts.Scanned,$counts.ScanErrors)
+    Write-TerminalText ('OUTPUT   '+$Destination)
+    $log=Get-ProbeProperty $Session 'JsonPath'
+    if ($log) { Write-TerminalText ('LOG      '+$log) }
+}
+
 function Run-TUI($ffmpeg, $ffprobe, $cfg) {
     $batches=New-Object 'Collections.Generic.List[object]'
+    $previousTerminal=$script:TerminalSession
+    $script:TerminalSession=$true
     try {
     while ($true) {
-        Write-Host ""
-        Write-Host "========== WinVidCompress =========="
-        Write-Host "Output folder: $($cfg.OutputDir)"
-        Write-Host ""
-        Write-Host "1) Set output folder"
-        Write-Host "2) Compress ONE file"
-        Write-Host "3) Compress ALL videos in a folder (recursive)"
-        Write-Host "4) Quit"
+        Write-TerminalMenu $cfg.OutputDir ([bool]$ffmpeg -and [bool]$ffprobe)
 
-        $c = Read-Host "Choose [1-4]"
+        $c = Read-Host "Select [1-4]"
         switch ($c) {
             '1' {
                 $p = Prompt-Path "Enter output folder path (blank to cancel)" -Folder -CreateIfMissing
@@ -3096,7 +3210,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
                     } catch {
                         if ($_.Exception -is [System.Management.Automation.PipelineStoppedException] -or
                             $_.Exception -is [System.OperationCanceledException]) { throw }
-                        Write-Host "Output preference was not changed: $($_.Exception.Message)" -ForegroundColor Yellow
+                        Write-TerminalText "Output preference was not changed: $($_.Exception.Message)" 'Warning'
                     }
                 }
             }
@@ -3125,7 +3239,7 @@ function Run-TUI($ffmpeg, $ffprobe, $cfg) {
         $cancelled=$_.Exception -is [System.OperationCanceledException]
         $batches.Add((Get-BatchResult @() @() -Cancelled:$cancelled -StartupFailed:(-not $cancelled) -Reason $_.Exception.Message))
         return (Get-SessionResult $batches.ToArray())
-    }
+    } finally { $script:TerminalSession=$previousTerminal }
 }
 
 function Resolve-RunConfiguration($Config, [hashtable]$Overrides) {

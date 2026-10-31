@@ -15,6 +15,7 @@ Describe 'Menu exit and selection intent [WVC-M1-01]' {
             $script:Choices.Dequeue()
         }
         Mock Write-Host {}
+        Mock Get-TerminalStyle { [pscustomobject]@{Width=59;Color=$false} }
         Mock Save-Config {}
         Mock Process-Paths {}
     }
@@ -27,7 +28,7 @@ Describe 'Menu exit and selection intent [WVC-M1-01]' {
         $continued | Should -BeTrue
         Should -Invoke Read-Host -Times 1 -Exactly
         Should -Invoke Write-Host -Times 1 -Exactly -ParameterFilter {
-            $Object -eq '========== WinVidCompress =========='
+            $Object -like 'WINVIDCOMPRESS  //  MEDIA OPERATIONS*'
         }
         Should -Invoke Process-Paths -Times 0 -Exactly
     }
@@ -37,8 +38,8 @@ Describe 'Menu exit and selection intent [WVC-M1-01]' {
         $script:Choices.Enqueue('4')
         Run-TUI 'unused-encoder' 'unused-probe' $script:Config
         Should -Invoke Read-Host -Times 2 -Exactly
-        foreach ($label in @('1) Set output folder','2) Compress ONE file',
-            '3) Compress ALL videos in a folder (recursive)','4) Quit')) {
+        foreach ($label in @('[1] Set output folder        [2] Compress one file',
+            '[3] Compress folder          [4] Quit')) {
             Should -Invoke Write-Host -Times 2 -Exactly -ParameterFilter { $Object -eq $label }
         }
     }

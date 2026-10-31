@@ -10,14 +10,14 @@ if not exist "%POWERSHELL%" goto missing_powershell
 
 REM Empty arguments open the menu; selections pass directly to PowerShell.
 if "%WVC_UNATTENDED%"=="1" goto unattended
-"%POWERSHELL%" -NoProfile -ExecutionPolicy Bypass -NoExit -File "%SCRIPT%" -KeepOpen %*
+"%POWERSHELL%" -NoLogo -NoProfile -ExecutionPolicy Bypass -NoExit -File "%SCRIPT%" -KeepOpen %*
 set "LAUNCH_EXIT=%ERRORLEVEL%"
 if not "%LAUNCH_EXIT%"=="0" goto launch_failed
 exit /b 0
 
 :unattended
 REM Keep the mode first. Forward each argument once; no prompt or pause.
-"%POWERSHELL%" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%SCRIPT%" %*
+"%POWERSHELL%" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%SCRIPT%" %*
 set "LAUNCH_EXIT=%ERRORLEVEL%"
 exit /b %LAUNCH_EXIT%
 
