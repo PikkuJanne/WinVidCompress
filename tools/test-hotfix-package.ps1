@@ -242,9 +242,18 @@ try {
     $stage='ShellEquivalentInteractiveQuit'
     [void][IO.Directory]::CreateDirectory((Join-Path $appData 'WinVidCompress'))
     [IO.File]::WriteAllText((Join-Path $appData 'WinVidCompress/config.json'),(@{OutputDir=$output}|ConvertTo-Json))
-    # The actual BAT intentionally retains its PS5.1 prompt with -NoExit.
-    # Quit returns to that prompt; the separate marker and exit close it explicitly.
-    $quit=Invoke-HotfixBat $application 'Interactive' $hint ("4`r`nWrite-Output 'WVC_PROOF_AFTER_QUIT'`r`nexit 0`r`n")
+    # Read-Host needs real console input on headless runners. The driver launches
+    # the actual BAT in a hidden native console, waits for the real menu, sends
+    # Quit, then proves return to -NoExit's prompt with an executed file marker.
+    $consoleTranscript=Join-Path $owner.Path 'interactive-console.local.txt'
+    $quitMarker=Join-Path $owner.Path 'after-quit.marker'
+    $driver=Join-Path $repo 'tests/launcher/Invoke-HotfixConsole.ps1'
+    $argv=@('-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',$driver,
+        '-BatPath',(Join-Path $application 'WinVidCompress.bat'),'-WorkingDirectory',$working,
+        '-TranscriptPath',$consoleTranscript,'-MarkerPath',$quitMarker)
+    $quit=Invoke-HotfixChild (Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe') (($argv | ForEach-Object {ConvertTo-WvcNativeArgument $_}) -join ' ') $hint -TimeoutMilliseconds 60000
+    if(Test-Path -LiteralPath $consoleTranscript -PathType Leaf) {$quit.StdOut=[IO.File]::ReadAllText($consoleTranscript)+$quit.StdOut}
+    Assert-Hotfix (Test-Path -LiteralPath $quitMarker -PathType Leaf) 'Interactive retained-prompt file marker is missing.'
     Assert-Hotfix ($quit.ExitCode -eq 0 -and $quit.StdOut -match 'WVC_PROOF_AFTER_QUIT') 'Interactive Quit did not return to the retained PowerShell prompt.'
     Assert-Hotfix ($quit.StdOut -match 'MEDIA OPERATIONS' -and ($quit.StdOut+$quit.StdErr) -notmatch 'not found|\x1b\[') 'Interactive shell-equivalent startup failed or emitted ANSI.'
     Complete-HotfixCase $stage
