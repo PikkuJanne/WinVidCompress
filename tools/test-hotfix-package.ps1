@@ -21,7 +21,7 @@ $repo=Split-Path -Parent $PSScriptRoot
 . (Join-Path $repo 'tests/TestSupport.ps1')
 . (Join-Path $repo 'tests/CiSupport.ps1')
 $cases=New-Object 'Collections.Generic.List[object]'
-$owner=$null; $drive=$null; $saved=@{}; $stage='Preparation'; $failure=$null
+$owner=$null; $drive=$null; $saved=@{}; $registryScopes=@{}; $stage='Preparation'; $failure=$null
 $packageHash=$null; $packageCommit=$null
 
 function Assert-Hotfix([bool]$Condition,[string]$Message) {
@@ -30,6 +30,12 @@ function Assert-Hotfix([bool]$Condition,[string]$Message) {
 function Complete-HotfixCase([string]$Id) {
     $cases.Add([pscustomobject]@{Id=$Id;Status='Passed'})
     [Console]::WriteLine(('PASS '+$Id))
+}
+function Set-HotfixScope([string]$Name,$Value,[string]$Scope,
+    [Microsoft.Win32.RegistryValueKind]$Kind=[Microsoft.Win32.RegistryValueKind]::String) {
+    # Only handles opened after the disposable-runner guard can reach this helper.
+    if($null -eq $Value) {$registryScopes[$Scope].DeleteValue($Name,$false)}
+    else {$registryScopes[$Scope].SetValue($Name,$Value,$Kind)}
 }
 function Invoke-HotfixChild([string]$Executable,[string]$Arguments,[hashtable]$Variables,
     [string]$InputText='',[int]$TimeoutMilliseconds=45000) {
@@ -108,16 +114,24 @@ try {
     Assert-Hotfix (-not (Test-Path -LiteralPath $ResultPath)) 'ResultPath must be new.'
     if($EphemeralUserScope) {
         Assert-Hotfix ($env:GITHUB_ACTIONS -eq 'true' -and $env:RUNNER_ENVIRONMENT -eq 'github-hosted') 'Persistent-scope proof is restricted to disposable GitHub-hosted runners.'
+        $registryScopes.User=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment',$true)
+        $registryScopes.Machine=[Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment',$true)
         foreach($scope in @('User','Machine')) {
+            Assert-Hotfix ($null -ne $registryScopes[$scope]) 'Disposable runner environment key is unavailable.'
             $saved[$scope]=@{}
-            foreach($name in @('FFMPEG','PATH')) {$saved[$scope][$name]=[Environment]::GetEnvironmentVariable($name,$scope)}
+            foreach($name in @('FFMPEG','PATH')) {
+                $exists=$registryScopes[$scope].GetValueNames() -contains $name
+                $saved[$scope][$name]=[pscustomobject]@{Exists=$exists;
+                    Value=$(if($exists){$registryScopes[$scope].GetValue($name,$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)}else{$null});
+                    Kind=$(if($exists){$registryScopes[$scope].GetValueKind($name)}else{[Microsoft.Win32.RegistryValueKind]::String})}
+            }
         }
         # Hosted images can contain unrelated codecs on persisted Machine PATH.
         # Mask only these two values in this disposable runner; keep the current
         # process intact and replace every child's PATH explicitly below.
         foreach($scope in @('User','Machine')) {
-            [Environment]::SetEnvironmentVariable('FFMPEG',$null,$scope)
-            [Environment]::SetEnvironmentVariable('PATH','',$scope)
+            Set-HotfixScope 'FFMPEG' $null $scope
+            Set-HotfixScope 'PATH' '' $scope
         }
     }
     $owner=New-WvcTestRoot
@@ -254,16 +268,16 @@ try {
         Assert-Hotfix ($invalid.ExitCode -eq 2 -and ($invalid.StdOut+$invalid.StdErr) -match 'ffmpeg.exe' -and ($invalid.StdOut+$invalid.StdErr) -notmatch 'ffmpeg.exe not found') 'Invalid executable must retain a distinct tool-specific startup error.'
         Complete-HotfixCase $stage
         $stage='PersistedUserHintStaleChild'
-        [Environment]::SetEnvironmentVariable('PATH','', 'User')
-        [Environment]::SetEnvironmentVariable('FFMPEG',$bin,'User')
+        Set-HotfixScope 'PATH' '' 'User'
+        Set-HotfixScope 'FFMPEG' $bin 'User'
         Assert-HotfixSelection (Invoke-HotfixBat $application 'Doctor' @{}) $bin 'FFMPEG (User)'
         Complete-HotfixCase $stage
         $stage='BadProcessHintValidPersistedFallback'
         Assert-HotfixSelection (Invoke-HotfixBat $application 'Doctor' @{FFMPEG=(Join-Path $owner.Path 'absent codec')}) $bin 'FFMPEG (User)'
         Complete-HotfixCase $stage
         $stage='PersistedUserConcretePathStaleChild'
-        [Environment]::SetEnvironmentVariable('FFMPEG',$null,'User')
-        [Environment]::SetEnvironmentVariable('PATH',$bin,'User')
+        Set-HotfixScope 'FFMPEG' $null 'User'
+        Set-HotfixScope 'PATH' $bin 'User'
         Assert-HotfixSelection (Invoke-HotfixBat $application 'Doctor' @{}) $bin 'PATH (User)'
         Complete-HotfixCase $stage
         $stage='PersistedUserExpandedPathStaleChild'
@@ -271,9 +285,9 @@ try {
         # reaches tools, so success proves PATH expansion rather than hint lookup.
         $expandedRoot=Join-Path $owner.Path 'expanded installation'; $expandedBin=Join-Path $expandedRoot 'tools'
         [void][IO.Directory]::CreateDirectory($expandedBin); Copy-Item -LiteralPath $nativeEncoder,$nativeProbe -Destination $expandedBin
-        [Environment]::SetEnvironmentVariable('FFMPEG',$expandedRoot,'User')
-        [Environment]::SetEnvironmentVariable('PATH','%FFMPEG%\tools','User')
-        Assert-HotfixSelection (Invoke-HotfixBat $application 'Doctor' @{}) $expandedBin 'PATH (User)'
+        Set-HotfixScope 'FFMPEG' $expandedRoot 'User'
+        Set-HotfixScope 'PATH' '%FFMPEG%\tools' 'User' ([Microsoft.Win32.RegistryValueKind]::ExpandString)
+        Assert-HotfixSelection (Invoke-HotfixBat $application 'Doctor' @{FFMPEG=(Join-Path $owner.Path 'stale inherited installation')}) $expandedBin 'PATH (User)'
         Complete-HotfixCase $stage
     }
 } catch {
@@ -282,8 +296,13 @@ try {
     [Console]::Error.WriteLine(('FAIL '+$stage+': '+$failure))
 } finally {
     foreach($scope in $saved.Keys) {
-        foreach($name in $saved[$scope].Keys) {[Environment]::SetEnvironmentVariable($name,$saved[$scope][$name],$scope)}
+        foreach($name in $saved[$scope].Keys) {
+            $original=$saved[$scope][$name]
+            if($original.Exists) {$registryScopes[$scope].SetValue($name,$original.Value,$original.Kind)}
+            else {$registryScopes[$scope].DeleteValue($name,$false)}
+        }
     }
+    foreach($scope in $registryScopes.Keys) {if($null -ne $registryScopes[$scope]) {$registryScopes[$scope].Dispose()}}
     if($drive) {
         & (Join-Path $env:SystemRoot 'System32/subst.exe') $drive /d
         if($LASTEXITCODE -ne 0) {$failure='Fixture drive cleanup failed.'}
