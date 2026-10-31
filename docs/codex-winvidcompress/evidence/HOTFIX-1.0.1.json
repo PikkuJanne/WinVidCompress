@@ -1,0 +1,421 @@
+{
+  "SchemaVersion": 1,
+  "Date": "2026-10-31",
+  "TaskIds": [
+    "WVC-M6-01",
+    "WVC-M6-02",
+    "WVC-M6-03"
+  ],
+  "Repository": "PikkuJanne/WinVidCompress",
+  "FeatureBranch": "codex/wvc-1.0.1-hotfix",
+  "FeatureTestCommit": "5d762470d7a62912d4e1a76ef6c56b419c0b9396",
+  "ReleaseCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+  "PullRequest": "https://github.com/PikkuJanne/WinVidCompress/pull/37",
+  "OwnerAuthorization": "The owner explicitly authorized implementation, automated Windows testing, push, merge, tag and public stable publication; no additional owner QA/publication gate for this patch.",
+  "FeatureWindowsCI": {
+    "PushRun": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/41231319584",
+    "PRRun": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/41231325099",
+    "WindowsPowerShell": {
+      "Host": {
+        "Version": "5.1.26100.33648",
+        "Edition": "Desktop"
+      },
+      "Counts": {
+        "Passed": 1061,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "Status": "Passed"
+    },
+    "PowerShell7": {
+      "Host": {
+        "Version": "7.6.6",
+        "Edition": "Core"
+      },
+      "Counts": {
+        "Passed": 1071,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "Status": "Passed"
+    },
+    "PRChangedFileAnalysis": {
+      "AnalyzedFiles": 12,
+      "DiagnosticCount": 0
+    },
+    "AllFourSanitizedSummariesInspected": true,
+    "AllCasesPassed": true
+  },
+  "ExactMainPackage": {
+    "Run": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/41231866327",
+    "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+    "ZIP": "WinVidCompress-1.0.1.zip",
+    "Bytes": 264791,
+    "SHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+    "Builder": "Windows PowerShell 5.1",
+    "VerifyDirectoryPassed": true,
+    "WindowsPowerShell": {
+      "SchemaVersion": 1,
+      "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+      "PackageSHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+      "Host": {
+        "Version": "5.1.26100.33648",
+        "Edition": "Desktop"
+      },
+      "WindowsVersion": "10.0.26100.0",
+      "Status": "Passed",
+      "Passed": 19,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0,
+      "PersistedUserScope": true,
+      "InteractiveCoverage": "Automated shell-equivalent BAT launch from unrelated working directory; not physical Explorer mouse coverage",
+      "Cases": [
+        {
+          "Id": "OldTaggedZipMiss",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintBin",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintRoot",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintExecutable",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintQuotedTrailingSeparator",
+          "Status": "Passed"
+        },
+        {
+          "Id": "DifferentDynamicDriveWithSpaces",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ProcessPathPrecedence",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ScriptAdjacentFromUnrelatedDirectory",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatSyntheticConversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Doctor",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Conversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ShellEquivalentInteractiveQuit",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatGenuinelyMissingTool",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatOnlyFfprobeMissing",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatInvalidExecutable",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserHintStaleChild",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BadProcessHintValidPersistedFallback",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserConcretePathStaleChild",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserExpandedPathStaleChild",
+          "Status": "Passed"
+        }
+      ]
+    },
+    "PowerShell7": {
+      "SchemaVersion": 1,
+      "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+      "PackageSHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+      "Host": {
+        "Version": "7.6.6",
+        "Edition": "Core"
+      },
+      "WindowsVersion": "10.0.26100.0",
+      "Status": "Passed",
+      "Passed": 19,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0,
+      "PersistedUserScope": true,
+      "InteractiveCoverage": "Automated shell-equivalent BAT launch from unrelated working directory; not physical Explorer mouse coverage",
+      "Cases": [
+        {
+          "Id": "OldTaggedZipMiss",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintBin",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintRoot",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintExecutable",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintQuotedTrailingSeparator",
+          "Status": "Passed"
+        },
+        {
+          "Id": "DifferentDynamicDriveWithSpaces",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ProcessPathPrecedence",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ScriptAdjacentFromUnrelatedDirectory",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatSyntheticConversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Doctor",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Conversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ShellEquivalentInteractiveQuit",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatGenuinelyMissingTool",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatOnlyFfprobeMissing",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatInvalidExecutable",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserHintStaleChild",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BadProcessHintValidPersistedFallback",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserConcretePathStaleChild",
+          "Status": "Passed"
+        },
+        {
+          "Id": "PersistedUserExpandedPathStaleChild",
+          "Status": "Passed"
+        }
+      ]
+    },
+    "LocalDownloadedZIPRerun": {
+      "SchemaVersion": 1,
+      "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+      "PackageSHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+      "Host": {
+        "Version": "5.1.26100.9711",
+        "Edition": "Desktop"
+      },
+      "WindowsVersion": "10.0.26300.0",
+      "Status": "Passed",
+      "Passed": 12,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 0,
+      "PersistedUserScope": false,
+      "InteractiveCoverage": "Automated shell-equivalent BAT launch from unrelated working directory; not physical Explorer mouse coverage",
+      "Cases": [
+        {
+          "Id": "OldTaggedZipMiss",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintBin",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintRoot",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintExecutable",
+          "Status": "Passed"
+        },
+        {
+          "Id": "BatHintQuotedTrailingSeparator",
+          "Status": "Passed"
+        },
+        {
+          "Id": "DifferentDynamicDriveWithSpaces",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ProcessPathPrecedence",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ScriptAdjacentFromUnrelatedDirectory",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ActualBatSyntheticConversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Doctor",
+          "Status": "Passed"
+        },
+        {
+          "Id": "CurrentHostDirectPs1Conversion",
+          "Status": "Passed"
+        },
+        {
+          "Id": "ShellEquivalentInteractiveQuit",
+          "Status": "Passed"
+        }
+      ]
+    },
+    "IndependentPayloadAudit": {
+      "Passed": 44,
+      "Failed": 0,
+      "AllowlistedFiles": 13,
+      "RuntimeBytesEqualReleaseGitBlobs": true,
+      "ArtifactUnmodified": true
+    }
+  },
+  "LocalFullTier": {
+    "SourceCommit": "5d762470d7a62912d4e1a76ef6c56b419c0b9396",
+    "Dirty": false,
+    "Host": "PowerShell 7.6.6",
+    "Counts": {
+      "Passed": 1071,
+      "Failed": 0,
+      "Skipped": 0,
+      "NotRun": 8
+    },
+    "Status": "Incomplete",
+    "ExitCode": 2,
+    "Scope": "All 1071 automated cases pass. Eight historical manual/extended placeholders remain NotRun; Full raw exit2 is retained. Current patch acceptance uses the explicitly requested automated Windows proof, without claiming new physical Explorer or perceptual observations."
+  },
+  "PublicReadback": {
+    "ReleaseUrl": "https://github.com/PikkuJanne/WinVidCompress/releases/tag/v1.0.1",
+    "Version": "v1.0.1",
+    "Draft": false,
+    "Prerelease": false,
+    "Latest": true,
+    "PublishedAt": "2026-10-31T19:00:23Z",
+    "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+    "LivePeeledTagCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+    "AssetName": "WinVidCompress-1.0.1.zip",
+    "Bytes": 264791,
+    "TestedZIP_SHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+    "DownloadedZIP_SHA256": "e144be45cb606aab6d7a5664e9646b01d13f63be23c5e2aeece76d9b78944dcc",
+    "DownloadedSidecarMatches": true,
+    "DownloadedZIPMatchesTestedZIP": true,
+    "AnonymousPublicDownload": true,
+    "VerifiedAt": "2026-10-31T19:00:41.9164658Z"
+  },
+  "MainWindowsCI": {
+    "Run": "https://github.com/PikkuJanne/WinVidCompress/actions/runs/41231866477",
+    "SourceCommit": "335bb1935b02c326c03b01d2e0d19892481a0559",
+    "Status": "Passed",
+    "WindowsPowerShell": {
+      "Host": {
+        "Version": "5.1.26100.33648",
+        "Edition": "Desktop"
+      },
+      "Counts": {
+        "Passed": 1061,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "Static": {
+        "AnalyzedFiles": 12,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules"
+      }
+    },
+    "PowerShell7": {
+      "Host": {
+        "Version": "7.6.6",
+        "Edition": "Core"
+      },
+      "Counts": {
+        "Passed": 1071,
+        "Failed": 0,
+        "Skipped": 0,
+        "NotRun": 0
+      },
+      "Static": {
+        "AnalyzedFiles": 12,
+        "DiagnosticCount": 0,
+        "Policy": "ErrorsAndSelectedSafetyRules"
+      }
+    },
+    "BothSanitizedSummariesAndEveryCaseInspected": true,
+    "AllStepsPassed": true
+  },
+  "Commands": [
+    "./tools/test-ci.ps1 -HostName $env:WVC_CI_HOST -ModuleRoot $env:WVC_CI_MODULES -NativeDirectory $env:WVC_CI_NATIVE -BaseCommit $base -ResultDirectory $reports",
+    "./tools/package.ps1 -OutputDirectory $package -ExpectedCommit $commit",
+    "./tools/package.ps1 -VerifyDirectory $package",
+    "./tools/test-hotfix-package.ps1 -PackagePath $zip[0].FullName -NativeDirectory $env:WVC_PROOF_NATIVE -OldPackagePath $env:WVC_PROOF_OLD -ResultPath $report -EphemeralUserScope",
+    "tools/test.ps1 -Tier Full -Hosts Current -ModuleRoot D:/projects/wvc-hotfix-runtime/modules -ReportPath D:/projects/wvc-hotfix-runtime/frozen-full7.json -IncludeKnownDefects",
+    "tools/package.ps1 -VerifyDirectory D:/projects/wvc-hotfix-release-1.0.1",
+    "tools/test-hotfix-package.ps1 -PackagePath D:/projects/wvc-hotfix-release-1.0.1/WinVidCompress-1.0.1.zip -NativeDirectory D:/projects/wvc-hotfix-runtime/native/ffmpeg-2026-10-04-git-a35c879992-essentials_build/bin -ResultPath D:/projects/wvc-hotfix-runtime/main-download-proof51-corrected.json -OldPackagePath D:/projects/wvc-hotfix-runtime/old-baseline-download/WinVidCompress-1.0.0.zip"
+  ],
+  "SafetyAndLimits": [
+    "No private media, owner paths, raw logs or credentials committed; fixtures/dependencies and readbacks are isolated developer-owned artifacts.",
+    "No owner persisted environment changes; persisted-scope writes occur only on guarded disposable GitHub-hosted runners and restore raw values/types.",
+    "Actual BAT shell-equivalent native-console coverage is automated, not physical Explorer mouse coverage.",
+    "Synthetic structural/full-decode checks do not prove general perceptual integrity.",
+    "Original v1.0.0 assets/tags, website, branding, compression profile and file protections are unchanged."
+  ],
+  "Synchronization": "Final handoff commit SHA and live feature ref are checked externally after commit/push, avoiding a self-SHA loop.",
+  "IndependentPublicAudit": {
+    "Passed": 7,
+    "Failed": 0,
+    "ReleaseStableAndLatest": true,
+    "ByteIdenticalZIPAndSidecar": true,
+    "LivePeeledTagMatchesReleaseCommit": true
+  }
+}
