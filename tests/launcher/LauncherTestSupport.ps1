@@ -1,6 +1,31 @@
 Set-StrictMode -Version Latest
 . (Join-Path (Split-Path -Parent $PSScriptRoot) 'TestSupport.ps1')
 
+function Write-WvcMissingToolApplication([string]$Application, [string]$Destination) {
+    # Negative discovery fixtures must not fall back to an owner's persisted tools.
+    # Only this copied test application's scoped reader is replaced. Packaged
+    # integration proof always runs the unmodified application and real scopes.
+    $text = [IO.File]::ReadAllText($Application)
+    $tokens = $null; $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseInput($text,[ref]$tokens,[ref]$errors)
+    if ($errors.Count) { throw 'Cannot prepare a malformed application fixture.' }
+    $readers = @($ast.FindAll({ param($node)
+        $node -is [Management.Automation.Language.FunctionDefinitionAst] -and
+            $node.Name -eq 'Get-ToolEnvironmentVariable'
+    },$true))
+    if ($readers.Count -ne 1) { throw 'Missing-tool fixture requires exactly one scoped environment reader.' }
+    $replacement = @'
+function Get-ToolEnvironmentVariable([string]$Name, [string]$Scope) {
+    # MODIFIED TEST FIXTURE: hide Process/User/Machine hint values, without writes.
+    return $null
+}
+'@
+    $reader = $readers[0].Extent
+    $text = $text.Substring(0,$reader.StartOffset)+$replacement+$text.Substring($reader.EndOffset)
+    if (Test-Path -LiteralPath $Destination) { throw 'Missing-tool fixture destination must be new.' }
+    [IO.File]::WriteAllText($Destination,$text,(New-Object Text.UTF8Encoding($true)))
+}
+
 function Invoke-WvcLauncherProcess([string]$Executable, [string]$Arguments,
     [hashtable]$Environment = @{}, [string]$InputText = '') {
     # Arguments is an observed Windows command line, not a shell-built program.
