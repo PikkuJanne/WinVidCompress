@@ -81,6 +81,9 @@ function Invoke-HotfixBat([string]$Application,[string]$Mode,[hashtable]$Variabl
     }
     Invoke-HotfixChild (Join-Path $env:SystemRoot 'System32/cmd.exe') $arguments $copy $InputText
 }
+function Invoke-HotfixNative([string]$Executable,[string[]]$Arguments) {
+    Invoke-HotfixChild $Executable (($Arguments | ForEach-Object {ConvertTo-WvcNativeArgument $_}) -join ' ') @{}
+}
 function Assert-HotfixSelection($Result,[string]$Bin,[string]$Source) {
     Assert-Hotfix ($Result.ExitCode -eq 0) 'Doctor must return exit 0.'
     foreach($pair in @(@('FFmpeg','ffmpeg.exe'),@('FFprobe','ffprobe.exe'))) {
@@ -163,11 +166,11 @@ try {
     Complete-HotfixCase $stage
 
     $stage='ActualBatSyntheticConversion'
-    $generated=Invoke-WvcTestProcess $nativeEncoder @('-hide_banner','-nostdin','-v','error','-n',
+    $generated=Invoke-HotfixNative $nativeEncoder @('-hide_banner','-nostdin','-v','error','-n',
         '-f','lavfi','-i','testsrc2=size=160x120:rate=24:duration=0.6',
         '-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=0.6',
         '-map','0:v:0','-map','1:a:0','-c:v','libx264','-preset','veryfast','-crf','18',
-        '-pix_fmt','yuv420p','-c:a','aac',$clip) -Environment @{FFREPORT=$null}
+        '-pix_fmt','yuv420p','-c:a','aac',$clip)
     Assert-Hotfix ($generated.ExitCode -eq 0) 'Absolute fixture encoder failed.'
     $sourceHash=(Get-FileHash -LiteralPath $clip).Hash
     $sentinel=Join-Path $output ([IO.Path]::GetFileName($clip)); [IO.File]::WriteAllText($sentinel,'existing final protection sentinel')
@@ -179,14 +182,14 @@ try {
     Assert-Hotfix ((Get-FileHash -LiteralPath $sentinel).Hash -ceq $sentinelHash) 'Existing final hash changed.'
     $produced=@(Get-ChildItem -LiteralPath $output -Filter '*.mp4' -File | Where-Object FullName -NE $sentinel)
     Assert-Hotfix ($produced.Count -eq 1) 'Expected one newly published MP4.'
-    $inspection=Invoke-WvcTestProcess $nativeProbe @('-v','error','-show_streams','-show_format','-of','json',$produced[0].FullName)
+    $inspection=Invoke-HotfixNative $nativeProbe @('-v','error','-show_streams','-show_format','-of','json',$produced[0].FullName)
     Assert-Hotfix ($inspection.ExitCode -eq 0) 'Published MP4 could not be probed.'
     $media=$inspection.StdOut | ConvertFrom-Json
     $video=@($media.streams | Where-Object codec_type -EQ 'video'); $audio=@($media.streams | Where-Object codec_type -EQ 'audio')
     Assert-Hotfix ($video.Count -eq 1 -and $video[0].codec_name -eq 'h264' -and $video[0].width -eq 160 -and $video[0].height -eq 120) 'Published H.264 video stream differs.'
     Assert-Hotfix ($audio.Count -eq 1 -and $audio[0].codec_name -eq 'aac') 'Published AAC audio stream is missing.'
     Assert-Hotfix ($media.format.format_name -match '\bmp4\b') 'Published file is not readable MP4.'
-    $decode=Invoke-WvcTestProcess $nativeEncoder @('-hide_banner','-nostdin','-v','error','-i',$produced[0].FullName,'-map','0:v:0','-map','0:a:0','-f','null','-')
+    $decode=Invoke-HotfixNative $nativeEncoder @('-hide_banner','-nostdin','-v','error','-i',$produced[0].FullName,'-map','0:v:0','-map','0:a:0','-f','null','-')
     Assert-Hotfix ($decode.ExitCode -eq 0) 'Published MP4 full synthetic decode failed.'
     Complete-HotfixCase $stage
 
