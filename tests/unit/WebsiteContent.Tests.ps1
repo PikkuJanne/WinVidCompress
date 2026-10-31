@@ -5,6 +5,7 @@ BeforeAll {
     $Schema=Get-Content -LiteralPath (Join-Path $ContentRoot 'product.schema.json') -Raw | ConvertFrom-Json
     $Example=Get-Content -LiteralPath (Join-Path $ContentRoot 'examples/synthetic-default.json') -Raw | ConvertFrom-Json
     . (Join-Path $RepoRoot 'tests/WebsiteContentSupport.ps1')
+    . (Join-Path $RepoRoot 'tools/package.ps1')
     function New-DraftWebsiteFixture {
         $document=$Product | ConvertTo-Json -Depth 12 | ConvertFrom-Json
         $document.status='draft_not_for_publication'
@@ -53,13 +54,15 @@ Describe 'Static product content [WVC-M5-04]' {
             $Schema.allOf[0].else.properties.$field.type | Should -BeExactly 'string'
         }
     }
-    It 'binds the unpublished candidate to actual application and launcher bytes [A01]' {
+    It 'binds the historical unpublished candidate to its stated Git source bytes [A01]' {
         $Product.candidate.status | Should -BeExactly 'unpublished_candidate'
         $version=@(& git -C $RepoRoot show ($Product.candidate.source_commit+':VERSION'))
         $LASTEXITCODE | Should -Be 0
         $Product.candidate.version | Should -BeExactly ($version -join "`n").Trim()
-        $Product.candidate.application_sha256 | Should -BeExactly (Get-FileHash -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.ps1')).Hash.ToLowerInvariant()
-        $Product.candidate.launcher_sha256 | Should -BeExactly (Get-FileHash -LiteralPath (Join-Path $RepoRoot 'WinVidCompress.bat')).Hash.ToLowerInvariant()
+        $application=Invoke-WvcPackageGit $RepoRoot @('show',($Product.candidate.source_commit+':WinVidCompress.ps1'))
+        $launcher=Invoke-WvcPackageGit $RepoRoot @('show',($Product.candidate.source_commit+':WinVidCompress.bat'))
+        $Product.candidate.application_sha256 | Should -BeExactly (Get-WvcPackageHash $application.Bytes)
+        $Product.candidate.launcher_sha256 | Should -BeExactly (Get-WvcPackageHash $launcher.Bytes)
         $Example.SourceCommit | Should -BeExactly $Product.candidate.source_commit
         $Example.Dirty | Should -BeFalse
     }
